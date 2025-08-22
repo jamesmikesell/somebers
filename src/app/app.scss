@@ -2,3 +2,12 @@
   display: flex;
   justify-content: center;
 }
+
+.version {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  /* keep off notches/home-bars on mobile */
+  inset: auto auto max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+}
