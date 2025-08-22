@@ -1,0 +1,7 @@
+<mat-form-field class="example-form-field">
+  <mat-label>Game Number</mat-label>
+  <input matInput type="number" [ngModel]="gameNumber" (ngModelChange)="updateGameNumber($event)" min="1">
+</mat-form-field>
+
+
+<pre>{{ board }}</pre>
