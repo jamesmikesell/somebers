@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BoardGroupGenerator } from '../../grouping';
 import { MATERIAL_IMPORTS } from '../../material-imports';
-import { Random } from '../../random';
+import { BoardGroupGenerator } from '../../service/grouping';
+import { Random } from '../../service/random';
 
 @Component({
   selector: 'app-board',
