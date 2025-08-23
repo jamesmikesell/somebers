@@ -1,18 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { BoardGroupGenerator } from '../../grouping';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Random } from '../../random';
-import { BoardGroupGenerator } from '../../grouping';
 
 @Component({
   selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS],
+  imports: [...MATERIAL_IMPORTS, CommonModule],
   templateUrl: './board.html',
   styleUrl: './board.scss'
 })
 export class Board {
 
   gameNumber: number = 1;
-  board: string;
+  grid: number[][] = [];
 
 
   constructor() {
@@ -26,10 +27,7 @@ export class Board {
     let gridMax = 9;
     const gridSize = Math.floor(Random.generateFromSeed(this.gameNumber) * (gridMax - gridMin + 1) + gridMin);
     const grid = new BoardGroupGenerator(this.gameNumber).generateRandomContiguousGroups(gridSize);
-
-    const emojis: string[] = ["🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "🟤", "⚫", "⚪"];
-    let gridString = grid.map(r => r.map(num => emojis[num - 1] ?? "?").join(" ")).join("\n");
-    this.board = gridString;
+    this.grid = grid.map(r => r.slice());
   }
 
 }

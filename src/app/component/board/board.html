@@ -1,7 +1,55 @@
 <mat-form-field class="example-form-field">
   <mat-label>Game Number</mat-label>
-  <input matInput type="number" [ngModel]="gameNumber" (ngModelChange)="updateGameNumber($event)" min="1">
+  <input
+    matInput
+    type="number"
+    [ngModel]="gameNumber"
+    (ngModelChange)="updateGameNumber($event)"
+    min="1"
+  />
 </mat-form-field>
 
+<div class="container">
+  <div class="grid" [style.--columnCount]="grid.length + 0">
+    <div class="cell">
+      <!-- blank first cell -->
+    </div>
 
-<pre class="board">{{ board }}</pre>
+    <div class="cell">
+      <!-- gap -->
+    </div>
+
+    <!-- header row -->
+    @for (i of [].constructor(grid.length); track $index) {
+      <div class="cell bg-muted">
+        <div class="corner-number"></div>
+        <div class="content">&nbsp;</div>
+      </div>
+    }
+
+    @for (i of [].constructor(grid.length + 2); track $index) {
+      <div class="cell">
+        <!-- first row gap -->
+      </div>
+    }
+
+    @for (row of grid; track $index) {
+      <!-- header column -->
+      <div class="cell bg-muted">
+        <div class="corner-number"></div>
+        <div class="content">&nbsp;</div>
+      </div>
+
+      <div class="cell">
+        <!-- gap -->
+      </div>
+
+      @for (cell of row; track $index) {
+        <div class="cell color-{{ cell }}">
+          <div class="corner-number bg-muted">{{ cell }}</div>
+          <div class="content circle">{{ cell }}</div>
+        </div>
+      }
+    }
+  </div>
+</div>
