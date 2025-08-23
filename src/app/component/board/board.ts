@@ -19,6 +19,7 @@ export class Board {
   goalRows: number[] = [];
   goalColumns: number[] = [];
   fails = 0;
+  solvable = false;
 
 
   constructor() {
@@ -66,6 +67,9 @@ export class Board {
       return cell
     }));
 
+
+    this.solvable = this.isSolvable(this.grid);
+
   }
 
 
@@ -99,6 +103,55 @@ export class Board {
     if ("vibrate" in navigator) {
       navigator.vibrate([100, 50, 100]);
     }
+  }
+
+
+  private isSolvable(cell: Cell[][]): boolean {
+    const rows = cell.length;
+    if (rows === 0) return true;
+    const cols = cell[0].length;
+    if (cols === 0) return true;
+
+    let countsOfColorGroups = new Map<number, number>();
+
+    // Check all possible rectangles
+    for (let r1 = 0; r1 < rows; r1++) {
+      for (let c1 = 0; c1 < cols; c1++) {
+        // For each starting position, check all possible bottom-right corners
+        for (let r2 = r1 + 1; r2 < rows; r2++) {
+          for (let c2 = c1 + 1; c2 < cols; c2++) {
+            // Check if all four corners have the same value
+            let cellTl = cell[r1][c1];
+            let cellTr = cell[r1][c2];
+            let cellBl = cell[r2][c1];
+            let cellBr = cell[r2][c2];
+
+            let allCornersSameValue = cellTl.value === cellTr.value &&
+              cellTl.value === cellBl.value &&
+              cellTl.value === cellBr.value;
+
+            let adjacentCornersHaveSameRequiredState = (cellTl.required === cellBr.required) && (cellBl.required === cellTr.required);
+            let exactlyOneSetOfAdjacentCornersRequired = adjacentCornersHaveSameRequiredState && cellTl.required !== cellTr.required;
+
+            const groupNumbers = [cellTl.groupNumber, cellTr.groupNumber, cellBl.groupNumber, cellBr.groupNumber];
+            const groupCounts = new Map<number, number>();
+            for (const groupNum of groupNumbers)
+              groupCounts.set(groupNum, (groupCounts.get(groupNum) || 0) + 1);
+
+            // Check if there are exactly 2 different group numbers, and each appearing exactly 2 times
+            let onlyTwoDistinctGroups = groupCounts.size === 2;
+            // Only need to check that one of the groups has a count of two, as that will ensure the other group has a count of two
+            let eachGroupHasExactlyTwoCells = groupCounts.values().next().value === 2;
+
+            if (allCornersSameValue && onlyTwoDistinctGroups && eachGroupHasExactlyTwoCells && exactlyOneSetOfAdjacentCornersRequired)
+              return false;
+          }
+        }
+      }
+    }
+
+    // No rectangles found with same corner values
+    return true;
   }
 
 }
