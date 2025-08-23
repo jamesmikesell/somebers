@@ -26,8 +26,8 @@
     <!-- column headers -->
     @for (i of [].constructor(grid.length); track $index) {
       <div class="cell bg-muted">
-        <div class="corner-number"></div>
-        <div class="content">{{ goalColumns[$index] }}</div>
+        <div class="corner-number">{{ goalColumns[$index].groupNumber }}</div>
+        <div class="content">{{ goalColumns[$index].value }}</div>
       </div>
     }
 
@@ -40,8 +40,8 @@
     @for (row of grid; track $index; let rowIndex = $index) {
       <!-- row headers -->
       <div class="cell bg-muted">
-        <div class="corner-number"></div>
-        <div class="content">{{ goalRows[rowIndex] }}</div>
+        <div class="corner-number">{{ goalRows[rowIndex].groupNumber }}</div>
+        <div class="content">{{ goalRows[rowIndex].value }}</div>
       </div>
 
       <div class="cell">

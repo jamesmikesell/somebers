@@ -16,8 +16,8 @@ export class Board {
   gameNumber: number = 1;
   SelectionStatus = SelectionStatus;
   grid: Cell[][] = [];
-  goalRows: number[] = [];
-  goalColumns: number[] = [];
+  goalRows: Cell[] = [];
+  goalColumns: Cell[] = [];
   fails = 0;
   solvable = false;
 
@@ -52,14 +52,20 @@ export class Board {
         goalColorGroups[cell.groupNumber] = cell;
       }
 
-      if (!this.goalRows[rowIndex])
-        this.goalRows[rowIndex] = 0
-      if (!this.goalColumns[colIndex])
-        this.goalColumns[colIndex] = 0
+      if (!this.goalRows[rowIndex]) {
+        let header = new Cell();
+        header.value = 0
+        this.goalRows[rowIndex] = header;
+      }
+      if (!this.goalColumns[colIndex]) {
+        let header = new Cell();
+        header.value = 0
+        this.goalColumns[colIndex] = header;
+      }
 
       if (cell.required) {
-        this.goalRows[rowIndex] += cell.value;
-        this.goalColumns[colIndex] += cell.value;
+        this.goalRows[rowIndex].value += cell.value;
+        this.goalColumns[colIndex].value += cell.value;
 
         goalColorGroups[cell.groupNumber].colorGroupGoalDisplay += cell.value;
       }
@@ -79,6 +85,7 @@ export class Board {
 
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
+      this.recalculateHeaders();
     } else {
       this.fails++;
       this.vibrate();
@@ -96,6 +103,24 @@ export class Board {
       this.fails++;
       this.vibrate();
     }
+  }
+
+
+  private recalculateHeaders(): void {
+    this.goalColumns.forEach(single => single.groupNumber = 0)
+    this.goalRows.forEach(single => single.groupNumber = 0)
+
+    this.grid.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        if (cell.status === SelectionStatus.SELECTED) {
+          this.goalColumns[colIndex].groupNumber += cell.value;
+          this.goalRows[rowIndex].groupNumber += cell.value;
+        }
+      })
+    })
+
+    this.goalColumns.forEach(single => single.groupNumber = single.groupNumber || undefined)
+    this.goalRows.forEach(single => single.groupNumber = single.groupNumber || undefined)
   }
 
 
@@ -143,8 +168,10 @@ export class Board {
             // Only need to check that one of the groups has a count of two, as that will ensure the other group has a count of two
             let eachGroupHasExactlyTwoCells = groupCounts.values().next().value === 2;
 
-            if (allCornersSameValue && onlyTwoDistinctGroups && eachGroupHasExactlyTwoCells && exactlyOneSetOfAdjacentCornersRequired)
+            if (allCornersSameValue && onlyTwoDistinctGroups && eachGroupHasExactlyTwoCells && exactlyOneSetOfAdjacentCornersRequired) {
+              // console.log(`Unsolvable: [${c1}, ${r1}] x  [${c2}, ${r2}]`)
               return false;
+            }
           }
         }
       }
