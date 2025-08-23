@@ -1,9 +1,9 @@
 # TODO
 
 - weed out unsolvable games
+- visually signal when game is complete
 - visual indication of failure
 - persistence of previously played games
-- visually signal when game is complete
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared.
 - ability to pinch to zoom, even on game board controls
 - ensure every row/col/group has at least one required cell
