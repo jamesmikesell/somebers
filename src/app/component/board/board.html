@@ -8,6 +8,24 @@
       (ngModelChange)="updateGameNumber($event)"
       min="1"
     />
+    <button
+      matPrefix
+      mat-icon-button
+      aria-label="Clear"
+      [disabled]="gameNumber <= 1"
+      (click)="updateGameNumber(gameNumber - 1)"
+    >
+      <mat-icon>do_not_disturb_on</mat-icon>
+    </button>
+
+    <button
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="updateGameNumber(gameNumber + 1)"
+    >
+      <mat-icon>add_circle</mat-icon>
+    </button>
   </mat-form-field>
 
   Fails: {{ fails }} &nbsp; Solvable: {{ solvable }}

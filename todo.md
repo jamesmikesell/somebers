@@ -1,9 +1,7 @@
 # TODO
 
 - weed out unsolvable games
-- current sum of selected col/rows
 - visual indication of failure
-- buttons to change game number
 - persistence of previously played games
 - visually signal when game is complete
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared.
@@ -12,7 +10,7 @@
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - temp cell selection:
   - ability to highlight cells temporarily to mark that you're using them for mental math
-  - cells are highlighed in consistant color depending on when they were highlighted
+  - cells are highlighted in consistent color depending on when they were highlighted
   - optionally do math for selected cells
 - history of completed boards
 - ability to partially solve a board, and save them for later
@@ -21,3 +19,6 @@
 - ability to undo
 
 # Done
+
+- current sum of selected col/rows
+- buttons to change game number
