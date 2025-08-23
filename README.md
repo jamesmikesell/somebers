@@ -1,3 +1,3 @@
 # Numbers Game
 
-Demo: <https://jamesmikesell.github.io/numbers/>
+Demo: <https://jamesmikesell.github.io/some-numbers/>
