@@ -9,6 +9,8 @@
       min="1"
     />
   </mat-form-field>
+
+  Fails: {{ fails }}
 </div>
 
 <div class="container">
@@ -21,11 +23,11 @@
       <!-- gap -->
     </div>
 
-    <!-- header row -->
+    <!-- column headers -->
     @for (i of [].constructor(grid.length); track $index) {
       <div class="cell bg-muted">
         <div class="corner-number"></div>
-        <div class="content">&nbsp;</div>
+        <div class="content">{{ goalColumns[$index] }}</div>
       </div>
     }
 
@@ -35,11 +37,11 @@
       </div>
     }
 
-    @for (row of grid; track $index) {
-      <!-- header column -->
+    @for (row of grid; track $index; let rowIndex = $index) {
+      <!-- row headers -->
       <div class="cell bg-muted">
         <div class="corner-number"></div>
-        <div class="content">&nbsp;</div>
+        <div class="content">{{ goalRows[rowIndex] }}</div>
       </div>
 
       <div class="cell">
@@ -47,9 +49,26 @@
       </div>
 
       @for (cell of row; track $index) {
-        <div class="cell color-{{ cell }}">
-          <div class="corner-number bg-muted">{{ cell }}</div>
-          <div class="content circle">{{ cell }}</div>
+        <div
+          class="cell color-{{ cell.groupNumber }}"
+          (click)="use(cell)"
+          (contextmenu)="clear(cell); $event.preventDefault()"
+          appHammerSwipe
+          (swipeUp)="use(cell)"
+          (swipeDown)="clear(cell)"
+          class="no-select"
+        >
+          <div class="corner-number bg-muted">
+            {{ cell.colorGroupGoalDisplay }}
+          </div>
+          <div
+            class="content"
+            [class.circle]="cell.status === SelectionStatus.SELECTED"
+          >
+            @if (cell.status !== SelectionStatus.CLEARED) {
+              {{ cell.value }}
+            }
+          </div>
         </div>
       }
     }
