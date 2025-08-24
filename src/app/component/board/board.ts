@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { HammerSwipeDirective } from '../../directive/hammer/hammer-swipe.directive';
 import { MATERIAL_IMPORTS } from '../../material-imports';
+import { CelebrationService } from '../../service/celebration';
 import { BoardGroupGenerator } from '../../service/grouping';
 import { Random } from '../../service/random';
 
@@ -22,7 +23,9 @@ export class Board {
   solvable = false;
 
 
-  constructor() {
+  constructor(
+    private celebrationService: CelebrationService,
+  ) {
     this.updateGameNumber(this.gameNumber);
   }
 
@@ -90,6 +93,8 @@ export class Board {
       this.fails++;
       this.vibrate();
     }
+
+    this.checkComplete();
   }
 
 
@@ -103,6 +108,8 @@ export class Board {
       this.fails++;
       this.vibrate();
     }
+
+    this.checkComplete();
   }
 
 
@@ -121,6 +128,25 @@ export class Board {
 
     this.goalColumns.forEach(single => single.groupNumber = single.groupNumber || undefined)
     this.goalRows.forEach(single => single.groupNumber = single.groupNumber || undefined)
+  }
+
+
+  private checkComplete(): void {
+    if (this.isComplete()) {
+      this.celebrationService.show();
+    }
+  }
+
+
+  private isComplete(): boolean {
+    for (const row of this.grid) {
+      for (const cell of row) {
+        if ((cell.required && cell.status !== SelectionStatus.SELECTED) || (!cell.required && cell.status !== SelectionStatus.CLEARED))
+          return false;
+      }
+    }
+
+    return true;
   }
 
 

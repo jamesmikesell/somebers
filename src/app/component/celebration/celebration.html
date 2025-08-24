@@ -1,0 +1,15 @@
+@if (isActive) {
+  <div
+    class="celebration-overlay"
+    (click)="close()"
+    [class.active]="isActive"
+    #overlay
+  >
+    <div class="pulse-bg"></div>
+    <button class="close-btn" (click)="close()">&times;</button>
+    <div class="celebration-content">
+      <div class="celebration-title">{{ config?.title }}</div>
+      <div class="celebration-subtitle">{{ config?.subtitle }}</div>
+    </div>
+  </div>
+}

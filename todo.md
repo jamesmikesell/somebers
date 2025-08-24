@@ -1,7 +1,6 @@
 # TODO
 
 - weed out unsolvable games
-- visually signal when game is complete
 - visual indication of failure
 - persistence of previously played games
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared.
@@ -22,3 +21,4 @@
 
 - current sum of selected col/rows
 - buttons to change game number
+- visually signal when game is complete
