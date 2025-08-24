@@ -1,4 +1,13 @@
 <div class="centered">
+  <button
+    matMiniFab
+    class="game-button"
+    [disabled]="gameNumber <= 1"
+    (click)="updateGameNumber(gameNumber - 1)"
+  >
+    <mat-icon>do_not_disturb_on</mat-icon>
+  </button>
+
   <mat-form-field class="game-number">
     <mat-label>Game #</mat-label>
     <input
@@ -8,25 +17,15 @@
       (ngModelChange)="updateGameNumber($event)"
       min="1"
     />
-    <button
-      matPrefix
-      mat-icon-button
-      aria-label="Clear"
-      [disabled]="gameNumber <= 1"
-      (click)="updateGameNumber(gameNumber - 1)"
-    >
-      <mat-icon>do_not_disturb_on</mat-icon>
-    </button>
-
-    <button
-      matSuffix
-      mat-icon-button
-      aria-label="Clear"
-      (click)="updateGameNumber(gameNumber + 1)"
-    >
-      <mat-icon>add_circle</mat-icon>
-    </button>
   </mat-form-field>
+
+  <button
+    matMiniFab
+    class="game-button"
+    (click)="updateGameNumber(gameNumber + 1)"
+  >
+    <mat-icon>add_circle</mat-icon>
+  </button>
 
   <div class="stats">Fails: {{ fails }} &nbsp; Solvable: {{ solvable }}</div>
 </div>
