@@ -48,7 +48,7 @@ export class Board {
       let cell = new Cell();
       cell.value = Math.floor(random.next() * 9) + 1;
       cell.groupNumber = cellGroupNumber;
-      cell.required = random.next() < 0.5;
+      cell.required = random.next() < 0.4;
 
       if (!goalColorGroups[cell.groupNumber]) {
         cell.colorGroupGoalDisplay = 0
