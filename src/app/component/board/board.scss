@@ -91,9 +91,9 @@
 
 .corner-number {
   position: absolute;
-  top: 0.2cqmin;
-  left: 0.5cqmin;
-  font-size: calc(6cqmin / var(--columnCount) * 3);
+  top: 0cqmin;
+  left: 0cqmin;
+  font-size: calc(7cqmin / var(--columnCount) * 3);
   padding-left: calc(1.3cqmin / var(--columnCount) * 3);
   padding-right: calc(1.3cqmin / var(--columnCount) * 3);
   border-radius: calc(2cqmin / var(--columnCount) * 3);
