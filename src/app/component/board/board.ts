@@ -6,6 +6,7 @@ import { CelebrationService } from '../../service/celebration';
 import { BoardGroupGenerator } from '../../service/grouping';
 import { Random } from '../../service/random';
 import { PAUSE } from '@angular/cdk/keycodes';
+import { AFFIRMATIONS } from '../celebration/afirmations';
 
 @Component({
   selector: 'app-board',
@@ -184,7 +185,13 @@ export class Board {
 
   private checkComplete(): void {
     if (this.isComplete()) {
-      this.celebrationService.show();
+      const randomIndex = Math.floor(Math.random() * AFFIRMATIONS.length);
+      let affirmation = AFFIRMATIONS[randomIndex];
+
+      this.celebrationService.show({
+        title: affirmation.title,
+        subtitle: affirmation.subTitle,
+      });
     }
   }
 
