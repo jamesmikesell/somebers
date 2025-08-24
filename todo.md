@@ -1,9 +1,10 @@
 # TODO
 
 - weed out unsolvable games
-- visual indication of failure
 - persistence of previously played games
-- clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared.
+- visual indication of failure moves
+- clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
+- dark/light/auto theme mode toggle
 - ability to pinch to zoom, even on game board controls
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - temp cell selection:
@@ -13,8 +14,7 @@
 - history of completed boards
 - ability to partially solve a board, and save them for later
 - stats of fail counts based on grid size
-- dark/light/auto toggle
-- ability to undo
+- ability to undo a move, IE unhide a hidden number, or de-select a selected number
 
 # Done
 
