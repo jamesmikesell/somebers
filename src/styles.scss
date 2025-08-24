@@ -5,15 +5,35 @@
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+
 html {
   // color-scheme: light dark;
-  @include mat.theme((color: (primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
+  @include mat.theme((color: mat.$azure-palette,
       typography: Roboto,
       density: 0,
     ));
 }
+
+
+// .green {@include mat.theme((color: mat.$green-palette));}
+// .blue {@include mat.theme((color: mat.$blue-palette));}
+// .yellow {@include mat.theme((color: mat.$yellow-palette));}
+// .cyan {@include mat.theme((color: mat.$cyan-palette));}
+// .magenta {@include mat.theme((color: mat.$magenta-palette));}
+// .orange {@include mat.theme((color: mat.$orange-palette));}
+// .chartreuse {@include mat.theme((color: mat.$chartreuse-palette));}
+// .spring-green {@include mat.theme((color: mat.$spring-green-palette));}
+// .azure {@include mat.theme((color: mat.$azure-palette));}
+// .rose {@include mat.theme((color: mat.$rose-palette));}
+.violet {
+  @include mat.theme((color: mat.$violet-palette));
+}
+
+.red {
+  @include mat.theme((color: mat.$red-palette));
+}
+
+
 
 body {
   // Default the application to a light color theme. This can be changed to
