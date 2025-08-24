@@ -15,6 +15,9 @@
 - ability to partially solve a board, and save them for later
 - stats of fail counts based on grid size
 - ability to undo a move, IE unhide a hidden number, or de-select a selected number
+- make game offline capable
+- make game a PWA so it can be added to home screen
+
 
 # Done
 
