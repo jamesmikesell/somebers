@@ -5,7 +5,6 @@
 - persistence of previously played games
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared.
 - ability to pinch to zoom, even on game board controls
-- ensure every row/col/group has at least one required cell
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - temp cell selection:
   - ability to highlight cells temporarily to mark that you're using them for mental math
@@ -16,10 +15,11 @@
 - stats of fail counts based on grid size
 - dark/light/auto toggle
 - ability to undo
-- change the percent of numbers that are on the board
 
 # Done
 
-- current sum of selected col/rows
-- buttons to change game number
+- ensure every row/col/group has at least one required cell
 - visually signal when game is complete
+- buttons to change game number
+- current sum of selected col/rows
+- change the percent of numbers that are on the board (reduced to 40%)

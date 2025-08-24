@@ -5,6 +5,7 @@ import { MATERIAL_IMPORTS } from '../../material-imports';
 import { CelebrationService } from '../../service/celebration';
 import { BoardGroupGenerator } from '../../service/grouping';
 import { Random } from '../../service/random';
+import { PAUSE } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-board',
@@ -41,42 +42,17 @@ export class Board {
     const grid = new BoardGroupGenerator(game).generateRandomContiguousGroups(gridSize);
 
     let random = new Random(gameSeed);
-    this.goalRows = [];
-    this.goalColumns = [];
-    let goalColorGroups: Cell[] = [];
     this.grid = grid.map((row, rowIndex) => row.map((cellGroupNumber, colIndex) => {
       let cell = new Cell();
       cell.value = Math.floor(random.next() * 9) + 1;
       cell.groupNumber = cellGroupNumber;
       cell.required = random.next() < 0.4;
 
-      if (!goalColorGroups[cell.groupNumber]) {
-        cell.colorGroupGoalDisplay = 0
-        goalColorGroups[cell.groupNumber] = cell;
-      }
-
-      if (!this.goalRows[rowIndex]) {
-        let header = new Cell();
-        header.value = 0
-        this.goalRows[rowIndex] = header;
-      }
-      if (!this.goalColumns[colIndex]) {
-        let header = new Cell();
-        header.value = 0
-        this.goalColumns[colIndex] = header;
-      }
-
-      if (cell.required) {
-        this.goalRows[rowIndex].value += cell.value;
-        this.goalColumns[colIndex].value += cell.value;
-
-        goalColorGroups[cell.groupNumber].colorGroupGoalDisplay += cell.value;
-      }
-
       return cell
     }));
 
 
+    this.ensureMinimumsAndCalculateHeaders();
     this.solvable = this.isSolvable(this.grid);
 
   }
@@ -110,6 +86,81 @@ export class Board {
     }
 
     this.checkComplete();
+  }
+
+
+  private ensureMinimumsAndCalculateHeaders() {
+    let gameSeed = Random.generateFromSeed(this.gameNumber) * Number.MAX_SAFE_INTEGER;
+    let random = new Random(gameSeed);
+
+    do {
+      this.goalRows = [];
+      this.goalColumns = [];
+      let goalColorGroups = new Map<number, Cell>();
+      let cellsByGroup = new Map<number, Cell[]>();
+
+      this.grid.forEach((row, rowIndex) => row.forEach((cell, colIndex) => {
+        let cells = cellsByGroup.get(cell.groupNumber) ?? [];
+        cells.push(cell)
+        cellsByGroup.set(cell.groupNumber, cells);
+
+        if (!goalColorGroups.get(cell.groupNumber)) {
+          cell.colorGroupGoalDisplay = 0
+          goalColorGroups.set(cell.groupNumber, cell);
+        }
+
+        if (!this.goalRows[rowIndex]) {
+          let header = new Cell();
+          header.value = 0
+          this.goalRows[rowIndex] = header;
+        }
+        if (!this.goalColumns[colIndex]) {
+          let header = new Cell();
+          header.value = 0
+          this.goalColumns[colIndex] = header;
+        }
+
+        if (cell.required) {
+          this.goalRows[rowIndex].value += cell.value;
+          this.goalColumns[colIndex].value += cell.value;
+
+          goalColorGroups.get(cell.groupNumber).colorGroupGoalDisplay += cell.value;
+        }
+      }));
+
+
+      {
+        let rowIndex = this.goalRows.findIndex(cell => !cell.value)
+        if (rowIndex >= 0) {
+          let col = Math.floor(random.next() * (this.grid[0].length - 1));
+
+          this.grid[rowIndex][col].required = true;
+          continue;
+        }
+      }
+
+      {
+        let colIndex = this.goalColumns.findIndex(cell => !cell.value)
+        if (colIndex >= 0) {
+          let row = Math.floor(random.next() * (this.grid.length - 1));
+
+          this.grid[row][colIndex].required = true;
+          continue;
+        }
+      }
+
+      {
+        let headerCellFromEmptyGroup = Array.from(goalColorGroups.values()).find(cell => !cell.colorGroupGoalDisplay);
+        if (headerCellFromEmptyGroup) {
+          let groupCells = cellsByGroup.get(headerCellFromEmptyGroup.groupNumber);
+          let cellIndex = Math.floor(random.next() * (groupCells.length - 1));
+          groupCells[cellIndex].required = true
+          continue;
+        }
+      }
+
+      break;
+    } while (true);
   }
 
 
@@ -162,8 +213,6 @@ export class Board {
     if (rows === 0) return true;
     const cols = cell[0].length;
     if (cols === 0) return true;
-
-    let countsOfColorGroups = new Map<number, number>();
 
     // Check all possible rectangles
     for (let r1 = 0; r1 < rows; r1++) {
