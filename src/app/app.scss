@@ -3,6 +3,25 @@
   justify-content: center;
 }
 
+
+.menu-trigger {
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.menu-trigger mat-icon {
+  font-size: 33px;
+  width: 62px;
+  height: 62px;
+  text-align: center;
+  align-content: center;
+}
+
+
 .version {
   position: fixed;
   left: 0;

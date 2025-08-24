@@ -1,5 +1,15 @@
 <app-celebration></app-celebration>
 
+<div [matMenuTriggerFor]="menu" class="menu-trigger">
+  <mat-icon>more_vert</mat-icon>
+</div>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="toggleColorMode()">
+    <mat-icon>{{ currentColorMode.icon }}</mat-icon>
+    {{ currentColorMode.label }} Mode
+  </button>
+</mat-menu>
+
 <div class="page">
   <router-outlet></router-outlet>
 </div>
