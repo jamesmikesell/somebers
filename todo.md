@@ -16,6 +16,7 @@
 - stats of fail counts based on grid size
 - dark/light/auto toggle
 - ability to undo
+- change the percent of numbers that are on the board
 
 # Done
 
