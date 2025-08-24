@@ -227,7 +227,6 @@ export class Board {
         // For each starting position, check all possible bottom-right corners
         for (let r2 = r1 + 1; r2 < rows; r2++) {
           for (let c2 = c1 + 1; c2 < cols; c2++) {
-            // Check if all four corners have the same value
             let cellTl = cell[r1][c1];
             let cellTr = cell[r1][c2];
             let cellBl = cell[r2][c1];
@@ -245,12 +244,12 @@ export class Board {
             for (const groupNum of groupNumbers)
               groupCounts.set(groupNum, (groupCounts.get(groupNum) || 0) + 1);
 
-            // Check if there are exactly 2 different group numbers, and each appearing exactly 2 times
-            let onlyTwoDistinctGroups = groupCounts.size === 2;
-            // Only need to check that one of the groups has a count of two, as that will ensure the other group has a count of two
+            // If the cells all exist in the same color group, or are evenly split with 2 cells in one color group, and two cells in another color group
+            // the board isn't solvable
             let eachGroupHasExactlyTwoCells = groupCounts.values().next().value === 2;
+            let cellsEvenlySplitIntoOneOrTwoGroups = (groupCounts.size === 2 && eachGroupHasExactlyTwoCells) || groupCounts.size === 1;
 
-            if (allCornersSameValue && onlyTwoDistinctGroups && eachGroupHasExactlyTwoCells && exactlyOneSetOfAdjacentCornersRequired) {
+            if (allCornersSameValue && cellsEvenlySplitIntoOneOrTwoGroups && exactlyOneSetOfAdjacentCornersRequired) {
               // console.log(`Unsolvable: [${c1}, ${r1}] x  [${c2}, ${r2}]`)
               return false;
             }
