@@ -16,10 +16,10 @@
 - ability to undo a move, IE unhide a hidden number, or de-select a selected number
 - make game offline capable
 - make game a PWA so it can be added to home screen
-- explain how to play game
 
 # Done
 
+- explain how to play game
 - weed out unsolvable games
 - ensure every row/col/group has at least one required cell
 - visually signal when game is complete

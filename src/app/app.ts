@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { AppVersion } from './app-version';
 import { CelebrationComponent } from "./component/celebration/celebration";
 import { MATERIAL_IMPORTS } from './material-imports';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CelebrationComponent, ...MATERIAL_IMPORTS],
+  imports: [RouterOutlet, CelebrationComponent, ...MATERIAL_IMPORTS, RouterLink],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

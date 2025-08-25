@@ -4,6 +4,16 @@
   <mat-icon>more_vert</mat-icon>
 </div>
 <mat-menu #menu="matMenu">
+  <button mat-menu-item routerLink="/">
+    <mat-icon>grid_on</mat-icon>
+    Game
+  </button>
+
+  <button mat-menu-item routerLink="/documentation">
+    <mat-icon>book</mat-icon>
+    How To Play
+  </button>
+
   <button mat-menu-item (click)="toggleColorMode()">
     <mat-icon>{{ currentColorMode.icon }}</mat-icon>
     {{ currentColorMode.label }} Mode

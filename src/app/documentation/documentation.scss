@@ -1,0 +1,31 @@
+.title {
+  justify-self: center;
+}
+
+.page {
+  margin-top: 54px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 50vh;
+  max-width: 900px;
+}
+
+.note {
+  color: var(--muted)
+}
+
+.callout {
+  border: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: .75rem 0
+}
+
+.kbd {
+  font: 600 .95rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: color-mix(in oklab, var(--fg) 8%, transparent);
+  border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent);
+  border-radius: 6px;
+  padding: .1rem .35rem
+}
