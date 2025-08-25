@@ -5,7 +5,6 @@ import { MATERIAL_IMPORTS } from '../../material-imports';
 import { CelebrationService } from '../../service/celebration';
 import { BoardGroupGenerator } from '../../service/grouping';
 import { Random } from '../../service/random';
-import { PAUSE } from '@angular/cdk/keycodes';
 import { AFFIRMATIONS } from '../celebration/afirmations';
 
 @Component({
@@ -25,17 +24,32 @@ export class Board {
   solvable = false;
 
   private readonly GAME_NUMBER = "gameNumberV1";
+  private readonly SAVED_STATE = "gameStateV3";
+
 
   constructor(
     private celebrationService: CelebrationService,
   ) {
-    this.gameNumber = +(localStorage.getItem(this.GAME_NUMBER) ?? 1);
-    this.updateGameNumber(this.gameNumber);
+    let savedGameString = localStorage.getItem(this.SAVED_STATE)
+    if (savedGameString) {
+      let savedState: SavedGameState = JSON.parse(savedGameString);
+      this.fails = savedState.fails;
+      this.grid = savedState.grid;
+      this.gameNumber = savedState.gameNumber;
+      this.ensureMinimumsAndCalculateHeaders();
+      this.solvable = this.isSolvable(this.grid);
+      this.ensureMinimumsAndCalculateHeaders();
+      this.recalculateSelectedHeaders();
+    } else {
+      this.gameNumber = +(localStorage.getItem(this.GAME_NUMBER) ?? 1);
+      this.updateGameNumber(this.gameNumber);
+    }
   }
 
 
   updateGameNumber(game: number) {
     localStorage.setItem(this.GAME_NUMBER, game.toString());
+    localStorage.removeItem(this.SAVED_STATE);
 
     this.gameNumber = game;
     this.fails = 0;
@@ -75,6 +89,7 @@ export class Board {
       this.vibrate();
     }
 
+    this.saveGameState();
     this.checkComplete();
   }
 
@@ -90,7 +105,18 @@ export class Board {
       this.vibrate();
     }
 
+    this.saveGameState();
     this.checkComplete();
+  }
+
+
+  private saveGameState(): void {
+    let state: SavedGameState = {
+      fails: this.fails,
+      grid: this.grid,
+      gameNumber: this.gameNumber,
+    }
+    localStorage.setItem(this.SAVED_STATE, JSON.stringify(state));
   }
 
 
@@ -335,4 +361,11 @@ interface UnsolvableRect {
   c1: number;
   r2: number;
   c2: number;
+}
+
+
+interface SavedGameState {
+  fails: number;
+  gameNumber: number;
+  grid: Cell[][];
 }
