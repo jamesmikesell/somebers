@@ -24,15 +24,19 @@ export class Board {
   fails = 0;
   solvable = false;
 
+  private readonly GAME_NUMBER = "gameNumberV1";
 
   constructor(
     private celebrationService: CelebrationService,
   ) {
+    this.gameNumber = +(localStorage.getItem(this.GAME_NUMBER) ?? 1);
     this.updateGameNumber(this.gameNumber);
   }
 
 
   updateGameNumber(game: number) {
+    localStorage.setItem(this.GAME_NUMBER, game.toString());
+
     this.gameNumber = game;
     this.fails = 0;
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
