@@ -55,7 +55,7 @@ export class Board {
 
     this.ensureMinimumsAndCalculateHeaders();
     this.solvable = this.isSolvable(this.grid);
-
+    this.ensureMinimumsAndCalculateHeaders();
   }
 
 
@@ -221,45 +221,85 @@ export class Board {
     const cols = cell[0].length;
     if (cols === 0) return true;
 
-    // Check all possible rectangles
+    let attempts = 0;
+    const maxAttempts = 50;
+
+    while (attempts < maxAttempts) {
+      const unsolvableRect = this.findUnsolvableRectangle(cell);
+      if (!unsolvableRect)
+        return true;
+
+      this.fixUnsolvableRectangle(unsolvableRect);
+
+      attempts++;
+    }
+
+    return false;
+  }
+
+  private findUnsolvableRectangle(cell: Cell[][]): UnsolvableRect | null {
+    const rows = cell.length;
+    const cols = cell[0].length;
+
     for (let r1 = 0; r1 < rows; r1++) {
       for (let c1 = 0; c1 < cols; c1++) {
         // For each starting position, check all possible bottom-right corners
         for (let r2 = r1 + 1; r2 < rows; r2++) {
           for (let c2 = c1 + 1; c2 < cols; c2++) {
-            let cellTl = cell[r1][c1];
-            let cellTr = cell[r1][c2];
-            let cellBl = cell[r2][c1];
-            let cellBr = cell[r2][c2];
-
-            let allCornersSameValue = cellTl.value === cellTr.value &&
-              cellTl.value === cellBl.value &&
-              cellTl.value === cellBr.value;
-
-            let adjacentCornersHaveSameRequiredState = (cellTl.required === cellBr.required) && (cellBl.required === cellTr.required);
-            let exactlyOneSetOfAdjacentCornersRequired = adjacentCornersHaveSameRequiredState && cellTl.required !== cellTr.required;
-
-            const groupNumbers = [cellTl.groupNumber, cellTr.groupNumber, cellBl.groupNumber, cellBr.groupNumber];
-            const groupCounts = new Map<number, number>();
-            for (const groupNum of groupNumbers)
-              groupCounts.set(groupNum, (groupCounts.get(groupNum) || 0) + 1);
-
-            // If the cells all exist in the same color group, or are evenly split with 2 cells in one color group, and two cells in another color group
-            // the board isn't solvable
-            let eachGroupHasExactlyTwoCells = groupCounts.values().next().value === 2;
-            let cellsEvenlySplitIntoOneOrTwoGroups = (groupCounts.size === 2 && eachGroupHasExactlyTwoCells) || groupCounts.size === 1;
-
-            if (allCornersSameValue && cellsEvenlySplitIntoOneOrTwoGroups && exactlyOneSetOfAdjacentCornersRequired) {
-              // console.log(`Unsolvable: [${c1}, ${r1}] x  [${c2}, ${r2}]`)
-              return false;
+            if (this.isRectangleUnsolvable(cell, r1, c1, r2, c2)) {
+              return { r1, c1, r2, c2 };
             }
           }
         }
       }
     }
 
-    // No rectangles found with same corner values
-    return true;
+    return null;
+  }
+
+
+  private isRectangleUnsolvable(cell: Cell[][], r1: number, c1: number, r2: number, c2: number): boolean {
+    const cellTl = cell[r1][c1];
+    const cellTr = cell[r1][c2];
+    const cellBl = cell[r2][c1];
+    const cellBr = cell[r2][c2];
+
+    const allCornersSameValue = cellTl.value === cellTr.value &&
+      cellTl.value === cellBl.value &&
+      cellTl.value === cellBr.value;
+
+    const adjacentCornersHaveSameRequiredState = (cellTl.required === cellBr.required) &&
+      (cellBl.required === cellTr.required);
+    const exactlyOneSetOfAdjacentCornersRequired = adjacentCornersHaveSameRequiredState &&
+      cellTl.required !== cellTr.required;
+
+    const groupNumbers = [cellTl.groupNumber, cellTr.groupNumber, cellBl.groupNumber, cellBr.groupNumber];
+    const groupCounts = new Map<number, number>();
+    for (const groupNum of groupNumbers)
+      groupCounts.set(groupNum, (groupCounts.get(groupNum) || 0) + 1);
+
+    // If the cells all exist in the same color group, or are evenly split with 2 cells in one color group, and two cells in another color group
+    // the board isn't solvable
+    const eachGroupHasExactlyTwoCells = groupCounts.values().next().value === 2;
+    const cellsEvenlySplitIntoOneOrTwoGroups = (groupCounts.size === 2 && eachGroupHasExactlyTwoCells) || groupCounts.size === 1;
+
+    let unSolvable = allCornersSameValue && cellsEvenlySplitIntoOneOrTwoGroups && exactlyOneSetOfAdjacentCornersRequired;
+    if (unSolvable)
+      console.log(`Unsolvable: [${c1}, ${r1}] x  [${c2}, ${r2}]`)
+
+    return unSolvable;
+  }
+
+
+  private fixUnsolvableRectangle(rect: UnsolvableRect): void {
+    const rectCells = [
+      this.grid[rect.r1][rect.c1],
+      this.grid[rect.r1][rect.c2],
+      this.grid[rect.r2][rect.c1],
+      this.grid[rect.r2][rect.c2]
+    ];
+
+    rectCells.find(c => !c.required).required = true;
   }
 
 }
@@ -283,4 +323,12 @@ enum SelectionStatus {
   NONE,
   SELECTED,
   CLEARED,
+}
+
+
+interface UnsolvableRect {
+  r1: number;
+  c1: number;
+  r2: number;
+  c2: number;
 }

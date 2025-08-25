@@ -1,6 +1,5 @@
 # TODO
 
-- weed out unsolvable games
 - persistence of previously played games
 - visual indication of failure moves
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
@@ -21,6 +20,7 @@
 
 # Done
 
+- weed out unsolvable games
 - ensure every row/col/group has at least one required cell
 - visually signal when game is complete
 - buttons to change game number
