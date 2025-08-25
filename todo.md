@@ -15,6 +15,8 @@
 - ability to undo a move, IE un-hide a hidden number, or de-select a selected number
 - make game offline capable
 - make game a PWA so it can be added to home screen
+- app icon
+- show game name somewhere on app
 
 # Done
 
