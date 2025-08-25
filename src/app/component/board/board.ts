@@ -65,7 +65,7 @@ export class Board {
 
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
-      this.recalculateHeaders();
+      this.recalculateSelectedHeaders();
     } else {
       this.fails++;
       this.vibrate();
@@ -106,7 +106,7 @@ export class Board {
         cellsByGroup.set(cell.groupNumber, cells);
 
         if (!goalColorGroups.get(cell.groupNumber)) {
-          cell.colorGroupGoalDisplay = 0
+          cell.colorGroupGoalDisplayValue = 0
           goalColorGroups.set(cell.groupNumber, cell);
         }
 
@@ -125,7 +125,7 @@ export class Board {
           this.goalRows[rowIndex].value += cell.value;
           this.goalColumns[colIndex].value += cell.value;
 
-          goalColorGroups.get(cell.groupNumber).colorGroupGoalDisplay += cell.value;
+          goalColorGroups.get(cell.groupNumber).colorGroupGoalDisplayValue += cell.value;
         }
       }));
 
@@ -151,7 +151,7 @@ export class Board {
       }
 
       {
-        let headerCellFromEmptyGroup = Array.from(goalColorGroups.values()).find(cell => !cell.colorGroupGoalDisplay);
+        let headerCellFromEmptyGroup = Array.from(goalColorGroups.values()).find(cell => !cell.colorGroupGoalDisplayValue);
         if (headerCellFromEmptyGroup) {
           let groupCells = cellsByGroup.get(headerCellFromEmptyGroup.groupNumber);
           let cellIndex = Math.floor(random.next() * (groupCells.length - 1));
@@ -165,7 +165,7 @@ export class Board {
   }
 
 
-  private recalculateHeaders(): void {
+  private recalculateSelectedHeaders(): void {
     this.goalColumns.forEach(single => single.groupNumber = 0)
     this.goalRows.forEach(single => single.groupNumber = 0)
 
@@ -269,7 +269,7 @@ export class Board {
 class Cell {
   status = SelectionStatus.NONE;
   required: boolean = false;
-  colorGroupGoalDisplay: number;
+  colorGroupGoalDisplayValue: number;
   value: number;
   groupNumber: number;
 
