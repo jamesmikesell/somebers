@@ -1,43 +1,45 @@
 <div class="centered">
-  <button
-    matMiniFab
-    class="game-button"
-    [disabled]="gameNumber <= 1"
-    (click)="updateGameNumber(gameNumber - 1)"
-  >
-    <mat-icon>do_not_disturb_on</mat-icon>
-  </button>
+  <div class="top-controls">
+    <button
+      matMiniFab
+      class="game-button"
+      [disabled]="gameNumber <= 1"
+      (click)="updateGameNumber(gameNumber - 1)"
+    >
+      <mat-icon>do_not_disturb_on</mat-icon>
+    </button>
 
-  <mat-form-field class="game-number">
-    <mat-label>Game #</mat-label>
-    <input
-      matInput
-      type="number"
-      [ngModel]="gameNumber"
-      (ngModelChange)="updateGameNumber($event)"
-      min="1"
-    />
-  </mat-form-field>
+    <mat-form-field class="game-number">
+      <mat-label>Game #</mat-label>
+      <input
+        matInput
+        type="number"
+        [ngModel]="gameNumber"
+        (ngModelChange)="updateGameNumber($event)"
+        min="1"
+      />
+    </mat-form-field>
 
-  <button
-    matMiniFab
-    class="game-button"
-    (click)="updateGameNumber(gameNumber + 1)"
-  >
-    <mat-icon>add_circle</mat-icon>
-  </button>
+    <button
+      matMiniFab
+      class="game-button"
+      (click)="updateGameNumber(gameNumber + 1)"
+    >
+      <mat-icon>add_circle</mat-icon>
+    </button>
 
-  <div class="stats">
-    <div style="display: inline-flex; align-items: center">
-      <span>Fails: {{ fails }}</span>
+    <div class="stats">
+      <div style="display: inline-flex; align-items: center">
+        <span>Fails: {{ fails }}</span>
 
-      @if (!solvable) {
-        &nbsp;&nbsp;&nbsp;
-        <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
-          >report_problem</mat-icon
-        >
-        <span>Unsolvable puzzle</span>
-      }
+        @if (!solvable) {
+          &nbsp;&nbsp;&nbsp;
+          <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
+            >report_problem</mat-icon
+          >
+          <span>Unsolvable puzzle</span>
+        }
+      </div>
     </div>
   </div>
 </div>

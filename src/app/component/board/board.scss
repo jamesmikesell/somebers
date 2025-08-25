@@ -2,6 +2,10 @@
   justify-self: center;
 }
 
+.top-controls {
+  height: 113px;
+}
+
 .game-number {
   max-width: 91px;
 }
@@ -12,7 +16,6 @@
 }
 
 .stats {
-  margin-bottom: 18px;
   justify-self: center;
 }
 
@@ -61,7 +64,7 @@
 
 
 .container {
-  width: 95vw;
+  width: min(95vw, calc(100vh - (113px + 40px)));
   margin: 0 auto;
   overflow: auto;
   line-height: normal;
