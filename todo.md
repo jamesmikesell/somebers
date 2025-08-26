@@ -20,6 +20,8 @@
 - stats of fail counts based on grid size, time spent per game, per size
 - ability to undo a move, IE un-hide a hidden number, or de-select a selected number
 - tutorial mode
+- affirmation main text doesn't look great on ios
+
 
 
 # Done
