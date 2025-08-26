@@ -1,7 +1,6 @@
 # TODO
 
 - investigate possibility that tapping is selecting a character... seems to be searching for "v" which may only be part of the version number display
-- make starting seed so that first few games are easy and progressively harder
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
 - app icon
@@ -19,12 +18,11 @@
 - stats of fail counts based on grid size, time spent per game, per size
 - ability to undo a move, IE un-hide a hidden number, or de-select a selected number
 - tutorial mode
-- affirmation main text doesn't look great on ios
-
-
 
 # Done
 
+- affirmation main text doesn't look great on ios
+- make starting seed so that first few games are easy and progressively harder
 - visual indication of failure moves
 - ensure board display correctly on both portrait and landscape oriented devices
 - explain how to play game
