@@ -20,7 +20,7 @@ export class Board {
   grid: Cell[][] = [];
   goalRows: Cell[] = [];
   goalColumns: Cell[] = [];
-  fails = 0;
+  mistakes = 0;
   solvable = false;
 
   private readonly GAME_NUMBER = "gameNumberV1";
@@ -33,7 +33,7 @@ export class Board {
     let savedGameString = localStorage.getItem(this.SAVED_STATE)
     if (savedGameString) {
       let savedState: SavedGameState = JSON.parse(savedGameString);
-      this.fails = savedState.fails;
+      this.mistakes = savedState.fails;
       this.grid = savedState.grid;
       this.gameNumber = savedState.gameNumber;
       this.ensureMinimumsAndCalculateHeaders();
@@ -52,7 +52,7 @@ export class Board {
     localStorage.removeItem(this.SAVED_STATE);
 
     this.gameNumber = game;
-    this.fails = 0;
+    this.mistakes = 0;
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     let gridMin = 5;
@@ -85,7 +85,7 @@ export class Board {
       cell.status = SelectionStatus.SELECTED;
       this.recalculateSelectedHeaders();
     } else {
-      this.fails++;
+      this.mistakes++;
       this.vibrate();
     }
 
@@ -101,7 +101,7 @@ export class Board {
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
     } else {
-      this.fails++;
+      this.mistakes++;
       this.vibrate();
     }
 
@@ -112,7 +112,7 @@ export class Board {
 
   private saveGameState(): void {
     let state: SavedGameState = {
-      fails: this.fails,
+      fails: this.mistakes,
       grid: this.grid,
       gameNumber: this.gameNumber,
     }
