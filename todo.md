@@ -3,10 +3,7 @@
 - investigate possibility that tapping is selecting a character... seems to be searching for "v" which may only be part of the version number display
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
-- app icon
 - show game name somewhere on app / or an app game logo
-- make game a PWA so it can be added to home screen
-- make game offline capable
 - show hints for when people get stuck (Participation Trophy Mode)
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
 - ability to pinch to zoom, even on game board controls
@@ -21,6 +18,9 @@
 
 # Done
 
+- make game offline capable
+- make game a PWA so it can be added to home screen
+- app icon
 - affirmation main text doesn't look great on ios
 - make starting seed so that first few games are easy and progressively harder
 - visual indication of failure moves
