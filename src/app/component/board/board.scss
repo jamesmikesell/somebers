@@ -68,7 +68,6 @@
   margin: 0 auto;
   overflow: auto;
   line-height: normal;
-  user-select: none;
 }
 
 .grid {
@@ -78,7 +77,6 @@
   gap: calc(2% / var(--columnCount) * 3);
   aspect-ratio: 1;
   container-type: inline-size;
-  user-select: none;
 }
 
 .cell {
@@ -87,7 +85,6 @@
   align-items: center;
   justify-content: center;
   border-radius: calc(2cqmin / var(--columnCount) * 3);
-  user-select: none;
 }
 
 .corner-number {
