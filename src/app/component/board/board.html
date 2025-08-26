@@ -55,18 +55,24 @@
     </div>
 
     <!-- column headers -->
-    @for (i of [].constructor(grid.length); track $index) {
+    @for (headerCell of goalColumns; track $index) {
       <div class="cell bg-muted">
-        <div class="corner-number">{{ goalColumns[$index].groupNumber }}</div>
-        <div class="content">{{ goalColumns[$index].value }}</div>
+        <div class="corner-number">{{ headerCell.groupNumber }}</div>
+        <div class="content">{{ headerCell.value }}</div>
       </div>
     }
 
-    @for (i of [].constructor(grid.length + 2); track $index) {
+    @for (headerCell of goalColumns; track $index) {
       <div class="cell">
         <!-- first row gap -->
       </div>
     }
+    <div class="cell">
+      <!-- first row gap -->
+    </div>
+    <div class="cell">
+      <!-- first row gap -->
+    </div>
 
     @for (row of grid; track $index; let rowIndex = $index) {
       <!-- row headers -->
