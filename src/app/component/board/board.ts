@@ -23,8 +23,8 @@ export class Board {
   mistakes = 0;
   solvable = false;
 
-  private readonly GAME_NUMBER = "gameNumberV1";
-  private readonly SAVED_STATE = "gameStateV3";
+  private readonly GAME_NUMBER = "gameNumberV2";
+  private readonly SAVED_STATE = "gameStateV4";
 
 
   constructor(
@@ -55,9 +55,11 @@ export class Board {
     this.mistakes = 0;
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
+    // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
+    const gridStartOffset = game + 87228;
     let gridMin = 5;
     let gridMax = 9;
-    const gridSize = Math.floor(Random.generateFromSeed(game) * (gridMax - gridMin + 1) + gridMin);
+    const gridSize = Math.floor(Random.generateFromSeed(gridStartOffset) * (gridMax - gridMin + 1) + gridMin);
     const grid = new BoardGroupGenerator(game).generateRandomContiguousGroups(gridSize);
 
     let random = new Random(gameSeed);
