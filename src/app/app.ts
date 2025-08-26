@@ -12,7 +12,6 @@ import { MATERIAL_IMPORTS } from './material-imports';
 })
 export class App {
 
-  AppVersion = AppVersion;
 
   colorModes = [
     { mode: 'auto', scheme: 'light dark', label: 'Auto', icon: 'brightness_auto' },
