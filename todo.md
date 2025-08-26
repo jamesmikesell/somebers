@@ -9,7 +9,6 @@
 - make game a PWA so it can be added to home screen
 - make game offline capable
 - show hints for when people get stuck (Participation Trophy Mode)
-- visual indication of failure moves
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
 - ability to pinch to zoom, even on game board controls
 - current sum of selected cells in a color group, shown in top right corner perhaps
@@ -26,6 +25,7 @@
 
 # Done
 
+- visual indication of failure moves
 - ensure board display correctly on both portrait and landscape oriented devices
 - explain how to play game
 - dark/light/auto theme mode toggle

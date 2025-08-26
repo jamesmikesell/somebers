@@ -77,7 +77,7 @@ export class Board {
   }
 
 
-  use(cell: Cell) {
+  async use(cell: Cell): Promise<void> {
     if (cell.status !== SelectionStatus.NONE)
       return;
 
@@ -85,8 +85,7 @@ export class Board {
       cell.status = SelectionStatus.SELECTED;
       this.recalculateSelectedHeaders();
     } else {
-      this.mistakes++;
-      this.vibrate();
+      await this.handleIncorrectMove(cell);
     }
 
     this.saveGameState();
@@ -94,19 +93,27 @@ export class Board {
   }
 
 
-  clear(cell: Cell) {
+  async clear(cell: Cell): Promise<void> {
     if (cell.status !== SelectionStatus.NONE)
       return;
 
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
     } else {
-      this.mistakes++;
-      this.vibrate();
+      await this.handleIncorrectMove(cell);
     }
 
     this.saveGameState();
     this.checkComplete();
+  }
+
+
+  private async handleIncorrectMove(cell: Cell): Promise<void> {
+    this.mistakes++;
+    this.vibrate();
+    cell.isInvalid = true;
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    cell.isInvalid = false;
   }
 
 
@@ -342,6 +349,7 @@ class Cell {
   colorGroupGoalDisplayValue: number;
   value: number;
   groupNumber: number;
+  isInvalid: boolean = false;
 
   constructor(
   ) { }

@@ -112,3 +112,36 @@
   align-items: center;
   justify-content: center;
 }
+
+.logo {
+  font-family: 'Special Elite', cursive;
+  font-size: 3rem;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg) translateX(0);
+  }
+  10% {
+    transform: rotate(14deg) translateX(-5px);
+  }
+  30% {
+    transform: rotate(-8deg) translateX(5px);
+  }
+  50% {
+    transform: rotate(4deg) translateX(-3px);
+  }
+  70% {
+    transform: rotate(-2deg) translateX(3px);
+  }
+  90% {
+    transform: rotate(1deg) translateX(0);
+  }
+}
+
+.wiggle {
+  animation: wiggle 0.8s ease-in-out;
+}

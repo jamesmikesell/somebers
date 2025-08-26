@@ -88,6 +88,7 @@
       @for (cell of row; track $index) {
         <div
           class="cell color-{{ cell.groupNumber }}"
+          [class.wiggle]="cell.isInvalid"
           (click)="use(cell)"
           (contextmenu)="clear(cell); $event.preventDefault()"
           appHammerSwipe
