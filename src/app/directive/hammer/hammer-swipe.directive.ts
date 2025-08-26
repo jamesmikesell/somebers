@@ -19,8 +19,8 @@ export class HammerSwipeDirective implements OnInit, OnDestroy {
 
     this.hammer.get('swipe').set({
       direction: Hammer.DIRECTION_VERTICAL,
-      threshold: 50,
-      velocity: 0.3
+      threshold: 20,
+      velocity: 0.15
     });
 
     this.hammer.on('swipeup', (event: HammerInput) => {
