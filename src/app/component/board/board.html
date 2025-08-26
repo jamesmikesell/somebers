@@ -1,114 +1,124 @@
-<div class="centered">
-  <div class="top-controls">
-    <button
-      matMiniFab
-      class="game-button"
-      [disabled]="gameNumber <= 1"
-      (click)="updateGameNumber(gameNumber - 1)"
-    >
-      <mat-icon>do_not_disturb_on</mat-icon>
-    </button>
-
-    <mat-form-field class="game-number">
-      <mat-label>Game #</mat-label>
-      <input
-        matInput
-        type="number"
-        [ngModel]="gameNumber"
-        (ngModelChange)="updateGameNumber($event)"
-        min="1"
-      />
-    </mat-form-field>
-
-    <button
-      matMiniFab
-      class="game-button"
-      (click)="updateGameNumber(gameNumber + 1)"
-    >
-      <mat-icon>add_circle</mat-icon>
-    </button>
-
-    <div class="stats">
-      <div style="display: inline-flex; align-items: center">
-        <span>Mistakes: {{ mistakes }}</span>
-
-        @if (!solvable) {
-          &nbsp;&nbsp;&nbsp;
-          <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
-            >report_problem</mat-icon
+<div class="page-container">
+  <div class="top-section">
+    <div class="centered">
+      <div class="top-controls">
+        <div class="game-controls">
+          <button
+            matMiniFab
+            class="game-button"
+            [disabled]="gameNumber <= 1"
+            (click)="updateGameNumber(gameNumber - 1)"
           >
-          <span>Unsolvable puzzle</span>
-        }
-      </div>
-    </div>
-  </div>
-</div>
+            <mat-icon>do_not_disturb_on</mat-icon>
+          </button>
 
-<div class="container no-select">
-  <div class="grid" [style.--columnCount]="grid.length + 0">
-    <div class="cell">
-      <!-- blank first cell -->
-    </div>
+          <mat-form-field class="game-number">
+            <mat-label>Game #</mat-label>
+            <input
+              matInput
+              type="number"
+              [ngModel]="gameNumber"
+              (ngModelChange)="updateGameNumber($event)"
+              min="1"
+            />
+          </mat-form-field>
 
-    <div class="cell">
-      <!-- gap -->
-    </div>
-
-    <!-- column headers -->
-    @for (headerCell of goalColumns; track $index) {
-      <div class="cell bg-muted">
-        <div class="corner-number">{{ headerCell.groupNumber }}</div>
-        <div class="content">{{ headerCell.value }}</div>
-      </div>
-    }
-
-    @for (headerCell of goalColumns; track $index) {
-      <div class="cell">
-        <!-- first row gap -->
-      </div>
-    }
-    <div class="cell">
-      <!-- first row gap -->
-    </div>
-    <div class="cell">
-      <!-- first row gap -->
-    </div>
-
-    @for (row of grid; track $index; let rowIndex = $index) {
-      <!-- row headers -->
-      <div class="cell bg-muted">
-        <div class="corner-number">{{ goalRows[rowIndex].groupNumber }}</div>
-        <div class="content">{{ goalRows[rowIndex].value }}</div>
-      </div>
-
-      <div class="cell">
-        <!-- gap -->
-      </div>
-
-      @for (cell of row; track $index) {
-        <div
-          class="cell color-{{ cell.groupNumber }}"
-          [class.wiggle]="cell.isInvalid"
-          (click)="use(cell)"
-          (contextmenu)="clear(cell); $event.preventDefault()"
-          appHammerSwipe
-          (swipeUp)="use(cell)"
-          (swipeDown)="clear(cell)"
-          class="no-select"
-        >
-          <div class="corner-number bg-muted">
-            {{ cell.colorGroupGoalDisplayValue }}
-          </div>
-          <div
-            class="content"
-            [class.circle]="cell.status === SelectionStatus.SELECTED"
+          <button
+            matMiniFab
+            class="game-button"
+            (click)="updateGameNumber(gameNumber + 1)"
           >
-            @if (cell.status !== SelectionStatus.CLEARED) {
-              {{ cell.value }}
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </div>
+
+        <div class="stats">
+          <div style="display: inline-flex; align-items: center">
+            <span>Mistakes: {{ mistakes }}</span>
+
+            @if (!solvable) {
+              &nbsp;&nbsp;&nbsp;
+              <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
+                >report_problem</mat-icon
+              >
+              <span>Unsolvable puzzle</span>
             }
           </div>
         </div>
-      }
-    }
+      </div>
+    </div>
+  </div>
+
+  <div class="game-board-section">
+    <div class="container no-select">
+      <div class="grid" [style.--columnCount]="grid.length + 0">
+        <div class="cell">
+          <!-- blank first cell -->
+        </div>
+
+        <div class="cell">
+          <!-- gap -->
+        </div>
+
+        <!-- column headers -->
+        @for (headerCell of goalColumns; track $index) {
+          <div class="cell bg-muted">
+            <div class="corner-number">{{ headerCell.groupNumber }}</div>
+            <div class="content">{{ headerCell.value }}</div>
+          </div>
+        }
+
+        @for (headerCell of goalColumns; track $index) {
+          <div class="cell">
+            <!-- first row gap -->
+          </div>
+        }
+        <div class="cell">
+          <!-- first row gap -->
+        </div>
+        <div class="cell">
+          <!-- first row gap -->
+        </div>
+
+        @for (row of grid; track $index; let rowIndex = $index) {
+          <!-- row headers -->
+          <div class="cell bg-muted">
+            <div class="corner-number">
+              {{ goalRows[rowIndex].groupNumber }}
+            </div>
+            <div class="content">{{ goalRows[rowIndex].value }}</div>
+          </div>
+
+          <div class="cell">
+            <!-- gap -->
+          </div>
+
+          @for (cell of row; track $index) {
+            <div
+              class="cell color-{{ cell.groupNumber }}"
+              [class.wiggle]="cell.isInvalid"
+              (click)="use(cell)"
+              (contextmenu)="clear(cell); $event.preventDefault()"
+              appHammerSwipe
+              (swipeUp)="use(cell)"
+              (swipeDown)="clear(cell)"
+              class="no-select"
+            >
+              <div class="corner-number bg-muted">
+                {{ cell.colorGroupGoalDisplayValue }}
+              </div>
+              <div
+                class="content"
+                [class.circle]="cell.status === SelectionStatus.SELECTED"
+              >
+                @if (cell.status !== SelectionStatus.CLEARED) {
+                  {{ cell.value }}
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
   </div>
 </div>
