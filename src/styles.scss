@@ -73,3 +73,7 @@ body {
   -webkit-touch-callout: none;
   /* Disable callout on iOS */
 }
+
+button {
+  touch-action: manipulation;
+}
