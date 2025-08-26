@@ -7,9 +7,9 @@
 	"features": {
 		"ghcr.io/devcontainers-extra/features/angular-cli:2": {}
 	},
-	"postCreateCommand": "sudo chown -R $(id -u):$(id -g) ${containerWorkspaceFolder}/node_modules",
 	"mounts": [
-		"type=volume,target=${containerWorkspaceFolder}/node_modules",
+		"source=some-numbers-host-node-modules,target=/workspace/host-machine-workspace/node_modules,type=volume",
+		"source=some-numbers-workspace,target=/workspace/container-workspace,type=volume",
 	],
 	"customizations": {
 		"vscode": {
@@ -21,6 +21,11 @@
 			]
 		}
 	},
+	"postCreateCommand": "sudo chown -R $(id -u):$(id -g) ${containerWorkspaceFolder}",
+	"workspaceFolder": "/workspace/container-workspace",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/host-machine-workspace,type=bind,consistency=cached",
+	"onCreateCommand": "(sudo cp /workspace/host-machine-workspace/.devcontainer/post-create.sh /workspace && sudo chown $(id -u):$(id -g) /workspace/post-create.sh && sudo chmod +x /workspace/post-create.sh && /workspace/post-create.sh)",
+	"postAttachCommand": "(cd ${containerWorkspaceFolder} && git fetch host -p && git config --global core.editor \"code --wait\")",
 	"runArgs": [
 		"--publish",
 		"0.0.0.0:4200:4200"
