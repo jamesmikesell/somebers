@@ -83,9 +83,10 @@
                   <div
                     class="cell color-{{ cell.groupNumber }}"
                     [class.wiggle]="cell.isInvalid"
-                    (click)="use(cell)"
-                    (contextmenu)="clear(cell); $event.preventDefault()"
                     appHammerSwipe
+                    (tap)="use(cell)"
+                    (doubleTap)="clear(cell)"
+                    (contextmenu)="clear(cell); $event.preventDefault()"
                     (swipeUp)="use(cell)"
                     (swipeDown)="clear(cell)"
                   >
