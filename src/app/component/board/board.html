@@ -51,74 +51,62 @@
 
   <div class="game-board-section">
     <div class="container no-select">
-      <div class="grid" [style.--columnCount]="grid.length + 0">
-        <div class="cell">
-          <!-- blank first cell -->
-        </div>
-
-        <div class="cell">
-          <!-- gap -->
-        </div>
-
-        <!-- column headers -->
-        @for (headerCell of goalColumns; track $index) {
-          <div class="cell bg-muted">
-            <div class="corner-number">{{ headerCell.groupNumber }}</div>
-            <div class="content">{{ headerCell.value }}</div>
-          </div>
-        }
-
-        @for (headerCell of goalColumns; track $index) {
-          <div class="cell">
-            <!-- first row gap -->
-          </div>
-        }
-        <div class="cell">
-          <!-- first row gap -->
-        </div>
-        <div class="cell">
-          <!-- first row gap -->
-        </div>
-
-        @for (row of grid; track $index; let rowIndex = $index) {
-          <!-- row headers -->
-          <div class="cell bg-muted">
-            <div class="corner-number">
-              {{ goalRows[rowIndex].groupNumber }}
-            </div>
-            <div class="content">{{ goalRows[rowIndex].value }}</div>
-          </div>
-
-          <div class="cell">
-            <!-- gap -->
-          </div>
-
-          @for (cell of row; track $index) {
-            <div
-              class="cell color-{{ cell.groupNumber }}"
-              [class.wiggle]="cell.isInvalid"
-              (click)="use(cell)"
-              (contextmenu)="clear(cell); $event.preventDefault()"
-              appHammerSwipe
-              (swipeUp)="use(cell)"
-              (swipeDown)="clear(cell)"
-              class="no-select"
-            >
-              <div class="corner-number bg-muted">
-                {{ cell.colorGroupGoalDisplayValue }}
-              </div>
-              <div
-                class="content"
-                [class.circle]="cell.status === SelectionStatus.SELECTED"
-              >
-                @if (cell.status !== SelectionStatus.CLEARED) {
-                  {{ cell.value }}
+      <table class="game-table">
+        @for (row of gameBoard.fullBoard; track $index; let rowIndex = $index) {
+          <tr>
+            @for (cell of row; track $index; let colIndex = $index) {
+              <td>
+                @if (rowIndex === 0 && colIndex === 0) {
+                  <ng-container *ngTemplateOutlet="blankCell"></ng-container>
+                } @else if (
+                  rowIndex === 0 || (rowIndex > 0 && colIndex === 0)
+                ) {
+                  <ng-container *ngTemplateOutlet="headerCell"></ng-container>
+                } @else {
+                  <ng-container *ngTemplateOutlet="standardCell"></ng-container>
                 }
-              </div>
-            </div>
-          }
+
+                <ng-template #blankCell>
+                  <div class="cell"></div>
+                </ng-template>
+
+                <ng-template #headerCell>
+                  <div class="cell bg-muted">
+                    <div class="corner-number">
+                      {{ cell.groupNumber }}
+                    </div>
+                    <div class="cell-number">{{ cell.value }}</div>
+                  </div>
+                </ng-template>
+
+                <ng-template #standardCell>
+                  <div
+                    class="cell color-{{ cell.groupNumber }}"
+                    [class.wiggle]="cell.isInvalid"
+                    (click)="use(cell)"
+                    (contextmenu)="clear(cell); $event.preventDefault()"
+                    appHammerSwipe
+                    (swipeUp)="use(cell)"
+                    (swipeDown)="clear(cell)"
+                  >
+                    <div class="corner-number bg-muted">
+                      {{ cell.colorGroupGoalDisplayValue }}
+                    </div>
+                    <div
+                      class="cell-number"
+                      [class.circle]="cell.status === SelectionStatus.SELECTED"
+                    >
+                      @if (cell.status !== SelectionStatus.CLEARED) {
+                        {{ cell.value }}
+                      }
+                    </div>
+                  </div>
+                </ng-template>
+              </td>
+            }
+          </tr>
         }
-      </div>
+      </table>
     </div>
   </div>
 </div>
