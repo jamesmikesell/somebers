@@ -1,145 +1,47 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { HammerSwipeDirective } from '../../directive/hammer/hammer-swipe.directive';
-import { MATERIAL_IMPORTS } from '../../material-imports';
-import { CelebrationService } from '../../service/celebration';
-import { BoardGroupGenerator } from '../../service/grouping';
-import { Random } from '../../service/random';
-import { AFFIRMATIONS } from '../celebration/afirmations';
-
-@Component({
-  selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS, CommonModule, HammerSwipeDirective],
-  templateUrl: './board.html',
-  styleUrl: './board.scss'
-})
-export class Board {
-
-  gameNumber: number = 1;
-  SelectionStatus = SelectionStatus;
-  grid: Cell[][] = [];
-  goalRows: Cell[] = [];
-  goalColumns: Cell[] = [];
-  mistakes = 0;
-  solvable = false;
-
-  private readonly GAME_NUMBER = "gameNumberV2";
-  private readonly SAVED_STATE = "gameStateV4";
+import { Random } from "../../service/random";
 
 
-  constructor(
-    private celebrationService: CelebrationService,
-  ) {
-    let savedGameString = localStorage.getItem(this.SAVED_STATE)
-    if (savedGameString) {
-      let savedState: SavedGameState = JSON.parse(savedGameString);
-      this.mistakes = savedState.fails;
-      this.grid = savedState.grid;
-      this.gameNumber = savedState.gameNumber;
-      this.ensureMinimumsAndCalculateHeaders();
-      this.solvable = this.isSolvable(this.grid);
-      this.ensureMinimumsAndCalculateHeaders();
-      this.recalculateSelectedHeaders();
-    } else {
-      this.gameNumber = +(localStorage.getItem(this.GAME_NUMBER) ?? 1);
-      this.updateGameNumber(this.gameNumber);
+export class GameBoard {
+
+  get fullBoard(): Cell[][] { return this._fullBoard; }
+  playArea: Cell[][] = [];
+  solvable: boolean;
+
+  private _fullBoard: Cell[][] = [];
+  private goalRows: Cell[] = [];
+  private goalColumns: Cell[] = [];
+
+
+  constructBoard(gameNumber: number): void {
+    this.ensureMinimumsAndCalculateHeaders(gameNumber);
+    this.solvable = this.checkIfSolvableAfterAttemptingFix();
+    this.ensureMinimumsAndCalculateHeaders(gameNumber);
+
+    this._fullBoard = [];
+
+    // First row: first cell is blank, then all goalColumns
+    this._fullBoard.push([undefined, ...this.goalColumns]);
+
+    // Remaining rows: goalRows cell at start, then corresponding playArea row
+    for (let i = 0; i < this.playArea.length; i++) {
+      const row: Cell[] = [this.goalRows[i], ...this.playArea[i]];
+      this._fullBoard.push(row);
     }
   }
 
 
-  updateGameNumber(game: number) {
-    localStorage.setItem(this.GAME_NUMBER, game.toString());
-    localStorage.removeItem(this.SAVED_STATE);
-
-    this.gameNumber = game;
-    this.mistakes = 0;
-    let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
-
-    // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
-    const gridStartOffset = game + 87228;
-    let gridMin = 5;
-    let gridMax = 9;
-    const gridSize = Math.floor(Random.generateFromSeed(gridStartOffset) * (gridMax - gridMin + 1) + gridMin);
-    const grid = new BoardGroupGenerator(game).generateRandomContiguousGroups(gridSize);
-
-    let random = new Random(gameSeed);
-    this.grid = grid.map((row, rowIndex) => row.map((cellGroupNumber, colIndex) => {
-      let cell = new Cell();
-      cell.value = Math.floor(random.next() * 9) + 1;
-      cell.groupNumber = cellGroupNumber;
-      cell.required = random.next() < 0.4;
-
-      return cell
-    }));
-
-
-    this.ensureMinimumsAndCalculateHeaders();
-    this.solvable = this.isSolvable(this.grid);
-    this.ensureMinimumsAndCalculateHeaders();
-  }
-
-
-  async use(cell: Cell): Promise<void> {
-    if (cell.status !== SelectionStatus.NONE)
-      return;
-
-    if (cell.required) {
-      cell.status = SelectionStatus.SELECTED;
-      this.recalculateSelectedHeaders();
-    } else {
-      await this.handleIncorrectMove(cell);
-    }
-
-    this.saveGameState();
-    this.checkComplete();
-  }
-
-
-  async clear(cell: Cell): Promise<void> {
-    if (cell.status !== SelectionStatus.NONE)
-      return;
-
-    if (!cell.required) {
-      cell.status = SelectionStatus.CLEARED;
-    } else {
-      await this.handleIncorrectMove(cell);
-    }
-
-    this.saveGameState();
-    this.checkComplete();
-  }
-
-
-  private async handleIncorrectMove(cell: Cell): Promise<void> {
-    this.mistakes++;
-    this.vibrate();
-    cell.isInvalid = true;
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    cell.isInvalid = false;
-  }
-
-
-  private saveGameState(): void {
-    let state: SavedGameState = {
-      fails: this.mistakes,
-      grid: this.grid,
-      gameNumber: this.gameNumber,
-    }
-    localStorage.setItem(this.SAVED_STATE, JSON.stringify(state));
-  }
-
-
-  private ensureMinimumsAndCalculateHeaders() {
-    let gameSeed = Random.generateFromSeed(this.gameNumber) * Number.MAX_SAFE_INTEGER;
+  private ensureMinimumsAndCalculateHeaders(gameNumber: number) {
+    let gameSeed = Random.generateFromSeed(gameNumber) * Number.MAX_SAFE_INTEGER;
     let random = new Random(gameSeed);
 
     do {
+
       this.goalRows = [];
       this.goalColumns = [];
       let goalColorGroups = new Map<number, Cell>();
       let cellsByGroup = new Map<number, Cell[]>();
 
-      this.grid.forEach((row, rowIndex) => row.forEach((cell, colIndex) => {
+      this.playArea.forEach((row, rowIndex) => row.forEach((cell, colIndex) => {
         let cells = cellsByGroup.get(cell.groupNumber) ?? [];
         cells.push(cell)
         cellsByGroup.set(cell.groupNumber, cells);
@@ -172,9 +74,9 @@ export class Board {
       {
         let rowIndex = this.goalRows.findIndex(cell => !cell.value)
         if (rowIndex >= 0) {
-          let col = Math.floor(random.next() * (this.grid[0].length - 1));
+          let col = Math.floor(random.next() * (this.playArea[0].length - 1));
 
-          this.grid[rowIndex][col].required = true;
+          this.playArea[rowIndex][col].required = true;
           continue;
         }
       }
@@ -182,9 +84,9 @@ export class Board {
       {
         let colIndex = this.goalColumns.findIndex(cell => !cell.value)
         if (colIndex >= 0) {
-          let row = Math.floor(random.next() * (this.grid.length - 1));
+          let row = Math.floor(random.next() * (this.playArea.length - 1));
 
-          this.grid[row][colIndex].required = true;
+          this.playArea[row][colIndex].required = true;
           continue;
         }
       }
@@ -204,11 +106,11 @@ export class Board {
   }
 
 
-  private recalculateSelectedHeaders(): void {
+  recalculateSelectedHeaders(): void {
     this.goalColumns.forEach(single => single.groupNumber = 0)
     this.goalRows.forEach(single => single.groupNumber = 0)
 
-    this.grid.forEach((row, rowIndex) => {
+    this.playArea.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         if (cell.status === SelectionStatus.SELECTED) {
           this.goalColumns[colIndex].groupNumber += cell.value;
@@ -222,49 +124,29 @@ export class Board {
   }
 
 
-  private checkComplete(): void {
-    if (this.isComplete()) {
-      const randomIndex = Math.floor(Math.random() * AFFIRMATIONS.length);
-      let affirmation = AFFIRMATIONS[randomIndex];
+  private fixUnsolvableRectangle(rect: UnsolvableRect): void {
+    const rectCells = [
+      this.playArea[rect.r1][rect.c1],
+      this.playArea[rect.r1][rect.c2],
+      this.playArea[rect.r2][rect.c1],
+      this.playArea[rect.r2][rect.c2]
+    ];
 
-      this.celebrationService.show({
-        title: affirmation.title,
-        subtitle: affirmation.subTitle,
-      });
-    }
+    rectCells.find(c => !c.required).required = true;
   }
 
 
-  private isComplete(): boolean {
-    for (const row of this.grid) {
-      for (const cell of row) {
-        if ((cell.required && cell.status !== SelectionStatus.SELECTED) || (!cell.required && cell.status !== SelectionStatus.CLEARED))
-          return false;
-      }
-    }
-
-    return true;
-  }
-
-
-  private vibrate(): void {
-    if ("vibrate" in navigator) {
-      navigator.vibrate([100, 50, 100]);
-    }
-  }
-
-
-  private isSolvable(cell: Cell[][]): boolean {
-    const rows = cell.length;
+  private checkIfSolvableAfterAttemptingFix(): boolean {
+    const rows = this.playArea.length;
     if (rows === 0) return true;
-    const cols = cell[0].length;
+    const cols = this.playArea[0].length;
     if (cols === 0) return true;
 
     let attempts = 0;
     const maxAttempts = 50;
 
     while (attempts < maxAttempts) {
-      const unsolvableRect = this.findUnsolvableRectangle(cell);
+      const unsolvableRect = this.findUnsolvableRectangle(this.playArea);
       if (!unsolvableRect)
         return true;
 
@@ -330,22 +212,23 @@ export class Board {
   }
 
 
-  private fixUnsolvableRectangle(rect: UnsolvableRect): void {
-    const rectCells = [
-      this.grid[rect.r1][rect.c1],
-      this.grid[rect.r1][rect.c2],
-      this.grid[rect.r2][rect.c1],
-      this.grid[rect.r2][rect.c2]
-    ];
+  isComplete(): boolean {
+    for (const row of this.playArea) {
+      for (const cell of row) {
+        if ((cell.required && cell.status !== SelectionStatus.SELECTED) || (!cell.required && cell.status !== SelectionStatus.CLEARED))
+          return false;
+      }
+    }
 
-    rectCells.find(c => !c.required).required = true;
+    return true;
   }
 
 }
 
 
 
-class Cell {
+
+export class Cell {
   status = SelectionStatus.NONE;
   required: boolean = false;
   colorGroupGoalDisplayValue: number;
@@ -359,7 +242,7 @@ class Cell {
 
 
 
-enum SelectionStatus {
+export enum SelectionStatus {
   NONE,
   SELECTED,
   CLEARED,
@@ -371,11 +254,4 @@ interface UnsolvableRect {
   c1: number;
   r2: number;
   c2: number;
-}
-
-
-interface SavedGameState {
-  fails: number;
-  gameNumber: number;
-  grid: Cell[][];
 }
