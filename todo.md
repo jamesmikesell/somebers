@@ -1,19 +1,21 @@
 # TODO
 
+- animate changes, show some animation on initial tap to make the lag while waiting to see if a double tap is coming seem like it's part of the game
+- ability to pinch to zoom, even on game board controls
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
+- tutorial mode
+- sounds
 - show game name somewhere on app / or an app game logo
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
-- animate changes
-- ability to pinch to zoom, even on game board controls
 - current sum of selected cells in a color group, shown in top right corner perhaps
+- configuration to be able to show/hide running calculated sums
 - temp cell selection:
   - ability to highlight cells temporarily to mark that you're using them for mental math
   - cells are highlighted in consistent color depending on when they were highlighted
   - optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
 - ability to undo a move, IE un-hide a hidden number, or de-select a selected number
-- tutorial mode
 
 # Done
 
