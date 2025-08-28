@@ -1,4 +1,5 @@
 import { FormsModule } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,4 +13,5 @@ export const MATERIAL_IMPORTS = [
   MatIconModule,
   MatButtonModule,
   MatMenuModule,
+  MatBadgeModule,
 ] as const;

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { AppVersion } from './app-version';
 import { CelebrationComponent } from "./component/celebration/celebration";
 import { MATERIAL_IMPORTS } from './material-imports';
+import { VersionCheckService } from './service/version-check.service';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +24,8 @@ export class App {
     return this.colorModes[this.currentModeIndex];
   }
 
-  constructor() {
+  constructor(public versionCheckService: VersionCheckService) {
+    versionCheckService.startVersionCheck();
   }
 
   toggleColorMode() {
