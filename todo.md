@@ -5,6 +5,7 @@
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
 - tutorial mode
+- sort affirmations based on number of mistakes
 - sounds
 - show game name somewhere on app / or an app game logo
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
