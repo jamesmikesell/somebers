@@ -89,7 +89,7 @@
                     class="cell color-{{ cell.groupNumber }}"
                     [class.wiggle]="cell.isInvalid"
                     [class.hidden]="cell.hideBackground"
-                    appHammerSwipe
+                    appHammer
                     (tap)="use(cell)"
                     (doubleTap)="clear(cell)"
                     (contextmenu)="clear(cell); $event.preventDefault()"

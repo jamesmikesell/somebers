@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { Board } from './component/board/board';
-import { Documentation } from './documentation/documentation';
+import { Documentation } from './component/documentation/documentation';
 
 export const routes: Routes = [
   {

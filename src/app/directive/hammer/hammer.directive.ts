@@ -3,10 +3,10 @@ import Hammer from 'hammerjs';
 
 
 @Directive({
-  selector: '[appHammerSwipe]',
+  selector: '[appHammer]',
   standalone: true
 })
-export class HammerSwipeDirective implements OnInit, OnDestroy {
+export class HammerDirective implements OnInit, OnDestroy {
   @Output() swipeUp = new EventEmitter<HammerInput>();
   @Output() swipeDown = new EventEmitter<HammerInput>();
   @Output() tap = new EventEmitter<HammerInput>();

@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding } from '@angular/core';
-import { HammerSwipeDirective } from '../../directive/hammer/hammer-swipe.directive';
+import { HammerDirective } from '../../directive/hammer/hammer.directive';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { CelebrationService } from '../../service/celebration';
 import { BoardGroupGenerator } from '../../service/grouping';
 import { Random } from '../../service/random';
-import { AFFIRMATIONS } from '../celebration/afirmations';
+import { AFFIRMATIONS } from '../celebration/affirmations';
 import { Cell, GameBoard, SelectionStatus } from './game-board';
 
 @Component({
   selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS, CommonModule, HammerSwipeDirective],
+  imports: [...MATERIAL_IMPORTS, CommonModule, HammerDirective],
   templateUrl: './board.html',
   styleUrl: './board.scss'
 })
