@@ -1,4 +1,4 @@
-<div class="page-container">
+<div class="page-container no-select">
   <div class="top-section">
     <div class="centered">
       <div class="top-controls">
@@ -50,7 +50,7 @@
   </div>
 
   <div class="game-board-section">
-    <div class="container no-select">
+    <div class="container">
       <table class="game-table">
         @for (row of gameBoard.fullBoard; track $index; let rowIndex = $index) {
           <tr>
