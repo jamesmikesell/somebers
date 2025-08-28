@@ -27,6 +27,8 @@ export class GameBoard {
       const row: Cell[] = [this.goalRows[i], ...this.playArea[i]];
       this._fullBoard.push(row);
     }
+
+    this.isComplete();
   }
 
 
@@ -213,6 +215,8 @@ export class GameBoard {
 
 
   isComplete(): boolean {
+    this.clearCompleted();
+
     for (const row of this.playArea) {
       for (const cell of row) {
         if ((cell.required && cell.status !== SelectionStatus.SELECTED) || (!cell.required && cell.status !== SelectionStatus.CLEARED))
@@ -221,6 +225,69 @@ export class GameBoard {
     }
 
     return true;
+  }
+
+
+  private clearCompleted(): void {
+    let completedRows = new Set<number>();
+    let completedColumns = new Set<number>();
+    let completedGroups = new Set<number>();
+    for (let i = 0; i < this.playArea.length; i++) {
+      if (this.isRowComplete(i))
+        completedRows.add(i);
+      if (this.isColumnComplete(i))
+        completedColumns.add(i);
+      if (this.isColorGroupComplete(i + 1))
+        completedGroups.add(i + 1);
+    }
+
+    this.playArea.forEach((row) => {
+      row.forEach((cell) => {
+        if (completedGroups.has(cell.groupNumber))
+          cell.hideBackground = true;
+      })
+    })
+
+    this.goalColumns.forEach((header, index) => {
+      if (completedColumns.has(index))
+        header.hideBackground = true;
+    })
+
+    this.goalRows.forEach((header, index) => {
+      if (completedRows.has(index))
+        header.hideBackground = true;
+    })
+  }
+
+
+  private isRowComplete(rowIndex: number): boolean {
+    return this.playArea[rowIndex].every(cell =>
+      (cell.required && cell.status === SelectionStatus.SELECTED) ||
+      (!cell.required && cell.status === SelectionStatus.CLEARED)
+    );
+  }
+
+
+  private isColumnComplete(colIndex: number): boolean {
+    for (let i = 0; i < this.playArea.length; i++) {
+      const cell = this.playArea[i][colIndex];
+      if (!((cell.required && cell.status === SelectionStatus.SELECTED) ||
+        (!cell.required && cell.status === SelectionStatus.CLEARED))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  private isColorGroupComplete(groupNumber: number): boolean {
+    return this.playArea
+      .flat()
+      .filter(cell => cell.groupNumber === groupNumber)
+      .every(cell =>
+        (cell.required && cell.status === SelectionStatus.SELECTED) ||
+        (!cell.required && cell.status === SelectionStatus.CLEARED)
+      );
   }
 
 }
@@ -235,6 +302,7 @@ export class Cell {
   value: number;
   groupNumber: number;
   isInvalid: boolean = false;
+  hideBackground = false;
 
   constructor(
   ) { }

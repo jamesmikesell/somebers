@@ -1,11 +1,10 @@
 # TODO
 
-- investigate possibility that tapping is selecting a character... seems to be searching for "v" which may only be part of the version number display
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
 - show game name somewhere on app / or an app game logo
-- show hints for when people get stuck (Participation Trophy Mode)
-- clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
+- show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
+- animate changes
 - ability to pinch to zoom, even on game board controls
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - temp cell selection:
@@ -18,6 +17,8 @@
 
 # Done
 
+- clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
+- investigate possibility that tapping is selecting a character... seems to be searching for "v" which may only be part of the version number display
 - make game offline capable
 - make game a PWA so it can be added to home screen
 - app icon

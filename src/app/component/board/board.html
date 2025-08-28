@@ -71,11 +71,16 @@
                 </ng-template>
 
                 <ng-template #headerCell>
-                  <div class="cell bg-muted">
-                    <div class="corner-number">
-                      {{ cell.groupNumber }}
-                    </div>
-                    <div class="cell-number">{{ cell.value }}</div>
+                  <div
+                    class="cell bg-muted"
+                    [class.hidden]="cell.hideBackground"
+                  >
+                    @if (!cell.hideBackground) {
+                      <div class="corner-number">
+                        {{ cell.groupNumber }}
+                      </div>
+                      <div class="cell-number">{{ cell.value }}</div>
+                    }
                   </div>
                 </ng-template>
 
@@ -83,6 +88,7 @@
                   <div
                     class="cell color-{{ cell.groupNumber }}"
                     [class.wiggle]="cell.isInvalid"
+                    [class.hidden]="cell.hideBackground"
                     appHammerSwipe
                     (tap)="use(cell)"
                     (doubleTap)="clear(cell)"
