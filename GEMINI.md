@@ -57,6 +57,7 @@ To deploy the application, use the `deploy.sh` script. This script will build th
 
 ## Development Conventions
 
+-   **Angular Structural Directives**: Avoid using deprecated structural directives like `*ngIf` and `*ngFor`. Instead, use the new `@if` and `@for` control flow syntax.
 -   **Code Style:** The project uses [Prettier](https://prettier.io/) for code formatting.
 -   **Styling:** The project uses SCSS for styling. The main stylesheet is located at `src/styles.scss`.
 -   **Components:** The application is structured into components, which can be found in the `src/app/component` directory.
