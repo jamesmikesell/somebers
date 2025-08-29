@@ -4,7 +4,6 @@
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
 - tutorial mode
-- sort affirmations based on number of mistakes
 - sounds
 - show game name somewhere on app / or an app game logo
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
@@ -19,6 +18,7 @@
 
 # Done
 
+- sort affirmations based on number of mistakes
 - click and partial drag on desktop doesn't clear animation
 - animate changes, show some animation on initial tap to make the lag while waiting to see if a double tap is coming seem like it's part of the game
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
