@@ -21,10 +21,24 @@ export class HammerDirective implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.hammer = new Hammer.Manager(this.el.nativeElement);
 
-    this.hammer.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
-    this.hammer.add(new Hammer.Tap({ event: 'tap' }));
-    this.hammer.get('doubletap').recognizeWith('tap');
-    this.hammer.get('tap').requireFailure('doubletap');
+    let tapIntervalMs = 800;
+    let tapCount = 0
+    let tapTimer: number
+    this.hammer.add(new Hammer.Tap({ event: 'tap', taps: 1 }));
+    this.hammer.on('tap', (event) => {
+      tapCount++;
+      if (tapCount === 1) {
+        tapTimer = setTimeout(() => {
+          this.tap.emit(event);
+          tapCount = 0;
+        }, tapIntervalMs);
+      } else if (tapCount === 2) {
+        clearTimeout(tapTimer);
+        this.doubleTap.emit(event);
+        tapCount = 0;
+      }
+    });
+
     this.hammer.add(new Hammer.Swipe({
       event: 'swipe',
       direction: Hammer.DIRECTION_VERTICAL,
@@ -44,7 +58,7 @@ export class HammerDirective implements OnInit, OnDestroy {
         gestureEndTimeout = setTimeout(() => {
           // All gestures are now guaranteed to be finished
           this.allGesturesComplete.emit(event);
-        }, 300);
+        }, tapIntervalMs);
       }
     });
 
@@ -55,14 +69,6 @@ export class HammerDirective implements OnInit, OnDestroy {
 
     this.hammer.on('swipedown', (event: HammerInput) => {
       this.swipeDown.emit(event);
-    });
-
-    this.hammer.on('tap', (event: HammerInput) => {
-      this.tap.emit(event);
-    });
-
-    this.hammer.on('doubletap', (event: HammerInput) => {
-      this.doubleTap.emit(event);
     });
 
     this.hammer.on('press', (event: HammerInput) => {
