@@ -87,14 +87,17 @@
                 <ng-template #standardCell>
                   <div
                     class="cell color-{{ cell.groupNumber }}"
-                    [class.wiggle]="cell.isInvalid"
+                    [class.wiggle]="cell.invalidMove"
                     [class.hidden]="cell.hideBackground"
+                    [class.processing]="cell.processing"
                     appHammer
+                    (touchStart)="touchStart(cell)"
                     (tap)="use(cell)"
                     (doubleTap)="clear(cell)"
                     (contextmenu)="clear(cell); $event.preventDefault()"
                     (swipeUp)="use(cell)"
                     (swipeDown)="clear(cell)"
+                    (allGesturesComplete)="cell.processing = false"
                   >
                     <div class="corner-number bg-muted">
                       {{ cell.colorGroupGoalDisplayValue }}

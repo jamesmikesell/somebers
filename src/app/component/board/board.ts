@@ -83,7 +83,15 @@ export class Board {
   }
 
 
+  touchStart(cell: Cell): void {
+    if (cell.status === SelectionStatus.NONE && !cell.processing)
+      cell.processing = true;
+  }
+
+
   async use(cell: Cell): Promise<void> {
+    cell.processing = false;
+
     if (cell.status !== SelectionStatus.NONE)
       return;
 
@@ -100,6 +108,8 @@ export class Board {
 
 
   async clear(cell: Cell): Promise<void> {
+    cell.processing = false;
+
     if (cell.status !== SelectionStatus.NONE)
       return;
 
@@ -117,9 +127,9 @@ export class Board {
   private async handleIncorrectMove(cell: Cell): Promise<void> {
     this.mistakes++;
     this.vibrate();
-    cell.isInvalid = true;
+    cell.invalidMove = true;
     await new Promise(resolve => setTimeout(resolve, 1000));
-    cell.isInvalid = false;
+    cell.invalidMove = false;
   }
 
 

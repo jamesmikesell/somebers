@@ -298,11 +298,13 @@ export class GameBoard {
 export class Cell {
   status = SelectionStatus.NONE;
   required: boolean = false;
-  colorGroupGoalDisplayValue: number;
   value: number;
   groupNumber: number;
-  isInvalid: boolean = false;
+
+  colorGroupGoalDisplayValue: number;
+  invalidMove: boolean = false;
   hideBackground = false;
+  processing = false;
 
   constructor(
   ) { }

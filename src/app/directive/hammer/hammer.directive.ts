@@ -11,6 +11,8 @@ export class HammerDirective implements OnInit, OnDestroy {
   @Output() swipeDown = new EventEmitter<HammerInput>();
   @Output() tap = new EventEmitter<HammerInput>();
   @Output() doubleTap = new EventEmitter<HammerInput>();
+  @Output() touchStart = new EventEmitter<HammerInput>();
+  @Output() allGesturesComplete = new EventEmitter<HammerInput>();
 
   private hammer: HammerManager | undefined;
 
@@ -29,8 +31,24 @@ export class HammerDirective implements OnInit, OnDestroy {
       threshold: 20,
       velocity: 0.15
     }));
+    this.hammer.add(new Hammer.Press({ event: 'press', time: 1 }));
 
+    let gestureEndTimeout: any;
+    this.hammer.on('hammer.input', (event: HammerInput) => {
+      if (gestureEndTimeout)
+        clearTimeout(gestureEndTimeout);
 
+      if (event.eventType === Hammer.INPUT_END || event.eventType === Hammer.INPUT_CANCEL) {
+        // Wait a brief moment to ensure all gesture recognition is complete
+        // The delay accounts for double-tap recognition time
+        gestureEndTimeout = setTimeout(() => {
+          // All gestures are now guaranteed to be finished
+          this.allGesturesComplete.emit(event);
+        }, 300);
+      }
+    });
+
+    // Your existing gesture handlers...
     this.hammer.on('swipeup', (event: HammerInput) => {
       this.swipeUp.emit(event);
     });
@@ -45,6 +63,10 @@ export class HammerDirective implements OnInit, OnDestroy {
 
     this.hammer.on('doubletap', (event: HammerInput) => {
       this.doubleTap.emit(event);
+    });
+
+    this.hammer.on('press', (event: HammerInput) => {
+      this.touchStart.emit(event);
     });
   }
 
