@@ -1,0 +1,43 @@
+@if (displayType === "blank") {
+  <div class="cell"></div>
+} @else if (displayType === "header") {
+  <div
+    class="cell bg-muted"
+    [class.hidden]="cell.hideBackground"
+    [style.--columnCount]="columnCount"
+  >
+    @if (!cell.hideBackground) {
+      <div class="corner-number">
+        {{ cell.groupNumber }}
+      </div>
+      <div class="main-number">{{ cell.value }}</div>
+    }
+  </div>
+} @else if (displayType === "standard") {
+  <div
+    class="cell color-{{ cell.groupNumber }}"
+    [class.wiggle]="cell.invalidMove"
+    [class.hidden]="cell.hideBackground"
+    [class.processing]="cell.processing"
+    [style.--columnCount]="columnCount"
+    appHammer
+    (touchStart)="touchStart(cell)"
+    (tap)="use(cell)"
+    (doubleTap)="clear(cell)"
+    (contextmenu)="clear(cell); $event.preventDefault()"
+    (swipeUp)="use(cell)"
+    (swipeDown)="clear(cell)"
+    (allGesturesComplete)="cell.processing = false"
+  >
+    <div class="corner-number bg-muted">
+      {{ cell.colorGroupGoalDisplayValue }}
+    </div>
+    <div
+      class="main-number"
+      [class.circle]="cell.status === SelectionStatus.SELECTED"
+      [class.cleared-text]="cell.status === SelectionStatus.CLEARED"
+    >
+      {{ cell.value }}
+    </div>
+  </div>
+}

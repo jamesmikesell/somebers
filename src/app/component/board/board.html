@@ -57,62 +57,27 @@
             @for (cell of row; track $index; let colIndex = $index) {
               <td>
                 @if (rowIndex === 0 && colIndex === 0) {
-                  <ng-container *ngTemplateOutlet="blankCell"></ng-container>
+                  <app-cell
+                    [displayType]="'blank'"
+                    [columnCount]="columnCount"
+                  ></app-cell>
                 } @else if (
                   rowIndex === 0 || (rowIndex > 0 && colIndex === 0)
                 ) {
-                  <ng-container *ngTemplateOutlet="headerCell"></ng-container>
+                  <app-cell
+                    [displayType]="'header'"
+                    [cell]="cell"
+                    [columnCount]="columnCount"
+                  ></app-cell>
                 } @else {
-                  <ng-container *ngTemplateOutlet="standardCell"></ng-container>
+                  <app-cell
+                    [displayType]="'standard'"
+                    [cell]="cell"
+                    [columnCount]="columnCount"
+                    (used)="use($event)"
+                    (cleared)="clear($event)"
+                  ></app-cell>
                 }
-
-                <ng-template #blankCell>
-                  <div class="cell"></div>
-                </ng-template>
-
-                <ng-template #headerCell>
-                  <div
-                    class="cell bg-muted"
-                    [class.hidden]="cell.hideBackground"
-                  >
-                    @if (!cell.hideBackground) {
-                      <div class="corner-number">
-                        {{ cell.groupNumber }}
-                      </div>
-                      <div class="main-number">{{ cell.value }}</div>
-                    }
-                  </div>
-                </ng-template>
-
-                <ng-template #standardCell>
-                  <div
-                    class="cell color-{{ cell.groupNumber }}"
-                    [class.wiggle]="cell.invalidMove"
-                    [class.hidden]="cell.hideBackground"
-                    [class.processing]="cell.processing"
-                    appHammer
-                    (touchStart)="touchStart(cell)"
-                    (tap)="use(cell)"
-                    (doubleTap)="clear(cell)"
-                    (contextmenu)="clear(cell); $event.preventDefault()"
-                    (swipeUp)="use(cell)"
-                    (swipeDown)="clear(cell)"
-                    (allGesturesComplete)="cell.processing = false"
-                  >
-                    <div class="corner-number bg-muted">
-                      {{ cell.colorGroupGoalDisplayValue }}
-                    </div>
-                    <div
-                      class="main-number"
-                      [class.circle]="cell.status === SelectionStatus.SELECTED"
-                      [class.cleared-text]="
-                        cell.status === SelectionStatus.CLEARED
-                      "
-                    >
-                      {{ cell.value }}
-                    </div>
-                  </div>
-                </ng-template>
               </td>
             }
           </tr>

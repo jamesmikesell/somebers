@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding } from '@angular/core';
-import { HammerDirective } from '../../directive/hammer.directive';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
-import { CelebrationService } from '../../service/celebration';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
+import { CelebrationService } from '../../service/celebration';
 import { AFFIRMATIONS } from '../celebration/affirmations';
+import { CellComponent } from '../cell/cell.component';
 
 @Component({
   selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS, CommonModule, HammerDirective],
+  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent],
   templateUrl: './board.html',
   styleUrl: './board.scss'
 })
@@ -80,12 +80,6 @@ export class Board {
 
     this.gameBoard.constructBoard(this.gameNumber);
     this.solvable = this.gameBoard.solvable;
-  }
-
-
-  touchStart(cell: Cell): void {
-    if (cell.status === SelectionStatus.NONE && !cell.processing)
-      cell.processing = true;
   }
 
 
