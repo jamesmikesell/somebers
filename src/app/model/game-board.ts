@@ -1,4 +1,4 @@
-import { Random } from "../../service/random";
+import { Random } from "./random";
 
 
 export class GameBoard {

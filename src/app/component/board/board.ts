@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding } from '@angular/core';
-import { HammerDirective } from '../../directive/hammer/hammer.directive';
+import { HammerDirective } from '../../directive/hammer.directive';
 import { MATERIAL_IMPORTS } from '../../material-imports';
+import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { CelebrationService } from '../../service/celebration';
-import { BoardGroupGenerator } from '../../service/grouping';
-import { Random } from '../../service/random';
+import { BoardGroupGenerator } from '../../model/grouping';
+import { Random } from '../../model/random';
 import { AFFIRMATIONS } from '../celebration/affirmations';
-import { Cell, GameBoard, SelectionStatus } from './game-board';
 
 @Component({
   selector: 'app-board',
