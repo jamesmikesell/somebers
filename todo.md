@@ -1,6 +1,5 @@
 # TODO
 
-- click and partial drag on desktop doesn't clear animation
 - ability to pinch to zoom, even on game board controls
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
@@ -20,6 +19,7 @@
 
 # Done
 
+- click and partial drag on desktop doesn't clear animation
 - animate changes, show some animation on initial tap to make the lag while waiting to see if a double tap is coming seem like it's part of the game
 - clear formatting rows / columns / groups when all required cells are selected, and non-required cells are cleared. Possibly remove header value once a rows/column has been solved.
 - investigate possibility that tapping is selecting a character... seems to be searching for "v" which may only be part of the version number display
