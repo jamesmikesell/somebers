@@ -79,7 +79,7 @@
                       <div class="corner-number">
                         {{ cell.groupNumber }}
                       </div>
-                      <div class="cell-number">{{ cell.value }}</div>
+                      <div class="main-number">{{ cell.value }}</div>
                     }
                   </div>
                 </ng-template>
@@ -103,12 +103,13 @@
                       {{ cell.colorGroupGoalDisplayValue }}
                     </div>
                     <div
-                      class="cell-number"
+                      class="main-number"
                       [class.circle]="cell.status === SelectionStatus.SELECTED"
+                      [class.cleared-text]="
+                        cell.status === SelectionStatus.CLEARED
+                      "
                     >
-                      @if (cell.status !== SelectionStatus.CLEARED) {
-                        {{ cell.value }}
-                      }
+                      {{ cell.value }}
                     </div>
                   </div>
                 </ng-template>
