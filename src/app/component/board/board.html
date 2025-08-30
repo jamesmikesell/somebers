@@ -7,7 +7,7 @@
             matMiniFab
             class="game-button"
             [disabled]="gameNumber <= 1"
-            (click)="updateGameNumber(gameNumber - 1)"
+            (click)="changeGameNumberFromUi(gameNumber - 1)"
           >
             <mat-icon>do_not_disturb_on</mat-icon>
           </button>
@@ -18,7 +18,7 @@
               matInput
               type="number"
               [ngModel]="gameNumber"
-              (ngModelChange)="updateGameNumber($event)"
+              (ngModelChange)="changeGameNumberFromUi($event)"
               min="1"
             />
           </mat-form-field>
@@ -26,7 +26,7 @@
           <button
             matMiniFab
             class="game-button"
-            (click)="updateGameNumber(gameNumber + 1)"
+            (click)="changeGameNumberFromUi(gameNumber + 1)"
           >
             <mat-icon>add_circle</mat-icon>
           </button>
@@ -35,6 +35,23 @@
         <div class="stats">
           <div style="display: inline-flex; align-items: center">
             <span>Mistakes: {{ mistakes }}</span>
+
+            @if (devMode) {
+              <button
+                matMiniFab
+                class="game-button"
+                (click)="autoCompleteGame(0)"
+              >
+                <mat-icon>auto_fix_high</mat-icon>
+              </button>
+              <button
+                matMiniFab
+                class="game-button"
+                (click)="autoCompleteGame(2)"
+              >
+                <mat-icon>auto_fix_off</mat-icon>
+              </button>
+            }
 
             @if (!solvable) {
               &nbsp;&nbsp;&nbsp;
@@ -51,38 +68,60 @@
 
   <div class="game-board-section">
     <div class="container">
-      <table class="game-table">
-        @for (row of gameBoard.fullBoard; track $index; let rowIndex = $index) {
-          <tr>
-            @for (cell of row; track $index; let colIndex = $index) {
-              <td>
-                @if (rowIndex === 0 && colIndex === 0) {
-                  <app-cell
-                    [displayType]="'blank'"
-                    [columnCount]="columnCount"
-                  ></app-cell>
-                } @else if (
-                  rowIndex === 0 || (rowIndex > 0 && colIndex === 0)
-                ) {
-                  <app-cell
-                    [displayType]="'header'"
-                    [cell]="cell"
-                    [columnCount]="columnCount"
-                  ></app-cell>
-                } @else {
-                  <app-cell
-                    [displayType]="'standard'"
-                    [cell]="cell"
-                    [columnCount]="columnCount"
-                    (used)="use($event)"
-                    (cleared)="clear($event)"
-                  ></app-cell>
-                }
-              </td>
-            }
-          </tr>
-        }
-      </table>
+      @if (gamePreviouslyCompleted) {
+        <div class="previously-completed">
+          <h2>Game {{ gameNumber }} Already Played.</h2>
+
+          <div>
+            <button matFab extended (click)="playGameAgain()">
+              <mat-icon>sports_esports</mat-icon>
+              Play Game {{ gameNumber }} Again
+            </button>
+            &nbsp;&nbsp;
+            <button matFab extended (click)="platNextUnfinishedGame()">
+              <mat-icon>skip_next</mat-icon>
+              Next Game
+            </button>
+          </div>
+        </div>
+      } @else {
+        <table class="game-table">
+          @for (
+            row of gameBoard.fullBoard;
+            track $index;
+            let rowIndex = $index
+          ) {
+            <tr>
+              @for (cell of row; track $index; let colIndex = $index) {
+                <td>
+                  @if (rowIndex === 0 && colIndex === 0) {
+                    <app-cell
+                      [displayType]="'blank'"
+                      [columnCount]="columnCount"
+                    ></app-cell>
+                  } @else if (
+                    rowIndex === 0 || (rowIndex > 0 && colIndex === 0)
+                  ) {
+                    <app-cell
+                      [displayType]="'header'"
+                      [cell]="cell"
+                      [columnCount]="columnCount"
+                    ></app-cell>
+                  } @else {
+                    <app-cell
+                      [displayType]="'standard'"
+                      [cell]="cell"
+                      [columnCount]="columnCount"
+                      (used)="use($event)"
+                      (cleared)="clear($event)"
+                    ></app-cell>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </table>
+      }
     </div>
   </div>
 </div>

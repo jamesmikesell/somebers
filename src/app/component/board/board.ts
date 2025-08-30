@@ -1,12 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding } from '@angular/core';
+import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
+import { GameInProgress } from '../../model/saved-game-data/saved-game-data.v1';
 import { CelebrationService } from '../../service/celebration';
+import { SaveDataService } from '../../service/save-data.service';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
+import { iterator } from 'rxjs/internal/symbol/iterator';
 
 @Component({
   selector: 'app-board',
@@ -25,39 +29,40 @@ export class Board {
   SelectionStatus = SelectionStatus;
   gameBoard = new GameBoard();
   mistakes = 0;
-  solvable = false;
+  solvable = true;
+  gamePreviouslyCompleted = false;
+  devMode = false;
 
-
-  private readonly GAME_NUMBER = "gameNumberV2";
-  private readonly SAVED_STATE = "gameStateV4";
+  private previousGames = new Map<number, GameInProgress>();
 
 
   constructor(
     private celebrationService: CelebrationService,
+    private saveDataService: SaveDataService,
   ) {
-    let savedGameString = localStorage.getItem(this.SAVED_STATE)
-    if (savedGameString) {
-      let savedState: SavedGameState = JSON.parse(savedGameString);
-      this.mistakes = savedState.fails;
-      this.gameBoard = new GameBoard();
-      this.gameBoard.playArea = savedState.grid;
-      this.gameNumber = savedState.gameNumber;
-      this.gameBoard.constructBoard(this.gameNumber);
-      this.solvable = this.gameBoard.solvable;
-      this.gameBoard.recalculateSelectedHeaders();
-    } else {
-      this.gameNumber = +(localStorage.getItem(this.GAME_NUMBER) ?? 1);
-      this.updateGameNumber(this.gameNumber);
-    }
+    this.devMode = AppVersion.VERSION as string === "000000-0000000000";
+
+    if (!this.loadGameFromStorage())
+      this.updateGameNumber(this.gameNumber || 1);
   }
 
 
-  updateGameNumber(game: number) {
-    localStorage.setItem(this.GAME_NUMBER, game.toString());
-    localStorage.removeItem(this.SAVED_STATE);
+  changeGameNumberFromUi(gameNumber: number): void {
+    let previous = this.previousGames.get(gameNumber);
+    if (previous) {
+      this.constructBoardFromPreviousState(previous);
+    } else {
+      this.updateGameNumber(gameNumber);
+    }
 
+    this.saveGameState()
+  }
+
+
+  private updateGameNumber(game: number) {
     this.gameNumber = game;
     this.mistakes = 0;
+    this.gamePreviouslyCompleted = false;
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -69,7 +74,7 @@ export class Board {
 
     let random = new Random(gameSeed);
     this.gameBoard = new GameBoard();
-    this.gameBoard.playArea = grid.map((row, rowIndex) => row.map((cellGroupNumber, colIndex) => {
+    this.gameBoard.playArea = grid.map((row) => row.map((cellGroupNumber) => {
       let cell = new Cell();
       cell.value = Math.floor(random.next() * 9) + 1;
       cell.groupNumber = cellGroupNumber;
@@ -80,6 +85,8 @@ export class Board {
 
     this.gameBoard.constructBoard(this.gameNumber);
     this.solvable = this.gameBoard.solvable;
+
+    this.saveGameState();
   }
 
 
@@ -118,6 +125,87 @@ export class Board {
   }
 
 
+  playGameAgain(): void {
+    this.previousGames.delete(this.gameNumber);
+    this.updateGameNumber(this.gameNumber);
+    this.saveGameState()
+  }
+
+
+  autoCompleteGame(mistakes: number): void {
+    this.mistakes = mistakes;
+    this.gameBoard.playArea.forEach(row => row.forEach(cell => cell.status = cell.required ? SelectionStatus.SELECTED : SelectionStatus.CLEARED))
+    let cell = this.gameBoard.playArea[0][0];
+    cell.status = SelectionStatus.NONE;
+    if (cell.required)
+      this.use(cell)
+    else
+      this.clear(cell)
+  }
+
+
+  platNextUnfinishedGame(): void {
+    this.gamePreviouslyCompleted = false;
+    const allGameNumbers = Array.from(this.previousGames.keys()).sort((a, b) => a - b);
+
+    // Find the next game number after current
+    for (let i = this.gameNumber + 1; i <= Math.max(...allGameNumbers) + 1; i++) {
+      const previousGame = this.previousGames.get(i);
+      if (previousGame && !previousGame.completed) {
+        // Found a partially completed game
+        this.constructBoardFromPreviousState(previousGame);
+        return;
+      } else if (!previousGame) {
+        // Found an unstarted game number
+        this.changeGameNumberFromUi(i);
+        return;
+      }
+    }
+
+    // Fallback: create next sequential game
+    const maxGameNumber = Math.max(...allGameNumbers);
+    this.changeGameNumberFromUi(maxGameNumber + 1);
+  }
+
+
+  private loadGameFromStorage(): boolean {
+    let savedData = this.saveDataService.service.load();
+    if (savedData) {
+      this.gameNumber = savedData.currentGameNumber || 1;
+
+      if (savedData.inProgressGames) {
+        savedData.inProgressGames.forEach(prev => this.previousGames.set(prev.gameNumber, prev))
+
+        let previous = this.previousGames.get(this.gameNumber);
+        if (previous) {
+          this.constructBoardFromPreviousState(previous);
+          return true
+        }
+      }
+    }
+
+    return false;
+  }
+
+
+  private constructBoardFromPreviousState(previous: GameInProgress): void {
+    this.gameNumber = previous.gameNumber || 1;
+    this.mistakes = previous.mistakes || 0;
+    this.gamePreviouslyCompleted = previous.completed ?? false;
+    if (!previous.completed) {
+      if (previous.grid) {
+        this.gameBoard = new GameBoard();
+        this.gameBoard.playArea = previous.grid;
+        this.gameBoard.constructBoard(this.gameNumber);
+        this.solvable = this.gameBoard.solvable;
+        this.gameBoard.recalculateSelectedHeaders();
+      } else {
+        this.updateGameNumber(this.gameNumber);
+      }
+    }
+  }
+
+
   private async handleIncorrectMove(cell: Cell): Promise<void> {
     this.mistakes++;
     this.vibrate();
@@ -128,12 +216,31 @@ export class Board {
 
 
   private saveGameState(): void {
-    let state: SavedGameState = {
-      fails: this.mistakes,
-      grid: this.gameBoard.playArea,
-      gameNumber: this.gameNumber,
+    let state = this.saveDataService.service.generateSaverDto();
+
+    let isInProgress = this.gameBoard.inProgress() || this.mistakes !== 0;
+    let isComplete = this.gameBoard.isComplete()
+    let wasComplete = this.previousGames.get(this.gameNumber)?.completed ?? false;
+    let someLevelOfComplete = isComplete || wasComplete
+
+    // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete })
+    // we only want a record if they partially or fully played a given game
+    if (isInProgress || someLevelOfComplete) {
+      let progress: GameInProgress = {
+        completed: someLevelOfComplete,
+        gameNumber: this.gameNumber,
+        mistakes: this.mistakes,
+        grid: !someLevelOfComplete ? this.gameBoard.playArea : undefined,
+      }
+      this.previousGames.set(this.gameNumber, progress)
+    } else {
+      this.previousGames.delete(this.gameNumber);
     }
-    localStorage.setItem(this.SAVED_STATE, JSON.stringify(state));
+
+    state.currentGameNumber = this.gameNumber
+    state.inProgressGames = Array.from(this.previousGames.values())
+
+    this.saveDataService.service.save(state);
   }
 
 
@@ -178,12 +285,4 @@ export class Board {
     }
   }
 
-}
-
-
-
-interface SavedGameState {
-  fails: number;
-  gameNumber: number;
-  grid: Cell[][];
 }

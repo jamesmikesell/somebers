@@ -214,6 +214,11 @@ export class GameBoard {
   }
 
 
+  inProgress(): boolean {
+    return this.playArea.some(row => row.some(cell => cell.status !== SelectionStatus.NONE))
+  }
+
+
   isComplete(): boolean {
     this.clearCompleted();
 

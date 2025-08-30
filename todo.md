@@ -3,8 +3,6 @@
 - add ability to clear all saved data.... new page / component with a text box that you have to type "delete everything" and click a button. 
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
-- persistence of previously played games
-  - ability to partially solve a board, and save them for later
 - tutorial mode
 - sounds
 - show game name somewhere on app / or an app game logo
@@ -20,6 +18,8 @@
 
 # Done
 
+- persistence of previously played games
+  - ability to partially solve a board, and save them for later
 - sort affirmations based on number of mistakes
 - click and partial drag on desktop doesn't clear animation
 - animate changes, show some animation on initial tap to make the lag while waiting to see if a double tap is coming seem like it's part of the game
