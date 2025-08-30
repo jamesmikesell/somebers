@@ -65,3 +65,4 @@ To deploy the application, use the `deploy.sh` script. This script will build th
 -   **Testing:** The project uses Karma and Jasmine for testing. Test files are located alongside the files they test and have a `.spec.ts` extension.
 -   **Documentation:** Each time the functionality of the game is changed, user interactions are modified, or how things are displayed is updated, be sure to update the user-facing documentation.
 -   **PWA/Offline Functionality:** Be cautious of changes that might break the offline Progressive Web App (PWA) functionality. The application is configured to work offline, and any changes to the service worker or caching strategy should be tested thoroughly.
+-   **File Structure:** Model/utility classes should always go at the bottom of a ts file, below the component/service etc.
