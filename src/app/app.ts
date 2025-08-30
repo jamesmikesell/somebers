@@ -26,11 +26,20 @@ export class App {
 
   constructor(public versionCheckService: VersionCheckService) {
     versionCheckService.startVersionCheck();
+    const savedMode = localStorage.getItem('colorMode');
+    if (savedMode) {
+      const savedModeIndex = this.colorModes.findIndex(m => m.mode === savedMode);
+      if (savedModeIndex > -1) {
+        this.currentModeIndex = savedModeIndex;
+      }
+    }
+    document.body.style.colorScheme = this.currentColorMode.scheme;
   }
 
   toggleColorMode() {
     this.currentModeIndex = (this.currentModeIndex + 1) % this.colorModes.length;
     document.body.style.colorScheme = this.currentColorMode.scheme;
+    localStorage.setItem('colorMode', this.currentColorMode.mode);
   }
 }
 
