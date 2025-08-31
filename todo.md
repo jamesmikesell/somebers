@@ -1,7 +1,8 @@
 # TODO
 
-- shapes are hard to see.. make "light" part of shape transparent. ensure shape isn't over text
-- tack "number of correct consecutive moves"., and perhaps "percentage correct last 1k moves".
+- tack "number of correct consecutive moves".
+- track "percentage correct last 1k moves".
+- show winning streak
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
 - tutorial mode
@@ -20,6 +21,8 @@
 
 # Done
 
+- use .map as a copy constructor in board to ensure previous ui states aren't persisted
+- shapes are hard to see.. make "light" part of shape transparent. ensure shape isn't over text
 - color blind accessability
 - add ability to clear all saved data.... new page / component with a text box that you have to type "delete everything" and click a button. 
 - persistence of previously played games
