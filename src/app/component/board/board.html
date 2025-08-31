@@ -98,6 +98,7 @@
                     <app-cell
                       [displayType]="'blank'"
                       [columnCount]="columnCount"
+                      [shapesMode]="shapesMode"
                     ></app-cell>
                   } @else if (
                     rowIndex === 0 || (rowIndex > 0 && colIndex === 0)
@@ -106,12 +107,14 @@
                       [displayType]="'header'"
                       [cell]="cell"
                       [columnCount]="columnCount"
+                      [shapesMode]="shapesMode"
                     ></app-cell>
                   } @else {
                     <app-cell
                       [displayType]="'standard'"
                       [cell]="cell"
                       [columnCount]="columnCount"
+                      [shapesMode]="shapesMode"
                       (used)="use($event)"
                       (cleared)="clear($event)"
                     ></app-cell>

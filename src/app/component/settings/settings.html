@@ -2,6 +2,21 @@
   <h1 style="text-align: center; margin-top: 0px; margin-bottom: 40px;">Settings</h1>
 
   <section style="margin-top: 60px;">
+    <h2>Display Settings</h2>
+    <mat-slide-toggle
+      [(ngModel)]="shapesModeEnabled"
+      (change)="onShapesModeChange($event)"
+    >
+      Enable Shapes Mode
+    </mat-slide-toggle>
+    <p>
+      When enabled, color-coded groups will display a unique shape in each cell,
+      providing an alternative visual cue for players who may have difficulty
+      distinguishing colors. This can enhance accessibility and gameplay for a wider audience.
+    </p>
+  </section>
+
+  <section style="margin-top: 60px;">
     <h2>Clear All Saved Data</h2>
     <p>
       This will permanently delete all your saved game data, including your progress and statistics. This action cannot be undone.

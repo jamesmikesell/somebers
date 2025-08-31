@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
@@ -32,6 +32,7 @@ export class Board {
   solvable = true;
   gamePreviouslyCompleted = false;
   devMode = false;
+  shapesMode: boolean = false;
 
   private previousGames = new Map<number, GameInProgress>();
 
@@ -44,6 +45,10 @@ export class Board {
 
     if (!this.loadGameFromStorage())
       this.updateGameNumber(this.gameNumber || 1);
+
+    const savedShapesMode = localStorage.getItem('shapesModeEnabled');
+    if (savedShapesMode !== null)
+      this.shapesMode = JSON.parse(savedShapesMode);
   }
 
 

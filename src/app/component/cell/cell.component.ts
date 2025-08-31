@@ -16,6 +16,7 @@ export class CellComponent {
   @Input() cell!: Cell;
   @Input() displayType!: CellDisplayType;
   @Input() columnCount!: number; // To pass the --columnCount CSS variable
+  @Input() shapesMode = false;
 
   @Output() used = new EventEmitter<Cell>();
   @Output() cleared = new EventEmitter<Cell>();
