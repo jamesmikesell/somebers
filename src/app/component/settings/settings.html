@@ -12,21 +12,52 @@
     <p>
       When enabled, color-coded groups will display a unique shape in each cell,
       providing an alternative visual cue for players who may have difficulty
-      distinguishing colors. This can enhance accessibility and gameplay for a wider audience.
+      distinguishing colors. This can enhance accessibility and gameplay for a
+      wider audience.
     </p>
   </section>
 
   <section class="settings-section">
     <h2>Clear All Saved Data</h2>
     <p>
-      This will permanently delete all your saved game data, including your progress and statistics. This action cannot be undone.
+      This will permanently delete all your saved game data, including your
+      progress and statistics. This action cannot be undone.
     </p>
     <mat-form-field>
       <mat-label>Type "delete all data" to confirm</mat-label>
-      <input matInput [(ngModel)]="deleteConfirmation" />
+      <input
+        matInput
+        [(ngModel)]="deleteConfirmation"
+        (ngModelChange)="onDeleteInputChange()"
+      />
     </mat-form-field>
-    <button mat-raised-button color="warn" [disabled]="!canDelete" (click)="deleteAllData()">
+    <button
+      mat-raised-button
+      color="warn"
+      [disabled]="!canDelete"
+      (click)="deleteAllData()"
+    >
       Delete All Data
     </button>
   </section>
+
+  @if (devModeEnabled) {
+    <section class="settings-section">
+      <h2>Developer Settings</h2>
+      <mat-form-field>
+        <mat-label>Gesture Recognizer</mat-label>
+        <mat-select
+          [(ngModel)]="gestureMode"
+          (ngModelChange)="onGestureModeChange()"
+        >
+          <mat-option value="HAMMER">Hammer</mat-option>
+          <mat-option value="CUSTOM">Custom</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <p>
+        Choose the gesture recognition library to use. "Hammer" uses Hammer.js,
+        while "Custom" uses a custom implementation.
+      </p>
+    </section>
+  }
 </div>

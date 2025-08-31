@@ -26,11 +26,25 @@ export class GestureDirective implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    let x = 1;
-    if (x === 1)
-      this.hammerInit()
-    else if (x === 2)
-      this.claudeInit()
+    let mode: GestureMode = GestureMode.HAMMER;
+    const savedGestureMode = localStorage.getItem('gestureMode');
+    if (savedGestureMode === 'CUSTOM') {
+      mode = GestureMode.CUSTOM;
+    }
+
+    switch (mode) {
+      case GestureMode.HAMMER:
+        console.log("Hammer Gesture Recognition")
+        this.hammerInit();
+        break;
+        case GestureMode.CUSTOM:
+        console.log("Custom Gesture Recognition")
+        this.claudeInit();
+        break;
+      default:
+        this.hammerInit();
+    }
+
   }
 
 
@@ -67,4 +81,9 @@ export class GestureDirective implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+}
+
+export enum GestureMode {
+  HAMMER,
+  CUSTOM,
 }
