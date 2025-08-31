@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { HammerDirective } from '../../directive/hammer.directive';
+import { GestureDirective } from '../../directive/gesture.directive';
 import { Cell, SelectionStatus } from '../../model/game-board';
 
 export type CellDisplayType = 'blank' | 'header' | 'standard';
@@ -8,7 +8,7 @@ export type CellDisplayType = 'blank' | 'header' | 'standard';
 @Component({
   selector: 'app-cell',
   standalone: true,
-  imports: [CommonModule, HammerDirective],
+  imports: [CommonModule, GestureDirective],
   templateUrl: './cell.component.html',
   styleUrl: './cell.component.scss'
 })
