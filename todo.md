@@ -3,7 +3,6 @@
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
 - tutorial mode
-- color blind accessability
 - sounds
 - show game name somewhere on app / or an app game logo
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
@@ -18,6 +17,7 @@
 
 # Done
 
+- color blind accessability
 - add ability to clear all saved data.... new page / component with a text box that you have to type "delete everything" and click a button. 
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
