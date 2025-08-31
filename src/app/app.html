@@ -19,6 +19,11 @@
     How To Play
   </button>
 
+  <button mat-menu-item routerLink="/settings">
+    <mat-icon>settings</mat-icon>
+    Settings
+  </button>
+
   <button mat-menu-item (click)="toggleColorMode()">
     <mat-icon>{{ currentColorMode.icon }}</mat-icon>
     {{ currentColorMode.label }} Mode

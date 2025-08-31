@@ -1,0 +1,17 @@
+<div class="settings-container">
+  <h1 style="text-align: center; margin-top: 0px; margin-bottom: 40px;">Settings</h1>
+
+  <section style="margin-top: 60px;">
+    <h2>Clear All Saved Data</h2>
+    <p>
+      This will permanently delete all your saved game data, including your progress and statistics. This action cannot be undone.
+    </p>
+    <mat-form-field>
+      <mat-label>Type "delete all data" to confirm</mat-label>
+      <input matInput [(ngModel)]="deleteConfirmation" />
+    </mat-form-field>
+    <button mat-raised-button color="warn" [disabled]="!canDelete" (click)="deleteAllData()">
+      Delete All Data
+    </button>
+  </section>
+</div>

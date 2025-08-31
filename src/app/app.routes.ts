@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { SettingsComponent } from './component/settings/settings';
 import { Board } from './component/board/board';
 import { Documentation } from './component/documentation/documentation';
 
@@ -10,6 +11,10 @@ export const routes: Routes = [
   {
     path: 'documentation',
     component: Documentation
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
   },
   {
     path: '**',

@@ -1,6 +1,5 @@
 # TODO
 
-- add ability to clear all saved data.... new page / component with a text box that you have to type "delete everything" and click a button. 
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
 - tutorial mode
@@ -19,6 +18,7 @@
 
 # Done
 
+- add ability to clear all saved data.... new page / component with a text box that you have to type "delete everything" and click a button. 
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
 - sort affirmations based on number of mistakes
