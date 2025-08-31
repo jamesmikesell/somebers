@@ -1,16 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
-import { GameInProgress } from '../../model/saved-game-data/saved-game-data.v1';
+import { CellDto, GameInProgress } from '../../model/saved-game-data/saved-game-data.v1';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
-import { iterator } from 'rxjs/internal/symbol/iterator';
 
 @Component({
   selector: 'app-board',
@@ -199,8 +198,21 @@ export class Board {
     this.gamePreviouslyCompleted = previous.completed ?? false;
     if (!previous.completed) {
       if (previous.grid) {
+
+        let grid = previous.grid
+          .map(row => row
+            .map(cell => {
+              let newCell = new Cell();
+              newCell.status = cell.status;
+              newCell.required = cell.required;
+              newCell.value = cell.value;
+              newCell.groupNumber = cell.groupNumber;
+
+              return newCell;
+            }));
+
         this.gameBoard = new GameBoard();
-        this.gameBoard.playArea = previous.grid;
+        this.gameBoard.playArea = grid;
         this.gameBoard.constructBoard(this.gameNumber);
         this.solvable = this.gameBoard.solvable;
         this.gameBoard.recalculateSelectedHeaders();
@@ -228,6 +240,19 @@ export class Board {
     let wasComplete = this.previousGames.get(this.gameNumber)?.completed ?? false;
     let someLevelOfComplete = isComplete || wasComplete
 
+    let grid = this.gameBoard.playArea
+      .map(row => row
+        .map(cell => {
+          let cellDto: CellDto = {
+            status: cell.status,
+            required: cell.required,
+            value: cell.value,
+            groupNumber: cell.groupNumber,
+          };
+
+          return cellDto;
+        }))
+
     // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete })
     // we only want a record if they partially or fully played a given game
     if (isInProgress || someLevelOfComplete) {
@@ -235,7 +260,7 @@ export class Board {
         completed: someLevelOfComplete,
         gameNumber: this.gameNumber,
         mistakes: this.mistakes,
-        grid: !someLevelOfComplete ? this.gameBoard.playArea : undefined,
+        grid: !someLevelOfComplete ? grid : undefined,
       }
       this.previousGames.set(this.gameNumber, progress)
     } else {
