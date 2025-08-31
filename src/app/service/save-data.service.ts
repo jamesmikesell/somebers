@@ -25,6 +25,10 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
     SavedGameStateV1,
   ];
 
+  constructor() {
+    this.checkForDuplicateVersionDtos();
+  }
+
 
   save(gameState: T): void {
     let wrapper: DataSaveWrapper<DataSaveVersion> = {
@@ -54,6 +58,18 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
 
   generateSaverDto(): T {
     return (new this.gameVersions[this.gameVersions.length - 1]() as T)
+  }
+
+
+  private checkForDuplicateVersionDtos(): void {
+    const versions = new Set<number>();
+    for (const version of this.gameVersions) {
+      const instance = new version();
+      if (versions.has(instance.version)) {
+        console.error(`Duplicate game state version found: ${instance.version}`);
+      }
+      versions.add(instance.version);
+    }
   }
 
 
