@@ -1,0 +1,9 @@
+import { CellDtoV1 } from "./cell-dto-v1";
+
+export interface GameInProgressDtoV1 {
+  gameNumber: number;
+  mistakes: number;
+  grid?: CellDtoV1[][];
+  completed: boolean;
+}
+

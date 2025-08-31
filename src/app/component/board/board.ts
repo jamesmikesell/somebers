@@ -5,7 +5,8 @@ import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
-import { CellDto, GameInProgress } from '../../model/saved-game-data/saved-game-data.v1';
+import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
+import { GameInProgressDtoV1 } from '../../model/saved-game-data/game-in-progress.v1';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
 import { AFFIRMATIONS } from '../celebration/affirmations';
@@ -33,7 +34,7 @@ export class Board {
   devMode = false;
   shapesMode: boolean = false;
 
-  private previousGames = new Map<number, GameInProgress>();
+  private previousGames = new Map<number, GameInProgressDtoV1>();
 
 
   constructor(
@@ -192,7 +193,7 @@ export class Board {
   }
 
 
-  private constructBoardFromPreviousState(previous: GameInProgress): void {
+  private constructBoardFromPreviousState(previous: GameInProgressDtoV1): void {
     this.gameNumber = previous.gameNumber || 1;
     this.mistakes = previous.mistakes || 0;
     this.gamePreviouslyCompleted = previous.completed ?? false;
@@ -243,7 +244,7 @@ export class Board {
     let grid = this.gameBoard.playArea
       .map(row => row
         .map(cell => {
-          let cellDto: CellDto = {
+          let cellDto: CellDtoV1 = {
             status: cell.status,
             required: cell.required,
             value: cell.value,
@@ -256,7 +257,7 @@ export class Board {
     // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete })
     // we only want a record if they partially or fully played a given game
     if (isInProgress || someLevelOfComplete) {
-      let progress: GameInProgress = {
+      let progress: GameInProgressDtoV1 = {
         completed: someLevelOfComplete,
         gameNumber: this.gameNumber,
         mistakes: this.mistakes,
