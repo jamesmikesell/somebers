@@ -60,6 +60,7 @@ To deploy the application, use the `deploy.sh` script. This script will build th
 -   **Angular Structural Directives**: Avoid using deprecated structural directives like `*ngIf` and `*ngFor`. Instead, use the new `@if` and `@for` control flow syntax.
 -   **Code Style:** The project uses [Prettier](https://prettier.io/) for code formatting.
 -   **Styling:** The project uses SCSS for styling. The main stylesheet is located at `src/styles.scss`.
+-   **Inline Styles:** Avoid using inline styles (`style="..."`) in HTML templates. Prefer defining styles in the corresponding SCSS files for better maintainability and separation of concerns.
 -   **Components:** The application is structured into components, which can be found in the `src/app/component` directory.
 -   **Services:** Services are used for shared logic and can be found in the `src/app/service` directory.
 -   **Testing:** The project uses Karma and Jasmine for testing. Test files are located alongside the files they test and have a `.spec.ts` extension.
