@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { DataSaveVersion, DataSaveWrapper } from '../model/saved-game-data/saved-game-data';
 import { SavedGameStateV1 } from '../model/saved-game-data/saved-game-data.v1';
 import { SavedGameStateV0 } from '../model/saved-game-data/saved-game-data.v0';
+import { SavedGameStateV2 } from '../model/saved-game-data/saved-game-data.v2';
 
 
 
@@ -10,7 +11,7 @@ import { SavedGameStateV0 } from '../model/saved-game-data/saved-game-data.v0';
   providedIn: 'root'
 })
 export class SaveDataService {
-  service = new SaveDataPrivateService<SavedGameStateV1>();
+  service = new SaveDataPrivateService<SavedGameStateV2>();
 }
 
 
@@ -23,6 +24,7 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
   private gameVersions: Constructor[] = [
     SavedGameStateV0,
     SavedGameStateV1,
+    SavedGameStateV2,
   ];
 
   constructor() {
@@ -82,9 +84,9 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
         case 1:
           migratedData = new SavedGameStateV1(migratedData as any as SavedGameStateV0)
           break;
-        // case 2:
-        //   migratedData = new SavedGameStateV2(migratedData as any as SavedGameStateV1)
-        //   break;
+        case 2:
+          migratedData = new SavedGameStateV2(migratedData as any as SavedGameStateV1)
+          break;
 
         default:
           console.warn(`No migration path defined for version ${nextUpgradeVersion}`);

@@ -6,11 +6,11 @@ import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
-import { GameInProgressDtoV1 } from '../../model/saved-game-data/game-in-progress.v1';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
+import { GameInProgressDtoV2 } from '../../model/saved-game-data/game-in-progress.v2';
 
 @Component({
   selector: 'app-board',
@@ -34,7 +34,7 @@ export class Board {
   devMode = false;
   shapesMode: boolean = false;
 
-  private previousGames = new Map<number, GameInProgressDtoV1>();
+  private previousGames = new Map<number, GameInProgressDtoV2>();
 
 
   constructor(
@@ -103,9 +103,11 @@ export class Board {
 
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
+      this.gameBoard.updateMoveHistory(true)
       this.gameBoard.recalculateSelectedHeaders();
     } else {
-      await this.handleIncorrectMove(cell);
+      this.gameBoard.updateMoveHistory(false)
+      this.handleIncorrectMove(cell);
     }
 
     this.saveGameState();
@@ -121,8 +123,10 @@ export class Board {
 
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
+      this.gameBoard.updateMoveHistory(true)
     } else {
-      await this.handleIncorrectMove(cell);
+      this.gameBoard.updateMoveHistory(false)
+      this.handleIncorrectMove(cell);
     }
 
     this.saveGameState();
@@ -193,7 +197,7 @@ export class Board {
   }
 
 
-  private constructBoardFromPreviousState(previous: GameInProgressDtoV1): void {
+  private constructBoardFromPreviousState(previous: GameInProgressDtoV2): void {
     this.gameNumber = previous.gameNumber || 1;
     this.mistakes = previous.mistakes || 0;
     this.gamePreviouslyCompleted = previous.completed ?? false;
@@ -214,6 +218,8 @@ export class Board {
 
         this.gameBoard = new GameBoard();
         this.gameBoard.playArea = grid;
+        this.gameBoard.correctMoveHistory = previous.correctMoveHistory ?? [];
+        this.gameBoard.lastMoveTime = previous.lastMoveTime ? new Date(previous.lastMoveTime) : undefined;
         this.gameBoard.constructBoard(this.gameNumber);
         this.solvable = this.gameBoard.solvable;
         this.gameBoard.recalculateSelectedHeaders();
@@ -257,11 +263,13 @@ export class Board {
     // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete })
     // we only want a record if they partially or fully played a given game
     if (isInProgress || someLevelOfComplete) {
-      let progress: GameInProgressDtoV1 = {
+      let progress: GameInProgressDtoV2 = {
         completed: someLevelOfComplete,
         gameNumber: this.gameNumber,
         mistakes: this.mistakes,
         grid: !someLevelOfComplete ? grid : undefined,
+        lastMoveTime: this.gameBoard.lastMoveTime?.getTime(),
+        correctMoveHistory: this.gameBoard.correctMoveHistory,
       }
       this.previousGames.set(this.gameNumber, progress)
     } else {

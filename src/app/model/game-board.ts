@@ -6,6 +6,8 @@ export class GameBoard {
   get fullBoard(): Cell[][] { return this._fullBoard; }
   playArea: Cell[][] = [];
   solvable: boolean;
+  lastMoveTime: Date;
+  correctMoveHistory: boolean[] = [];
 
   private _fullBoard: Cell[][] = [];
   private goalRows: Cell[] = [];
@@ -29,6 +31,12 @@ export class GameBoard {
     }
 
     this.isComplete();
+  }
+
+
+  updateMoveHistory(correctMove: boolean): void {
+    this.lastMoveTime = new Date();
+    this.correctMoveHistory.push(correctMove);
   }
 
 
