@@ -12,6 +12,7 @@ export class StatsComponent implements OnChanges {
   @Input() mistakes = 0;
   @Input() streak = 0;
   @Input() accuracy: number | null = null;
+  @Input() accuracyHistory: number;
   @Input() previousStreak = 0;
 
   streakAnimationClass = '';

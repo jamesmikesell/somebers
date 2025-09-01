@@ -18,9 +18,11 @@
       }
     </div>
   </div>
-  @if (accuracy !== null) {
+  @if (accuracy !== null && accuracyHistory > 1) {
     <div class="stat-item">
-      <span class="stat-label">Last 1k Moves</span>
+      <span class="stat-label">
+        Last {{ accuracyHistory | number: "1.0-0" }} Moves
+      </span>
       <span class="stat-value">{{ accuracy | number: "1.1-1" }}%</span>
     </div>
   }

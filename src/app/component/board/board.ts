@@ -37,6 +37,7 @@ export class Board {
   gamePreviouslyCompleted = false;
   devMode = false;
   shapesMode: boolean = false;
+  accuracyHistory = 0;
 
   private previousGames = new Map<number, GameInProgressDtoV2>();
   private lastMoveTime: Date;
@@ -324,9 +325,11 @@ export class Board {
 
     const mostRecentMoves = allMoves.slice(-1000);
     if (mostRecentMoves.length > 0) {
+      this.accuracyHistory = mostRecentMoves.length;
       const correctMoves = mostRecentMoves.filter(move => move).length;
       this.accuracy = (correctMoves / mostRecentMoves.length) * 100;
     } else {
+      this.accuracyHistory = 0
       this.accuracy = null;
     }
   }
