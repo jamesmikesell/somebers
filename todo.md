@@ -1,12 +1,8 @@
 # TODO
 
-- tack "number of correct consecutive moves".
-- track "percentage correct last 1k moves".
-- show winning streak
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
 - tutorial mode
-- more polished way to ensure that temp UI state (if a cell is "processing", or should be wiggling etc) aren't persisted to storage
 - sounds
 - show game name somewhere on app / or an app game logo
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
@@ -21,6 +17,10 @@
 
 # Done
 
+- more polished way to ensure that temp UI state (if a cell is "processing", or should be wiggling etc) aren't persisted to storage
+- tack "number of correct consecutive moves".
+- track "percentage correct last 1k moves".
+- show winning streak
 - use .map as a copy constructor in board to ensure previous ui states aren't persisted
 - shapes are hard to see.. make "light" part of shape transparent. ensure shape isn't over text
 - color blind accessability
