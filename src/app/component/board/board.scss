@@ -68,6 +68,27 @@
   align-items: center;
 }
 
+.next-game-container {
+  text-align: center;
+  overflow: hidden;
+  animation: expand-view 1.0s ease-in-out forwards;
+}
+
+@keyframes expand-view {
+  from {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  to {
+    max-height: 80px;
+    opacity: 1;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+
 .unsolvable {
   display: inline-flex;
   align-items: center;

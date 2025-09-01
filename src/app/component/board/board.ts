@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding } from '@angular/core';
+import { first, pairwise } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
@@ -40,6 +41,7 @@ export class Board {
   devMode = false;
   shapesMode: boolean = false;
   accuracyHistory = 0;
+  showNextGameButton = false;
 
   private previousGames = new Map<number, GameInProgressDtoV3>();
   private moveHistory: MoveHistoryDtoV1[] = [];
@@ -77,6 +79,7 @@ export class Board {
     this.mistakes = 0;
     this.gamePreviouslyCompleted = false;
     this.moveHistory = [];
+    this.showNextGameButton = false;
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -220,6 +223,7 @@ export class Board {
     this.mistakes = previous.mistakes || 0;
     this.gamePreviouslyCompleted = previous.completed ?? false;
     this.moveHistory = previous.moveHistory ?? [];
+    this.showNextGameButton = false;
     if (!previous.completed) {
       if (previous.grid) {
 
@@ -374,6 +378,16 @@ export class Board {
         title: affirmation.title,
         subtitle: affirmation.subTitle,
       });
+
+      this.celebrationService.isActive$.pipe(
+        pairwise(),
+        first(([wasActive, isActive]) => wasActive && !isActive),
+      ).subscribe(() => {
+        setTimeout(() => {
+          this.showNextGameButton = true;
+        }, 250);
+      });
+
     }
   }
 

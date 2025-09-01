@@ -65,6 +65,15 @@
     </div>
   </div>
 
+  @if (showNextGameButton) {
+    <div class="next-game-container">
+      <button mat-fab extended (click)="platNextUnfinishedGame()">
+        <mat-icon>skip_next</mat-icon>
+        Next Game
+      </button>
+    </div>
+  }
+
   @if (!solvable) {
     <div class="unsolvable">
       <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
