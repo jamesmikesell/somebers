@@ -1,5 +1,5 @@
 import { Observable, Subject, fromEvent, merge, timer } from 'rxjs';
-import { takeUntil, filter, map } from 'rxjs/operators';
+import { takeUntil, filter, map, tap } from 'rxjs/operators';
 
 
 export class GestureRecognizer {
@@ -74,9 +74,12 @@ export class GestureRecognizer {
     const touchMove$ = fromEvent<TouchEvent>(this.element, 'touchmove');
     const touchEnd$ = fromEvent<TouchEvent>(this.element, 'touchend');
 
-    // Unified start events
+    // Unified start events - filter out right-click
     const startEvents$ = merge(
-      mouseDown$.pipe(map(e => ({ type: 'mouse', event: e }))),
+      mouseDown$.pipe(
+        filter(e => e.button !== 2),
+        map(e => ({ type: 'mouse', event: e }))
+      ),
       touchStart$.pipe(map(e => ({ type: 'touch', event: e })))
     );
 
