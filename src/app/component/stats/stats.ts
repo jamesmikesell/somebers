@@ -33,7 +33,7 @@ export class StatsComponent implements OnChanges {
       }
 
       this.tears = [];
-      const numberOfTears = 3 + Math.floor(this.previousStreak / 50);
+      const numberOfTears = 1 + Math.floor(this.previousStreak / 50);
       for (let i = 0; i < numberOfTears; i++) {
         const left = i % 2 === 0 ? 'calc(50% - 20px)' : 'calc(50% + 20px)';
         const animationDelay = `${i * 0.2}s`;
