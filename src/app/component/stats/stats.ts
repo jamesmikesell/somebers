@@ -20,6 +20,7 @@ export class StatsComponent implements OnChanges {
 
   isCountingDown = false;
   previousStreakDigits: number[] = [];
+  showRedOrb = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -46,6 +47,13 @@ export class StatsComponent implements OnChanges {
         this.streakAnimationClass = 'sad-2';
       } else {
         this.streakAnimationClass = 'sad-1';
+      }
+
+      if (this.previousStreak > 20) {
+        this.showRedOrb = true;
+        setTimeout(() => {
+          this.showRedOrb = false;
+        }, 1500); // Animation duration of red orb
       }
 
       this.tears = [];

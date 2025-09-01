@@ -6,6 +6,9 @@
   <div class="stat-item">
     <span class="stat-label">Streak</span>
     <div class="streak-value-wrapper">
+      @if (showRedOrb) {
+        <div class="red-orb"></div>
+      }
       @if (isCountingDown) {
         <div class="stat-value streak-countdown" [class]="streakAnimationClass">
           @for (digit of previousStreakDigits; track $index) {
