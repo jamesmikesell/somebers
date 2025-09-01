@@ -1,0 +1,16 @@
+<div class="stat-container">
+  <div class="stat-item">
+    <span class="stat-label">Mistakes</span>
+    <span class="stat-value">{{ mistakes }}</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-label">Streak</span>
+    <span class="stat-value" [class]="streakAnimationClass">{{ streak }}</span>
+  </div>
+  @if (accuracy !== null) {
+    <div class="stat-item">
+      <span class="stat-label">Last 1k Moves</span>
+      <span class="stat-value">{{ accuracy | number: "1.1-1" }}%</span>
+    </div>
+  }
+</div>

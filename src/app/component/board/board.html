@@ -33,9 +33,14 @@
         </div>
 
         <div class="stats">
-          <div style="display: inline-flex; align-items: center">
-            <span>Mistakes: {{ mistakes }}</span>
+          <app-stats
+            [mistakes]="mistakes"
+            [streak]="streak"
+            [previousStreak]="previousStreak"
+            [accuracy]="accuracy"
+          ></app-stats>
 
+          <div class="dev-controls">
             @if (devMode) {
               <button
                 matMiniFab
@@ -54,11 +59,12 @@
             }
 
             @if (!solvable) {
-              &nbsp;&nbsp;&nbsp;
-              <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
-                >report_problem</mat-icon
-              >
-              <span>Unsolvable puzzle</span>
+              <div class="unsolvable">
+                <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
+                  >report_problem</mat-icon
+                >
+                <span>Unsolvable puzzle</span>
+              </div>
             }
           </div>
         </div>

@@ -57,6 +57,22 @@
 
 .stats {
   justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.dev-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.unsolvable {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .container {

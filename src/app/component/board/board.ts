@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, HostBinding } from '@angular/core';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
@@ -6,17 +6,18 @@ import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
+import { GameInProgressDtoV2 } from '../../model/saved-game-data/game-in-progress.v2';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
-import { GameInProgressDtoV2 } from '../../model/saved-game-data/game-in-progress.v2';
+import { StatsComponent } from '../stats/stats';
 
 @Component({
   selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent],
+  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent, StatsComponent],
   templateUrl: './board.html',
-  styleUrl: './board.scss'
+  styleUrl: './board.scss',
 })
 export class Board {
 
@@ -29,12 +30,17 @@ export class Board {
   SelectionStatus = SelectionStatus;
   gameBoard = new GameBoard();
   mistakes = 0;
+  streak = 0;
+  previousStreak = 0;
+  accuracy: number | null = null;
   solvable = true;
   gamePreviouslyCompleted = false;
   devMode = false;
   shapesMode: boolean = false;
 
   private previousGames = new Map<number, GameInProgressDtoV2>();
+  private lastMoveTime: Date;
+  private correctMoveHistory: boolean[] = [];
 
 
   constructor(
@@ -43,7 +49,7 @@ export class Board {
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
-    if (!this.loadGameFromStorage())
+    if (!this.tryLoadGameFromStorage())
       this.updateGameNumber(this.gameNumber || 1);
 
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
@@ -68,6 +74,8 @@ export class Board {
     this.gameNumber = game;
     this.mistakes = 0;
     this.gamePreviouslyCompleted = false;
+    this.lastMoveTime = undefined;
+    this.correctMoveHistory = [];
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -101,12 +109,14 @@ export class Board {
     if (cell.status !== SelectionStatus.NONE)
       return;
 
+    this.previousStreak = this.streak;
+
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
-      this.gameBoard.updateMoveHistory(true)
+      this.updateMoveHistory(true)
       this.gameBoard.recalculateSelectedHeaders();
     } else {
-      this.gameBoard.updateMoveHistory(false)
+      this.updateMoveHistory(false)
       this.handleIncorrectMove(cell);
     }
 
@@ -121,11 +131,13 @@ export class Board {
     if (cell.status !== SelectionStatus.NONE)
       return;
 
+    this.previousStreak = this.streak;
+
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
-      this.gameBoard.updateMoveHistory(true)
+      this.updateMoveHistory(true)
     } else {
-      this.gameBoard.updateMoveHistory(false)
+      this.updateMoveHistory(false)
       this.handleIncorrectMove(cell);
     }
 
@@ -177,7 +189,13 @@ export class Board {
   }
 
 
-  private loadGameFromStorage(): boolean {
+  private updateMoveHistory(correctMove: boolean): void {
+    this.lastMoveTime = new Date();
+    this.correctMoveHistory.push(correctMove);
+  }
+
+
+  private tryLoadGameFromStorage(): boolean {
     let savedData = this.saveDataService.service.load();
     if (savedData) {
       this.gameNumber = savedData.currentGameNumber || 1;
@@ -201,6 +219,8 @@ export class Board {
     this.gameNumber = previous.gameNumber || 1;
     this.mistakes = previous.mistakes || 0;
     this.gamePreviouslyCompleted = previous.completed ?? false;
+    this.correctMoveHistory = previous.correctMoveHistory ?? [];
+    this.lastMoveTime = previous.lastMoveTime ? new Date(previous.lastMoveTime) : undefined;
     if (!previous.completed) {
       if (previous.grid) {
 
@@ -218,8 +238,6 @@ export class Board {
 
         this.gameBoard = new GameBoard();
         this.gameBoard.playArea = grid;
-        this.gameBoard.correctMoveHistory = previous.correctMoveHistory ?? [];
-        this.gameBoard.lastMoveTime = previous.lastMoveTime ? new Date(previous.lastMoveTime) : undefined;
         this.gameBoard.constructBoard(this.gameNumber);
         this.solvable = this.gameBoard.solvable;
         this.gameBoard.recalculateSelectedHeaders();
@@ -227,6 +245,8 @@ export class Board {
         this.updateGameNumber(this.gameNumber);
       }
     }
+
+    this.calculateStats();
   }
 
 
@@ -260,7 +280,8 @@ export class Board {
           return cellDto;
         }))
 
-    // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete })
+    // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete, lm: this.lastMoveTime, hist: this.correctMoveHistory })
+
     // we only want a record if they partially or fully played a given game
     if (isInProgress || someLevelOfComplete) {
       let progress: GameInProgressDtoV2 = {
@@ -268,8 +289,8 @@ export class Board {
         gameNumber: this.gameNumber,
         mistakes: this.mistakes,
         grid: !someLevelOfComplete ? grid : undefined,
-        lastMoveTime: this.gameBoard.lastMoveTime?.getTime(),
-        correctMoveHistory: this.gameBoard.correctMoveHistory,
+        lastMoveTime: this.lastMoveTime?.getTime(),
+        correctMoveHistory: this.correctMoveHistory,
       }
       this.previousGames.set(this.gameNumber, progress)
     } else {
@@ -280,8 +301,35 @@ export class Board {
     state.inProgressGames = Array.from(this.previousGames.values())
 
     this.saveDataService.service.save(state);
+
+    this.calculateStats();
   }
 
+
+  private calculateStats(): void {
+    const allGameData = Array.from(this.previousGames.values());
+
+    const allMoves = allGameData
+      .sort((a, b) => (a.lastMoveTime || 0) - (b.lastMoveTime || 0))
+      .flatMap(game => game.correctMoveHistory ?? []);
+
+    this.streak = 0;
+    for (let i = allMoves.length - 1; i >= 0; i--) {
+      if (allMoves[i]) {
+        this.streak++;
+      } else {
+        break;
+      }
+    }
+
+    const mostRecentMoves = allMoves.slice(-1000);
+    if (mostRecentMoves.length > 0) {
+      const correctMoves = mostRecentMoves.filter(move => move).length;
+      this.accuracy = (correctMoves / mostRecentMoves.length) * 100;
+    } else {
+      this.accuracy = null;
+    }
+  }
 
 
   private checkComplete(): void {
