@@ -30,20 +30,9 @@
           >
             <mat-icon>add_circle</mat-icon>
           </button>
-        </div>
 
-        <div class="stats">
-          <app-stats
-            [mistakes]="mistakes"
-            [streak]="streak"
-            [previousStreak]="previousStreak"
-            [longestStreak]="longestStreak"
-            [accuracy]="accuracy"
-            [accuracyHistory]="accuracyHistory"
-          ></app-stats>
-
-          <div class="dev-controls">
-            @if (devMode) {
+          @if (devMode) {
+            <div class="dev-controls">
               <button
                 matMiniFab
                 class="game-button"
@@ -58,21 +47,32 @@
               >
                 <mat-icon>auto_fix_off</mat-icon>
               </button>
-            }
+            </div>
+          }
+        </div>
 
-            @if (!solvable) {
-              <div class="unsolvable">
-                <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
-                  >report_problem</mat-icon
-                >
-                <span>Unsolvable puzzle</span>
-              </div>
-            }
-          </div>
+        <div class="stats">
+          <app-stats
+            [mistakes]="mistakes"
+            [streak]="streak"
+            [previousStreak]="previousStreak"
+            [longestStreak]="longestStreak"
+            [accuracy]="accuracy"
+            [accuracyHistory]="accuracyHistory"
+          ></app-stats>
         </div>
       </div>
     </div>
   </div>
+
+  @if (!solvable) {
+    <div class="unsolvable">
+      <mat-icon style="color: light-dark(#ee0000, #ff3a3a)"
+        >report_problem</mat-icon
+      >
+      <span>Unsolvable puzzle</span>
+    </div>
+  }
 
   <div class="game-board-section">
     <div class="container">
