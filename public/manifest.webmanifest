@@ -2,6 +2,7 @@
   "name": "Some Numbers",
   "short_name": "Some Numbers",
   "display": "standalone",
+  "background_color": "#000000",
   "scope": "./",
   "start_url": "./",
   "icons": [
