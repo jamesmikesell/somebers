@@ -11,6 +11,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 export class StatsComponent implements OnChanges {
   @Input() mistakes = 0;
   @Input() streak = 0;
+  @Input() longestStreak = 0;
   @Input() accuracy: number | null = null;
   @Input() accuracyHistory: number;
   @Input() previousStreak = 0;

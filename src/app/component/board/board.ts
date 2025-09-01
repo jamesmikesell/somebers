@@ -32,6 +32,7 @@ export class Board {
   mistakes = 0;
   streak = 0;
   previousStreak = 0;
+  longestStreak = 0;
   accuracy: number | null = null;
   solvable = true;
   gamePreviouslyCompleted = false;
@@ -322,6 +323,18 @@ export class Board {
         break;
       }
     }
+
+    let currentStreak = 0;
+    this.longestStreak = 0;
+    for (const move of allMoves) {
+      if (move) {
+        currentStreak++;
+      } else {
+        this.longestStreak = Math.max(this.longestStreak, currentStreak);
+        currentStreak = 0;
+      }
+    }
+    this.longestStreak = Math.max(this.longestStreak, currentStreak);
 
     const mostRecentMoves = allMoves.slice(-1000);
     if (mostRecentMoves.length > 0) {
