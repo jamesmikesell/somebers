@@ -5,7 +5,18 @@
   </div>
   <div class="stat-item">
     <span class="stat-label">Streak</span>
-    <span class="stat-value" [class]="streakAnimationClass">{{ streak }}</span>
+    <div class="streak-value-wrapper">
+      <span class="stat-value" [class]="streakAnimationClass">
+        {{ streak }}
+      </span>
+      @for (tear of tears; track $index) {
+        <div
+          class="tear"
+          [style.left]="tear.left"
+          [style.animation-delay]="tear.animationDelay"
+        ></div>
+      }
+    </div>
   </div>
   @if (accuracy !== null) {
     <div class="stat-item">

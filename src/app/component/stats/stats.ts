@@ -15,11 +15,14 @@ export class StatsComponent implements OnChanges {
   @Input() previousStreak = 0;
 
   streakAnimationClass = '';
-
-
+  tears: { left: string; animationDelay: string }[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['streak'] && changes['streak'].currentValue < this.previousStreak && changes['streak'].currentValue === 0) {
+    if (
+      changes['streak'] &&
+      changes['streak'].currentValue < this.previousStreak &&
+      changes['streak'].currentValue === 0
+    ) {
       if (this.previousStreak >= 300) {
         this.streakAnimationClass = 'sad-3';
       } else if (this.previousStreak >= 40) {
@@ -28,9 +31,22 @@ export class StatsComponent implements OnChanges {
         this.streakAnimationClass = 'sad-1';
       }
 
+      this.tears = [];
+      const numberOfTears = 3 + Math.floor(this.previousStreak / 50);
+      for (let i = 0; i < numberOfTears; i++) {
+        const left = i % 2 === 0 ? 'calc(50% - 20px)' : 'calc(50% + 20px)';
+        const animationDelay = `${i * 0.2}s`;
+        this.tears.push({ left, animationDelay });
+      }
+
+      const cumulativeTearDelayMs = (numberOfTears - 1) * 200;
+      const tearAnimationDurationMs = 1500; // From stats.scss, animation: fall 1.5s
+      const timeoutDuration = 1000 + cumulativeTearDelayMs + tearAnimationDurationMs;
+
       setTimeout(() => {
         this.streakAnimationClass = '';
-      }, 1000);
+        this.tears = [];
+      }, timeoutDuration);
     }
   }
 }
