@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, HostBinding } from '@angular/core';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
@@ -6,7 +6,8 @@ import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
-import { GameInProgressDtoV2 } from '../../model/saved-game-data/game-in-progress.v2';
+import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progress.v3';
+import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v1';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
 import { AFFIRMATIONS } from '../celebration/affirmations';
@@ -40,9 +41,8 @@ export class Board {
   shapesMode: boolean = false;
   accuracyHistory = 0;
 
-  private previousGames = new Map<number, GameInProgressDtoV2>();
-  private lastMoveTime: Date;
-  private correctMoveHistory: boolean[] = [];
+  private previousGames = new Map<number, GameInProgressDtoV3>();
+  private moveHistory: MoveHistoryDtoV1[] = [];
 
 
   constructor(
@@ -76,8 +76,7 @@ export class Board {
     this.gameNumber = game;
     this.mistakes = 0;
     this.gamePreviouslyCompleted = false;
-    this.lastMoveTime = undefined;
-    this.correctMoveHistory = [];
+    this.moveHistory = [];
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -192,8 +191,7 @@ export class Board {
 
 
   private updateMoveHistory(correctMove: boolean): void {
-    this.lastMoveTime = new Date();
-    this.correctMoveHistory.push(correctMove);
+    this.moveHistory.push({ timestamp: Date.now(), correct: correctMove });
   }
 
 
@@ -217,12 +215,11 @@ export class Board {
   }
 
 
-  private constructBoardFromPreviousState(previous: GameInProgressDtoV2): void {
+  private constructBoardFromPreviousState(previous: GameInProgressDtoV3): void {
     this.gameNumber = previous.gameNumber || 1;
     this.mistakes = previous.mistakes || 0;
     this.gamePreviouslyCompleted = previous.completed ?? false;
-    this.correctMoveHistory = previous.correctMoveHistory ?? [];
-    this.lastMoveTime = previous.lastMoveTime ? new Date(previous.lastMoveTime) : undefined;
+    this.moveHistory = previous.moveHistory ?? [];
     if (!previous.completed) {
       if (previous.grid) {
 
@@ -282,17 +279,16 @@ export class Board {
           return cellDto;
         }))
 
-    // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete, lm: this.lastMoveTime, hist: this.correctMoveHistory })
+    // console.log({ isInProgress, someLevelOfComplete, isComplete, wasComplete, hist: this.moveHistory })
 
     // we only want a record if they partially or fully played a given game
     if (isInProgress || someLevelOfComplete) {
-      let progress: GameInProgressDtoV2 = {
+      let progress: GameInProgressDtoV3 = {
         completed: someLevelOfComplete,
         gameNumber: this.gameNumber,
         mistakes: this.mistakes,
         grid: !someLevelOfComplete ? grid : undefined,
-        lastMoveTime: this.lastMoveTime?.getTime(),
-        correctMoveHistory: this.correctMoveHistory,
+        moveHistory: this.moveHistory,
       }
       this.previousGames.set(this.gameNumber, progress)
     } else {
@@ -312,12 +308,12 @@ export class Board {
     const allGameData = Array.from(this.previousGames.values());
 
     const allMoves = allGameData
-      .sort((a, b) => (a.lastMoveTime || 0) - (b.lastMoveTime || 0))
-      .flatMap(game => game.correctMoveHistory ?? []);
+      .sort((a, b) => (a.moveHistory[0]?.timestamp || 0) - (b.moveHistory[0]?.timestamp || 0))
+      .flatMap(game => game.moveHistory ?? []);
 
     this.streak = 0;
     for (let i = allMoves.length - 1; i >= 0; i--) {
-      if (allMoves[i]) {
+      if (allMoves[i].correct) {
         this.streak++;
       } else {
         break;
@@ -327,7 +323,7 @@ export class Board {
     let currentStreak = 0;
     this.longestStreak = 0;
     for (const move of allMoves) {
-      if (move) {
+      if (move.correct) {
         currentStreak++;
       } else {
         this.longestStreak = Math.max(this.longestStreak, currentStreak);
@@ -339,7 +335,7 @@ export class Board {
     const mostRecentMoves = allMoves.slice(-1000);
     if (mostRecentMoves.length > 0) {
       this.accuracyHistory = mostRecentMoves.length;
-      const correctMoves = mostRecentMoves.filter(move => move).length;
+      const correctMoves = mostRecentMoves.filter(move => move.correct).length;
       this.accuracy = (correctMoves / mostRecentMoves.length) * 100;
     } else {
       this.accuracyHistory = 0

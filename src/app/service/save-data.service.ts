@@ -4,6 +4,7 @@ import { DataSaveVersion, DataSaveWrapper } from '../model/saved-game-data/saved
 import { SavedGameStateV1 } from '../model/saved-game-data/saved-game-data.v1';
 import { SavedGameStateV0 } from '../model/saved-game-data/saved-game-data.v0';
 import { SavedGameStateV2 } from '../model/saved-game-data/saved-game-data.v2';
+import { SavedGameStateV3 } from '../model/saved-game-data/saved-game-data.v3';
 
 
 
@@ -11,7 +12,7 @@ import { SavedGameStateV2 } from '../model/saved-game-data/saved-game-data.v2';
   providedIn: 'root'
 })
 export class SaveDataService {
-  service = new SaveDataPrivateService<SavedGameStateV2>();
+  service = new SaveDataPrivateService<SavedGameStateV3>();
 }
 
 
@@ -25,6 +26,7 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
     SavedGameStateV0,
     SavedGameStateV1,
     SavedGameStateV2,
+    SavedGameStateV3,
   ];
 
   constructor() {
@@ -86,6 +88,9 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
           break;
         case 2:
           migratedData = new SavedGameStateV2(migratedData as any as SavedGameStateV1)
+          break;
+        case 3:
+          migratedData = new SavedGameStateV3(migratedData as any as SavedGameStateV2)
           break;
 
         default:
