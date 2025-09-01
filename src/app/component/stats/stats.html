@@ -9,8 +9,12 @@
       @if (showRedOrb) {
         <div class="red-orb"></div>
       }
-      @if (isCountingDown) {
-        <div class="stat-value streak-countdown" [class]="streakAnimationClass">
+      @if (isCountingDown || isSlidingUp) {
+        <div
+          class="stat-value streak-countdown"
+          [class.slide-up]="isSlidingUp"
+          [class]="streakAnimationClass"
+        >
           @for (digit of previousStreakDigits; track $index) {
             <div class="digit-roller">
               <div

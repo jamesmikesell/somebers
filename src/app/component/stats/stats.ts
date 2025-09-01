@@ -19,6 +19,7 @@ export class StatsComponent implements OnChanges {
   tears: { left: string; animationDelay: string }[] = [];
 
   isCountingDown = false;
+  isSlidingUp = false;
   previousStreakDigits: number[] = [];
   showRedOrb = false;
 
@@ -38,6 +39,12 @@ export class StatsComponent implements OnChanges {
 
       setTimeout(() => {
         this.isCountingDown = false;
+        if (this.previousStreak >= 10) {
+          this.isSlidingUp = true;
+          setTimeout(() => {
+            this.isSlidingUp = false;
+          }, 500); // slide-up duration
+        }
       }, 2000);
 
       // Trigger sad animation and tears
