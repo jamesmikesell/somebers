@@ -82,6 +82,41 @@
   text-align: center;
 }
 
+.streak-countdown {
+  display: flex;
+  justify-content: center;
+  line-height: 1;
+}
+
+.digit-roller {
+  height: 1em;
+  overflow: hidden;
+}
+
+.digit-roller-inner {
+  --digit-height: 1em;
+  --from-digit-reversed: calc(9 - var(--from-digit));
+
+  transform: translateY(calc(var(--from-digit-reversed) * var(--digit-height) * -1));
+  animation: roll-up-to-zero 2s ease-in-out forwards;
+
+  span {
+    display: block;
+    height: var(--digit-height);
+    line-height: var(--digit-height);
+  }
+}
+
+@keyframes roll-up-to-zero {
+  from {
+    transform: translateY(calc(var(--from-digit-reversed) * var(--digit-height) * -1));
+  }
+
+  to {
+    transform: translateY(calc(9 * var(--digit-height) * -1));
+  }
+}
+
 .tear {
   position: absolute;
   top: 5px;
@@ -98,9 +133,11 @@
     transform: translateY(0);
     opacity: 0;
   }
+
   20% {
     opacity: 1;
   }
+
   100% {
     transform: translateY(40px);
     opacity: 0;
