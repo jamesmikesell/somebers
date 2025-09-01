@@ -1,5 +1,7 @@
 # TODO
 
+- Green processing circle difficult to see on light theme
+- ability to long press on a cell and see an expanded it for better visibility
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
 - tutorial mode
@@ -14,9 +16,11 @@
   - optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
 - ability to undo a move, IE un-hide a hidden number, or de-select a selected number
+- Create a queue of pending moves and If one of the first moves fails, prevent failure of the others
 
 # Done
 
+- button appears to change to next game after game completion
 - more polished way to ensure that temp UI state (if a cell is "processing", or should be wiggling etc) aren't persisted to storage
 - tack "number of correct consecutive moves".
 - track "percentage correct last 1k moves".
@@ -24,7 +28,7 @@
 - use .map as a copy constructor in board to ensure previous ui states aren't persisted
 - shapes are hard to see.. make "light" part of shape transparent. ensure shape isn't over text
 - color blind accessability
-- add ability to clear all saved data.... new page / component with a text box that you have to type "delete everything" and click a button. 
+- add ability to clear all saved data.... new page / component with a text box that you have to type "delete everything" and click a button.
 - persistence of previously played games
   - ability to partially solve a board, and save them for later
 - sort affirmations based on number of mistakes
