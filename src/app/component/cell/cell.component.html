@@ -1,6 +1,6 @@
-@if (displayType === "blank") {
-  <div class="cell"></div>
-} @else if (displayType === "header") {
+<div #positionFinder></div>
+
+<ng-template #headerCellContent>
   <div
     class="cell bg-muted"
     [class.hidden]="cell.hideBackground"
@@ -13,22 +13,16 @@
       <div class="main-number">{{ cell.value }}</div>
     }
   </div>
-} @else if (displayType === "standard") {
+</ng-template>
+
+<ng-template #standardCellContent let-isMagnifiedView="isMagnifiedView">
   <div
     class="cell color-{{ cell.groupNumber }}"
     [class.wiggle]="cell.invalidMove"
     [class.hidden]="cell.hideBackground"
-    [class.processing]="cell.processing"
+    [class.processing]="cell.processing && !isMagnifiedView"
     [class.shape]="shapesMode"
     [style.--columnCount]="columnCount"
-    appGesture
-    (touchStart)="touchStart(cell)"
-    (tap)="use(cell)"
-    (doubleTap)="clear(cell)"
-    (contextmenu)="clear(cell); $event.preventDefault()"
-    (swipeUp)="use(cell)"
-    (swipeDown)="clear(cell)"
-    (allGesturesComplete)="cell.processing = false"
   >
     <div class="corner-number bg-muted">
       {{ cell.colorGroupGoalDisplayValue }}
@@ -41,4 +35,52 @@
       {{ cell.value }}
     </div>
   </div>
+</ng-template>
+
+@if (displayType === "blank") {
+  <div class="cell"></div>
+} @else if (displayType === "header") {
+  <div
+    appGesture
+    (longPress)="isMagnified = true"
+    (allGesturesComplete)="gestureComplete(cell)"
+  >
+    <ng-container *ngTemplateOutlet="headerCellContent"></ng-container>
+  </div>
+
+  @if (isMagnified) {
+    <div class="magnifier-view">
+      <ng-container *ngTemplateOutlet="headerCellContent"></ng-container>
+    </div>
+  }
+} @else if (displayType === "standard") {
+  <div
+    appGesture
+    (touchStart)="touchStart(cell)"
+    (tap)="use(cell)"
+    (doubleTap)="clear(cell)"
+    (contextmenu)="clear(cell); $event.preventDefault()"
+    (swipeUp)="use(cell)"
+    (swipeDown)="clear(cell)"
+    (longPress)="isMagnified = true"
+    (allGesturesComplete)="gestureComplete(cell)"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        standardCellContent;
+        context: { isMagnifiedView: false }
+      "
+    ></ng-container>
+  </div>
+
+  @if (isMagnified) {
+    <div class="magnifier-view">
+      <ng-container
+        *ngTemplateOutlet="
+          standardCellContent;
+          context: { isMagnifiedView: true }
+        "
+      ></ng-container>
+    </div>
+  }
 }
