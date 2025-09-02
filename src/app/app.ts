@@ -13,10 +13,10 @@ import { VersionCheckService } from './service/version-check.service';
 export class App {
 
 
-  colorModes = [
-    { mode: 'auto', scheme: 'light dark', label: 'Auto', icon: 'brightness_auto' },
-    { mode: 'light', scheme: 'light', label: 'Light', icon: 'light_mode' },
-    { mode: 'dark', scheme: 'dark', label: 'Dark', icon: 'dark_mode' }
+  colorModes: ColorMode[] = [
+    { mode: 'auto', cssScheme: 'light dark', label: 'Auto', icon: 'brightness_auto' },
+    { mode: 'light', cssScheme: 'light', label: 'Light', icon: 'light_mode' },
+    { mode: 'dark', cssScheme: 'dark', label: 'Dark', icon: 'dark_mode' }
   ];
   currentModeIndex = 0;
 
@@ -33,13 +33,43 @@ export class App {
         this.currentModeIndex = savedModeIndex;
       }
     }
-    document.body.style.colorScheme = this.currentColorMode.scheme;
+
+    this.setColorMode();
   }
+
 
   toggleColorMode() {
     this.currentModeIndex = (this.currentModeIndex + 1) % this.colorModes.length;
-    document.body.style.colorScheme = this.currentColorMode.scheme;
+    this.setColorMode();
     localStorage.setItem('colorMode', this.currentColorMode.mode);
+  }
+
+
+  private getOrCreateThemeColorMeta(): HTMLMetaElement {
+    let themeColorMeta = document.querySelector('meta[name="theme-color"]') as HTMLMetaElement;
+    if (!themeColorMeta) {
+      themeColorMeta = document.createElement('meta');
+      themeColorMeta.name = 'theme-color';
+      document.head.appendChild(themeColorMeta);
+    }
+    return themeColorMeta;
+  }
+
+
+  private setColorMode(): void {
+    document.body.style.colorScheme = this.currentColorMode.cssScheme;
+
+    const computedStyle = window.getComputedStyle(document.body);
+    computedStyle.backgroundColor;
+
+    const themeColorMeta = this.getOrCreateThemeColorMeta();
+    themeColorMeta.content = computedStyle.backgroundColor;
   }
 }
 
+interface ColorMode {
+  mode: "light" | "dark" | "auto";
+  cssScheme: "light" | "dark" | "light dark";
+  label: string;
+  icon: string;
+}
