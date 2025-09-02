@@ -1,5 +1,7 @@
 # TODO
 
+- on smaller screens, gap in stats container is causing the game board to shrink smaller than page width
+- missing left margin on stats container
 - ability to long press on a cell and see an expanded it for better visibility
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
