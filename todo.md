@@ -1,6 +1,5 @@
 # TODO
 
-- Green processing circle difficult to see on light theme
 - ability to long press on a cell and see an expanded it for better visibility
 - ability to pinch to zoom, even on game board controls
 - record time spent per game
@@ -20,6 +19,7 @@
 
 # Done
 
+- Green processing circle difficult to see on light theme
 - button appears to change to next game after game completion
 - more polished way to ensure that temp UI state (if a cell is "processing", or should be wiggling etc) aren't persisted to storage
 - tack "number of correct consecutive moves".
