@@ -360,7 +360,7 @@
   content: '';
   position: absolute;
   inset: -6px;
-  border: 3px dashed rgba(0, 200, 255, 0.8);
+  border: 3px dashed light-dark(rgb(0, 106, 255), rgba(0, 200, 255, 0.8));
   border-radius: 50%;
   animation: spinDashed 1.8s ease-in-out infinite;
   z-index: 1;
