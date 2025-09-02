@@ -97,12 +97,12 @@
 }
 
 .digit-roller {
-  height: 1em;
+  height: 1.05em;
   overflow: hidden;
 }
 
 .digit-roller-inner {
-  --digit-height: 1em;
+  --digit-height: 1.05em;
   --from-digit-reversed: calc(9 - var(--from-digit));
 
   transform: translateY(calc(var(--from-digit-reversed) * var(--digit-height) * -1));
