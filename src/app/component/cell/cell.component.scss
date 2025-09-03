@@ -15,20 +15,27 @@
   --_cellGap: var(--cellGap, -100px);
 }
 
+
+.cell-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+
+.cell-fade::before {
+  transition: filter 0.5s ease-out, opacity 0.5s ease-out;
+}
+
 .bg-muted {
   color: var(--mat-sys-on-surface-variant);
 
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background: var(--mat-sys-surface-variant);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 }
 
@@ -38,16 +45,7 @@
 
 .color-1 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-1);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -65,16 +63,7 @@
 
 .color-2 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-2);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -91,16 +80,7 @@
 
 .color-3 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-3);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -117,16 +97,7 @@
 
 .color-4 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-4);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -143,16 +114,7 @@
 
 .color-5 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-5);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -169,16 +131,7 @@
 
 .color-6 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-6);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -195,16 +148,7 @@
 
 .color-7 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-7);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -221,16 +165,7 @@
 
 .color-8 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-8);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -247,16 +182,7 @@
 
 .color-9 {
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    border-radius: inherit;
     background-color: var(--color-9);
-    transition: filter 0.5s ease-out, opacity 0.5s ease-out;
   }
 
   &.hidden {
@@ -363,7 +289,7 @@
   inset: -6px;
   border: 3px dashed light-dark(rgb(0, 106, 255), rgba(0, 200, 255, 0.8));
   border-radius: 50%;
-  animation: spinDashed 1.8s ease-in-out infinite;
+  animation: spinDashed 4s ease-in-out infinite;
   z-index: 1;
 }
 

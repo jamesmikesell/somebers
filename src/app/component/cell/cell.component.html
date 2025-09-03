@@ -2,7 +2,7 @@
 
 <ng-template #headerCellContent>
   <div
-    class="cell bg-muted"
+    class="cell cell-bg cell-fade bg-muted"
     [class.hidden]="cell.hideBackground"
     [style.--columnCount]="columnCount"
   >
@@ -17,7 +17,7 @@
 
 <ng-template #standardCellContent let-isMagnifiedView="isMagnifiedView">
   <div
-    class="cell color-{{ cell.groupNumber }}"
+    class="cell cell-bg cell-fade color-{{ cell.groupNumber }}"
     [class.wiggle]="cell.invalidMove"
     [class.hidden]="cell.hideBackground"
     [class.processing]="cell.processing && !isMagnifiedView"
