@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-This repo hosts Some Numbers, an Angular SPA deployed as static pages. Follow these conventions to keep changes consistent and safe to ship.
+This repo hosts Somebers, an Angular SPA deployed as static pages. Follow these conventions to keep changes consistent and safe to ship.
 
 ## Project Structure & Module Organization
 - Source: `src/app` by feature: `component/`, `service/`, `model/`, `directive/` (Angular Material UI, HammerJS for gestures).

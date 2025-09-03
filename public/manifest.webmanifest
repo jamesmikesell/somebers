@@ -1,6 +1,6 @@
 {
-  "name": "Some Numbers",
-  "short_name": "Some Numbers",
+  "name": "Somebers",
+  "short_name": "Somebers",
   "display": "standalone",
   "background_color": "#000000",
   "scope": "./",

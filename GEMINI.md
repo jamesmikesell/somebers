@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project is a web-based number puzzle game called "Some Numbers," built with Angular. The game presents the user with a grid of numbers, and the player's objective is to determine which numbers are part of the solution and which are not. The game is won when the sum of the selected numbers in each row, column, and color-coded group matches the target values for each.
+This project is a web-based number puzzle game called "Somebers," built with Angular. The game presents the user with a grid of numbers, and the player's objective is to determine which numbers are part of the solution and which are not. The game is won when the sum of the selected numbers in each row, column, and color-coded group matches the target values for each.
 
 The application is a single-page application (SPA) that uses Angular for its frontend framework and Angular Material for its UI components. The game state is saved to the browser's local storage, allowing players to resume their progress.
 
