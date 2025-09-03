@@ -15,7 +15,7 @@ This repo hosts Somebers, an Angular SPA deployed as static pages. Follow these 
 - `npm start`: Start dev server with HMR at `http://localhost:4200`.
 - `npm run startExternal`: Serve on `0.0.0.0` with local SSL certs.
 - `npm run startExternalOffline`: Dev serve using production config.
-- `npm run build`: Production build (base href `/some-numbers/`).
+- `npm run build`: Production build (base href `/`).
 - `npm test`: Run unit tests (Karma + Jasmine).
 - `./deploy.sh`: Stamp version, update `public/version.json`, build, push static site to `deploy` branch (`docs/`).
 

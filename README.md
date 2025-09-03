@@ -1,3 +1,5 @@
-# Numbers Game
+# Somebers
 
-Demo: <https://jamesmikesell.github.io/some-numbers/>
+Somebers is an addicting number puzzle game.
+
+Play now at [somebers.com](https://somebers.com).
