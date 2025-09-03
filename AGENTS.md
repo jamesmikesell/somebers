@@ -23,6 +23,7 @@ This repo hosts Some Numbers, an Angular SPA deployed as static pages. Follow th
 - Indentation: 2 spaces; UTF‑8; trim trailing whitespace (`.editorconfig`).
 - TypeScript: single quotes; SCSS for styles. Avoid inline `style="..."` in templates.
 - Angular control flow: prefer `@if`, `@for` over `*ngIf`, `*ngFor`.
+- If statements: put the action on a separate line (no single-line `if (cond) doThing();`).
 - Naming: `thing.component.ts`, `thing.service.ts`, `thing.directive.ts`; selector prefix `app-`.
 - File layout: place model/utility classes at the bottom of a `.ts` file.
 - Formatting: Prettier 3 (HTML uses Angular parser). Example: `npx prettier --check .`.
@@ -41,4 +42,3 @@ This repo hosts Some Numbers, an Angular SPA deployed as static pages. Follow th
 - PWA/offline: service worker configured via `ngsw-config.json`; test offline after changes.
 - State migrations: when changing saved data, add/adjust versions under `model/saved-game-data/`.
 - Documentation: update `GEMINI.md` and `component/documentation/` when interactions or UI change.
-
