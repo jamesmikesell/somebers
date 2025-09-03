@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { AppVersion } from '../../app-version';
+import { Title } from "../title/title";
 
 @Component({
   selector: 'app-documentation',
-  imports: [],
+  imports: [Title],
   templateUrl: './documentation.html',
   styleUrl: './documentation.scss'
 })

@@ -16,10 +16,11 @@ import { UndoManager } from '../../service/undo-manager';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
 import { StatsComponent } from '../stats/stats';
+import { Title } from "../title/title";
 
 @Component({
   selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent, StatsComponent],
+  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent, StatsComponent, Title],
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
