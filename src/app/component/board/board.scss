@@ -81,6 +81,7 @@
     margin-top: 0;
     margin-bottom: 0;
   }
+
   to {
     max-height: 80px;
     opacity: 1;
@@ -123,6 +124,10 @@
     padding: 0;
   }
 
+  td {
+    position: relative;
+  }
+
   tr:first-child td {
     padding-bottom: var(--headerSpacing);
   }
@@ -139,4 +144,36 @@
     padding-right: var(--cellGap);
   }
 
+}
+
+
+.game-table td::after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--cellGap));
+  left: calc(-1 * var(--cellGap));
+  width: calc(100% + var(--cellGap));
+  height: calc(100% + var(--cellGap));
+  z-index: 1;
+  pointer-events: none;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: var(--mat-sys-on-surface-variant);
+  border-width: 0;
+}
+
+.game-table td.shape-border-top::after {
+  border-top-width: var(--cellGap);
+}
+
+.game-table td.shape-border-left::after {
+  border-left-width: var(--cellGap);
+}
+
+.game-table td.shape-border-right::after {
+  border-right-width: var(--cellGap);
+}
+
+.game-table td.shape-border-bottom::after {
+  border-bottom-width: var(--cellGap);
 }

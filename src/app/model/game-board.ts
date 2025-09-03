@@ -28,6 +28,8 @@ export class GameBoard {
       this._fullBoard.push(row);
     }
 
+    this.computeCellBorders();
+
     this.isComplete();
   }
 
@@ -265,6 +267,23 @@ export class GameBoard {
   }
 
 
+  private computeCellBorders(): void {
+    const rows = this.playArea.length;
+    const cols = this.playArea[0].length;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const cell = this.playArea[r][c];
+
+        cell.borderTop = r === 0 || this.playArea[r - 1][c].groupNumber !== cell.groupNumber;
+        cell.borderLeft = c === 0 || this.playArea[r][c - 1].groupNumber !== cell.groupNumber;
+        cell.borderRight = c === cols - 1 || this.playArea[r][c + 1].groupNumber !== cell.groupNumber;
+        cell.borderBottom = r === rows - 1 || this.playArea[r + 1][c].groupNumber !== cell.groupNumber;
+      }
+    }
+  }
+
+
   private isRowComplete(rowIndex: number): boolean {
     return this.playArea[rowIndex].every(cell =>
       (cell.required && cell.status === SelectionStatus.SELECTED) ||
@@ -310,6 +329,10 @@ export class Cell {
   invalidMove: boolean = false;
   hideBackground = false;
   processing = false;
+  borderTop = false;
+  borderLeft = false;
+  borderRight = false;
+  borderBottom = false;
 
   constructor(
   ) { }

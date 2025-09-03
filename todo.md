@@ -1,7 +1,6 @@
 # TODO
 
 - undo move menu option in menu
-- border around color groups, esp in shape mode
 - record time spent per game
 - tutorial mode
 - sounds
@@ -19,6 +18,7 @@
 
 # Done
 
+- border around color groups, esp in shape mode
 - ability to long press on a cell and see an expanded it for better visibility
 - Green processing circle difficult to see on light theme
 - button appears to change to next game after game completion

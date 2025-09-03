@@ -110,7 +110,20 @@
           ) {
             <tr>
               @for (cell of row; track $index; let colIndex = $index) {
-                <td>
+                <td
+                  [class.shape-border-top]="
+                    shapesMode && !cell?.hideBackground && cell?.borderTop
+                  "
+                  [class.shape-border-left]="
+                    shapesMode && !cell?.hideBackground && cell?.borderLeft
+                  "
+                  [class.shape-border-right]="
+                    shapesMode && !cell?.hideBackground && cell?.borderRight
+                  "
+                  [class.shape-border-bottom]="
+                    shapesMode && !cell?.hideBackground && cell?.borderBottom
+                  "
+                >
                   @if (rowIndex === 0 && colIndex === 0) {
                     <app-cell
                       [displayType]="'blank'"
