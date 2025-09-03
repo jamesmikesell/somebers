@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { CelebrationComponent } from "./component/celebration/celebration";
 import { MATERIAL_IMPORTS } from './material-imports';
+import { BoardUiService } from './service/board-ui.service';
 import { VersionCheckService } from './service/version-check.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +13,7 @@ import { VersionCheckService } from './service/version-check.service';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
-
+export class App implements OnInit, OnDestroy {
 
   colorModes: ColorMode[] = [
     { mode: 'auto', cssScheme: 'light dark', label: 'Auto', icon: 'brightness_auto' },
@@ -19,12 +21,17 @@ export class App {
     { mode: 'dark', cssScheme: 'dark', label: 'Dark', icon: 'dark_mode' }
   ];
   currentModeIndex = 0;
+  get currentColorMode() { return this.colorModes[this.currentModeIndex] }
+  boardVisible = false;
+  canUndo = false;
 
-  get currentColorMode() {
-    return this.colorModes[this.currentModeIndex];
-  }
+  private destroy = new Subject<void>();
 
-  constructor(public versionCheckService: VersionCheckService) {
+
+  constructor(
+    public versionCheckService: VersionCheckService,
+    public boardUiService: BoardUiService,
+  ) {
     versionCheckService.startVersionCheck();
     const savedMode = localStorage.getItem('colorMode');
     if (savedMode) {
@@ -35,6 +42,22 @@ export class App {
     }
 
     this.setColorMode();
+  }
+
+
+  ngOnInit(): void {
+    this.boardUiService.boardVisible$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(visible => setTimeout(() => this.boardVisible = visible, 0))
+
+    this.boardUiService.canUndo$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(canUndo => setTimeout(() => this.canUndo = canUndo, 0))
+  }
+
+
+  ngOnDestroy(): void {
+    this.destroy.next();
   }
 
 
@@ -66,6 +89,7 @@ export class App {
     themeColorMeta.content = computedStyle.backgroundColor;
   }
 }
+
 
 interface ColorMode {
   mode: "light" | "dark" | "auto";

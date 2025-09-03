@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding } from '@angular/core';
-import { first, pairwise } from 'rxjs';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { first, pairwise, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
@@ -9,8 +9,10 @@ import { Random } from '../../model/random';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
 import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progress.v3';
 import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v1';
+import { BoardUiService } from '../../service/board-ui.service';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
+import { UndoManager } from '../../service/undo-manager';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
 import { StatsComponent } from '../stats/stats';
@@ -21,7 +23,7 @@ import { StatsComponent } from '../stats/stats';
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
-export class Board {
+export class Board implements OnInit, OnDestroy {
 
   @HostBinding('style.--columnCount')
   get columnCount() {
@@ -45,13 +47,18 @@ export class Board {
 
   private previousGames = new Map<number, GameInProgressDtoV3>();
   private moveHistory: MoveHistoryDtoV1[] = [];
+  private undo: UndoManager;
+  private destroy = new Subject<void>();
 
 
   constructor(
     private celebrationService: CelebrationService,
     private saveDataService: SaveDataService,
+    private boardUiService: BoardUiService,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
+
+    this.configureUndo();
 
     if (!this.tryLoadGameFromStorage())
       this.updateGameNumber(this.gameNumber || 1);
@@ -59,6 +66,32 @@ export class Board {
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
     if (savedShapesMode !== null)
       this.shapesMode = JSON.parse(savedShapesMode);
+  }
+
+
+  ngOnInit(): void {
+    this.boardUiService.boardVisible$.next(true);
+    this.boardUiService.undoRequested$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.undo.undoLast())
+    this.boardUiService.setCanUndo(this.undo.hasUndo());
+  }
+
+
+  ngOnDestroy(): void {
+    this.destroy.next()
+    this.boardUiService.boardVisible$.next(false);
+  }
+
+
+  private configureUndo(): void {
+    this.undo = new UndoManager({
+      getGameBoard: () => this.gameBoard,
+      getMoveHistory: () => this.moveHistory,
+      decrementMistakes: () => { this.mistakes-- },
+      moveUndone: () => { this.saveGameState() },
+      undoEnabledStateChange: (canUndo: boolean) => this.boardUiService.setCanUndo(canUndo),
+    });
   }
 
 
@@ -80,6 +113,7 @@ export class Board {
     this.gamePreviouslyCompleted = false;
     this.moveHistory = [];
     this.showNextGameButton = false;
+    this.undo.clear();
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -118,9 +152,11 @@ export class Board {
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
       this.updateMoveHistory(true)
+      this.undo.pushCell('select', cell, SelectionStatus.SELECTED);
       this.gameBoard.recalculateSelectedHeaders();
     } else {
       this.updateMoveHistory(false)
+      this.undo.pushMistake();
       this.handleIncorrectMove(cell);
     }
 
@@ -140,8 +176,10 @@ export class Board {
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
       this.updateMoveHistory(true)
+      this.undo.pushCell('clear', cell, SelectionStatus.CLEARED);
     } else {
       this.updateMoveHistory(false)
+      this.undo.pushMistake();
       this.handleIncorrectMove(cell);
     }
 
@@ -224,6 +262,7 @@ export class Board {
     this.gamePreviouslyCompleted = previous.completed ?? false;
     this.moveHistory = previous.moveHistory ?? [];
     this.showNextGameButton = false;
+    this.undo.clear();
     if (!previous.completed) {
       if (previous.grid) {
 
@@ -350,6 +389,7 @@ export class Board {
 
   private checkComplete(): void {
     if (this.gameBoard.isComplete()) {
+      this.undo.clear();
       const boardSize = this.gameBoard.playArea.length;
       const mistakes = this.mistakes;
       const affirmationsCount = AFFIRMATIONS.length;
