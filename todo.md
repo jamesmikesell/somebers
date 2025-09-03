@@ -1,6 +1,7 @@
 # TODO
 
-- on smaller screens, gap in stats container is causing the game board to shrink smaller than page width
+- undo move menu option in menu
+- border around color groups, esp in shape mode
 - record time spent per game
 - tutorial mode
 - sounds
