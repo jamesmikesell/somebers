@@ -44,6 +44,7 @@ export class Board implements OnInit, OnDestroy {
   shapesMode: boolean = false;
   accuracyHistory = 0;
   showNextGameButton = false;
+  disableAnimations = false;
 
   private previousGames = new Map<number, GameInProgressDtoV3>();
   private moveHistory: MoveHistoryDtoV1[] = [];
@@ -136,6 +137,8 @@ export class Board implements OnInit, OnDestroy {
 
     this.gameBoard.constructBoard(this.gameNumber);
     this.solvable = this.gameBoard.solvable;
+
+    this.disableAnimationsTemporarily();
 
     this.saveGameState();
   }
@@ -231,6 +234,13 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
+  private async disableAnimationsTemporarily(): Promise<void> {
+    this.disableAnimations = true
+    await new Promise(resolve => setTimeout(resolve, 0));
+    this.disableAnimations = false
+  }
+
+
   private updateMoveHistory(correctMove: boolean): void {
     this.moveHistory.push({ timestamp: Date.now(), correct: correctMove });
   }
@@ -283,6 +293,7 @@ export class Board implements OnInit, OnDestroy {
         this.gameBoard.constructBoard(this.gameNumber);
         this.solvable = this.gameBoard.solvable;
         this.gameBoard.recalculateSelectedHeaders();
+        this.disableAnimationsTemporarily();
       } else {
         this.updateGameNumber(this.gameNumber);
       }

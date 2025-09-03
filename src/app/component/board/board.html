@@ -138,6 +138,7 @@
                       [cell]="cell"
                       [columnCount]="columnCount"
                       [shapesMode]="shapesMode"
+                      [disableAnimation]="disableAnimations"
                     ></app-cell>
                   } @else {
                     <app-cell
@@ -145,6 +146,7 @@
                       [cell]="cell"
                       [columnCount]="columnCount"
                       [shapesMode]="shapesMode"
+                      [disableAnimation]="disableAnimations"
                       (used)="use($event)"
                       (cleared)="clear($event)"
                     ></app-cell>

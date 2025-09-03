@@ -17,6 +17,7 @@ export class CellComponent implements AfterViewInit, OnChanges {
   @Input() displayType!: CellDisplayType;
   @Input() columnCount!: number; // To pass the --columnCount CSS variable
   @Input() shapesMode = false;
+  @Input() disableAnimation = false;
 
   @Output() used = new EventEmitter<Cell>();
   @Output() cleared = new EventEmitter<Cell>();

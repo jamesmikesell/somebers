@@ -16,6 +16,17 @@
 }
 
 
+.disable-animation,
+.disable-animation *,
+.disable-animation::before,
+.disable-animation::after,
+.disable-animation *::before,
+.disable-animation *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+
 .cell-bg::before {
   content: '';
   position: absolute;
@@ -28,6 +39,7 @@
 }
 
 .cell-fade::before {
+  // background fading
   transition: filter 0.5s ease-out, opacity 0.5s ease-out;
 }
 

@@ -4,6 +4,7 @@
   <div
     class="cell cell-bg cell-fade bg-muted"
     [class.hidden]="cell.hideBackground"
+    [class.disable-animation]="disableAnimation"
     [style.--columnCount]="columnCount"
   >
     @if (!cell.hideBackground) {
@@ -21,6 +22,7 @@
     [class.wiggle]="cell.invalidMove"
     [class.hidden]="cell.hideBackground"
     [class.processing]="cell.processing && !isMagnifiedView"
+    [class.disable-animation]="disableAnimation"
     [class.shape]="shapesMode"
     [style.--columnCount]="columnCount"
   >
