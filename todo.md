@@ -1,6 +1,6 @@
 # TODO
 
-- long press should move higher (try 5x5)
+- small numbers no longer have a background... not a problem, but probably remove their styling
 - migrate to indexeddb
 - record time spent per game
 - tutorial mode
