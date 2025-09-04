@@ -1,7 +1,12 @@
 # TODO
 
+- documentation note on cheating
+- faster animation on zoom
 - small numbers no longer have a background... not a problem, but probably remove their styling
 - migrate to indexeddb
+- multi-player: pvp
+- multi-player: co-op
+- stats streak last 5 days, week, month, all time
 - record time spent per game
 - tutorial mode
 - sounds
