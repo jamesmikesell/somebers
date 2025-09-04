@@ -1,0 +1,31 @@
+/* Overlay styles for transfer completion notice */
+.transfer-warning-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.transfer-warning-panel {
+  max-width: 680px;
+  background: var(--mat-sys-surface, #fff);
+  color: var(--mat-sys-on-surface, #000);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+.transfer-warning-panel h2 {
+  margin-top: 0;
+}
+
+.transfer-warning-panel .actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+

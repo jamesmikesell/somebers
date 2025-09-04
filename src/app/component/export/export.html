@@ -1,0 +1,65 @@
+<app-title>Export</app-title>
+
+<!-- <p>Local storage: {{ storageUsageText }}</p>
+<p>Compressed backup size: {{ compressedSizeText }}</p> -->
+
+<!-- <button mat-raised-button color="primary" (click)="export()">Export</button> -->
+
+<!-- @if (message) {
+  <p>{{ message }}</p>
+} -->
+
+<div style="max-width: 800px; margin: 20px">
+  <br /><br />
+  <h2>We've Moved!</h2>
+  <br />
+  <p>
+    Some Numbers is now officially Somebers! To celebrate, we're moving. But
+    don't worry, we won't ask you to help or borrow your pickup truck.
+  </p>
+  <p>
+    Please use the "Begin Transfer" button below to transfer your game history
+    to somebers.com and follow any instructions after transfer is complete.
+  </p>
+  <p>See you there!</p>
+</div>
+
+@if (!inTransfer) {
+  <div style="margin: 16px">
+    <!-- <label for="destUrl">Destination /#/export URL</label>
+    <input id="destUrl" type="url" [(ngModel)]="destUrl" placeholder="https://new.example.com/#/export" style="display:block; width:100%; max-width:600px; margin:8px 0;" /> -->
+    <button matButton="outlined" (click)="beginTransfer()">
+      Begin Transfer
+    </button>
+  </div>
+}
+
+@if (inTransfer) {
+  <p>{{ progressText }}</p>
+}
+
+@if (showTransferWarning) {
+  <div class="transfer-warning-overlay">
+    <div class="transfer-warning-panel">
+      <h2>Data Transfer Complete</h2>
+      <p>
+        Your game data has been transferred to Somebers on this device. To avoid
+        confusion, please close this page, remove any bookmarks, and if this is
+        saved to a mobile device desktop as a standalone app, delete that app
+        and reinstall. Use
+        <a href="https://somebers.com" target="_blank" rel="noopener"
+          >somebers.com</a
+        >
+        from now on.
+      </p>
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="openSomebers()">
+          Open somebers.com
+        </button>
+        <button mat-button (click)="dismissTransferWarning()">
+          Continue here
+        </button>
+      </div>
+    </div>
+  </div>
+}
