@@ -1,5 +1,7 @@
 # TODO
 
+- long press should move higher (try 5x5)
+- migrate to indexeddb
 - record time spent per game
 - tutorial mode
 - sounds
@@ -15,6 +17,7 @@
 
 # Done
 
+- long-press isn't working in safari
 - ability to undo a move, IE un-hide a hidden number, or de-select a selected number
 - show game name somewhere on app / or an app game logo
 - undo move menu option in menu

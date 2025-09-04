@@ -335,5 +335,6 @@
 
   .cell {
     animation: magnify-and-move 0.3s ease-out forwards;
+    flex: 0 0 auto;
   }
 }
