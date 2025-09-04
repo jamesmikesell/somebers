@@ -16,9 +16,9 @@ import { Subject, takeUntil } from 'rxjs';
 export class App implements OnInit, OnDestroy {
 
   colorModes: ColorMode[] = [
-    { mode: 'auto', cssScheme: 'light dark', label: 'Auto', icon: 'brightness_auto' },
-    { mode: 'light', cssScheme: 'light', label: 'Light', icon: 'light_mode' },
-    { mode: 'dark', cssScheme: 'dark', label: 'Dark', icon: 'dark_mode' }
+    { mode: 'auto', cssScheme: 'light dark', label: 'Auto Color Theme', icon: 'brightness_auto' },
+    { mode: 'light', cssScheme: 'light', label: 'Light Theme', icon: 'light_mode' },
+    { mode: 'dark', cssScheme: 'dark', label: 'Dark Theme', icon: 'dark_mode' }
   ];
   currentModeIndex = 0;
   get currentColorMode() { return this.colorModes[this.currentModeIndex] }
