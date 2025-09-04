@@ -49,7 +49,7 @@ export class Board implements OnInit, OnDestroy {
 
   private previousGames = new Map<number, GameInProgressDtoV3>();
   private moveHistory: MoveHistoryDtoV1[] = [];
-  private undo: UndoManager;
+  private undoManager: UndoManager;
   private destroy = new Subject<void>();
 
 
@@ -75,8 +75,8 @@ export class Board implements OnInit, OnDestroy {
     this.boardUiService.boardVisible$.next(true);
     this.boardUiService.undoRequested$
       .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.undo.undoLast())
-    this.boardUiService.setCanUndo(this.undo.hasUndo());
+      .subscribe(() => this.undoManager.undoLast())
+    this.boardUiService.setCanUndo(this.undoManager.hasUndo());
   }
 
 
@@ -87,11 +87,14 @@ export class Board implements OnInit, OnDestroy {
 
 
   private configureUndo(): void {
-    this.undo = new UndoManager({
+    this.undoManager = new UndoManager({
       getGameBoard: () => this.gameBoard,
       getMoveHistory: () => this.moveHistory,
       decrementMistakes: () => { this.mistakes-- },
-      moveUndone: () => { this.saveGameState() },
+      moveUndone: () => {
+        this.gameBoard.recalculateSelectedHeaders();
+        this.saveGameState();
+      },
       undoEnabledStateChange: (canUndo: boolean) => this.boardUiService.setCanUndo(canUndo),
     });
   }
@@ -115,7 +118,7 @@ export class Board implements OnInit, OnDestroy {
     this.gamePreviouslyCompleted = false;
     this.moveHistory = [];
     this.showNextGameButton = false;
-    this.undo.clear();
+    this.undoManager.clear();
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -156,11 +159,11 @@ export class Board implements OnInit, OnDestroy {
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
       this.updateMoveHistory(true)
-      this.undo.pushCell('select', cell, SelectionStatus.SELECTED);
+      this.undoManager.pushCell('select', cell, SelectionStatus.SELECTED);
       this.gameBoard.recalculateSelectedHeaders();
     } else {
       this.updateMoveHistory(false)
-      this.undo.pushMistake();
+      this.undoManager.pushMistake();
       this.handleIncorrectMove(cell);
     }
 
@@ -180,10 +183,10 @@ export class Board implements OnInit, OnDestroy {
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
       this.updateMoveHistory(true)
-      this.undo.pushCell('clear', cell, SelectionStatus.CLEARED);
+      this.undoManager.pushCell('clear', cell, SelectionStatus.CLEARED);
     } else {
       this.updateMoveHistory(false)
-      this.undo.pushMistake();
+      this.undoManager.pushMistake();
       this.handleIncorrectMove(cell);
     }
 
@@ -273,7 +276,7 @@ export class Board implements OnInit, OnDestroy {
     this.gamePreviouslyCompleted = previous.completed ?? false;
     this.moveHistory = previous.moveHistory ?? [];
     this.showNextGameButton = false;
-    this.undo.clear();
+    this.undoManager.clear();
     if (!previous.completed) {
       if (previous.grid) {
 
@@ -401,7 +404,7 @@ export class Board implements OnInit, OnDestroy {
 
   private checkComplete(): void {
     if (this.gameBoard.isComplete()) {
-      this.undo.clear();
+      this.undoManager.clear();
       const boardSize = this.gameBoard.playArea.length;
       const mistakes = this.mistakes;
       const affirmationsCount = AFFIRMATIONS.length;
