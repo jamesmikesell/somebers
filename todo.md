@@ -3,7 +3,6 @@
 - record time spent per game
 - tutorial mode
 - sounds
-- show game name somewhere on app / or an app game logo
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - configuration to be able to show/hide running calculated sums
@@ -12,11 +11,12 @@
   - cells are highlighted in consistent color depending on when they were highlighted
   - optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
-- ability to undo a move, IE un-hide a hidden number, or de-select a selected number
 - Create a queue of pending moves and If one of the first moves fails, prevent failure of the others
 
 # Done
 
+- ability to undo a move, IE un-hide a hidden number, or de-select a selected number
+- show game name somewhere on app / or an app game logo
 - undo move menu option in menu
 - border around color groups, esp in shape mode
 - ability to long press on a cell and see an expanded it for better visibility
