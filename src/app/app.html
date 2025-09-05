@@ -35,6 +35,11 @@
     Settings
   </button>
 
+  <button mat-menu-item routerLink="/backup">
+    <mat-icon>backup</mat-icon>
+    Backup & Restore
+  </button>
+
   <button mat-menu-item (click)="toggleColorMode()">
     <mat-icon>{{ currentColorMode.icon }}</mat-icon>
     {{ currentColorMode.label }}

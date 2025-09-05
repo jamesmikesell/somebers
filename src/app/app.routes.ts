@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
-import { SettingsComponent } from './component/settings/settings';
+import { BackupComponent } from './component/backup/backup';
 import { Board } from './component/board/board';
 import { Documentation } from './component/documentation/documentation';
 import { ExportComponent } from './component/export/export';
+import { SettingsComponent } from './component/settings/settings';
 import { TransferComplete } from './component/transfer-complete/transfer-complete';
 
 export const routes: Routes = [
@@ -21,6 +22,10 @@ export const routes: Routes = [
   {
     path: 'export',
     component: ExportComponent,
+  },
+  {
+    path: 'backup',
+    component: BackupComponent,
   },
   {
     path: 'transferComplete',

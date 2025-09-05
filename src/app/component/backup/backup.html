@@ -1,0 +1,68 @@
+<app-title>Backup & Restore</app-title>
+
+<div class="backup-restore-container">
+  <div class="section">
+    <h3>Backup</h3>
+    <p>Download your current saved data as a .somebers file.</p>
+    <button mat-raised-button color="primary" (click)="backup()">
+      <mat-icon>download</mat-icon>
+      Backup Now
+    </button>
+  </div>
+
+  <div class="section">
+    <h3>Restore</h3>
+    @if (!restoreComplete) {
+      <p>Select or drag a .somebers file to restore your data.</p>
+
+      <div class="warning" role="alert" aria-live="polite">
+        <mat-icon aria-hidden="true">warning</mat-icon>
+        <div class="warn-text">
+          <strong>Warning:</strong>
+          Restoring will overwrite ALL existing game data on this device. This
+          cannot be undone.
+        </div>
+      </div>
+
+      <div
+        class="dropzone"
+        [class.dragging]="isDragging"
+        (drop)="onDrop($event)"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+      >
+        <div class="dropzone-content">
+          <mat-icon>upload_file</mat-icon>
+          <div>Drag & drop your .somebers file here</div>
+          <div class="or">or</div>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="openFilePicker(fileInput)"
+          >
+            Choose File
+          </button>
+          <input
+            #fileInput
+            type="file"
+            accept=".somebers,application/json,text/plain"
+            (change)="onFileSelected($event)"
+            hidden
+          />
+        </div>
+      </div>
+    } @else {
+      <div class="success-panel" role="status" aria-live="polite">
+        <mat-icon>check_circle</mat-icon>
+        <div class="text">
+          <h4>Restore Complete</h4>
+          <p>Your game data has been restored on this device.</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (message) {
+    <p class="message">{{ message }}</p>
+  }
+</div>
