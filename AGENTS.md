@@ -23,10 +23,16 @@ This repo hosts Somebers, an Angular SPA deployed as static pages. Follow these 
 - Indentation: 2 spaces; UTF‑8; trim trailing whitespace (`.editorconfig`).
 - TypeScript: single quotes; SCSS for styles. Avoid inline `style="..."` in templates.
 - Angular control flow: prefer `@if`, `@for` over `*ngIf`, `*ngFor`.
-- If statements: put the action on a separate line (no single-line `if (cond) doThing();`).
+- If statements: one-liner `if (cond) doThing();` is allowed for trivial actions; two-line without curly braces is also allowed; use braces for multi-line blocks or when needed for clarity.
 - Naming: `thing.component.ts`, `thing.service.ts`, `thing.directive.ts`; selector prefix `app-`.
+- Variables: prefer full words over abbreviations (e.g., `count` not `cnt`); reserved, widely-understood short forms are OK (`i/j` loop indices, `id`, `URL`, `API`).
 - File layout: place model/utility classes at the bottom of a `.ts` file.
 - Formatting: Prettier 3 (HTML uses Angular parser). Example: `npx prettier --check .`.
+
+## Error Handling
+- Never bury exceptions: every `catch` must handle the error (log, rethrow, or map to a clear user-visible/result state). Do not use empty `catch {}` blocks.
+- Logging: include concise, contextual messages and the error object.
+- Prefer specific error scopes; avoid over-broad try/catch that hides the root cause.
 
 ## Testing Guidelines
 - Frameworks: Jasmine + Karma; run with `npm test`.
