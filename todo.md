@@ -1,7 +1,6 @@
 # TODO
 
 - documentation note on cheating
-- migrate to indexeddb
 - multi-player: pvp
 - multi-player: co-op
 - stats streak last 5 days, week, month, all time
@@ -19,6 +18,7 @@
 
 # Done
 
+- migrate to indexeddb
 - faster animation on zoom
 - small numbers no longer have a background... not a problem, but probably remove their styling
 - long-press isn't working in safari
