@@ -62,21 +62,20 @@ export class Board implements OnInit, OnDestroy {
 
     this.configureUndo();
 
-    if (!this.tryLoadGameFromStorage())
-      this.updateGameNumber(this.gameNumber || 1);
-
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
     if (savedShapesMode !== null)
       this.shapesMode = JSON.parse(savedShapesMode);
   }
 
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.boardUiService.boardVisible$.next(true);
     this.boardUiService.undoRequested$
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.undoManager.undoLast())
     this.boardUiService.setCanUndo(this.undoManager.hasUndo());
+    if (!(await this.tryLoadGameFromStorage()))
+      this.updateGameNumber(this.gameNumber || 1);
   }
 
 
@@ -250,8 +249,8 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  private tryLoadGameFromStorage(): boolean {
-    let savedData = this.saveDataService.service.load();
+  private async tryLoadGameFromStorage(): Promise<boolean> {
+    let savedData = await this.saveDataService.service.load();
     if (savedData) {
       this.gameNumber = savedData.currentGameNumber || 1;
 
@@ -356,7 +355,7 @@ export class Board implements OnInit, OnDestroy {
     state.currentGameNumber = this.gameNumber
     state.inProgressGames = Array.from(this.previousGames.values())
 
-    this.saveDataService.service.save(state);
+    this.saveDataService.service.saveNoWait(state);
 
     this.calculateStats();
   }

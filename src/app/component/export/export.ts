@@ -6,6 +6,7 @@ import { SaveDataService } from '../../service/save-data.service';
 import { Title } from '../title/title';
 import { ActivatedRoute, Router } from '@angular/router';
 
+// TODO: delete this component in a few weeks
 @Component({
   selector: 'app-export',
   standalone: true,
@@ -329,7 +330,7 @@ export class ExportComponent implements OnInit {
     const buffer = compressor.decodeBase64UrlToArrayBuffer(payload);
     const json = await compressor.deCompressString(buffer);
     const parsed = JSON.parse(json);
-    this.saveDataService.service.save(parsed);
+    this.saveDataService.service.saveNoWait(parsed);
     this.clearReceiverSession(key);
     // Best effort: clear sender session if same origin used both roles
     this.clearSenderSession(key);
@@ -368,11 +369,11 @@ export class ExportComponent implements OnInit {
 
   // Shared export pipeline: load -> save -> JSON -> compress -> b64String
   private async getCompressedAppData(): Promise<string | null> {
-    const data = this.saveDataService.service.load();
+    const data = await this.saveDataService.service.load();
     if (!data)
       return null;
     // Persist latest state before export/size calc
-    this.saveDataService.service.save(data);
+    this.saveDataService.service.saveNoWait(data);
     const json = JSON.stringify(data);
     const compressor = new Compressor();
     const compressed = await compressor.compressString(json);
