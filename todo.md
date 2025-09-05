@@ -1,8 +1,6 @@
 # TODO
 
 - documentation note on cheating
-- faster animation on zoom
-- small numbers no longer have a background... not a problem, but probably remove their styling
 - migrate to indexeddb
 - multi-player: pvp
 - multi-player: co-op
@@ -22,6 +20,8 @@
 
 # Done
 
+- faster animation on zoom
+- small numbers no longer have a background... not a problem, but probably remove their styling
 - long-press isn't working in safari
 - ability to undo a move, IE un-hide a hidden number, or de-select a selected number
 - show game name somewhere on app / or an app game logo
