@@ -6,9 +6,9 @@
 - multi-player: co-op
 - stats streak last 5 days, week, month, all time
 - record time spent per game
+- leader board
 - tutorial mode
 - sounds
-- show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - configuration to be able to show/hide running calculated sums
 - temp cell selection:
@@ -16,7 +16,6 @@
   - cells are highlighted in consistent color depending on when they were highlighted
   - optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
-- Create a queue of pending moves and If one of the first moves fails, prevent failure of the others
 
 # Done
 
@@ -60,3 +59,10 @@
 - buttons to change game number
 - current sum of selected col/rows
 - change the percent of numbers that are on the board (reduced to 40%)
+
+
+
+# Not Gonna Do
+
+- show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
+- Create a queue of pending moves and If one of the first moves fails, prevent failure of the others
