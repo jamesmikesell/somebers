@@ -5,6 +5,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { deleteDB } from 'idb';
+import { IdbService } from '../../service/idb.service';
 
 @Component({
   selector: 'app-settings',
@@ -60,10 +62,34 @@ export class SettingsComponent implements OnInit {
     return this.deleteConfirmation.toLowerCase() === 'delete all data';
   }
 
-  deleteAllData(): void {
+  async deleteAllData(): Promise<void> {
     if (this.canDelete) {
       localStorage.clear();
+      await deleteDB(IdbService.dbName);
+      await this.deleteAllIndexedDbDatabases()
+
       window.location.reload();
     }
   }
+
+
+  private async deleteAllIndexedDbDatabases(): Promise<void> {
+    const dbs = await indexedDB.databases();
+    const deletionPromises = dbs.map(db => {
+      return new Promise<void>((resolve, reject) => {
+        const deleteReq = indexedDB.deleteDatabase(db.name);
+        deleteReq.onsuccess = () => resolve();
+        deleteReq.onerror = () => reject(deleteReq.error);
+      });
+    });
+
+
+    try {
+      await Promise.all(deletionPromises);
+      console.log('All databases deleted successfully');
+    } catch (error) {
+      console.error('Error deleting databases:', error);
+    }
+  };
+
 }
