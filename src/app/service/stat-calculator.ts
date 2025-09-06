@@ -2,7 +2,7 @@ import { GameInProgressDtoV3 } from "../model/saved-game-data/game-in-progress.v
 
 export class StatCalculator {
 
-  private streak: number;
+  private currentStreak: number;
 
   constructor(
     private gameHistories: Map<number, GameInProgressDtoV3>,
@@ -10,33 +10,15 @@ export class StatCalculator {
 
 
   calculateStats(currentGameNumber: number): GameStats {
-    let previousStreak = this.streak ?? 0;
+    let previousStreak = this.currentStreak ?? 0;
     const allGameData = Array.from(this.gameHistories.values());
 
     const allMoves = allGameData
-      .sort((a, b) => (a.moveHistory[0]?.timestamp || 0) - (b.moveHistory[0]?.timestamp || 0))
-      .flatMap(game => game.moveHistory ?? []);
+      .flatMap(game => game.moveHistory ?? [])
+      .sort((a, b) => a.timestamp - b.timestamp);
 
-    this.streak = 0;
-    for (let i = allMoves.length - 1; i >= 0; i--) {
-      if (allMoves[i].correct) {
-        this.streak++;
-      } else {
-        break;
-      }
-    }
-
-    let currentStreak = 0;
-    let longestStreak = 0;
-    for (const move of allMoves) {
-      if (move.correct) {
-        currentStreak++;
-      } else {
-        longestStreak = Math.max(longestStreak, currentStreak);
-        currentStreak = 0;
-      }
-    }
-    longestStreak = Math.max(longestStreak, currentStreak);
+    this.currentStreak = this.getMaxStreakSinceDays(0);
+    let longestStreak = this.getMaxStreakSinceDays(undefined);
 
     const mostRecentMoves = allMoves.slice(-1000);
     let accuracyHistory: number;
@@ -57,12 +39,54 @@ export class StatCalculator {
       accuracyHistoryMoveCount: accuracyHistory,
       accuracyPercent: accuracy,
       previousStreak: previousStreak,
-      currentStreak: this.streak,
+      currentStreak: this.currentStreak,
       mistakesCurrentBoard: mistakesCurrentBoard,
     }
   }
 
+
+  /**
+   * Returns the maximum streak whose end is within the last `daysAgo` days,
+   * or any ongoing streak regardless of when its last move occurred.
+   *
+   * A streak is a run of consecutive correct moves; it ends at the last
+   * correct move before an incorrect move (or is ongoing if there has been
+   * no incorrect move since). If a streak started before the window but ended
+   * within the window, the entire streak length is considered.
+   * 
+   * 0 days == current streak
+   * 
+   * undefined days = max streak forever
+   */
+  getMaxStreakSinceDays(daysAgo: number): number {
+    const allMovesReverseHistory = Array.from(this.gameHistories.values())
+      .flatMap(game => game.moveHistory ?? [])
+      .sort((a, b) => b.timestamp - a.timestamp);
+
+    if (allMovesReverseHistory.length === 0) return 0;
+
+    const includeAll = daysAgo == null || !isFinite(daysAgo);
+    const windowStart = includeAll ? Number.NEGATIVE_INFINITY : Date.now() - daysAgo * 24 * 60 * 60 * 1000;
+
+    let currentStreak = 0;
+    let maxStreak = 0;
+    for (const move of allMovesReverseHistory) {
+      if (move.correct) {
+        currentStreak++;
+      } else {
+        maxStreak = Math.max(maxStreak, currentStreak);
+        currentStreak = 0
+        if (move.timestamp < windowStart)
+          break
+      }
+    }
+    maxStreak = Math.max(maxStreak, currentStreak);
+
+    return maxStreak;
+  }
+
 }
+
 
 export interface GameStats {
   longestStreak: number;
