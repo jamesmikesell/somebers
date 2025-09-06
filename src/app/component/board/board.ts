@@ -14,6 +14,7 @@ import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { UndoManager } from '../../service/undo-manager';
+import { WakeLock } from '../../service/wake-lock';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
 import { StatsComponent } from '../stats/stats';
@@ -55,6 +56,7 @@ export class Board implements OnInit, OnDestroy {
     private celebrationService: CelebrationService,
     private saveDataService: SaveDataService,
     private boardUiService: BoardUiService,
+    private wakeLock: WakeLock,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -70,6 +72,8 @@ export class Board implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.boardUiService.boardVisible$.next(true);
+    this.wakeLock.enable();
+    this.destroy.pipe(first()).subscribe(() => this.wakeLock.disable());
     this.boardUiService.undoRequested$
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.undoManager.undoLast())

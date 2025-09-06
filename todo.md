@@ -1,6 +1,5 @@
 # TODO
 
-- stats streak last 5 days, week, month, all time
 - animation when row/col/group total has been reached, even if some cells haven't been cleared
 - better contrast between cells... potentially assign contrasting colors to different parts of the board, then give group a color based on which section of the board it occupies most
 - documentation note on cheating
@@ -22,6 +21,8 @@
 
 # Done
 
+- screen wake lock
+- stats streak last 5 days, week, month, all time
 - migrate to indexeddb
 - faster animation on zoom
 - small numbers no longer have a background... not a problem, but probably remove their styling
