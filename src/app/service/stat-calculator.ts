@@ -48,6 +48,22 @@ export class StatCalculator {
           streak: this.getMaxStreakSinceDays(5),
         },
         {
+          displayTimeline: "Past 7 days",
+          streak: this.getMaxStreakSinceDays(7),
+        },
+        {
+          displayTimeline: "Past 14 days",
+          streak: this.getMaxStreakSinceDays(14),
+        },
+        {
+          displayTimeline: "Past 30 days",
+          streak: this.getMaxStreakSinceDays(30),
+        },
+        {
+          displayTimeline: "Past year",
+          streak: this.getMaxStreakSinceDays(365.25),
+        },
+        {
           displayTimeline: "Forever",
           streak: this.getMaxStreakSinceDays(undefined),
         },
