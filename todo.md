@@ -1,9 +1,11 @@
 # TODO
 
+- stats streak last 5 days, week, month, all time
+- animation when row/col/group total has been reached, even if some cells haven't been cleared
+- better contrast between cells... potentially assign contrasting colors to different parts of the board, then give group a color based on which section of the board it occupies most
 - documentation note on cheating
 - multi-player: pvp
 - multi-player: co-op
-- stats streak last 5 days, week, month, all time
 - record time spent per game
 - leader board
 - tutorial mode
@@ -15,6 +17,8 @@
   - cells are highlighted in consistent color depending on when they were highlighted
   - optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
+- ability to sync game state across devices
+- Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
 
 # Done
 
