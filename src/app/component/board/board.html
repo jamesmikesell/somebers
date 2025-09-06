@@ -54,14 +54,7 @@
         </div>
 
         <div class="stats">
-          <app-stats
-            [mistakes]="mistakes"
-            [streak]="streak"
-            [previousStreak]="previousStreak"
-            [longestStreak]="longestStreak"
-            [accuracy]="accuracy"
-            [accuracyHistory]="accuracyHistory"
-          ></app-stats>
+          <app-stats [stats]="stats"></app-stats>
         </div>
       </div>
     </div>

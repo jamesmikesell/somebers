@@ -58,7 +58,7 @@ export class UndoManager {
         break;
       }
       case 'mistake': {
-        this.deps.decrementMistakes();
+        //no-op
         break;
       }
     }
@@ -98,7 +98,6 @@ interface UndoEntry {
 export interface UndoManagerDeps {
   getGameBoard: () => GameBoard;
   getMoveHistory: () => MoveHistoryDtoV1[];
-  decrementMistakes: () => void;
   moveUndone: () => void;
   undoEnabledStateChange: (value: boolean) => void; // for UI state
 }

@@ -12,6 +12,7 @@ import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v
 import { BoardUiService } from '../../service/board-ui.service';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
+import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { UndoManager } from '../../service/undo-manager';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
@@ -34,23 +35,20 @@ export class Board implements OnInit, OnDestroy {
   gameNumber: number = 1;
   SelectionStatus = SelectionStatus;
   gameBoard = new GameBoard();
-  mistakes = 0;
-  streak = 0;
-  previousStreak = 0;
-  longestStreak = 0;
-  accuracy: number | null = null;
   solvable = true;
   gamePreviouslyCompleted = false;
   devMode = false;
   shapesMode: boolean = false;
-  accuracyHistory = 0;
   showNextGameButton = false;
   disableAnimations = false;
+  stats: GameStats;
+
 
   private previousGames = new Map<number, GameInProgressDtoV3>();
   private moveHistory: MoveHistoryDtoV1[] = [];
   private undoManager: UndoManager;
   private destroy = new Subject<void>();
+  private statCalculator: StatCalculator;
 
 
   constructor(
@@ -59,6 +57,8 @@ export class Board implements OnInit, OnDestroy {
     private boardUiService: BoardUiService,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
+
+    this.statCalculator = new StatCalculator(this.previousGames);
 
     this.configureUndo();
 
@@ -89,7 +89,6 @@ export class Board implements OnInit, OnDestroy {
     this.undoManager = new UndoManager({
       getGameBoard: () => this.gameBoard,
       getMoveHistory: () => this.moveHistory,
-      decrementMistakes: () => { this.mistakes-- },
       moveUndone: () => {
         this.gameBoard.recalculateSelectedHeaders();
         this.saveGameState();
@@ -113,7 +112,6 @@ export class Board implements OnInit, OnDestroy {
 
   private updateGameNumber(game: number) {
     this.gameNumber = game;
-    this.mistakes = 0;
     this.gamePreviouslyCompleted = false;
     this.moveHistory = [];
     this.showNextGameButton = false;
@@ -153,8 +151,6 @@ export class Board implements OnInit, OnDestroy {
     if (cell.status !== SelectionStatus.NONE)
       return;
 
-    this.previousStreak = this.streak;
-
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
       this.updateMoveHistory(true)
@@ -176,8 +172,6 @@ export class Board implements OnInit, OnDestroy {
 
     if (cell.status !== SelectionStatus.NONE)
       return;
-
-    this.previousStreak = this.streak;
 
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
@@ -202,7 +196,6 @@ export class Board implements OnInit, OnDestroy {
 
 
   autoCompleteGame(mistakes: number): void {
-    this.mistakes = mistakes;
     this.gameBoard.playArea.forEach(row => row.forEach(cell => cell.status = cell.required ? SelectionStatus.SELECTED : SelectionStatus.CLEARED))
     let cell = this.gameBoard.playArea[0][0];
     cell.status = SelectionStatus.NONE;
@@ -271,7 +264,6 @@ export class Board implements OnInit, OnDestroy {
 
   private constructBoardFromPreviousState(previous: GameInProgressDtoV3): void {
     this.gameNumber = previous.gameNumber || 1;
-    this.mistakes = previous.mistakes || 0;
     this.gamePreviouslyCompleted = previous.completed ?? false;
     this.moveHistory = previous.moveHistory ?? [];
     this.showNextGameButton = false;
@@ -307,7 +299,6 @@ export class Board implements OnInit, OnDestroy {
 
 
   private async handleIncorrectMove(cell: Cell): Promise<void> {
-    this.mistakes++;
     this.vibrate();
     cell.invalidMove = true;
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -318,7 +309,7 @@ export class Board implements OnInit, OnDestroy {
   private saveGameState(): void {
     let state = this.saveDataService.service.generateSaverDto();
 
-    let isInProgress = this.gameBoard.inProgress() || this.mistakes !== 0;
+    let isInProgress = this.gameBoard.inProgress() || this.previousGames.get(this.gameNumber)?.moveHistory.length > 0;
     let isComplete = this.gameBoard.isComplete()
     let wasComplete = this.previousGames.get(this.gameNumber)?.completed ?? false;
     let someLevelOfComplete = isComplete || wasComplete
@@ -343,7 +334,6 @@ export class Board implements OnInit, OnDestroy {
       let progress: GameInProgressDtoV3 = {
         completed: someLevelOfComplete,
         gameNumber: this.gameNumber,
-        mistakes: this.mistakes,
         grid: !someLevelOfComplete ? grid : undefined,
         moveHistory: this.moveHistory,
       }
@@ -362,42 +352,7 @@ export class Board implements OnInit, OnDestroy {
 
 
   private calculateStats(): void {
-    const allGameData = Array.from(this.previousGames.values());
-
-    const allMoves = allGameData
-      .sort((a, b) => (a.moveHistory[0]?.timestamp || 0) - (b.moveHistory[0]?.timestamp || 0))
-      .flatMap(game => game.moveHistory ?? []);
-
-    this.streak = 0;
-    for (let i = allMoves.length - 1; i >= 0; i--) {
-      if (allMoves[i].correct) {
-        this.streak++;
-      } else {
-        break;
-      }
-    }
-
-    let currentStreak = 0;
-    this.longestStreak = 0;
-    for (const move of allMoves) {
-      if (move.correct) {
-        currentStreak++;
-      } else {
-        this.longestStreak = Math.max(this.longestStreak, currentStreak);
-        currentStreak = 0;
-      }
-    }
-    this.longestStreak = Math.max(this.longestStreak, currentStreak);
-
-    const mostRecentMoves = allMoves.slice(-1000);
-    if (mostRecentMoves.length > 0) {
-      this.accuracyHistory = mostRecentMoves.length;
-      const correctMoves = mostRecentMoves.filter(move => move.correct).length;
-      this.accuracy = (correctMoves / mostRecentMoves.length) * 100;
-    } else {
-      this.accuracyHistory = 0
-      this.accuracy = null;
-    }
+    this.stats = this.statCalculator.calculateStats(this.gameNumber);
   }
 
 
@@ -405,7 +360,7 @@ export class Board implements OnInit, OnDestroy {
     if (this.gameBoard.isComplete()) {
       this.undoManager.clear();
       const boardSize = this.gameBoard.playArea.length;
-      const mistakes = this.mistakes;
+      const mistakes = this.stats.mistakesCurrentBoard;
       const affirmationsCount = AFFIRMATIONS.length;
 
       // Normalize board size (5-9) to a 0-1 range

@@ -34,7 +34,6 @@ export class SavedGameStateV3 implements DataSaveVersion {
 
           let newProgress: GameInProgressDtoV3 = {
             gameNumber: prevProgress.gameNumber,
-            mistakes: prevProgress.mistakes,
             grid: prevProgress.grid,
             completed: prevProgress.completed,
             moveHistory: moveHistory,
