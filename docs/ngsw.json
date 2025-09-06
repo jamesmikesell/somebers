@@ -1,0 +1,91 @@
+{
+  "configVersion": 1,
+  "timestamp": 1757160742162,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/favicon.ico",
+        "/index.html",
+        "/main-JYA7VSRI.js",
+        "/manifest.webmanifest",
+        "/polyfills-5CFQRCPP.js",
+        "/styles-JEXOAMCQ.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/icons/apple-touch-icon.png",
+        "/icons/icon-16x16.png",
+        "/icons/icon-192x192.png",
+        "/icons/icon-32x32.png",
+        "/icons/icon-48x48.png",
+        "/icons/icon-512x512.png",
+        "/icons/icon-96x96.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "app-version",
+      "patterns": [
+        "\\/version\\.json"
+      ],
+      "strategy": "freshness",
+      "maxSize": 0,
+      "maxAge": 0,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/favicon.ico": "c3704f35818f436e021f1bb63461f424c649af01",
+    "/icons/apple-touch-icon.png": "31cd1e7673d66501b451ad70f67f8dc8bbe90fe7",
+    "/icons/icon-16x16.png": "890bbc6b9c8de138db380b47f7df42262fc11718",
+    "/icons/icon-192x192.png": "78e30de4b26d5fe801f5afc382fae5f0da3c1d16",
+    "/icons/icon-32x32.png": "d75ff7cb22063bf45a9bb786a34997cb9aeb8458",
+    "/icons/icon-48x48.png": "a3febdf6238672e347a01c8255365dfb8f03606d",
+    "/icons/icon-512x512.png": "e2c50cef83447089ffc3e0c230d2d585b099dd77",
+    "/icons/icon-96x96.png": "43bb9a1dbaece536d35b43eafa6c1f8d50fd5f10",
+    "/index.html": "2ece95576c75f08c61aa1259133ed79d8eafd394",
+    "/main-JYA7VSRI.js": "39702a365cdd1c6c21d5c995c3934615d95bacc8",
+    "/manifest.webmanifest": "9ca1db2ec8330c903467b271eb96b71d02fab159",
+    "/polyfills-5CFQRCPP.js": "f2241e9a25858f895ce299d15f6f22e849e2fd72",
+    "/styles-JEXOAMCQ.css": "42a90714c2a51571d373d0974fe9231d8fe67786"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
