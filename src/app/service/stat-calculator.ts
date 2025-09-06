@@ -18,7 +18,6 @@ export class StatCalculator {
       .sort((a, b) => a.timestamp - b.timestamp);
 
     this.currentStreak = this.getMaxStreakSinceDays(0);
-    let longestStreak = this.getMaxStreakSinceDays(undefined);
 
     const mostRecentMoves = allMoves.slice(-1000);
     let accuracyHistory: number;
@@ -35,7 +34,24 @@ export class StatCalculator {
     const mistakesCurrentBoard = this.gameHistories.get(currentGameNumber)?.moveHistory.filter(hist => !hist.correct).length ?? 0;
 
     return {
-      longestStreak: longestStreak,
+      streaks: [
+        {
+          displayTimeline: "Past 24 hours",
+          streak: this.getMaxStreakSinceDays(1),
+        },
+        {
+          displayTimeline: "Past 3 days",
+          streak: this.getMaxStreakSinceDays(3),
+        },
+        {
+          displayTimeline: "Past 5 days",
+          streak: this.getMaxStreakSinceDays(5),
+        },
+        {
+          displayTimeline: "Forever",
+          streak: this.getMaxStreakSinceDays(undefined),
+        },
+      ],
       accuracyHistoryMoveCount: accuracyHistory,
       accuracyPercent: accuracy,
       previousStreak: previousStreak,
@@ -89,10 +105,16 @@ export class StatCalculator {
 
 
 export interface GameStats {
-  longestStreak: number;
+  streaks: StreakPeriod[],
   accuracyHistoryMoveCount: number;
   accuracyPercent: number;
   previousStreak: number;
   currentStreak: number;
   mistakesCurrentBoard: number;
+}
+
+
+export interface StreakPeriod {
+  displayTimeline: string;
+  streak: number;
 }

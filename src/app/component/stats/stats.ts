@@ -1,8 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Observable } from 'rxjs';
-import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progress.v3';
-import { GameStats } from '../../service/stat-calculator';
+import { Component, Input, OnInit } from '@angular/core';
+import { GameStats, StreakPeriod } from '../../service/stat-calculator';
 
 @Component({
   selector: 'app-stats',
@@ -11,7 +9,7 @@ import { GameStats } from '../../service/stat-calculator';
   templateUrl: './stats.html',
   styleUrls: ['./stats.scss'],
 })
-export class StatsComponent {
+export class StatsComponent implements OnInit {
 
   @Input() set stats(val: GameStats) {
     this.updateStats(val);
@@ -19,9 +17,9 @@ export class StatsComponent {
 
   mistakes = 0;
   streak = 0;
-  longestStreak = 0;
   accuracy: number | null = null;
   accuracyHistory: number;
+  displayedStreak: StreakPeriod;
 
 
   streakAnimationClass = '';
@@ -33,15 +31,21 @@ export class StatsComponent {
   showRedOrb = false;
 
 
+  private currentStats: GameStats;
+  private displayedStreakIndex = 0;
+
+
   private updateStats(val: GameStats): void {
     if (!val)
       return;
 
+    this.currentStats = val;
     this.mistakes = val.mistakesCurrentBoard;
     this.streak = val.currentStreak;
-    this.longestStreak = val.longestStreak;
     this.accuracy = val.accuracyPercent;
     this.accuracyHistory = val.accuracyHistoryMoveCount;
+
+    this.updateDisplayedStreak();
 
     if (val.previousStreak > 0 && val.currentStreak === 0) {
       // Start countdown animation
@@ -96,5 +100,26 @@ export class StatsComponent {
       }, timeoutDuration);
     }
   }
+
+
+  ngOnInit(): void {
+    this.displayedStreakIndex = +localStorage.getItem('bestStreakDisplay');
+    this.updateDisplayedStreak();
+  }
+
+
+  cycleBestStreakWindow(): void {
+    this.displayedStreakIndex = (this.displayedStreakIndex + 1) % this.currentStats.streaks.length;
+    localStorage.setItem('bestStreakDisplay', this.displayedStreakIndex.toString());
+    this.updateDisplayedStreak();
+  }
+
+
+  private updateDisplayedStreak(): void {
+    if (this.currentStats) {
+      this.displayedStreak = this.currentStats.streaks[this.displayedStreakIndex % this.currentStats.streaks.length];
+    }
+  }
+
 
 }

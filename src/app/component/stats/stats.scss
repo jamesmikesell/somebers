@@ -14,6 +14,10 @@
   align-items: center;
 }
 
+.stat-item.clickable {
+  cursor: pointer;
+}
+
 .stat-label {
   font-size: 0.8em;
   color: light-dark(rgba(0, 0, 0, 0.6), rgba(255, 255, 255, 0.7));
@@ -25,6 +29,31 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+
+.stat-item.clickable .stat-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cycle-icon {
+  font-size: 0.9em;
+  line-height: 1;
+  color: light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.6));
+  transition: transform 120ms ease, opacity 120ms ease;
+  opacity: 0.6;
+}
+
+.stat-item.clickable:hover .cycle-icon.left {
+  transform: translateX(-1px);
+  opacity: 0.85;
+}
+
+.stat-item.clickable:hover .cycle-icon.right {
+  transform: translateX(1px);
+  opacity: 0.85;
 }
 
 .stat-value {

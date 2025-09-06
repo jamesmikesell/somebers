@@ -42,10 +42,22 @@
       }
     </div>
   </div>
-  <div class="stat-item">
-    <span class="stat-label">Best Streak (Forever)</span>
-    <span class="stat-value">{{ longestStreak }}</span>
-  </div>
+  @if (displayedStreak) {
+    <div
+      class="stat-item clickable"
+      (click)="cycleBestStreakWindow()"
+      title="Change period"
+    >
+      <span class="stat-label">
+        Best Streak {{ displayedStreak.displayTimeline }}</span
+      >
+      <span class="stat-value">
+        <span class="cycle-icon left" aria-hidden="true">‹</span>
+        {{ displayedStreak.streak }}
+        <span class="cycle-icon right" aria-hidden="true">›</span>
+      </span>
+    </div>
+  }
   @if (accuracy !== null && accuracyHistory > 1) {
     <div class="stat-item">
       <span class="stat-label">
