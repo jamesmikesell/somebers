@@ -12,7 +12,7 @@
 }
 
 .note {
-  color: var(--muted)
+  color: var(--muted);
 }
 
 .callout {
@@ -20,15 +20,21 @@
   background: color-mix(in oklab, var(--accent) 10%, transparent);
   border-radius: 12px;
   padding: 12px 14px;
-  margin: .75rem 0
+  margin: 0.75rem 0;
 }
 
-.kbd {
-  font: 600 .95rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
-  background: color-mix(in oklab, var(--fg) 8%, transparent);
-  border: 1px solid color-mix(in oklab, var(--fg) 20%, transparent);
-  border-radius: 6px;
-  padding: .1rem .35rem
+/* Removed special formatting for input controls per design feedback */
+
+.page code {
+  font:
+    500 0.9rem/1.2 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+  background: color-mix(in oklab, var(--fg) 6%, transparent);
+  border: 1px solid color-mix(in oklab, var(--fg) 15%, transparent);
+  border-radius: 8px;
+  padding: 0.05rem 0.3rem;
 }
 
 .version {
