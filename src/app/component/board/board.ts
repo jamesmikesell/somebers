@@ -199,7 +199,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  autoCompleteGame(mistakes: number): void {
+  autoCompleteGame(): void {
     this.gameBoard.playArea.forEach(row => row.forEach(cell => cell.status = cell.required ? SelectionStatus.SELECTED : SelectionStatus.CLEARED))
     let cell = this.gameBoard.playArea[0][0];
     cell.status = SelectionStatus.NONE;
