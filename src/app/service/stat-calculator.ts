@@ -31,7 +31,9 @@ export class StatCalculator {
       accuracy = null;
     }
 
-    const mistakesCurrentBoard = this.gameHistories.get(currentGameNumber)?.moveHistory.filter(hist => !hist.correct).length ?? 0;
+    let previousGame = this.gameHistories.get(currentGameNumber);
+    const mistakesCurrentBoard = previousGame?.moveHistory.filter(hist => !hist.correct).length ?? 0;
+    const timeSpent = previousGame?.timeSpent
 
     return {
       streaks: [
@@ -73,6 +75,7 @@ export class StatCalculator {
       previousStreak: previousStreak,
       currentStreak: this.currentStreak,
       mistakesCurrentBoard: mistakesCurrentBoard,
+      timeSpent: timeSpent,
     }
   }
 
@@ -127,6 +130,7 @@ export interface GameStats {
   previousStreak: number;
   currentStreak: number;
   mistakesCurrentBoard: number;
+  timeSpent: number;
 }
 
 

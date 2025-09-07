@@ -1,12 +1,15 @@
 # TODO
 
 - animation when row/col/group total has been reached, even if some cells haven't been cleared
+- Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
 - better contrast between cells... potentially assign contrasting colors to different parts of the board, then give group a color based on which section of the board it occupies most
 - documentation note on cheating
 - multi-player: pvp
 - multi-player: co-op
-- record time spent per game
 - leader board
+- ability to play board again and compare against previous attempts
+- ability to play board again and not ruin streak history
+- warn that playing board again will ruin streak history
 - tutorial mode
 - sounds
 - current sum of selected cells in a color group, shown in top right corner perhaps
@@ -17,10 +20,10 @@
   - optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
 - ability to sync game state across devices
-- Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
 
 # Done
 
+- record time spent per game
 - screen wake lock
 - stats streak last 5 days, week, month, all time
 - migrate to indexeddb

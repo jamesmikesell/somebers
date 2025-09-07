@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { first, pairwise, Subject, takeUntil } from 'rxjs';
+import { filter, first, interval, pairwise, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
@@ -13,6 +13,7 @@ import { BoardUiService } from '../../service/board-ui.service';
 import { CelebrationService } from '../../service/celebration';
 import { SaveDataService } from '../../service/save-data.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
+import { TimeTracker } from '../../service/time-tracker';
 import { UndoManager } from '../../service/undo-manager';
 import { WakeLock } from '../../service/wake-lock';
 import { AFFIRMATIONS } from '../celebration/affirmations';
@@ -50,7 +51,7 @@ export class Board implements OnInit, OnDestroy {
   private undoManager: UndoManager;
   private destroy = new Subject<void>();
   private statCalculator: StatCalculator;
-
+  private timeTracker = new TimeTracker();
 
   constructor(
     private celebrationService: CelebrationService,
@@ -60,8 +61,8 @@ export class Board implements OnInit, OnDestroy {
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
+    this.configureTimeTracking();
     this.statCalculator = new StatCalculator(this.previousGames);
-
     this.configureUndo();
 
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
@@ -86,6 +87,8 @@ export class Board implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next()
     this.boardUiService.boardVisible$.next(false);
+    this.timeTracker.destroy();
+    this.saveGameState();
   }
 
 
@@ -102,7 +105,33 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
+  private configureTimeTracking(): void {
+    interval(1000).pipe(
+      takeUntil(this.destroy)
+    ).subscribe(() => {
+      if (this.stats) {
+        let previous = this.previousGames.get(this.gameNumber);
+        if (previous && previous.completed)
+          return
+
+        this.stats.timeSpent = this.timeTracker.getTotalTime()
+      }
+    })
+
+    this.timeTracker.browserState$
+      .pipe(
+        takeUntil(this.destroy),
+        filter(state => !state.active && state.reason !== 'manualPause'
+        ),
+      ).subscribe(() => {
+        this.saveGameState()
+      })
+  }
+
+
   changeGameNumberFromUi(gameNumber: number): void {
+    this.saveGameState()
+
     let previous = this.previousGames.get(gameNumber);
     if (previous) {
       this.constructBoardFromPreviousState(previous);
@@ -120,6 +149,8 @@ export class Board implements OnInit, OnDestroy {
     this.moveHistory = [];
     this.showNextGameButton = false;
     this.undoManager.clear();
+    this.timeTracker.reset(0)
+    this.timeTracker.manualStart();
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -272,9 +303,9 @@ export class Board implements OnInit, OnDestroy {
     this.moveHistory = previous.moveHistory ?? [];
     this.showNextGameButton = false;
     this.undoManager.clear();
+    this.timeTracker.reset(previous.timeSpent ?? 0)
     if (!previous.completed) {
       if (previous.grid) {
-
         let grid = previous.grid
           .map(row => row
             .map(cell => {
@@ -293,6 +324,7 @@ export class Board implements OnInit, OnDestroy {
         this.solvable = this.gameBoard.solvable;
         this.gameBoard.recalculateSelectedHeaders();
         this.disableAnimationsTemporarily();
+        this.timeTracker.manualStart();
       } else {
         this.updateGameNumber(this.gameNumber);
       }
@@ -313,10 +345,15 @@ export class Board implements OnInit, OnDestroy {
   private saveGameState(): void {
     let state = this.saveDataService.service.generateSaverDto();
 
-    let isInProgress = this.gameBoard.inProgress() || this.previousGames.get(this.gameNumber)?.moveHistory.length > 0;
+    let isInProgress = this.gameBoard.inProgress()
+      || this.previousGames.get(this.gameNumber)?.moveHistory.length > 0
+      || this.moveHistory?.length > 0;
     let isComplete = this.gameBoard.isComplete()
     let wasComplete = this.previousGames.get(this.gameNumber)?.completed ?? false;
     let someLevelOfComplete = isComplete || wasComplete
+
+    if (someLevelOfComplete)
+      this.timeTracker.manualPause()
 
     let grid = this.gameBoard.playArea
       .map(row => row
@@ -340,6 +377,7 @@ export class Board implements OnInit, OnDestroy {
         gameNumber: this.gameNumber,
         grid: !someLevelOfComplete ? grid : undefined,
         moveHistory: this.moveHistory,
+        timeSpent: this.timeTracker.getTotalTime(),
       }
       this.previousGames.set(this.gameNumber, progress)
     } else {

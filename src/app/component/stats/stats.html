@@ -58,12 +58,26 @@
       </span>
     </div>
   }
-  @if (accuracy !== null && accuracyHistory > 1) {
-    <div class="stat-item">
-      <span class="stat-label">
+  <div
+    class="stat-item clickable"
+    (click)="cycleSecondaryMetric()"
+    title="Change metric"
+  >
+    <span class="stat-label">
+      @if (secondaryDisplayIndex === 0) {
         Last {{ accuracyHistory | number: "1.0-0" }} Moves
-      </span>
-      <span class="stat-value">{{ accuracy | number: "1.1-2" }}%</span>
-    </div>
-  }
+      } @else {
+        Time Spent
+      }
+    </span>
+    <span class="stat-value">
+      <span class="cycle-icon left" aria-hidden="true">‹</span>
+      @if (secondaryDisplayIndex === 0) {
+        {{ accuracy != null ? (accuracy | number: "1.1-2") + "%" : "—" }}
+      } @else {
+        {{ currentStats?.timeSpent | duration }}
+      }
+      <span class="cycle-icon right" aria-hidden="true">›</span>
+    </span>
+  </div>
 </div>

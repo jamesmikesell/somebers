@@ -37,6 +37,7 @@ export class SavedGameStateV3 implements DataSaveVersion {
             grid: prevProgress.grid,
             completed: prevProgress.completed,
             moveHistory: moveHistory,
+            timeSpent: undefined,
           }
 
           return newProgress;

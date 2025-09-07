@@ -13,4 +13,5 @@ export interface GameInProgressDtoV3 {
   grid?: CellDtoV1[][];
   completed: boolean;
   moveHistory: MoveHistoryDtoV1[];
+  timeSpent: number;
 }

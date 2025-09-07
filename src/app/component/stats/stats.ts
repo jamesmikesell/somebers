@@ -1,11 +1,12 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { DurationPipe } from '../../pipe/duration.pipe';
 import { GameStats, StreakPeriod } from '../../service/stat-calculator';
 
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [CommonModule, DecimalPipe],
+  imports: [CommonModule, DecimalPipe, DurationPipe],
   templateUrl: './stats.html',
   styleUrls: ['./stats.scss'],
 })
@@ -20,6 +21,8 @@ export class StatsComponent implements OnInit {
   accuracy: number | null = null;
   accuracyHistory: number;
   displayedStreak: StreakPeriod;
+  secondaryDisplayIndex = 0;
+  currentStats: GameStats;
 
 
   streakAnimationClass = '';
@@ -31,7 +34,6 @@ export class StatsComponent implements OnInit {
   showRedOrb = false;
 
 
-  private currentStats: GameStats;
   private displayedStreakIndex = 0;
 
 
@@ -103,7 +105,8 @@ export class StatsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.displayedStreakIndex = +localStorage.getItem('bestStreakDisplay');
+    this.displayedStreakIndex = +(localStorage.getItem('bestStreakDisplay') ?? 0);
+    this.secondaryDisplayIndex = +(localStorage.getItem('statsSecondaryDisplay') ?? 0) % 2;
     this.updateDisplayedStreak();
   }
 
@@ -121,5 +124,10 @@ export class StatsComponent implements OnInit {
     }
   }
 
+
+  cycleSecondaryMetric(): void {
+    this.secondaryDisplayIndex = (this.secondaryDisplayIndex + 1) % 2;
+    localStorage.setItem('statsSecondaryDisplay', this.secondaryDisplayIndex.toString());
+  }
 
 }
