@@ -333,6 +333,8 @@ export class Cell {
   borderLeft = false;
   borderRight = false;
   borderBottom = false;
+  colorDark: string;
+  colorLight: string;
 
   constructor(
   ) { }

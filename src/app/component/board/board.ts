@@ -11,6 +11,7 @@ import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progres
 import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v1';
 import { BoardUiService } from '../../service/board-ui.service';
 import { CelebrationService } from '../../service/celebration';
+import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
 import { SaveDataService } from '../../service/save-data.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { TimeTracker } from '../../service/time-tracker';
@@ -20,6 +21,7 @@ import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
 import { StatsComponent } from '../stats/stats';
 import { Title } from "../title/title";
+import { AppColors } from './colors';
 
 @Component({
   selector: 'app-board',
@@ -58,6 +60,7 @@ export class Board implements OnInit, OnDestroy {
     private saveDataService: SaveDataService,
     private boardUiService: BoardUiService,
     private wakeLock: WakeLock,
+    private colorOptimizer: ColorGridOptimizerService,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -160,6 +163,9 @@ export class Board implements OnInit, OnDestroy {
     const gridSize = Math.floor(Random.generateFromSeed(gridStartOffset) * (gridMax - gridMin + 1) + gridMin);
     const grid = new BoardGroupGenerator(game).generateRandomContiguousGroups(gridSize);
 
+    let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, grid);
+    let colorAssignmentsLight = this.colorOptimizer.assignColors(AppColors.COLORS_LIGHT, grid);
+
     let random = new Random(gameSeed);
     this.gameBoard = new GameBoard();
     this.gameBoard.playArea = grid.map((row) => row.map((cellGroupNumber) => {
@@ -167,6 +173,8 @@ export class Board implements OnInit, OnDestroy {
       cell.value = Math.floor(random.next() * 9) + 1;
       cell.groupNumber = cellGroupNumber;
       cell.required = random.next() < 0.4;
+      cell.colorDark = colorAssignmentsDark.colorByNumber.get(cellGroupNumber);
+      cell.colorLight = colorAssignmentsLight.colorByNumber.get(cellGroupNumber);
 
       return cell
     }));
@@ -306,6 +314,10 @@ export class Board implements OnInit, OnDestroy {
     this.timeTracker.reset(previous.timeSpent ?? 0)
     if (!previous.completed) {
       if (previous.grid) {
+        let colorGroupGrid = previous.grid.map(row => row.map(cell => cell.groupNumber))
+        let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, colorGroupGrid);
+        let colorAssignmentsLight = this.colorOptimizer.assignColors(AppColors.COLORS_LIGHT, colorGroupGrid);
+
         let grid = previous.grid
           .map(row => row
             .map(cell => {
@@ -314,6 +326,8 @@ export class Board implements OnInit, OnDestroy {
               newCell.required = cell.required;
               newCell.value = cell.value;
               newCell.groupNumber = cell.groupNumber;
+              newCell.colorDark = colorAssignmentsDark.colorByNumber.get(cell.groupNumber);
+              newCell.colorLight = colorAssignmentsLight.colorByNumber.get(cell.groupNumber);
 
               return newCell;
             }));
