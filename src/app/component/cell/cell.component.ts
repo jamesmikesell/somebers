@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { GestureDirective } from '../../directive/gesture.directive';
 import { Cell, SelectionStatus } from '../../model/game-board';
 
@@ -12,8 +12,14 @@ export type CellDisplayType = 'blank' | 'header' | 'standard';
   templateUrl: './cell.component.html',
   styleUrl: './cell.component.scss'
 })
-export class CellComponent implements AfterViewInit, OnChanges {
-  @Input() cell!: Cell;
+export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
+  private _cell: Cell;
+  get cell(): Cell { return this._cell }
+  @Input() set cell(val: Cell) {
+    if (this._cell)
+      this.gestureComplete();
+    this._cell = val;
+  }
   @Input() displayType!: CellDisplayType;
   @Input() columnCount!: number; // To pass the --columnCount CSS variable
   @Input() shapesMode = false;
@@ -48,6 +54,11 @@ export class CellComponent implements AfterViewInit, OnChanges {
     this.updateScaleFactor();
   }
 
+  ngOnDestroy(): void {
+    this.gestureComplete();
+  }
+
+
   ngAfterViewInit(): void {
     this.updateScaleFactor();
   }
@@ -68,21 +79,22 @@ export class CellComponent implements AfterViewInit, OnChanges {
   }
 
 
-  touchStart(cell: Cell): void {
-    if (cell.status === SelectionStatus.NONE && !cell.processing)
-      cell.processing = true;
+  touchStart(): void {
+    if (this.cell.status === SelectionStatus.NONE && !this.cell.processing)
+      this.cell.processing = true;
   }
 
-  use(cell: Cell): void {
-    this.used.emit(cell);
+  use(): void {
+    this.used.emit(this.cell);
   }
 
-  clear(cell: Cell): void {
-    this.cleared.emit(cell);
+  clear(): void {
+    this.cleared.emit(this.cell);
   }
 
-  gestureComplete(cell: Cell): void {
-    cell.processing = false;
+  gestureComplete(): void {
+    if (this.cell)
+      this.cell.processing = false;
     this.isMagnified = false;
   }
 }

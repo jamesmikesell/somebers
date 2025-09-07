@@ -73,6 +73,7 @@ export class GestureRecognizer {
     const touchStart$ = fromEvent<TouchEvent>(this.element, 'touchstart');
     const touchMove$ = fromEvent<TouchEvent>(this.element, 'touchmove');
     const touchEnd$ = fromEvent<TouchEvent>(this.element, 'touchend');
+    const touchCancel$ = fromEvent<TouchEvent>(document, 'touchcancel');
 
     // Unified start events - filter out right-click
     const startEvents$ = merge(
@@ -120,6 +121,16 @@ export class GestureRecognizer {
       )
       .subscribe(({ type, event }) => {
         this.handleEnd(type, event as MouseEvent | TouchEvent);
+      });
+
+    // Handle cancel events (treat as immediate completion)
+    touchCancel$
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(() => this.isPointerDown)
+      )
+      .subscribe((event) => {
+        this.handleCancel('touch', event);
       });
   }
 
@@ -256,6 +267,22 @@ export class GestureRecognizer {
       this.completeGesture();
     }
 
+    this.resetState();
+  }
+
+  private handleCancel(type: string, event: TouchEvent): void {
+    if (!this.startPoint) return;
+
+    // Best-effort set of current point from the cancel event
+    this.currentPoint = this.getPoint(type, event);
+
+    // Clear timers and any pending tap to avoid deferred completion
+    this.clearLongPressTimer();
+    this.clearDoubleTapTimer();
+    this.pendingTap = null;
+
+    // Emit completion immediately on cancel and reset
+    this.completeGesture();
     this.resetState();
   }
 

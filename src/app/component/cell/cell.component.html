@@ -45,7 +45,7 @@
   <div
     appGesture
     (longPress)="isMagnified = true"
-    (allGesturesComplete)="gestureComplete(cell)"
+    (allGesturesComplete)="gestureComplete()"
   >
     <ng-container *ngTemplateOutlet="headerCellContent"></ng-container>
   </div>
@@ -58,14 +58,14 @@
 } @else if (displayType === "standard") {
   <div
     appGesture
-    (touchStart)="touchStart(cell)"
-    (tap)="use(cell)"
-    (doubleTap)="clear(cell)"
-    (contextmenu)="clear(cell); $event.preventDefault()"
-    (swipeUp)="use(cell)"
-    (swipeDown)="clear(cell)"
+    (touchStart)="touchStart()"
+    (tap)="use()"
+    (doubleTap)="clear()"
+    (contextmenu)="clear(); $event.preventDefault()"
+    (swipeUp)="use()"
+    (swipeDown)="clear()"
     (longPress)="isMagnified = true"
-    (allGesturesComplete)="gestureComplete(cell)"
+    (allGesturesComplete)="gestureComplete()"
   >
     <ng-container
       *ngTemplateOutlet="
