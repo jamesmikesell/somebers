@@ -336,5 +336,6 @@
   .cell {
     animation: magnify-and-move 0.15s ease-out forwards;
     flex: 0 0 auto;
+    background-color: var(--mat-sys-background);
   }
 }
