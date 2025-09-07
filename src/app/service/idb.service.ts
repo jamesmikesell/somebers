@@ -6,7 +6,7 @@ import { openDB, type IDBPDatabase } from 'idb';
 export class IdbService {
   private dbPromise: Promise<IDBPDatabase> | null = null;
   public static readonly dbName = 'somebers-db';
-  private readonly storeName = 'kv';
+  public static readonly storeName = 'kv';
 
   async init(): Promise<void> {
     if (this.dbPromise)
@@ -31,16 +31,16 @@ export class IdbService {
 
   async get<T>(key: IDBValidKey): Promise<T | undefined> {
     const db = await this.db();
-    return db.get(this.storeName, key) as Promise<T | undefined>;
+    return db.get(IdbService.storeName, key) as Promise<T | undefined>;
   }
 
   async set<T>(key: IDBValidKey, value: T): Promise<void> {
     const db = await this.db();
-    await db.put(this.storeName, value as any, key);
+    await db.put(IdbService.storeName, value as any, key);
   }
 
   async delete(key: IDBValidKey): Promise<void> {
     const db = await this.db();
-    await db.delete(this.storeName, key);
+    await db.delete(IdbService.storeName, key);
   }
 }

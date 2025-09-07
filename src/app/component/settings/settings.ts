@@ -5,8 +5,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { deleteDB } from 'idb';
+import { deleteDB, openDB } from 'idb';
 import { IdbService } from '../../service/idb.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -28,6 +29,7 @@ export class SettingsComponent implements OnInit {
   shapesModeEnabled: boolean = false;
   gestureMode: string = 'HAMMER';
 
+
   ngOnInit(): void {
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
     if (savedShapesMode !== null) {
@@ -40,56 +42,52 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+
   onShapesModeChange(event: MatSlideToggleChange): void {
     this.shapesModeEnabled = event.checked;
     localStorage.setItem('shapesModeEnabled', JSON.stringify(this.shapesModeEnabled));
   }
 
+
   onDeleteInputChange(): void {
     this.devModeEnabled = this.isDevModeTriggered;
   }
 
+
   onGestureModeChange(): void {
     localStorage.setItem('gestureMode', this.gestureMode);
   }
+
 
   get isDevModeTriggered(): boolean {
     const lowerCaseInput = this.deleteConfirmation.toLowerCase();
     return lowerCaseInput === 'devmode' || lowerCaseInput === 'dev mode';
   }
 
+
   get canDelete(): boolean {
     return this.deleteConfirmation.toLowerCase() === 'delete all data';
   }
 
+
   async deleteAllData(): Promise<void> {
     if (this.canDelete) {
-      localStorage.clear();
-      await deleteDB(IdbService.dbName);
-      await this.deleteAllIndexedDbDatabases()
+      try {
+        localStorage.clear();
+      } catch (e) {
+        console.error(e)
+      }
 
-      window.location.reload();
+      try {
+        const db = await openDB(IdbService.dbName);
+        await db.clear(IdbService.storeName);
+        db.close();
+      } catch (e) {
+        console.error(e)
+      }
+
+      window.location.href = '/';
     }
   }
-
-
-  private async deleteAllIndexedDbDatabases(): Promise<void> {
-    const dbs = await indexedDB.databases();
-    const deletionPromises = dbs.map(db => {
-      return new Promise<void>((resolve, reject) => {
-        const deleteReq = indexedDB.deleteDatabase(db.name);
-        deleteReq.onsuccess = () => resolve();
-        deleteReq.onerror = () => reject(deleteReq.error);
-      });
-    });
-
-
-    try {
-      await Promise.all(deletionPromises);
-      console.log('All databases deleted successfully');
-    } catch (error) {
-      console.error('Error deleting databases:', error);
-    }
-  };
 
 }
