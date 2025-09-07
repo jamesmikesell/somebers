@@ -13,7 +13,7 @@ export class VersionCheckService {
   constructor(private http: HttpClient, private swUpdate: SwUpdate) { }
 
   startVersionCheck() {
-    timer(5 * 1000, 10 * 60 * 1000).subscribe(() => {
+    timer(1 * 1000, 10 * 60 * 1000).subscribe(() => {
       this.http.get<{ version: string }>('./version.json?t=' + new Date().getTime()).subscribe(
         (serverVersion) => {
           if (serverVersion.version !== AppVersion.VERSION) {
