@@ -21,7 +21,7 @@
 			]
 		}
 	},
-	"postCreateCommand": "sudo chown -R $(id -u):$(id -g) ${containerWorkspaceFolder}",
+	"postCreateCommand": "sudo chown -R $(id -u):$(id -g) ${containerWorkspaceFolder} && sudo apt-get update && sudo apt-get install -y chromium",
 	"workspaceFolder": "/workspace/container-workspace",
 	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/host-machine-workspace,type=bind,consistency=cached",
 	"onCreateCommand": "(sudo cp /workspace/host-machine-workspace/.devcontainer/post-create.sh /workspace && sudo chown $(id -u):$(id -g) /workspace/post-create.sh && sudo chmod +x /workspace/post-create.sh && /workspace/post-create.sh)",
