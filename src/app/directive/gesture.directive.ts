@@ -2,7 +2,6 @@ import { Directive, ElementRef, EventEmitter, OnDestroy, OnInit, Output } from '
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { GestureRecognizer } from './gesture-recognizer';
-import { HammerImplementation } from './hammer-recognizer';
 
 
 @Directive({
@@ -18,7 +17,6 @@ export class GestureDirective implements OnInit, OnDestroy {
   @Output() allGesturesComplete = new EventEmitter<void>();
   @Output() longPress = new EventEmitter<void>();
 
-  private hammer: HammerImplementation | undefined;
   private claude: GestureRecognizer | undefined;
   private destroy$ = new Subject<void>();
 
@@ -26,22 +24,7 @@ export class GestureDirective implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    let mode: GestureMode = GestureMode.CUSTOM;
-    const savedGestureMode = localStorage.getItem('gestureMode');
-    if (savedGestureMode === 'HAMMER')
-      mode = GestureMode.HAMMER;
-
-    switch (mode) {
-      case GestureMode.HAMMER:
-        this.hammerInit();
-        break;
-      case GestureMode.CUSTOM:
-        this.claudeInit();
-        break;
-      default:
-        this.hammerInit();
-    }
-
+    this.claudeInit();
   }
 
 
@@ -57,21 +40,8 @@ export class GestureDirective implements OnInit, OnDestroy {
     this.claude.longPress$.pipe(takeUntil(this.destroy$)).subscribe(() => this.longPress.emit());
   }
 
-  private hammerInit(): void {
-    this.hammer = new HammerImplementation(this.el.nativeElement);
-
-    this.hammer.touchStart$.pipe(takeUntil(this.destroy$)).subscribe(() => this.touchStart.emit());
-    this.hammer.allGesturesComplete$.pipe(takeUntil(this.destroy$)).subscribe(() => this.allGesturesComplete.emit());
-    this.hammer.swipeUp$.pipe(takeUntil(this.destroy$)).subscribe(() => this.swipeUp.emit());
-    this.hammer.swipeDown$.pipe(takeUntil(this.destroy$)).subscribe(() => this.swipeDown.emit());
-    this.hammer.tap$.pipe(takeUntil(this.destroy$)).subscribe(() => this.tap.emit());
-    this.hammer.doubleTap$.pipe(takeUntil(this.destroy$)).subscribe(() => this.doubleTap.emit());
-    this.hammer.longPress$.pipe(takeUntil(this.destroy$)).subscribe(() => this.longPress.emit());
-  }
 
   ngOnDestroy(): void {
-    if (this.hammer)
-      this.hammer.destroy();
     if (this.claude)
       this.claude.destroy();
 

@@ -27,18 +27,12 @@ export class SettingsComponent implements OnInit {
   deleteConfirmation = '';
   devModeEnabled: boolean = false;
   shapesModeEnabled: boolean = false;
-  gestureMode: string = 'HAMMER';
 
 
   ngOnInit(): void {
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
     if (savedShapesMode !== null) {
       this.shapesModeEnabled = JSON.parse(savedShapesMode);
-    }
-
-    const savedGestureMode = localStorage.getItem('gestureMode');
-    if (savedGestureMode !== null) {
-      this.gestureMode = savedGestureMode;
     }
   }
 
@@ -51,11 +45,6 @@ export class SettingsComponent implements OnInit {
 
   onDeleteInputChange(): void {
     this.devModeEnabled = this.isDevModeTriggered;
-  }
-
-
-  onGestureModeChange(): void {
-    localStorage.setItem('gestureMode', this.gestureMode);
   }
 
 
