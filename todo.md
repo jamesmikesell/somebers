@@ -1,6 +1,5 @@
 # TODO
 
-- better contrast between cells... potentially assign contrasting colors to different parts of the board, then give group a color based on which section of the board it occupies most
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
 - animation when row/col/group total has been reached, even if some cells haven't been cleared
 - Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
@@ -24,6 +23,7 @@
 
 # Done
 
+- better contrast between cells... potentially assign contrasting colors to different parts of the board, then give group a color based on which section of the board it occupies most
 - record time spent per game
 - screen wake lock
 - stats streak last 5 days, week, month, all time
