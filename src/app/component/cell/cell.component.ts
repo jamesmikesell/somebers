@@ -21,7 +21,7 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
     this._cell = val;
   }
   @Input() displayType!: CellDisplayType;
-  @Input() columnCount!: number; // To pass the --columnCount CSS variable
+  @Input() columnCount!: number;
   @Input() shapesMode = false;
   @Input() disableAnimation = false;
 
@@ -33,6 +33,13 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @HostBinding('style.--scaleFactor')
   get scaleFactor() { return this._scaleFactor; }
+
+  @HostBinding('style.--cellColor')
+  get getCellColor() {
+    if (this.cell)
+      return `light-dark(${this.cell.colorLight}, ${this.cell.colorDark})`;
+    return "light-dark( #cacacaff, #3f3f3fff)";
+  }
 
   @HostBinding('style.--moveX')
   get moveX() { return this._moveX; }

@@ -1,14 +1,5 @@
 :host {
   position: relative;
-  --color-1: light-dark(#ff8f8f, #943501);
-  --color-2: light-dark(#ffad63, #50322d);
-  --color-3: light-dark(#fff67d, #817d00);
-  --color-4: light-dark(#91d594, #1b5e20);
-  --color-5: light-dark(#4beff5, #0062af);
-  --color-6: light-dark(#62acf6, #282a93);
-  --color-7: light-dark(#a0a7c7, #540dab);
-  --color-8: light-dark(#e8acff, #9e0b91);
-  --color-9: light-dark(#ff55cd, #840046);
   // These need to be defined in the parent component css... if things are displaying weird it's likely because
   // the defaults are being used here as it can't find the value specified in the parent.
   --_headerSpacing: var(--headerSpacing, -100px);
@@ -55,157 +46,75 @@
   box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--mat-sys-surface-variant);
 }
 
-.color-1 {
+.color {
   &::before {
-    background-color: var(--color-1);
+    background-color: var(--cellColor);
   }
 
   &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-1);
-  }
-
-  // Shape mode: use clip-path instead of background
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    background-color: var(--color-1);
-    border-radius: 0; // Remove border radius for shapes
+    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--cellColor);
   }
 }
 
-.color-2 {
-  &::before {
-    background-color: var(--color-2);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-2);
-  }
-
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(20% 0%, 80% 0%, 80% 20%, 100% 20%, 100% 80%, 80% 80%, 80% 100%, 20% 100%, 20% 80%, 0% 80%, 0% 20%, 20% 20%);
-    background-color: var(--color-2);
-    border-radius: 0;
-  }
+.shape.shape-1::before {
+  background: transparent;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
 
-.color-3 {
-  &::before {
-    background-color: var(--color-3);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-3);
-  }
-
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    background-color: var(--color-3);
-    border-radius: 0;
-  }
+.shape.shape-2::before {
+  background: transparent;
+  clip-path: polygon(20% 0%, 80% 0%, 80% 20%, 100% 20%, 100% 80%, 80% 80%, 80% 100%, 20% 100%, 20% 80%, 0% 80%, 0% 20%, 20% 20%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
 
-.color-4 {
-  &::before {
-    background-color: var(--color-4);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-4);
-  }
-
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%);
-    background-color: var(--color-4);
-    border-radius: 0;
-  }
+.shape.shape-3::before {
+  background: transparent;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
 
-.color-5 {
-  &::before {
-    background-color: var(--color-5);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-5);
-  }
-
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-    background-color: var(--color-5);
-    border-radius: 0;
-  }
+.shape.shape-4::before {
+  background: transparent;
+  clip-path: polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
 
-.color-6 {
-  &::before {
-    background-color: var(--color-6);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-6);
-  }
-
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 50% 100%, 0% 75%);
-    background-color: var(--color-6);
-    border-radius: 0;
-  }
+.shape.shape-5::before {
+  background: transparent;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
 
-.color-7 {
-  &::before {
-    background-color: var(--color-7);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-7);
-  }
-
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-    background-color: var(--color-7);
-    border-radius: 0;
-  }
+.shape.shape-6::before {
+  background: transparent;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 50% 100%, 0% 75%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
 
-.color-8 {
-  &::before {
-    background-color: var(--color-8);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-8);
-  }
-
-  &.shape::before {
-    background: transparent;
-    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    background-color: var(--color-8);
-    border-radius: 0;
-  }
+.shape.shape-7::before {
+  background: transparent;
+  clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
 
-.color-9 {
-  &::before {
-    background-color: var(--color-9);
-  }
-
-  &.hidden {
-    box-shadow: 0px 0px calc(14cqmin / var(--columnCount)) 0px var(--color-9);
-  }
-
-
-  // &.shape::before {
-  // no need for a custom shape, we'll just leave one of the cells with a solid BG
-  // }
+.shape.shape-8::before {
+  background: transparent;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background-color: var(--cellColor);
+  border-radius: 0;
 }
+
+// .shape.shape-9::before {
+//   // no need for a custom shape, we'll just leave one of the cells with a solid BG
+// }
 
 .cell {
   position: relative;
