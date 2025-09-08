@@ -69,6 +69,13 @@
 
 .next-game-container {
   text-align: center;
+  max-height: 200px;
+  opacity: 1;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.next-game-container.animate {
   animation: expand-view 1.0s ease-in-out forwards;
 }
 
@@ -103,14 +110,6 @@
   max-width: min(100%, 100cqh); // Square aspect ratio constraint
   max-height: min(100%, 100cqw);
   line-height: normal;
-}
-
-.previously-completed {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  flex-flow: column;
 }
 
 .game-table {

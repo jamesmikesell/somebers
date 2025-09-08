@@ -40,10 +40,9 @@ export class Board implements OnInit, OnDestroy {
   SelectionStatus = SelectionStatus;
   gameBoard = new GameBoard();
   solvable = true;
-  gamePreviouslyCompleted = false;
   devMode = false;
   shapesMode: boolean = false;
-  showNextGameButton = false;
+  nextGameButtonState: "hidden" | "show-animated" | "show-instant" = "hidden";
   disableAnimations = false;
   stats: GameStats;
 
@@ -148,12 +147,19 @@ export class Board implements OnInit, OnDestroy {
 
   private updateGameNumber(game: number) {
     this.gameNumber = game;
-    this.gamePreviouslyCompleted = false;
     this.moveHistory = [];
-    this.showNextGameButton = false;
+    this.nextGameButtonState = "hidden";
     this.undoManager.clear();
     this.timeTracker.reset(0)
     this.timeTracker.manualStart();
+
+    this.buildAndDisplayBoard(game)
+
+    this.saveGameState();
+  }
+
+
+  private buildAndDisplayBoard(game: number): void {
     let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
 
     // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -183,8 +189,6 @@ export class Board implements OnInit, OnDestroy {
     this.solvable = this.gameBoard.solvable;
 
     this.disableAnimationsTemporarily();
-
-    this.saveGameState();
   }
 
 
@@ -250,7 +254,6 @@ export class Board implements OnInit, OnDestroy {
 
 
   platNextUnfinishedGame(): void {
-    this.gamePreviouslyCompleted = false;
     const allGameNumbers = Array.from(this.previousGames.keys()).sort((a, b) => a - b);
 
     // Find the next game number after current
@@ -307,12 +310,21 @@ export class Board implements OnInit, OnDestroy {
 
   private constructBoardFromPreviousState(previous: GameInProgressDtoV3): void {
     this.gameNumber = previous.gameNumber || 1;
-    this.gamePreviouslyCompleted = previous.completed ?? false;
     this.moveHistory = previous.moveHistory ?? [];
-    this.showNextGameButton = false;
+    this.nextGameButtonState = "hidden";
     this.undoManager.clear();
     this.timeTracker.reset(previous.timeSpent ?? 0)
-    if (!previous.completed) {
+    if (previous.completed) {
+      this.buildAndDisplayBoard(this.gameNumber);
+      this.gameBoard.playArea.forEach(row => row.forEach(cell => {
+        cell.required = false;
+        cell.status = SelectionStatus.CLEARED;
+        cell.value = 0;
+      }))
+      this.gameBoard.recalculateSelectedHeaders();
+      this.gameBoard.isComplete()
+      this.nextGameButtonState = "show-instant";
+    } else {
       if (previous.grid) {
         let colorGroupGrid = previous.grid.map(row => row.map(cell => cell.groupNumber))
         let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, colorGroupGrid);
@@ -449,7 +461,7 @@ export class Board implements OnInit, OnDestroy {
         first(([wasActive, isActive]) => wasActive && !isActive),
       ).subscribe(() => {
         setTimeout(() => {
-          this.showNextGameButton = true;
+          this.nextGameButtonState = "show-animated";
         }, 250);
       });
 

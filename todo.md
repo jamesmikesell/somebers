@@ -23,6 +23,7 @@
 
 # Done
 
+- show empty grid for completed games
 - better contrast between cells... potentially assign contrasting colors to different parts of the board, then give group a color based on which section of the board it occupies most
 - record time spent per game
 - screen wake lock
