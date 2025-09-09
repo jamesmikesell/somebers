@@ -142,7 +142,7 @@
     <li>Work offline thanks to the built-in service worker.</li>
   </ul>
 
-  @if (canInstall) {
+  @if (!isInstalled && canInstall) {
     <div class="callout install-callout">
       <div class="install-header">
         <mat-icon aria-hidden="true">get_app</mat-icon>
@@ -176,6 +176,12 @@
       @if (installError) {
         <p class="note">{{ installError }}</p>
       }
+    </div>
+  }
+  @if (isInstalled) {
+    <div class="callout">
+      <strong>Already installed:</strong> You’re running the installed app. If
+      you need platform-specific steps for another device, see below.
     </div>
   }
 

@@ -17,13 +17,19 @@ export class Documentation implements OnInit, OnDestroy {
   installInProgress = false;
   installError: string | null = null;
   installOutcome: 'accepted' | 'dismissed' | null = null;
+  isInstalled = false;
 
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
   private beforeInstallHandler?: (e: Event) => void;
   private appInstalledHandler?: () => void;
+  private displayModeMql?: MediaQueryList;
+  private displayModeListener?: (ev: MediaQueryListEvent) => void;
 
   ngOnInit(): void {
     try {
+      // Detect if already running in standalone/app mode
+      this.isInstalled = this.computeInstalled();
+
       this.beforeInstallHandler = (event: Event) => {
         // Keep the install prompt under our control
         try {
@@ -47,6 +53,16 @@ export class Documentation implements OnInit, OnDestroy {
         this.beforeInstallHandler as EventListener,
       );
       window.addEventListener('appinstalled', this.appInstalledHandler);
+
+      // Track changes to display-mode (e.g., when launched as installed app)
+      if (window.matchMedia) {
+        this.displayModeMql = window.matchMedia('(display-mode: standalone)');
+        const handler = (e: MediaQueryListEvent) => {
+          this.isInstalled = e.matches || this.isIOSStandalone();
+        };
+        this.displayModeListener = handler;
+        this.displayModeMql.addEventListener?.('change', handler);
+      }
     } catch (error) {
       console.error('docs: init install UI failed', error);
     }
@@ -61,6 +77,12 @@ export class Documentation implements OnInit, OnDestroy {
         );
       if (this.appInstalledHandler)
         window.removeEventListener('appinstalled', this.appInstalledHandler);
+      if (this.displayModeMql && this.displayModeListener) {
+        this.displayModeMql.removeEventListener?.(
+          'change',
+          this.displayModeListener,
+        );
+      }
     } catch (error) {
       console.error('docs: cleanup listeners failed', error);
     }
@@ -89,6 +111,18 @@ export class Documentation implements OnInit, OnDestroy {
     } finally {
       this.installInProgress = false;
     }
+  }
+
+  private computeInstalled(): boolean {
+    // Standard PWA standalone detection
+    const standalone =
+      window.matchMedia?.('(display-mode: standalone)')?.matches === true;
+    return standalone || this.isIOSStandalone();
+  }
+
+  private isIOSStandalone(): boolean {
+    // iOS Safari exposes navigator.standalone when launched from home screen
+    return (navigator as any).standalone === true;
   }
 }
 
