@@ -12,15 +12,55 @@
 }
 
 .note {
-  color: var(--muted);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .callout {
-  border: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
-  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: color-mix(
+    in oklab,
+    var(--mat-sys-primary) 10%,
+    var(--mat-sys-surface)
+  );
   border-radius: 12px;
   padding: 12px 14px;
   margin: 0.75rem 0;
+}
+
+/* Make the install callout stand out a bit more */
+.install-callout {
+  border-width: 2px;
+  border-color: var(--mat-sys-primary);
+  /* Make this visibly different from the standard callout */
+  background: color-mix(
+    in oklab,
+    var(--mat-sys-primary) 24%,
+    var(--mat-sys-surface)
+  );
+  box-shadow: 0 8px 20px
+    color-mix(in oklab, var(--mat-sys-primary) 26%, transparent);
+  padding: 14px 16px;
+  /* Accent left rail for emphasis */
+  border-left-width: 6px;
+  border-left-color: var(--mat-sys-primary);
+}
+
+.install-callout .install-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.install-callout .install-header mat-icon {
+  font-size: 22px;
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.install-callout button[mat-raised-button] {
+  margin-top: 8px;
 }
 
 /* Removed special formatting for input controls per design feedback */
@@ -31,8 +71,8 @@
     SFMono-Regular,
     Menlo,
     monospace;
-  background: color-mix(in oklab, var(--fg) 6%, transparent);
-  border: 1px solid color-mix(in oklab, var(--fg) 15%, transparent);
+  background: var(--mat-sys-surface-container-lowest);
+  border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 8px;
   padding: 0.05rem 0.3rem;
 }

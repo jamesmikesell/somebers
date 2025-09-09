@@ -127,6 +127,128 @@
     which existing numbers belong. Select what must remain, remove what cannot,
     and when rows, columns, and color groups all add up perfectly—you win. 🎉
   </p>
+
+  <br /><br /><br />
+  <h2>📲 Installing (Optional)</h2>
+  <p>
+    <em>Somebers</em> is a Progressive Web App (PWA). You can simply use it in
+    your browser, or you can optionally “install” it to get a more app-like
+    experience. Installation is not required — gameplay is identical — but
+    installed PWAs:
+  </p>
+  <ul>
+    <li>Launch faster from your home screen, Dock, or Start menu.</li>
+    <li>Run in a standalone window without the browser address bar.</li>
+    <li>Work offline thanks to the built-in service worker.</li>
+  </ul>
+
+  @if (canInstall) {
+    <div class="callout install-callout">
+      <div class="install-header">
+        <mat-icon aria-hidden="true">get_app</mat-icon>
+        <span>Quick Install</span>
+      </div>
+      <p>
+        <strong>Install with one click:</strong> Your browser supports
+        installing this app easily! Use the button below to install
+        <em>Somebers</em>. If this doesn’t work, use the platform-specific steps
+        that follow.
+      </p>
+      <p class="note">
+        After clicking, installation may take a minute or two to complete.
+      </p>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="installPWA()"
+        [disabled]="installInProgress"
+      >
+        <mat-icon aria-hidden="true">get_app</mat-icon>
+        <span>{{
+          installInProgress ? "Installing…" : "Install Somebers"
+        }}</span>
+      </button>
+      @if (installOutcome === "dismissed") {
+        <p class="note">
+          Install was dismissed. You can try again or follow the steps below.
+        </p>
+      }
+      @if (installError) {
+        <p class="note">{{ installError }}</p>
+      }
+    </div>
+  }
+
+  <div class="callout">
+    <strong>Note:</strong> Exact steps differ by platform and browser. Follow
+    the instructions for your setup below.
+  </div>
+
+  <h3>iOS (iPhone / iPad)</h3>
+  <p class="note">For best results on iOS, use Safari.</p>
+  <ol>
+    <li>
+      Open <strong>Safari</strong> and navigate to
+      <code>https://somebers.com</code>.
+    </li>
+    <li>Tap the <strong>Share</strong> button.</li>
+    <li>
+      Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.
+    </li>
+  </ol>
+
+  <h3>Android</h3>
+  <ul>
+    <li>
+      <strong>Chrome:</strong> Visit <code>somebers.com</code> → tap the
+      <strong>⋮</strong> menu → <strong>Install app</strong> (or
+      <strong>Add to Home screen</strong>), then confirm.
+    </li>
+  </ul>
+  <p class="note">
+    If given the option, choose <strong>Install</strong> instead of “Add to Home
+    screen” for the best PWA experience.
+  </p>
+  <p class="note">
+    You may also see an automatic “Install” prompt banner in supported browsers.
+  </p>
+
+  <h3>macOS</h3>
+  <ul>
+    <li>
+      <strong>Safari:</strong> Open <code>somebers.com</code> → from the
+      <strong>File</strong> menu select <strong>Add to Dock</strong> (or use the
+      <strong>Share</strong> button → <strong>Add to Dock</strong>), then choose
+      to open in a separate window.
+    </li>
+    <li>
+      <strong>Chrome:</strong> Open <code>somebers.com</code> → click the
+      <strong>Install</strong> icon in the address bar (or
+      <strong>⋮</strong> menu → <strong>Save and share</strong> →
+      <strong>Install page as app…</strong>), then confirm.
+    </li>
+  </ul>
+
+  <h3>Windows</h3>
+  <ul>
+    <li>
+      <strong>Chrome:</strong> Open <code>somebers.com</code> → click the
+      <strong>Install</strong> icon in the address bar (or
+      <strong>⋮</strong> menu → <strong>Install</strong>), then confirm.
+    </li>
+    <li>
+      <strong>Edge:</strong> Open <code>somebers.com</code> →
+      <strong>⋮</strong> menu → <strong>Apps</strong> →
+      <strong>Install this site as an app</strong>.
+    </li>
+  </ul>
+  <p class="note">Safari is not available on Windows; use Chrome or Edge.</p>
+
+  <p>
+    After installing, launch <em>Somebers</em> from your home screen, Dock, or
+    Start menu. If you prefer using your browser, that’s great too —
+    installation is completely optional.
+  </p>
 </div>
 
 <div class="version">v. {{ AppVersion.VERSION }}</div>
