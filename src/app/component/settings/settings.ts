@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
 import { openDB } from 'idb';
+import { AppVersion } from '../../app-version';
 import { IdbService } from '../../service/idb.service';
 import { InstallComponent } from '../install/install.component';
 
@@ -30,6 +31,7 @@ export class SettingsComponent implements OnInit {
   deleteConfirmation = '';
   devModeEnabled: boolean = false;
   shapesModeEnabled: boolean = false;
+  AppVersion = AppVersion;
 
 
   ngOnInit(): void {
