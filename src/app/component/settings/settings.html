@@ -17,6 +17,21 @@
   </section>
 
   <section class="settings-section">
+    <h2>Install App</h2>
+    <app-install #inst="appInstall"></app-install>
+    @if (!inst.canInstall && !inst.isInstalled) {
+      <p>
+        Your browser does not support automatic installation here, however you
+        may still be able to install it by following the
+        <a routerLink="/documentation" fragment="installation"
+          >installation instructions</a
+        >
+        for your platform.
+      </p>
+    }
+  </section>
+
+  <section class="settings-section">
     <h2>Clear All Saved Data</h2>
     <p>
       This will permanently delete all your saved game data, including your

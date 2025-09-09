@@ -1,0 +1,49 @@
+.note {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.callout {
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: color-mix(
+    in oklab,
+    var(--mat-sys-primary) 10%,
+    var(--mat-sys-surface)
+  );
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 0.75rem 0;
+}
+
+.install-callout {
+  border-width: 2px;
+  border-color: var(--mat-sys-primary);
+  background: color-mix(
+    in oklab,
+    var(--mat-sys-primary) 24%,
+    var(--mat-sys-surface)
+  );
+  box-shadow: 0 8px 20px
+    color-mix(in oklab, var(--mat-sys-primary) 26%, transparent);
+  padding: 14px 16px;
+  border-left-width: 6px;
+  border-left-color: var(--mat-sys-primary);
+}
+
+.install-callout .install-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.install-callout .install-header mat-icon {
+  font-size: 22px;
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.install-callout button[mat-raised-button] {
+  margin-top: 8px;
+}
+

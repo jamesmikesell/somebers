@@ -5,9 +5,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { deleteDB, openDB } from 'idb';
+import { RouterLink } from '@angular/router';
+import { openDB } from 'idb';
 import { IdbService } from '../../service/idb.service';
-import { Router } from '@angular/router';
+import { InstallComponent } from '../install/install.component';
 
 @Component({
   selector: 'app-settings',
@@ -21,6 +22,8 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatSlideToggleModule,
     MatSelectModule,
+    RouterLink,
+    InstallComponent,
   ],
 })
 export class SettingsComponent implements OnInit {

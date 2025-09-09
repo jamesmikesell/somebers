@@ -129,6 +129,7 @@
   </p>
 
   <br /><br /><br />
+  <a id="installation"></a>
   <h2>📲 Installing (Optional)</h2>
   <p>
     <em>Somebers</em> is a Progressive Web App (PWA). You can simply use it in
@@ -141,49 +142,7 @@
     <li>Run in a standalone window without the browser address bar.</li>
     <li>Work offline thanks to the built-in service worker.</li>
   </ul>
-
-  @if (!isInstalled && canInstall) {
-    <div class="callout install-callout">
-      <div class="install-header">
-        <mat-icon aria-hidden="true">get_app</mat-icon>
-        <span>Quick Install</span>
-      </div>
-      <p>
-        <strong>Install with one click:</strong> Your browser supports
-        installing this app easily! Use the button below to install
-        <em>Somebers</em>. If this doesn’t work, use the platform-specific steps
-        that follow.
-      </p>
-      <p class="note">
-        After clicking, installation may take a minute or two to complete.
-      </p>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="installPWA()"
-        [disabled]="installInProgress"
-      >
-        <mat-icon aria-hidden="true">get_app</mat-icon>
-        <span>{{
-          installInProgress ? "Installing…" : "Install Somebers"
-        }}</span>
-      </button>
-      @if (installOutcome === "dismissed") {
-        <p class="note">
-          Install was dismissed. You can try again or follow the steps below.
-        </p>
-      }
-      @if (installError) {
-        <p class="note">{{ installError }}</p>
-      }
-    </div>
-  }
-  @if (isInstalled) {
-    <div class="callout">
-      <strong>Already installed:</strong> You’re running the installed app. If
-      you need platform-specific steps for another device, see below.
-    </div>
-  }
+  <app-install></app-install>
 
   <div class="callout">
     <strong>Note:</strong> Exact steps differ by platform and browser. Follow

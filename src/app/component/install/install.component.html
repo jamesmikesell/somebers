@@ -1,0 +1,33 @@
+@if (!isInstalled && canInstall) {
+  <div class="callout install-callout">
+    <div class="install-header">
+      <mat-icon aria-hidden="true">get_app</mat-icon>
+      <span>Quick Install</span>
+    </div>
+    <p>
+      <strong>Install with one click:</strong> Your browser supports installing this app easily. Use the button below to install <em>Somebers</em>.
+    </p>
+    <p class="note">After clicking, installation may take a minute to complete.</p>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="installPWA()"
+      [disabled]="installInProgress"
+    >
+      <mat-icon aria-hidden="true">get_app</mat-icon>
+      <span>{{ installInProgress ? 'Installing…' : 'Install Somebers' }}</span>
+    </button>
+    @if (installOutcome === 'dismissed') {
+      <p class="note">Install was dismissed. You can try again.</p>
+    }
+    @if (installError) {
+      <p class="note">{{ installError }}</p>
+    }
+  </div>
+}
+@if (isInstalled) {
+  <div class="callout">
+    <strong>Already installed:</strong> You’re running the installed app.
+  </div>
+}
+
