@@ -1,10 +1,14 @@
 {
   "name": "Somebers",
   "short_name": "Somebers",
+  "lang": "en",
+  "description": "Somebers is a fast, free, offline-friendly number puzzle game for web and mobile browsers.",
   "display": "standalone",
   "background_color": "#000000",
+  "theme_color": "#121212",
   "scope": "./",
   "start_url": "./",
+  "categories": ["games", "puzzle", "brain", "math"],
   "icons": [
     {
       "src": "icons/icon-16x16.png",
