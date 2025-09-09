@@ -1,11 +1,11 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { CelebrationComponent } from "./component/celebration/celebration";
 import { MATERIAL_IMPORTS } from './material-imports';
 import { BoardUiService } from './service/board-ui.service';
+import { PwaInstallService } from './service/pwa-install.service';
 import { VersionCheckService } from './service/version-check.service';
-import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -31,6 +31,8 @@ export class App implements OnInit, OnDestroy {
   constructor(
     public versionCheckService: VersionCheckService,
     public boardUiService: BoardUiService,
+    // Force early construction so it can capture beforeinstallprompt events
+    _pwaInstallService: PwaInstallService,
   ) {
     versionCheckService.startVersionCheck();
     const savedMode = localStorage.getItem('colorMode');
