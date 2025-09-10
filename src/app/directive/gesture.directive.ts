@@ -16,6 +16,7 @@ export class GestureDirective implements OnInit, OnDestroy {
   @Output() touchStart = new EventEmitter<void>();
   @Output() allGesturesComplete = new EventEmitter<void>();
   @Output() longPress = new EventEmitter<void>();
+  @Output() longPressDragHorizontal = new EventEmitter<void>();
 
   private claude: GestureRecognizer | undefined;
   private destroy$ = new Subject<void>();
@@ -38,6 +39,7 @@ export class GestureDirective implements OnInit, OnDestroy {
     this.claude.tap$.pipe(takeUntil(this.destroy$)).subscribe(() => this.tap.emit());
     this.claude.doubleTap$.pipe(takeUntil(this.destroy$)).subscribe(() => this.doubleTap.emit());
     this.claude.longPress$.pipe(takeUntil(this.destroy$)).subscribe(() => this.longPress.emit());
+    this.claude.longPressDrag$.pipe(takeUntil(this.destroy$)).subscribe(() => this.longPressDragHorizontal.emit());
   }
 
 

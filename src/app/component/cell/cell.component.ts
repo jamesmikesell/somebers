@@ -104,4 +104,8 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.cell.processing = false;
     this.isMagnified = false;
   }
+
+  highlightCell(): void {
+    this.cell.highlighted = !this.cell.highlighted;
+  }
 }

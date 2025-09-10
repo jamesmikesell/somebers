@@ -15,6 +15,7 @@ export class GestureRecognizer {
   private tapSubject = new Subject<GestureEvent>();
   private doubleTapSubject = new Subject<GestureEvent>();
   private longPressSubject = new Subject<GestureEvent>();
+  private longPressDragSubject = new Subject<GestureEvent>();
 
   // State management
   private isPointerDown = false;
@@ -26,6 +27,9 @@ export class GestureRecognizer {
   private lastTapStartPoint: Point | null = null;
   private pendingTap: GestureEvent | null = null;
   private doubleTapTimer: number | null = null;
+  private longPressActive = false;
+  private longPressAnchorPoint: Point | null = null;
+  private longPressDragRecognized = false;
 
   // Public observables
   public readonly touchStart$: Observable<GestureEvent>;
@@ -35,6 +39,7 @@ export class GestureRecognizer {
   public readonly tap$: Observable<GestureEvent>;
   public readonly doubleTap$: Observable<GestureEvent>;
   public readonly longPress$: Observable<GestureEvent>;
+  public readonly longPressDrag$: Observable<GestureEvent>;
 
   constructor(element: HTMLElement, config: GestureConfig = {}) {
     this.element = element;
@@ -49,6 +54,7 @@ export class GestureRecognizer {
       maxDoubleTapDistance: config.maxDoubleTapDistance ?? 20,
       minLongPressDuration: config.minLongPressDuration ?? 500,
       maxLongPressMovement: config.maxLongPressMovement ?? 15,
+      minLongPressHorizontalDragDistance: config.minLongPressHorizontalDragDistance ?? 30,
     };
 
     // Initialize observables
@@ -59,6 +65,7 @@ export class GestureRecognizer {
     this.tap$ = this.tapSubject.asObservable();
     this.doubleTap$ = this.doubleTapSubject.asObservable();
     this.longPress$ = this.longPressSubject.asObservable();
+    this.longPressDrag$ = this.longPressDragSubject.asObservable();
 
     this.attachEventListeners();
   }
@@ -196,6 +203,9 @@ export class GestureRecognizer {
             distance: movement
           };
           this.longPressSubject.next(longPressEvent);
+          // Mark long press state to allow follow-up horizontal drag detection
+          this.longPressActive = true;
+          this.longPressAnchorPoint = this.currentPoint;
         }
       }
     }, this.config.minLongPressDuration);
@@ -209,6 +219,26 @@ export class GestureRecognizer {
     // Check if movement exceeds tap threshold early
     const movement = this.calculateDistance(this.startPoint, this.currentPoint);
     const duration = this.currentPoint.timestamp - this.startPoint.timestamp;
+
+    // If a long press is active, detect a subsequent horizontal drag (left or right)
+    if (this.longPressActive && !this.longPressDragRecognized && this.longPressAnchorPoint) {
+      const deltaX = this.currentPoint.x - this.longPressAnchorPoint.x;
+      const deltaY = this.currentPoint.y - this.longPressAnchorPoint.y;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+      if (absX >= this.config.minLongPressHorizontalDragDistance && absX > absY) {
+        this.longPressDragRecognized = true;
+        const lpDragEvent: GestureEvent = {
+          type: 'longPressDragHorizontal',
+          startPoint: this.longPressAnchorPoint,
+          endPoint: this.currentPoint,
+          duration: this.currentPoint.timestamp - this.longPressAnchorPoint.timestamp,
+          distance: Math.abs(deltaX)
+        };
+        this.longPressDragSubject.next(lpDragEvent);
+        // Do not complete here; wait for pointer up to emit allGesturesComplete
+      }
+    }
 
     // Check for swipe gesture
     if (!this.gestureRecognized && movement >= this.config.minSwipeDistance && duration <= this.config.maxSwipeDuration) {
@@ -342,6 +372,9 @@ export class GestureRecognizer {
     this.startPoint = null;
     this.currentPoint = null;
     this.gestureRecognized = false;
+    this.longPressActive = false;
+    this.longPressAnchorPoint = null;
+    this.longPressDragRecognized = false;
   }
 
   private clearLongPressTimer(): void {
@@ -375,6 +408,7 @@ export class GestureRecognizer {
     this.tapSubject.complete();
     this.doubleTapSubject.complete();
     this.longPressSubject.complete();
+    this.longPressDragSubject.complete();
 
     // Reset state
     this.resetState();
@@ -402,6 +436,7 @@ export interface GestureConfig {
   // Long press configuration
   minLongPressDuration?: number;
   maxLongPressMovement?: number;
+  minLongPressHorizontalDragDistance?: number;
 }
 
 

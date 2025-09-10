@@ -328,6 +328,7 @@ export class Cell {
   colorGroupGoalDisplayValue: number;
   invalidMove: boolean = false;
   hideBackground = false;
+  highlighted = false
   processing = false;
   borderTop = false;
   borderLeft = false;

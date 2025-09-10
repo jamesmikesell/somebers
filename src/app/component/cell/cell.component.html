@@ -31,6 +31,7 @@
     </div>
     <div
       class="main-number"
+      [class.highlighted]="cell.highlighted"
       [class.circle]="cell.status === SelectionStatus.SELECTED"
       [class.cleared-text]="cell.status === SelectionStatus.CLEARED"
     >
@@ -65,6 +66,7 @@
     (swipeUp)="use()"
     (swipeDown)="clear()"
     (longPress)="isMagnified = true"
+    (longPressDragHorizontal)="highlightCell()"
     (allGesturesComplete)="gestureComplete()"
   >
     <ng-container
