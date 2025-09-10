@@ -3,13 +3,13 @@ import { Random } from "./random";
 
 export class GameBoard {
 
-  get fullBoard(): Cell[][] { return this._fullBoard; }
-  playArea: Cell[][] = [];
+  get fullBoard(): DisplayCell[][] { return this._fullBoard; }
+  playArea: DisplayCell[][] = [];
   solvable: boolean;
 
-  private _fullBoard: Cell[][] = [];
-  private goalRows: Cell[] = [];
-  private goalColumns: Cell[] = [];
+  private _fullBoard: DisplayCell[][] = [];
+  private goalRows: DisplayCell[] = [];
+  private goalColumns: DisplayCell[] = [];
 
 
   constructBoard(gameNumber: number): void {
@@ -24,7 +24,7 @@ export class GameBoard {
 
     // Remaining rows: goalRows cell at start, then corresponding playArea row
     for (let i = 0; i < this.playArea.length; i++) {
-      const row: Cell[] = [this.goalRows[i], ...this.playArea[i]];
+      const row: DisplayCell[] = [this.goalRows[i], ...this.playArea[i]];
       this._fullBoard.push(row);
     }
 
@@ -42,8 +42,8 @@ export class GameBoard {
 
       this.goalRows = [];
       this.goalColumns = [];
-      let goalColorGroups = new Map<number, Cell>();
-      let cellsByGroup = new Map<number, Cell[]>();
+      let goalColorGroups = new Map<number, DisplayCell>();
+      let cellsByGroup = new Map<number, DisplayCell[]>();
 
       this.playArea.forEach((row, rowIndex) => row.forEach((cell, colIndex) => {
         let cells = cellsByGroup.get(cell.groupNumber) ?? [];
@@ -56,12 +56,12 @@ export class GameBoard {
         }
 
         if (!this.goalRows[rowIndex]) {
-          let header = new Cell();
+          let header = new DisplayCell();
           header.value = 0
           this.goalRows[rowIndex] = header;
         }
         if (!this.goalColumns[colIndex]) {
-          let header = new Cell();
+          let header = new DisplayCell();
           header.value = 0
           this.goalColumns[colIndex] = header;
         }
@@ -162,7 +162,7 @@ export class GameBoard {
     return false;
   }
 
-  private findUnsolvableRectangle(cell: Cell[][]): UnsolvableRect | null {
+  private findUnsolvableRectangle(cell: DisplayCell[][]): UnsolvableRect | null {
     const rows = cell.length;
     const cols = cell[0].length;
 
@@ -183,7 +183,7 @@ export class GameBoard {
   }
 
 
-  private isRectangleUnsolvable(cell: Cell[][], r1: number, c1: number, r2: number, c2: number): boolean {
+  private isRectangleUnsolvable(cell: DisplayCell[][], r1: number, c1: number, r2: number, c2: number): boolean {
     const cellTl = cell[r1][c1];
     const cellTr = cell[r1][c2];
     const cellBl = cell[r2][c1];
@@ -318,8 +318,20 @@ export class GameBoard {
 
 
 
+export interface SimpleCell {
+  required: boolean;
+  value: number;
+  groupNumber: number;
+}
 
-export class Cell {
+
+export interface GameCell extends SimpleCell {
+  status: SelectionStatus;
+}
+
+
+
+export class DisplayCell implements GameCell {
   status = SelectionStatus.NONE;
   required: boolean = false;
   value: number;

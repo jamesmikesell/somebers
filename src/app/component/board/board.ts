@@ -3,7 +3,7 @@ import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { filter, first, interval, pairwise, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
-import { Cell, GameBoard, SelectionStatus } from '../../model/game-board';
+import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { BoardGroupGenerator } from '../../model/grouping';
 import { Random } from '../../model/random';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
@@ -175,7 +175,7 @@ export class Board implements OnInit, OnDestroy {
     let random = new Random(gameSeed);
     this.gameBoard = new GameBoard();
     this.gameBoard.playArea = grid.map((row) => row.map((cellGroupNumber) => {
-      let cell = new Cell();
+      let cell = new DisplayCell();
       cell.value = Math.floor(random.next() * 9) + 1;
       cell.groupNumber = cellGroupNumber;
       cell.required = random.next() < 0.4;
@@ -192,7 +192,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  async use(cell: Cell): Promise<void> {
+  async use(cell: DisplayCell): Promise<void> {
     cell.processing = false;
 
     if (cell.status !== SelectionStatus.NONE)
@@ -214,7 +214,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  async clear(cell: Cell): Promise<void> {
+  async clear(cell: DisplayCell): Promise<void> {
     cell.processing = false;
 
     if (cell.status !== SelectionStatus.NONE)
@@ -333,7 +333,7 @@ export class Board implements OnInit, OnDestroy {
         let grid = previous.grid
           .map(row => row
             .map(cell => {
-              let newCell = new Cell();
+              let newCell = new DisplayCell();
               newCell.status = cell.status;
               newCell.required = cell.required;
               newCell.value = cell.value;
@@ -360,7 +360,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  private async handleIncorrectMove(cell: Cell): Promise<void> {
+  private async handleIncorrectMove(cell: DisplayCell): Promise<void> {
     this.vibrate();
     cell.invalidMove = true;
     await new Promise(resolve => setTimeout(resolve, 1000));

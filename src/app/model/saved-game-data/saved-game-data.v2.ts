@@ -1,5 +1,3 @@
-import { Cell } from "../game-board";
-import { GameInProgressDtoV1 } from "./game-in-progress.v1";
 import { GameInProgressDtoV2 } from "./game-in-progress.v2";
 import { DataSaveVersion } from "./saved-game-data";
 import { SavedGameStateV1 } from "./saved-game-data.v1";

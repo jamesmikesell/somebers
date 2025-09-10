@@ -1,4 +1,4 @@
-import { Cell } from "../game-board";
+import { DisplayCell } from "../game-board";
 
 /**
  * 
@@ -12,5 +12,5 @@ import { Cell } from "../game-board";
 export class SavedGameStateV0 {
   fails: number;
   gameNumber: number;
-  grid: Cell[][];
+  grid: DisplayCell[][];
 }

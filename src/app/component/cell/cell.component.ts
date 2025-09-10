@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { GestureDirective } from '../../directive/gesture.directive';
-import { Cell, SelectionStatus } from '../../model/game-board';
+import { DisplayCell, SelectionStatus } from '../../model/game-board';
 
 export type CellDisplayType = 'blank' | 'header' | 'standard';
 
@@ -13,9 +13,9 @@ export type CellDisplayType = 'blank' | 'header' | 'standard';
   styleUrl: './cell.component.scss'
 })
 export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
-  private _cell: Cell;
-  get cell(): Cell { return this._cell }
-  @Input() set cell(val: Cell) {
+  private _cell: DisplayCell;
+  get cell(): DisplayCell { return this._cell }
+  @Input() set cell(val: DisplayCell) {
     if (this._cell)
       this.gestureComplete();
     this._cell = val;
@@ -25,8 +25,8 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() shapesMode = false;
   @Input() disableAnimation = false;
 
-  @Output() used = new EventEmitter<Cell>();
-  @Output() cleared = new EventEmitter<Cell>();
+  @Output() used = new EventEmitter<DisplayCell>();
+  @Output() cleared = new EventEmitter<DisplayCell>();
 
 
   @ViewChild('positionFinder', { static: false }) positionFinder!: ElementRef<HTMLDivElement>;
