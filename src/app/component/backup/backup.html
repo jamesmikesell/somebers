@@ -4,7 +4,7 @@
   <div class="section">
     <h3>Backup</h3>
     <p>Download your current saved data as a .somebers file.</p>
-    <button mat-raised-button color="primary" (click)="backup()">
+    <button matButton="outlined" color="primary" (click)="backup()">
       <mat-icon>download</mat-icon>
       Backup Now
     </button>
@@ -36,7 +36,7 @@
           <div>Drag & drop your .somebers file here</div>
           <div class="or">or</div>
           <button
-            mat-stroked-button
+            matButton="outlined"
             color="primary"
             (click)="openFilePicker(fileInput)"
           >
