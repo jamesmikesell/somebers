@@ -16,15 +16,13 @@
 - sounds
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - configuration to be able to show/hide running calculated sums
-- temp cell selection:
-  - ability to highlight cells temporarily to mark that you're using them for mental math
-  - cells are highlighted in consistent color depending on when they were highlighted
-  - optionally do math for selected cells
+- temp cell selection: optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
 - ability to sync game state across devices
 
 # Done
 
+- temp cell selection: ability to highlight cells temporarily to mark that you're using them for mental math
 - show empty grid for completed games
 - better contrast between cells... potentially assign contrasting colors to different parts of the board, then give group a color based on which section of the board it occupies most
 - record time spent per game
@@ -78,3 +76,4 @@
 
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
 - Create a queue of pending moves and If one of the first moves fails, prevent failure of the others
+- temp cell selection: cells are highlighted in consistent color depending on when they were highlighted
