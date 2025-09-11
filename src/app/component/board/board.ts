@@ -42,7 +42,6 @@ export class Board implements OnInit, OnDestroy {
   solvable = true;
   devMode = false;
   shapesMode: boolean = false;
-  estimatedDifficultyDisplayEnabled: boolean = false;
   nextGameButtonState: "hidden" | "show-animated" | "show-instant" = "hidden";
   disableAnimations = false;
   stats: GameStats;
@@ -72,9 +71,6 @@ export class Board implements OnInit, OnDestroy {
     if (savedShapesMode !== null)
       this.shapesMode = JSON.parse(savedShapesMode);
 
-    const est = localStorage.getItem('estimatedDifficultyDisplayEnabled');
-    if (est !== null)
-      this.estimatedDifficultyDisplayEnabled = JSON.parse(est);
   }
 
 
