@@ -4,14 +4,13 @@ import { filter, first, interval, pairwise, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
-import { BoardGroupGenerator } from '../../model/grouping';
-import { Random } from '../../model/random';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
 import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progress.v3';
 import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v1';
 import { BoardUiService } from '../../service/board-ui.service';
 import { CelebrationService } from '../../service/celebration';
 import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
+import { generatePlayArea } from '../../service/gameboard-generator';
 import { SaveDataService } from '../../service/save-data.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { TimeTracker } from '../../service/time-tracker';
@@ -19,13 +18,14 @@ import { UndoManager } from '../../service/undo-manager';
 import { WakeLock } from '../../service/wake-lock';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
+import { EstimatedDifficultyComponent } from '../estimated-difficulty/estimated-difficulty';
 import { StatsComponent } from '../stats/stats';
 import { Title } from "../title/title";
 import { AppColors } from './colors';
 
 @Component({
   selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent, StatsComponent, Title],
+  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent, StatsComponent, Title, EstimatedDifficultyComponent],
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
@@ -42,6 +42,7 @@ export class Board implements OnInit, OnDestroy {
   solvable = true;
   devMode = false;
   shapesMode: boolean = false;
+  estimatedDifficultyDisplayEnabled: boolean = false;
   nextGameButtonState: "hidden" | "show-animated" | "show-instant" = "hidden";
   disableAnimations = false;
   stats: GameStats;
@@ -70,6 +71,10 @@ export class Board implements OnInit, OnDestroy {
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
     if (savedShapesMode !== null)
       this.shapesMode = JSON.parse(savedShapesMode);
+
+    const est = localStorage.getItem('estimatedDifficultyDisplayEnabled');
+    if (est !== null)
+      this.estimatedDifficultyDisplayEnabled = JSON.parse(est);
   }
 
 
@@ -160,32 +165,17 @@ export class Board implements OnInit, OnDestroy {
 
 
   private buildAndDisplayBoard(game: number): void {
-    let gameSeed = Random.generateFromSeed(game) * Number.MAX_SAFE_INTEGER;
+    this.gameBoard = generatePlayArea(game);
 
-    // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
-    const gridStartOffset = game + 87228;
-    let gridMin = 5;
-    let gridMax = 9;
-    const gridSize = Math.floor(Random.generateFromSeed(gridStartOffset) * (gridMax - gridMin + 1) + gridMin);
-    const grid = new BoardGroupGenerator(game).generateRandomContiguousGroups(gridSize);
+    let groupGrid = this.gameBoard.playArea.map(row => row.map(cell => cell.groupNumber))
+    let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, groupGrid);
+    let colorAssignmentsLight = this.colorOptimizer.assignColors(AppColors.COLORS_LIGHT, groupGrid);
 
-    let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, grid);
-    let colorAssignmentsLight = this.colorOptimizer.assignColors(AppColors.COLORS_LIGHT, grid);
+    this.gameBoard.playArea.forEach(row => row.forEach(cell => {
+      cell.colorDark = colorAssignmentsDark.colorByNumber.get(cell.groupNumber);
+      cell.colorLight = colorAssignmentsLight.colorByNumber.get(cell.groupNumber);
+    }))
 
-    let random = new Random(gameSeed);
-    this.gameBoard = new GameBoard();
-    this.gameBoard.playArea = grid.map((row) => row.map((cellGroupNumber) => {
-      let cell = new DisplayCell();
-      cell.value = Math.floor(random.next() * 9) + 1;
-      cell.groupNumber = cellGroupNumber;
-      cell.required = random.next() < 0.4;
-      cell.colorDark = colorAssignmentsDark.colorByNumber.get(cellGroupNumber);
-      cell.colorLight = colorAssignmentsLight.colorByNumber.get(cellGroupNumber);
-
-      return cell
-    }));
-
-    this.gameBoard.constructBoard(this.gameNumber);
     this.solvable = this.gameBoard.solvable;
 
     this.disableAnimationsTemporarily();

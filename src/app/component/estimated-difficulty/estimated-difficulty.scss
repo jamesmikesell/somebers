@@ -1,0 +1,22 @@
+.estimated-difficulty {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.95rem;
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .note {
+    font-style: italic;
+  }
+}
