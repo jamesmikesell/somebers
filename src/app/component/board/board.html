@@ -50,16 +50,14 @@
           <app-stats [stats]="stats"></app-stats>
         </div>
 
-        @if (estimatedDifficultyDisplayEnabled) {
-          <div class="estimated">
-            <app-estimated-difficulty
-              [playArea]="
-                !gameBoard.isComplete() ? gameBoard.playArea : undefined
-              "
-              [gameNumber]="gameNumber"
-            ></app-estimated-difficulty>
-          </div>
-        }
+        <div class="estimated">
+          <app-estimated-difficulty
+            [playArea]="
+              !gameBoard.isComplete() ? gameBoard.playArea : undefined
+            "
+            [gameNumber]="gameNumber"
+          ></app-estimated-difficulty>
+        </div>
       </div>
     </div>
   </div>
