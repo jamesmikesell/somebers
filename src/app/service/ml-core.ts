@@ -54,11 +54,69 @@ export const FEATURE_SPEC: FeatureSpec = {
     'groupsValuesRmsMax',
     'groupsRequiredRatioMin',
     'groupsRequiredRatioMax',
+    // Aggregates of exactCombinationCount for rows, columns, groups
+    'rowExactCombinationCountMean',
+    'rowExactCombinationCountMin',
+    'rowExactCombinationCountMax',
+    'rowExactCombinationCountStd',
+    'rowExactCombinationCountSum',
+    'columnExactCombinationCountMean',
+    'columnExactCombinationCountMin',
+    'columnExactCombinationCountMax',
+    'columnExactCombinationCountStd',
+    'columnExactCombinationCountSum',
+    'groupExactCombinationCountMean',
+    'groupExactCombinationCountMin',
+    'groupExactCombinationCountMax',
+    'groupExactCombinationCountStd',
+    'groupExactCombinationCountSum',
+    'rowsAndColumnsExactCombinationCountMean',
+    'rowsAndColumnsExactCombinationCountMin',
+    'rowsAndColumnsExactCombinationCountMax',
+    'rowsAndColumnsExactCombinationCountStd',
+    'allExactCombinationCountMean',
+    'allExactCombinationCountMin',
+    'allExactCombinationCountMax',
+    'allExactCombinationCountStd',
   ],
 };
 
 
 export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGameStat {
+  const rowExact = stats.rows.map(s => s.exactCombinationCount);
+  const colExact = stats.columns.map(s => s.exactCombinationCount);
+  const groupExact = stats.groups.map(s => s.exactCombinationCount);
+  const rowsAndColumnsExact = [...rowExact, ...colExact];
+  const allExact = [...rowExact, ...colExact, ...groupExact];
+
+  const agg = (xs: number[]) => {
+    const n = xs.length || 1;
+    let sum = 0;
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < xs.length; i++) {
+      const v = xs[i];
+      sum += v;
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+    if (!xs.length) { min = 0; max = 0; }
+    const mean = sum / n;
+    let vsum = 0;
+    for (let i = 0; i < xs.length; i++) {
+      const d = xs[i] - mean;
+      vsum += d * d;
+    }
+    const std = Math.sqrt(vsum / n);
+    return { mean, min, max, std, sum };
+  };
+
+  const rowAgg = agg(rowExact);
+  const colAgg = agg(colExact);
+  const groupAgg = agg(groupExact);
+  const rowsAndColumnsAgg = agg(rowsAndColumnsExact);
+  const allAgg = agg(allExact);
+
   return {
     gameNumber,
     boardSize: stats.totals.rowsEvaluated,
@@ -87,6 +145,31 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     groupsValuesRmsMax: Math.max(stats.summaries.groups.valuesRmsAvg, stats.summaries.groups.valuesRmsRms),
     groupsRequiredRatioMin: Math.min(stats.summaries.groups.requiredRatioAvg, stats.summaries.groups.requiredRatioRms),
     groupsRequiredRatioMax: Math.max(stats.summaries.groups.requiredRatioAvg, stats.summaries.groups.requiredRatioRms),
+    // exactCombinationCount aggregates
+    rowExactCombinationCountMean: rowAgg.mean,
+    rowExactCombinationCountMin: rowAgg.min,
+    rowExactCombinationCountMax: rowAgg.max,
+    rowExactCombinationCountStd: rowAgg.std,
+    rowExactCombinationCountSum: rowAgg.sum,
+    columnExactCombinationCountMean: colAgg.mean,
+    columnExactCombinationCountMin: colAgg.min,
+    columnExactCombinationCountMax: colAgg.max,
+    columnExactCombinationCountStd: colAgg.std,
+    columnExactCombinationCountSum: colAgg.sum,
+    groupExactCombinationCountMean: groupAgg.mean,
+    groupExactCombinationCountMin: groupAgg.min,
+    groupExactCombinationCountMax: groupAgg.max,
+    groupExactCombinationCountStd: groupAgg.std,
+    groupExactCombinationCountSum: groupAgg.sum,
+    // Combined rows+columns exactCombinationCount aggregates (groups unchanged)
+    rowsAndColumnsExactCombinationCountMean: rowsAndColumnsAgg.mean,
+    rowsAndColumnsExactCombinationCountMin: rowsAndColumnsAgg.min,
+    rowsAndColumnsExactCombinationCountMax: rowsAndColumnsAgg.max,
+    rowsAndColumnsExactCombinationCountStd: rowsAndColumnsAgg.std,
+    allExactCombinationCountMean: allAgg.mean,
+    allExactCombinationCountMin: allAgg.min,
+    allExactCombinationCountMax: allAgg.max,
+    allExactCombinationCountStd: allAgg.std,
   };
 }
 
@@ -294,4 +377,3 @@ export function trainBestModel(rawStats: RawGameStat[], seed = 1337): { best: Mo
   for (const r of ridgeEvals) if (r.metrics.rmse < best.metrics.rmse) best = r as ModelEvaluationResult<ModelJson>;
   return { best, baseline: baselineEval, ridgeCandidates: ridgeEvals };
 }
-

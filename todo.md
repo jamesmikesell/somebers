@@ -1,5 +1,10 @@
 # TODO
 
+- difficulty prediction
+  - look at a few thousand boards to get an idea of min / max timeSpent to convert timeSpent into a difficulty
+  - ratio of average row value vs required total
+  - ratio of cells that are X value vs required total
+    - though, shouldn't both of the above metrics already be reflected in the #of possible correct ratio?
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
 - estimate board difficulty
 - animation when row/col/group total has been reached, even if some cells haven't been cleared
