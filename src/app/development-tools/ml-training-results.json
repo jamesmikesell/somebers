@@ -27,9 +27,32 @@
       "groupsValuesRmsMin",
       "groupsValuesRmsMax",
       "groupsRequiredRatioMin",
-      "groupsRequiredRatioMax"
+      "groupsRequiredRatioMax",
+      "rowExactCombinationCountMean",
+      "rowExactCombinationCountMin",
+      "rowExactCombinationCountMax",
+      "rowExactCombinationCountStd",
+      "rowExactCombinationCountSum",
+      "columnExactCombinationCountMean",
+      "columnExactCombinationCountMin",
+      "columnExactCombinationCountMax",
+      "columnExactCombinationCountStd",
+      "columnExactCombinationCountSum",
+      "groupExactCombinationCountMean",
+      "groupExactCombinationCountMin",
+      "groupExactCombinationCountMax",
+      "groupExactCombinationCountStd",
+      "groupExactCombinationCountSum",
+      "rowsAndColumnsExactCombinationCountMean",
+      "rowsAndColumnsExactCombinationCountMin",
+      "rowsAndColumnsExactCombinationCountMax",
+      "rowsAndColumnsExactCombinationCountStd",
+      "allExactCombinationCountMean",
+      "allExactCombinationCountMin",
+      "allExactCombinationCountMax",
+      "allExactCombinationCountStd"
     ],
-    "lambda": 0.1,
+    "lambda": 1,
     "transform": "log1p",
     "featureMeans": [
       6.933333333333334,
@@ -56,7 +79,30 @@
       5.435715146542473,
       5.4997537526791485,
       0.050468753322172606,
-      0.05640419871378752
+      0.05640419871378752,
+      7.347010582010582,
+      2.933333333333333,
+      12,
+      2.912299442267576,
+      57.06666666666667,
+      6.325978835978836,
+      2.066666666666667,
+      11,
+      2.924974836323032,
+      49.86666666666667,
+      7.073095238095238,
+      2.8666666666666667,
+      11.6,
+      2.838784126802026,
+      55.53333333333333,
+      6.836494708994709,
+      1.5333333333333334,
+      13,
+      3.088304598502806,
+      6.915361552028219,
+      1.5333333333333334,
+      13.6,
+      3.110332241706469
     ],
     "featureStds": [
       1.3888444437333107,
@@ -83,50 +129,96 @@
       0.47528642214146605,
       0.46335035689172693,
       0.016287346475652074,
-      0.021250871656411343
+      0.021250871656411343,
+      4.78396936800103,
+      1.9136933459209764,
+      8.286535263104035,
+      2.234923007335291,
+      46.74964052149374,
+      4.639717461151441,
+      2.0483055327649624,
+      8.2138095100061,
+      2.199136767228906,
+      44.55837619223673,
+      5.158709617785723,
+      2.1561282171728307,
+      8.467978900934193,
+      2.237569926279861,
+      49.41641652550519,
+      4.666272075551786,
+      0.8844332774281066,
+      9.018499505645789,
+      2.1423354543957096,
+      4.747903166501357,
+      0.8844332774281066,
+      9.707728879609277,
+      2.2261632945279826
     ],
     "weights": [
-      12.385429153117954,
-      1.014948834289546,
-      0.2646996487389739,
-      -0.3927906793408213,
-      0.15430983138677398,
-      0.1386800264361244,
-      -0.35573873739547246,
-      0.3413293674364947,
-      0.2646996487389791,
-      -0.3927906793408211,
-      0.15430983138677712,
-      0.13868002643612543,
-      -0.3557387373954723,
-      0.34132936743649284,
-      0.2646996487389792,
-      -0.08609279137775752,
-      -0.45843330948292244,
-      0.13868002643618718,
-      0.11142673827956003,
-      -0.05552851785885571,
-      0.2646996487389792,
-      -0.08609279137775755,
-      -0.4584333094829223,
-      0.13868002643618718,
-      0.11142673827955979,
-      -0.055528517858855736
+      12.385429153117958,
+      0.18101347416810953,
+      0.07667910602424487,
+      0.036747492673158855,
+      0.0027288358135795976,
+      -0.025130890639539712,
+      -0.12292463397042516,
+      -0.017666124983097827,
+      0.07667910602424474,
+      0.036747492673158806,
+      0.002728835813579535,
+      -0.025130890639539685,
+      -0.12292463397042531,
+      -0.017666124983097813,
+      0.07667910602424473,
+      0.020754333402117943,
+      -0.029969089108573804,
+      -0.025130890639533637,
+      -0.11440621115719254,
+      0.056111737320803545,
+      0.07667910602424469,
+      0.020754333402117936,
+      -0.029969089108573804,
+      -0.025130890639533648,
+      -0.11440621115719253,
+      0.05611173732080355,
+      0.054437329749385796,
+      0.10576470584097164,
+      0.09511220280914148,
+      0.0023425641350939917,
+      -0.01972938934448357,
+      -0.07217797695705945,
+      0.03283052434034573,
+      -0.04114088005934804,
+      -0.009461737466926395,
+      -0.11099495705693953,
+      -0.0686184684618749,
+      0.04801969233827487,
+      -0.017126219547360686,
+      -0.03954057497296978,
+      -0.12147152346474856,
+      -0.007978414116872489,
+      0.14211269143321378,
+      0.10109466118948594,
+      0.0881646194173553,
+      -0.030079359258787183,
+      0.14211269143321378,
+      0.04277777864978892,
+      0.021288792147443336
     ],
     "perSizeMeans": {},
     "globalMean": 388297.13333333336
   },
   "metrics": {
-    "rmse": 503052.368193564,
-    "mae": 260865.38778710496,
-    "r2": 0.4595569602263948
+    "rmse": 206884.61808974238,
+    "mae": 113396.62189561084,
+    "r2": 0.9085928988030283
   },
   "perSizeRmse": {
-    "5": 25244.78406965832,
-    "6": 8774.79513731366,
-    "7": 35165.040972732124,
-    "8": 883377.331439473,
-    "9": 698908.5972930397
+    "5": 37804.21854954626,
+    "6": 69438.82391701861,
+    "7": 44970.15235337198,
+    "8": 410101.0232145501,
+    "9": 221489.63558109722
   },
   "baseline": {
     "model": {
@@ -157,7 +249,30 @@
         "groupsValuesRmsMin",
         "groupsValuesRmsMax",
         "groupsRequiredRatioMin",
-        "groupsRequiredRatioMax"
+        "groupsRequiredRatioMax",
+        "rowExactCombinationCountMean",
+        "rowExactCombinationCountMin",
+        "rowExactCombinationCountMax",
+        "rowExactCombinationCountStd",
+        "rowExactCombinationCountSum",
+        "columnExactCombinationCountMean",
+        "columnExactCombinationCountMin",
+        "columnExactCombinationCountMax",
+        "columnExactCombinationCountStd",
+        "columnExactCombinationCountSum",
+        "groupExactCombinationCountMean",
+        "groupExactCombinationCountMin",
+        "groupExactCombinationCountMax",
+        "groupExactCombinationCountStd",
+        "groupExactCombinationCountSum",
+        "rowsAndColumnsExactCombinationCountMean",
+        "rowsAndColumnsExactCombinationCountMin",
+        "rowsAndColumnsExactCombinationCountMax",
+        "rowsAndColumnsExactCombinationCountStd",
+        "allExactCombinationCountMean",
+        "allExactCombinationCountMin",
+        "allExactCombinationCountMax",
+        "allExactCombinationCountStd"
       ],
       "perSizeMeans": {
         "5": 59483.333333333336,
@@ -185,49 +300,25 @@
     {
       "model": {
         "modelType": "ridge",
-        "lambda": 0.1,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 503052.368193564,
-        "mae": 260865.38778710496,
-        "r2": 0.4595569602263948
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
         "lambda": 1,
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 508135.89718612033,
-        "mae": 218437.83934718036,
-        "r2": 0.4485790200899079
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 1,
-        "transform": "none"
-      },
-      "metrics": {
-        "rmse": 570505.6897591572,
-        "mae": 354657.90021129604,
-        "r2": 0.30490607558033056
+        "rmse": 206884.61808974238,
+        "mae": 113396.62189561084,
+        "r2": 0.9085928988030283
       }
     },
     {
       "model": {
         "modelType": "ridge",
         "lambda": 0.1,
-        "transform": "none"
+        "transform": "log1p"
       },
       "metrics": {
-        "rmse": 578515.5910726911,
-        "mae": 388940.10324767296,
-        "r2": 0.2852508166242895
+        "rmse": 217867.3446952338,
+        "mae": 117419.3716522785,
+        "r2": 0.8986303812505879
       }
     },
     {
@@ -237,9 +328,57 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 606834.2536145188,
-        "mae": 383105.343026476,
-        "r2": 0.21356341855084682
+        "rmse": 335353.3755162178,
+        "mae": 185175.00918127212,
+        "r2": 0.7598243932196838
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.001,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 387501.1102672572,
+        "mae": 209881.84275861693,
+        "r2": 0.679321801823978
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.0001,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 394464.2024912075,
+        "mae": 213176.47259948752,
+        "r2": 0.6676935837397411
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 1,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 398994.69177953905,
+        "mae": 238162.70986859646,
+        "r2": 0.6600165566517251
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.1,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 422593.0402581345,
+        "mae": 259222.9500994357,
+        "r2": 0.6186109560888063
       }
     },
     {
@@ -249,45 +388,9 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 655886.1309916856,
-        "mae": 475807.62602001993,
-        "r2": 0.0812858029666409
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.001,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 693526.2994758618,
-        "mae": 446683.26823830046,
-        "r2": -0.02718673398788174
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.0001,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 706923.3897884898,
-        "mae": 452425.8679275276,
-        "r2": -0.06725509046780398
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0,
-        "transform": "none"
-      },
-      "metrics": {
-        "rmse": 740596.1192886392,
-        "mae": 612374.6791767626,
-        "r2": -0.17134923001517133
+        "rmse": 457537.0318410129,
+        "mae": 277234.3314797285,
+        "r2": 0.5529294799624656
       }
     },
     {
@@ -297,9 +400,9 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 746462.8320437109,
-        "mae": 545563.2505290379,
-        "r2": -0.18998067518665462
+        "rmse": 476509.61609129066,
+        "mae": 287539.01564755675,
+        "r2": 0.5150836016523004
       }
     },
     {
@@ -309,9 +412,21 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 772349.5230082284,
-        "mae": 566699.5744100092,
-        "r2": -0.27394681597574033
+        "rmse": 479268.14634882245,
+        "mae": 289003.30582333734,
+        "r2": 0.50945295588398
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 2683926.3830664093,
+        "mae": 1776400.942922829,
+        "r2": -14.383839183205184
       }
     },
     {
@@ -321,11 +436,11 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 1545124.3876555406,
-        "mae": 785630.5828939946,
-        "r2": -4.098593958090719
+        "rmse": 21825260.280729968,
+        "mae": 5782721.47021639,
+        "r2": -1016.2844257785827
       }
     }
   ],
-  "predictionForGame27": 1334919.6133452314
+  "predictionForGame27": 737448.8265162149
 }

@@ -95,4 +95,28 @@ export interface GameStatFeatures {
   groupsValuesRmsMax: number;
   groupsRequiredRatioMin: number;
   groupsRequiredRatioMax: number;
+  // Aggregates of exactCombinationCount for rows, columns, and groups
+  rowExactCombinationCountMean: number;
+  rowExactCombinationCountMin: number;
+  rowExactCombinationCountMax: number;
+  rowExactCombinationCountStd: number;
+  rowExactCombinationCountSum: number;
+  columnExactCombinationCountMean: number;
+  columnExactCombinationCountMin: number;
+  columnExactCombinationCountMax: number;
+  columnExactCombinationCountStd: number;
+  columnExactCombinationCountSum: number;
+  groupExactCombinationCountMean: number;
+  groupExactCombinationCountMin: number;
+  groupExactCombinationCountMax: number;
+  groupExactCombinationCountStd: number;
+  groupExactCombinationCountSum: number;
+  rowsAndColumnsExactCombinationCountMean: number;
+  rowsAndColumnsExactCombinationCountMin: number;
+  rowsAndColumnsExactCombinationCountMax: number;
+  rowsAndColumnsExactCombinationCountStd: number;
+  allExactCombinationCountMean: number;
+  allExactCombinationCountMin: number;
+  allExactCombinationCountMax: number;
+  allExactCombinationCountStd: number;
 }
