@@ -31,6 +31,7 @@ export class SettingsComponent implements OnInit {
   deleteConfirmation = '';
   devModeEnabled: boolean = false;
   shapesModeEnabled: boolean = false;
+  estimatedDifficultyDisplayEnabled: boolean = false;
   AppVersion = AppVersion;
 
 
@@ -39,12 +40,21 @@ export class SettingsComponent implements OnInit {
     if (savedShapesMode !== null) {
       this.shapesModeEnabled = JSON.parse(savedShapesMode);
     }
+
+    const est = localStorage.getItem('estimatedDifficultyDisplayEnabled');
+    if (est !== null)
+      this.estimatedDifficultyDisplayEnabled = JSON.parse(est);
   }
 
 
   onShapesModeChange(event: MatSlideToggleChange): void {
     this.shapesModeEnabled = event.checked;
     localStorage.setItem('shapesModeEnabled', JSON.stringify(this.shapesModeEnabled));
+  }
+
+  onEstimatedDifficultyChange(event: MatSlideToggleChange): void {
+    this.estimatedDifficultyDisplayEnabled = event.checked;
+    localStorage.setItem('estimatedDifficultyDisplayEnabled', JSON.stringify(this.estimatedDifficultyDisplayEnabled));
   }
 
 

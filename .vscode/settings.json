@@ -1,8 +1,17 @@
 {
   "cSpell.words": [
+    "devmode",
     "doubletap",
     "Dtos",
-    "Somebers"
+    "Evals",
+    "gameboard",
+    "idxs",
+    "indexeddb",
+    "rmse",
+    "Somebers",
+    "Stds",
+    "unstarted",
+    "yhat"
   ],
   "cSpell.flagWords": [
     "sombers: somebers",

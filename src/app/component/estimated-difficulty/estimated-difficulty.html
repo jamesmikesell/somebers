@@ -1,0 +1,22 @@
+<div class="estimated-difficulty">
+  <div class="row">
+    <strong>Estimated Time:</strong>
+    <span>{{ predictedLabel }}</span>
+  </div>
+  <div class="actions">
+    <button
+      mat-stroked-button
+      color="primary"
+      (click)="train()"
+      [disabled]="training"
+    >
+      {{ training ? "Training…" : "Train Model" }}
+    </button>
+    <button mat-stroked-button (click)="downloadModel()" [disabled]="!hasModel">
+      Download Model
+    </button>
+  </div>
+  <div class="note" *ngIf="error">
+    {{ error }}
+  </div>
+</div>

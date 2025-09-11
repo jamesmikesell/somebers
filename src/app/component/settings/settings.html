@@ -55,7 +55,15 @@
     </button>
   </section>
 
-  @if (devModeEnabled) {}
+  @if (devModeEnabled) {
+    <section class="settings-section">
+      <h2>Developer Options</h2>
+      <mat-slide-toggle [(ngModel)]="estimatedDifficultyDisplayEnabled" (change)="onEstimatedDifficultyChange($event)">
+        Estimated Difficulty Display
+      </mat-slide-toggle>
+      <p>Show a development UI on the board to predict and train an on-device model estimating timeSpent.</p>
+    </section>
+  }
 </div>
 
 <div class="version">v. {{ AppVersion.VERSION }}</div>

@@ -1,6 +1,6 @@
 import { Random } from "../model/random";
 
-export class BoardTests {
+export class BoardPatternFinder {
 
   public static findGameSeedSoFirstFewGamesMatchDifficulty(): void {
     const gridSizeHistory = [];
