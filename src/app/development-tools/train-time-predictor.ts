@@ -37,6 +37,26 @@ function main(): void {
   };
   writeFileSync('src/app/development-tools/ml-training-results.json', JSON.stringify(results, null, 2), 'utf8');
 
+  // Generate predictions for game boards 10 -> 2010 (inclusive), sort, and persist
+  const predictions: { gameNumber: number; predictedMs: number }[] = [];
+  for (let gameNumber = 10; gameNumber <= 2010; gameNumber++) {
+    const sample = toSample(buildRawGameStatForGameNumber(gameNumber));
+    if (!sample) continue;
+    const yhat = best.model.modelType === 'baseline'
+      ? predictBaseline(best.model as BaselineModelJson, sample)
+      : predictRidge(best.model as RidgeModelJson, sample);
+    predictions.push({ gameNumber, predictedMs: yhat });
+  }
+  let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => x.predictedMs);
+  writeFileSync('src/app/development-tools/ml-predictions-2k-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
+  writeFileSync('src/app/development-tools/ml-predictions-2k-games.json', JSON.stringify(predictions, null, 2), 'utf8');
+  // Also persist a public copy with just the sorted times for use in-app
+  try {
+    writeFileSync('public/difficulty-ml-predicted-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('Failed to write public/difficulty-ml-predicted-times.json', err);
+  }
+
   // Console summary
   console.log('Best model:', best.model.modelType, best.model.modelType === 'ridge' ? (best.model as RidgeModelJson).lambda + '/' + (best.model as RidgeModelJson).transform : 'baseline');
   console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'R2:', best.metrics.r2.toFixed(3));
