@@ -1,61 +1,45 @@
 import { Injectable } from '@angular/core';
-import { ModelJson, RidgeModelJson, BaselineModelJson } from '../model/ml-types';
+import { ModelJson } from '../model/ml-types';
+import { TrainingSample, predictRidge } from './ml-core';
 
 @Injectable({ providedIn: 'root' })
 export class DifficultyPredictorService {
-  private modelPromise?: Promise<ModelJson | undefined>;
-  private overrideModel?: ModelJson;
+  private packagedModelPromise?: Promise<ModelJson | undefined>;
 
-  private async loadModel(): Promise<ModelJson | undefined> {
-    if (this.overrideModel) return this.overrideModel;
-    if (!this.modelPromise) {
-      this.modelPromise = fetch('difficulty-ml-model.json', { cache: 'no-cache' })
-        .then(async (r: Response): Promise<ModelJson | undefined> => {
-          if (!r.ok) return undefined;
-          return (await r.json()) as ModelJson;
-        })
-        .catch((err: unknown): ModelJson | undefined => {
-          console.warn('TimePredictorService: failed to load model', err);
-          return undefined;
-        });
-    }
-    return this.modelPromise;
-  }
+  constructor() { }
 
-  // Allows in-session override of the model (not persisted). Useful for training in-browser.
-  setModelOverride(model: ModelJson): void {
-    this.overrideModel = model;
-  }
-
-  getCurrentModel(): ModelJson | undefined {
-    return this.overrideModel;
-  }
-
-  async predict(features: GameStatFeatures): Promise<number | undefined> {
+  // Predict strictly using the downloaded packaged model (for Difficulty percentile display)
+  async predictGameModel(features: TrainingSample): Promise<number | undefined> {
     try {
-      const model = await this.loadModel();
-      if (!model) return undefined;
-      if (model.modelType === 'baseline') return this.predictBaseline(model, features);
-      else return this.predictRidge(model, features);
+      const model = await this.loadPackagedModel();
+      if (!model || model.modelType === 'baseline')
+        return undefined;
+      else
+        return predictRidge(model, features);
     } catch (err) {
-      console.warn('TimePredictorService.predict failed', err);
+      console.warn('TimePredictorService.predictFromPackaged failed', err);
       return undefined;
     }
   }
 
-  private predictBaseline(model: BaselineModelJson, f: GameStatFeatures): number {
-    const perSize = model.perSizeMeans[String(f.boardSize)];
-    return perSize ?? model.globalMean;
+
+  private async loadPackagedModel(): Promise<ModelJson | undefined> {
+    if (!this.packagedModelPromise) {
+      this.packagedModelPromise = fetch('difficulty-ml-model.json', { cache: 'no-cache' })
+        .then(async (r: Response): Promise<ModelJson | undefined> => {
+          if (!r.ok)
+            return undefined;
+          return (await r.json()) as ModelJson;
+        })
+        .catch((err: unknown): ModelJson | undefined => {
+          console.warn('TimePredictorService: failed to load packaged model', err);
+          return undefined;
+        });
+    }
+    return this.packagedModelPromise;
   }
 
-  private predictRidge(model: RidgeModelJson, f: GameStatFeatures): number {
-    const xs = model.features.map((k) => (f as any)[k] as number);
-    const x = xs.map((v, j) => (v - model.featureMeans[j]) / (model.featureStds[j] || 1));
-    let yhat = model.weights[0];
-    for (let j = 0; j < x.length; j++) yhat += model.weights[j + 1] * x[j];
-    if (model.transform === 'log1p') yhat = Math.max(0, Math.expm1(yhat));
-    return yhat;
-  }
+
 }
 
 

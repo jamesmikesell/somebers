@@ -3,7 +3,7 @@ import { BoardGroupGenerator } from '../model/grouping';
 import { Random } from '../model/random';
 
 
-export function generatePlayArea(gameNumber: number): GameBoard {
+export function generateGameBoard(gameNumber: number): GameBoard {
   let gameSeed = Random.generateFromSeed(gameNumber) * Number.MAX_SAFE_INTEGER;
 
   // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]

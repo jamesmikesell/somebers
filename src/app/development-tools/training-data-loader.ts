@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { SavedGameStateV3 } from '../model/saved-game-data/saved-game-data.v3';
-import { BoardStatAnalyzer, DifficultyReport } from '../service/board-stat-analyzer';
-import { generatePlayArea } from '../service/gameboard-generator';
+import { BoardStatAnalyzer } from '../service/board-stat-analyzer';
+import { generateGameBoard } from '../service/gameboard-generator';
 import { difficultyReportToGameStat, RawGenericFeatureSet } from '../service/ml-core';
 
 
@@ -11,12 +11,11 @@ export function computeStatsFromBackupFile(backupPath = 'src/app/development-too
 
   const out: RawGenericFeatureSet[] = [];
   for (const game of savedState.inProgressGames ?? []) {
-    if (!game) continue;
-    if (!game.completed) continue;
-    if (!game.timeSpent || game.timeSpent <= 15000) continue;
-    if (!game.moveHistory || game.moveHistory.filter((correctMove) => !correctMove).length > 3) continue;
+    if (!game?.completed) continue;
+    if ((game.timeSpent ?? 0) <= 15000) continue;
+    if ((game.moveHistory?.filter((correctMove) => !correctMove).length ?? 0) > 3) continue;
 
-    const gameBoard = generatePlayArea(game.gameNumber);
+    const gameBoard = generateGameBoard(game.gameNumber);
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
     const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber)
 
@@ -25,8 +24,9 @@ export function computeStatsFromBackupFile(backupPath = 'src/app/development-too
   return out;
 }
 
+
 export function buildRawGameStatForGameNumber(gameNumber: number): RawGenericFeatureSet {
-  const playArea = generatePlayArea(gameNumber).playArea;
+  const playArea = generateGameBoard(gameNumber).playArea;
   const stats = BoardStatAnalyzer.evaluate(playArea);
 
   return difficultyReportToGameStat(stats, 0, gameNumber);

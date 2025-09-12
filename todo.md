@@ -1,6 +1,7 @@
 # TODO
 
 - difficulty prediction
+  - calculate how many cells are known to be required / unusable
   - ratio of average row value vs required total
   - ratio of cells that are X value vs required total
     - though, shouldn't both of the above metrics already be reflected in the #of possible correct ratio?
