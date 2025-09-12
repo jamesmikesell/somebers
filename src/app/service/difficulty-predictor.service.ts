@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ModelJson, RidgeModelJson, BaselineModelJson } from '../model/ml-types';
 
 @Injectable({ providedIn: 'root' })
-export class TimePredictorService {
+export class DifficultyPredictorService {
   private modelPromise?: Promise<ModelJson | undefined>;
   private overrideModel?: ModelJson;
 
