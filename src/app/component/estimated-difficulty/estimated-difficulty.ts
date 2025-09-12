@@ -5,7 +5,7 @@ import { DisplayCell } from '../../model/game-board';
 import { BoardStatAnalyzer } from '../../service/board-stat-analyzer';
 import { generatePlayArea } from '../../service/gameboard-generator';
 import { difficultyReportToGameStat } from '../../service/ml-core';
-import { GameStatFeatures, TimePredictorService } from '../../service/time-predictor.service';
+import { GameStatFeatures, DifficultyPredictorService } from '../../service/difficulty-predictor.service';
 
 @Component({
   selector: 'app-estimated-difficulty',
@@ -23,7 +23,7 @@ export class EstimatedDifficultyComponent implements OnChanges {
   private timesPromise?: Promise<number[] | undefined>;
 
   constructor(
-    private predictor: TimePredictorService,
+    private predictor: DifficultyPredictorService,
   ) { }
 
   get hasModel(): boolean { return !!this.predictor.getCurrentModel(); }

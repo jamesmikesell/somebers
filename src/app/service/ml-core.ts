@@ -1,6 +1,6 @@
 import { FeatureSpec, ModelEvaluationResult, ModelJson, RidgeModelJson, BaselineModelJson, EvaluationMetrics, TargetTransform } from '../model/ml-types';
 import { DifficultyReport } from './board-stat-analyzer';
-import { GameStatFeatures, GameStatWithBoard, GameStatWithTimeSpent } from './time-predictor.service';
+import { GameStatFeatures, GameStatWithBoard, GameStatWithTimeSpent } from './difficulty-predictor.service';
 
 export interface RawGenericFeatureSet extends RawGameStatBase, RawGameStateTime {
   // dynamic feature bag, keys listed in FEATURE_SPEC
