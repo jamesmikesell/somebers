@@ -2,13 +2,13 @@ import { FeatureSpec, ModelEvaluationResult, ModelJson, RidgeModelJson, Baseline
 import { DifficultyReport } from './board-stat-analyzer';
 import { GameStatFeatures, GameStatWithBoard, GameStatWithTimeSpent } from './time-predictor.service';
 
-export interface RawGameStat extends RawGameStatBase, RawGameStateTime {
+export interface RawGenericFeatureSet extends RawGameStatBase, RawGameStateTime {
   // dynamic feature bag, keys listed in FEATURE_SPEC
   [key: string]: number | undefined;
 }
 
 
-export interface RawGameStateTime{
+export interface RawGameStateTime {
   timeSpent?: number;
 }
 
@@ -34,26 +34,18 @@ export const FEATURE_SPEC: FeatureSpec = {
     'rowsAndColumnsRequiredSumRms',
     'rowsAndColumnsValuesRmsAvg',
     'rowsAndColumnsValuesRmsRms',
-    'rowsAndColumnsRequiredRatioAvg',
-    'rowsAndColumnsRequiredRatioRms',
     'rowsAndColumnsRequiredSumMin',
     'rowsAndColumnsRequiredSumMax',
     'rowsAndColumnsValuesRmsMin',
     'rowsAndColumnsValuesRmsMax',
-    'rowsAndColumnsRequiredRatioMin',
-    'rowsAndColumnsRequiredRatioMax',
     'groupsRequiredSumAvg',
     'groupsRequiredSumRms',
     'groupsValuesRmsAvg',
     'groupsValuesRmsRms',
-    'groupsRequiredRatioAvg',
-    'groupsRequiredRatioRms',
     'groupsRequiredSumMin',
     'groupsRequiredSumMax',
     'groupsValuesRmsMin',
     'groupsValuesRmsMax',
-    'groupsRequiredRatioMin',
-    'groupsRequiredRatioMax',
     // Aggregates of exactCombinationCount for rows, columns, groups
     'rowExactCombinationCountMean',
     'rowExactCombinationCountMin',
@@ -78,11 +70,35 @@ export const FEATURE_SPEC: FeatureSpec = {
     'allExactCombinationCountMin',
     'allExactCombinationCountMax',
     'allExactCombinationCountStd',
+    //
+    'maxStates',
+    'cellCount',
+    'rowRequiredRatioMean',
+    'rowRequiredRatioMin',
+    'rowRequiredRatioMax',
+    'rowRequiredRatioStd',
+    'colRequiredRatioMean',
+    'colRequiredRatioMin',
+    'colRequiredRatioMax',
+    'colRequiredRatioStd',
+    'groupRequiredRatioMean',
+    'groupRequiredRatioMin',
+    'groupRequiredRatioMax',
+    'groupRequiredRatioStd',
+    'rowAndColumnRequiredRatioMean',
+    'rowAndColumnRequiredRatioMin',
+    'rowAndColumnRequiredRatioMax',
+    'rowAndColumnRequiredRatioStd',
+    'allRequiredRatioMean',
+    'allRequiredRatioMin',
+    'allRequiredRatioMax',
+    'allRequiredRatioStd',
+
   ],
 };
 
 
-export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGameStat {
+export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
   const rowExact = stats.rows.map(s => s.exactCombinationCount);
   const colExact = stats.columns.map(s => s.exactCombinationCount);
   const groupExact = stats.groups.map(s => s.exactCombinationCount);
@@ -117,34 +133,36 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const rowsAndColumnsAgg = agg(rowsAndColumnsExact);
   const allAgg = agg(allExact);
 
-  return {
-    gameNumber,
+
+  const rowRatio = stats.rows.map(x => x.exactCombinationCount / x.nonExactCombinationCount)
+  const colRatio = stats.columns.map(x => x.exactCombinationCount / x.nonExactCombinationCount)
+  const groupRatio = stats.groups.map(x => x.exactCombinationCount / x.nonExactCombinationCount)
+
+  const rowRatioAgg = agg(rowRatio);
+  const colRatioAgg = agg(colRatio);
+  const groupRatioAgg = agg(groupRatio);
+  const rowAndColRatioAgg = agg([...rowRatio, ...colRatio])
+  const allRatioAgg = agg([...rowRatio, ...colRatio, ...groupRatio])
+
+
+  let features: GameStatFeatures = {
     boardSize: stats.totals.rowsEvaluated,
-    timeSpent: timeSpent,
     rowsAndColumnsRequiredSumAvg: stats.summaries.rowsAndColumns.requiredSumAvg,
     rowsAndColumnsRequiredSumRms: stats.summaries.rowsAndColumns.requiredSumRms,
     rowsAndColumnsValuesRmsAvg: stats.summaries.rowsAndColumns.valuesRmsAvg,
     rowsAndColumnsValuesRmsRms: stats.summaries.rowsAndColumns.valuesRmsRms,
-    rowsAndColumnsRequiredRatioAvg: stats.summaries.rowsAndColumns.requiredRatioAvg,
-    rowsAndColumnsRequiredRatioRms: stats.summaries.rowsAndColumns.requiredRatioRms,
     rowsAndColumnsRequiredSumMin: Math.min(stats.summaries.rowsAndColumns.requiredSumAvg, stats.summaries.rowsAndColumns.requiredSumRms),
     rowsAndColumnsRequiredSumMax: Math.max(stats.summaries.rowsAndColumns.requiredSumAvg, stats.summaries.rowsAndColumns.requiredSumRms),
     rowsAndColumnsValuesRmsMin: Math.min(stats.summaries.rowsAndColumns.valuesRmsAvg, stats.summaries.rowsAndColumns.valuesRmsRms),
     rowsAndColumnsValuesRmsMax: Math.max(stats.summaries.rowsAndColumns.valuesRmsAvg, stats.summaries.rowsAndColumns.valuesRmsRms),
-    rowsAndColumnsRequiredRatioMin: Math.min(stats.summaries.rowsAndColumns.requiredRatioAvg, stats.summaries.rowsAndColumns.requiredRatioRms),
-    rowsAndColumnsRequiredRatioMax: Math.max(stats.summaries.rowsAndColumns.requiredRatioAvg, stats.summaries.rowsAndColumns.requiredRatioRms),
     groupsRequiredSumAvg: stats.summaries.groups.requiredSumAvg,
     groupsRequiredSumRms: stats.summaries.groups.requiredSumRms,
     groupsValuesRmsAvg: stats.summaries.groups.valuesRmsAvg,
     groupsValuesRmsRms: stats.summaries.groups.valuesRmsRms,
-    groupsRequiredRatioAvg: stats.summaries.groups.requiredRatioAvg,
-    groupsRequiredRatioRms: stats.summaries.groups.requiredRatioRms,
     groupsRequiredSumMin: Math.min(stats.summaries.groups.requiredSumAvg, stats.summaries.groups.requiredSumRms),
     groupsRequiredSumMax: Math.max(stats.summaries.groups.requiredSumAvg, stats.summaries.groups.requiredSumRms),
     groupsValuesRmsMin: Math.min(stats.summaries.groups.valuesRmsAvg, stats.summaries.groups.valuesRmsRms),
     groupsValuesRmsMax: Math.max(stats.summaries.groups.valuesRmsAvg, stats.summaries.groups.valuesRmsRms),
-    groupsRequiredRatioMin: Math.min(stats.summaries.groups.requiredRatioAvg, stats.summaries.groups.requiredRatioRms),
-    groupsRequiredRatioMax: Math.max(stats.summaries.groups.requiredRatioAvg, stats.summaries.groups.requiredRatioRms),
     // exactCombinationCount aggregates
     rowExactCombinationCountMean: rowAgg.mean,
     rowExactCombinationCountMin: rowAgg.min,
@@ -170,11 +188,41 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     allExactCombinationCountMin: allAgg.min,
     allExactCombinationCountMax: allAgg.max,
     allExactCombinationCountStd: allAgg.std,
+    //
+    maxStates: Math.pow(2, stats.totals.columnsEvaluated * stats.totals.columnsEvaluated),
+    cellCount: stats.totals.columnsEvaluated * stats.totals.columnsEvaluated,
+
+    rowRequiredRatioMean: rowRatioAgg.mean,
+    rowRequiredRatioMin: rowRatioAgg.min,
+    rowRequiredRatioMax: rowRatioAgg.max,
+    rowRequiredRatioStd: rowRatioAgg.std,
+    colRequiredRatioMean: colRatioAgg.mean,
+    colRequiredRatioMin: colRatioAgg.min,
+    colRequiredRatioMax: colRatioAgg.max,
+    colRequiredRatioStd: colRatioAgg.std,
+    groupRequiredRatioMean: groupRatioAgg.mean,
+    groupRequiredRatioMin: groupRatioAgg.min,
+    groupRequiredRatioMax: groupRatioAgg.max,
+    groupRequiredRatioStd: groupRatioAgg.std,
+    rowAndColumnRequiredRatioMean: rowAndColRatioAgg.mean,
+    rowAndColumnRequiredRatioMin: rowAndColRatioAgg.min,
+    rowAndColumnRequiredRatioMax: rowAndColRatioAgg.max,
+    rowAndColumnRequiredRatioStd: rowAndColRatioAgg.std,
+    allRequiredRatioMean: allRatioAgg.mean,
+    allRequiredRatioMin: allRatioAgg.min,
+    allRequiredRatioMax: allRatioAgg.max,
+    allRequiredRatioStd: allRatioAgg.std,
+
   };
+
+  let x: GameStatWithBoard = { gameNumber }
+  let z: GameStatWithTimeSpent = { timeSpent }
+
+  return { ...features, ...x, ...z };
 }
 
 
-export function toSample(s: RawGameStat): TrainingSample | undefined {
+export function toSample(s: RawGenericFeatureSet): TrainingSample | undefined {
   if (s.timeSpent == null) return undefined;
   const features = FEATURE_SPEC.keys.map((k) => s[k] as number);
   if (features.some((v) => typeof v !== 'number' || Number.isNaN(v))) return undefined;
@@ -251,10 +299,12 @@ export function rmse(yTrue: number[], yPred: number[]): number {
   const n = yTrue.length;
   return Math.sqrt(yTrue.reduce((s, yi, i) => s + (yi - yPred[i]) ** 2, 0) / (n || 1));
 }
+
 export function mae(yTrue: number[], yPred: number[]): number {
   const n = yTrue.length;
   return yTrue.reduce((s, yi, i) => s + Math.abs(yi - yPred[i]), 0) / (n || 1);
 }
+
 export function r2(yTrue: number[], yPred: number[]): number {
   const m = mean(yTrue);
   let ssTot = 0, ssRes = 0;
@@ -357,7 +407,7 @@ export function evaluate<T extends ModelJson>(pred: (s: TrainingSample) => numbe
   return { model, metrics, perSizeRmse };
 }
 
-export function trainBestModel(rawStats: RawGameStat[], seed = 1337): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
+export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
   const samples = rawStats.map(toSample).filter((x): x is TrainingSample => !!x);
   if (!samples.length) throw new Error('No training samples available.');
   const { train, valid } = stratifiedSplit(samples, seed);
