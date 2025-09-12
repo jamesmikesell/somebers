@@ -209,8 +209,8 @@ export class GameBoard {
     const cellsEvenlySplitIntoOneOrTwoGroups = (groupCounts.size === 2 && eachGroupHasExactlyTwoCells) || groupCounts.size === 1;
 
     let unSolvable = allCornersSameValue && cellsEvenlySplitIntoOneOrTwoGroups && exactlyOneSetOfAdjacentCornersRequired;
-    if (unSolvable)
-      console.log(`Unsolvable: [${c1}, ${r1}] x  [${c2}, ${r2}]`)
+    // if (unSolvable)
+    //   console.log(`Unsolvable: [${c1}, ${r1}] x  [${c2}, ${r2}]`)
 
     return unSolvable;
   }

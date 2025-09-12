@@ -75,26 +75,18 @@ export interface GameStatFeatures {
   rowsAndColumnsRequiredSumRms: number;
   rowsAndColumnsValuesRmsAvg: number;
   rowsAndColumnsValuesRmsRms: number;
-  rowsAndColumnsRequiredRatioAvg: number;
-  rowsAndColumnsRequiredRatioRms: number;
   rowsAndColumnsRequiredSumMin: number;
   rowsAndColumnsRequiredSumMax: number;
   rowsAndColumnsValuesRmsMin: number;
   rowsAndColumnsValuesRmsMax: number;
-  rowsAndColumnsRequiredRatioMin: number;
-  rowsAndColumnsRequiredRatioMax: number;
   groupsRequiredSumAvg: number;
   groupsRequiredSumRms: number;
   groupsValuesRmsAvg: number;
   groupsValuesRmsRms: number;
-  groupsRequiredRatioAvg: number;
-  groupsRequiredRatioRms: number;
   groupsRequiredSumMin: number;
   groupsRequiredSumMax: number;
   groupsValuesRmsMin: number;
   groupsValuesRmsMax: number;
-  groupsRequiredRatioMin: number;
-  groupsRequiredRatioMax: number;
   // Aggregates of exactCombinationCount for rows, columns, and groups
   rowExactCombinationCountMean: number;
   rowExactCombinationCountMin: number;
@@ -119,4 +111,28 @@ export interface GameStatFeatures {
   allExactCombinationCountMin: number;
   allExactCombinationCountMax: number;
   allExactCombinationCountStd: number;
+  //
+  maxStates: number;
+  cellCount: number;
+  rowRequiredRatioMean: number;
+  rowRequiredRatioMin: number;
+  rowRequiredRatioMax: number;
+  rowRequiredRatioStd: number;
+  colRequiredRatioMean: number;
+  colRequiredRatioMin: number;
+  colRequiredRatioMax: number;
+  colRequiredRatioStd: number;
+  groupRequiredRatioMean: number;
+  groupRequiredRatioMin: number;
+  groupRequiredRatioMax: number;
+  groupRequiredRatioStd: number;
+  rowAndColumnRequiredRatioMean: number;
+  rowAndColumnRequiredRatioMin: number;
+  rowAndColumnRequiredRatioMax: number;
+  rowAndColumnRequiredRatioStd: number;
+  allRequiredRatioMean: number;
+  allRequiredRatioMin: number;
+  allRequiredRatioMax: number;
+  allRequiredRatioStd: number;
+  //
 }

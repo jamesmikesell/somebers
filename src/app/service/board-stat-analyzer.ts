@@ -89,7 +89,6 @@ export class BoardStatAnalyzer {
       requiredIndices: stat.requiredIndices.slice(),
       exactCombinationCount: possibleCorrect.exact,
       nonExactCombinationCount: nonExact,
-      requiredRatio: nonExact === 0 ? Number.POSITIVE_INFINITY : possibleCorrect.exact / nonExact,
       valuesRms: BoardStatAnalyzer.rms(stat.values),
     };
   }
@@ -98,14 +97,11 @@ export class BoardStatAnalyzer {
   private static summarize(sections: SectionStats[]): SectionAggregates {
     const requiredSums = sections.map(s => s.requiredSum);
     const valuesRms = sections.map(s => s.valuesRms);
-    const requiredRatios = sections.map(s => s.requiredRatio);
     return {
       requiredSumAvg: BoardStatAnalyzer.mean(requiredSums),
       requiredSumRms: BoardStatAnalyzer.rms(requiredSums),
       valuesRmsAvg: BoardStatAnalyzer.mean(valuesRms),
       valuesRmsRms: BoardStatAnalyzer.rms(valuesRms),
-      requiredRatioAvg: BoardStatAnalyzer.mean(requiredRatios),
-      requiredRatioRms: BoardStatAnalyzer.rms(requiredRatios),
     };
   };
 
@@ -175,7 +171,6 @@ export interface SectionStats {
   requiredIndices: number[];
   exactCombinationCount: number;
   nonExactCombinationCount: number;
-  requiredRatio: number;
   valuesRms: number;
 }
 
@@ -184,7 +179,5 @@ export interface SectionAggregates {
   requiredSumRms: number;
   valuesRmsAvg: number;
   valuesRmsRms: number;
-  requiredRatioAvg: number;
-  requiredRatioRms: number;
 }
 

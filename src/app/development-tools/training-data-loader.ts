@@ -2,14 +2,14 @@ import { readFileSync } from 'fs';
 import { SavedGameStateV3 } from '../model/saved-game-data/saved-game-data.v3';
 import { BoardStatAnalyzer, DifficultyReport } from '../service/board-stat-analyzer';
 import { generatePlayArea } from '../service/gameboard-generator';
-import { difficultyReportToGameStat, RawGameStat } from '../service/ml-core';
+import { difficultyReportToGameStat, RawGenericFeatureSet } from '../service/ml-core';
 
 
-export function computeStatsFromBackupFile(backupPath = 'src/app/development-tools/somebers-backup.somebers.json'): RawGameStat[] {
+export function computeStatsFromBackupFile(backupPath = 'src/app/development-tools/somebers-backup.somebers.json'): RawGenericFeatureSet[] {
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 
-  const out: RawGameStat[] = [];
+  const out: RawGenericFeatureSet[] = [];
   for (const game of savedState.inProgressGames ?? []) {
     if (!game) continue;
     if (!game.completed) continue;
@@ -25,7 +25,7 @@ export function computeStatsFromBackupFile(backupPath = 'src/app/development-too
   return out;
 }
 
-export function buildRawGameStatForGameNumber(gameNumber: number): RawGameStat {
+export function buildRawGameStatForGameNumber(gameNumber: number): RawGenericFeatureSet {
   const playArea = generatePlayArea(gameNumber).playArea;
   const stats = BoardStatAnalyzer.evaluate(playArea);
 
