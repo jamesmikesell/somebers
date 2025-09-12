@@ -15,7 +15,7 @@ if [ -z "$(git status --porcelain)" ]; then
 
   git add -A
   git commit -m "build(deploy): deploying "$(git rev-parse --short HEAD)
-  git push origin HEAD:deploy --force
+  # git push origin HEAD:deploy --force
   git checkout $old_branch
 else 
   echo "Error: commit all changes before attempting deploying"
