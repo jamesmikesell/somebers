@@ -387,9 +387,9 @@ export function trainRidge(train: TrainingSample[], lambda: number, transform: T
 }
 
 export function predictRidge(model: RidgeModelJson, sample: TrainingSample): number {
-  const x = sample.features.map((v, j) => (v - model.featureMeans[j]) / (model.featureStds[j] || 1));
+  const normalizedFeatureValues = sample.features.map((value, index) => (value - model.featureMeans[index]) / (model.featureStds[index] || 1));
   let yhat = model.weights[0];
-  for (let j = 0; j < x.length; j++) yhat += model.weights[j + 1] * x[j];
+  for (let j = 0; j < normalizedFeatureValues.length; j++) yhat += model.weights[j + 1] * normalizedFeatureValues[j];
   if (model.transform === 'log1p') yhat = Math.max(0, Math.expm1(yhat));
   return yhat;
 }
@@ -427,3 +427,4 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
   for (const r of ridgeEvals) if (r.metrics.rmse < best.metrics.rmse) best = r as ModelEvaluationResult<ModelJson>;
   return { best, baseline: baselineEval, ridgeCandidates: ridgeEvals };
 }
+

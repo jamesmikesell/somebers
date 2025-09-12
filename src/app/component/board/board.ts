@@ -10,7 +10,7 @@ import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v
 import { BoardUiService } from '../../service/board-ui.service';
 import { CelebrationService } from '../../service/celebration';
 import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
-import { generatePlayArea } from '../../service/gameboard-generator';
+import { generateGameBoard } from '../../service/gameboard-generator';
 import { SaveDataService } from '../../service/save-data.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { TimeTracker } from '../../service/time-tracker';
@@ -161,7 +161,7 @@ export class Board implements OnInit, OnDestroy {
 
 
   private buildAndDisplayBoard(game: number): void {
-    this.gameBoard = generatePlayArea(game);
+    this.gameBoard = generateGameBoard(game);
 
     let groupGrid = this.gameBoard.playArea.map(row => row.map(cell => cell.groupNumber))
     let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, groupGrid);
