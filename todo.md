@@ -1,5 +1,6 @@
 # TODO
 
+- button to re-do current in progress game
 - bug: undoing moves after a column / color group is hidden doesn't unhide their styling
 - difficulty prediction
   - ratio of average row value vs required total
