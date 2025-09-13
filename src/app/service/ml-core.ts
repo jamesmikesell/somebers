@@ -442,13 +442,16 @@ export function r2(yTrue: number[], yPred: number[]): number {
 }
 
 // Solve (A)x = b using Gaussian elimination with partial pivoting
-export function solveLinearSystem(A: number[][], b: number[]): number[] {
+export function solveLinearSystem(A: number[][], b: number[], warn?: (msg: string) => void): number[] {
   const n = A.length;
   const M = A.map((row, i) => [...row, b[i]]);
   for (let i = 0; i < n; i++) {
     let maxRow = i;
     for (let k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[maxRow][i])) maxRow = k;
-    if (Math.abs(M[maxRow][i]) < 1e-12) continue;
+    if (Math.abs(M[maxRow][i]) < 1e-12) {
+      if (warn) warn(`solve: near-singular pivot at row ${i} (|pivot|<1e-12); solution may be unstable`);
+      continue;
+    }
     [M[i], M[maxRow]] = [M[maxRow], M[i]];
     const pivot = M[i][i];
     for (let j = i; j <= n; j++) M[i][j] /= pivot;
@@ -474,9 +477,26 @@ export function predictBaseline(model: BaselineModelJson, sample: TrainingSample
   return m ?? model.globalMean;
 }
 
-export function trainRidge(train: TrainingSample[], lambda: number, transform: TargetTransform): RidgeModelJson {
+export function trainRidge(train: TrainingSample[], lambda: number, transform: TargetTransform, logWarn?: (msg: string) => void): RidgeModelJson {
+  const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
   const xRaw = train.map((s) => s.features);
   const yRaw = train.map((s) => s.target);
+  // Detect non-finite or extremely large inputs
+  let badCount = 0;
+  const badExamples: string[] = [];
+  for (let i = 0; i < xRaw.length; i++) {
+    const row = xRaw[i];
+    for (let j = 0; j < row.length; j++) {
+      const v = row[j];
+      if (!Number.isFinite(v) || Math.abs(v) > 1e12) {
+        badCount++;
+        if (badExamples.length < 5) badExamples.push(`game=${train[i].gameNumber} featIdx=${j} val=${v}`);
+        break;
+      }
+    }
+  }
+  if (badCount > 0) (logWarn ?? warn)(`trainRidge: detected ${badCount} samples with non-finite or huge feature values; examples: ${badExamples.join('; ')}`);
+  if (lambda === 0) (logWarn ?? warn)('trainRidge: lambda=0 (no regularization); solution may be unstable');
   const { means, stds, X } = standardize(xRaw);
   const y = transform === 'log1p' ? yRaw.map((v) => Math.log1p(Math.max(0, v))) : yRaw.slice();
 
@@ -494,7 +514,8 @@ export function trainRidge(train: TrainingSample[], lambda: number, transform: T
     }
   }
   for (let j = 1; j <= d; j++) ZtZ[j][j] += lambda; // no penalty on intercept
-  const weights = solveLinearSystem(ZtZ, Zty);
+  const weights = solveLinearSystem(ZtZ, Zty, (m) => (logWarn ?? warn)(`ridge: ${m}`));
+  if (weights.some((w) => !Number.isFinite(w))) (logWarn ?? warn)('trainRidge: solved weights contain non-finite values');
 
   const perSizeMeans: Record<string, number> = {};
   const globalMean = mean(train.map((s) => s.target));
@@ -524,6 +545,8 @@ export function evaluate<T extends ModelJson>(pred: (s: TrainingSample) => numbe
   const yTrue = valid.map((s) => s.target);
   const yPred = valid.map(pred);
   const metrics: EvaluationMetrics = { rmse: rmse(yTrue, yPred), mae: mae(yTrue, yPred), r2: r2(yTrue, yPred) };
+  if (!Number.isFinite(metrics.rmse) || !Number.isFinite(metrics.mae) || !Number.isFinite(metrics.r2))
+    console.warn('[ml-core] evaluate: metrics contain non-finite values (rmse/mae/r2) — check features and model conditioning');
   const bySize = groupBy(valid.map((v, i) => ({ v, i })), (o) => o.v.boardSize);
   const perSizeRmse: Record<string, number> = {};
   for (const size of Object.keys(bySize)) {
@@ -534,9 +557,16 @@ export function evaluate<T extends ModelJson>(pred: (s: TrainingSample) => numbe
 }
 
 export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
-  const samples = rawStats.map(toSample).filter((x): x is TrainingSample => !!x);
+  const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
+  const mapped = rawStats.map((r) => ({ raw: r, sample: toSample(r) }));
+  const dropped = mapped.filter((m) => !m.sample);
+  if (dropped.length) warn(`toSample: skipped ${dropped.length} record(s) due to missing/invalid features; examples gameNumbers: ${dropped.slice(0, 5).map((m) => m.raw.gameNumber).join(', ')}`);
+  const samples = mapped.map((m) => m.sample).filter((x): x is TrainingSample => !!x);
   if (!samples.length) throw new Error('No training samples available.');
   const { train, valid } = stratifiedSplit(samples, seed);
+  const d = FEATURE_SPEC.keys.length;
+  if (train.length < d) warn(`dataset: training samples (${train.length}) < feature count (${d}); model may be underdetermined or singular`);
+  else if (train.length / d < 5) warn(`dataset: low samples-to-features ratio ${(train.length / d).toFixed(2)}; consider reducing features or adding data`);
 
   const baseline = trainBaseline(train);
   const baselineEval = evaluate((s) => predictBaseline(baseline, s), valid, baseline);
@@ -545,7 +575,7 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
   const transforms: TargetTransform[] = ['none', 'log1p'];
   const ridgeEvals: ModelEvaluationResult<RidgeModelJson>[] = [];
   for (const t of transforms) for (const l of lambdas) {
-    const model = trainRidge(train, l, t);
+    const model = trainRidge(train, l, t, warn);
     ridgeEvals.push(evaluate((s) => predictRidge(model, s), valid, model));
   }
 
@@ -553,4 +583,3 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
   for (const r of ridgeEvals) if (r.metrics.rmse < best.metrics.rmse) best = r as ModelEvaluationResult<ModelJson>;
   return { best, baseline: baselineEval, ridgeCandidates: ridgeEvals };
 }
-
