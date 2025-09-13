@@ -1,0 +1,246 @@
+{
+  "selectedModel": {
+    "version": 1,
+    "modelType": "ridge",
+    "features": [
+      "boardSize",
+      "allExactCombinationCountMin",
+      "allExactCombinationCountMax",
+      "allExactCombinationCountStd",
+      "allAlwaysRequiredCountMax",
+      "allAlwaysRequiredCountStd",
+      "allNeverUsedCountMax",
+      "allNeverUsedCountStd"
+    ],
+    "lambda": 0.1,
+    "transform": "log1p",
+    "featureMeans": [
+      6.9,
+      1.35,
+      12.45,
+      2.882977764921063,
+      2.65,
+      0.7410708036517943,
+      5.25,
+      1.625542169714734
+    ],
+    "featureStds": [
+      1.260952021291849,
+      0.7262919523166975,
+      7.716702663702937,
+      1.7978802871558495,
+      1.8513508581573617,
+      0.44546212530467244,
+      1.1346805717910218,
+      0.3543303056678051
+    ],
+    "weights": [
+      12.232629947553688,
+      0.6834731747180465,
+      0.13065953720436935,
+      0.31143433517929314,
+      -0.1495220712908521,
+      0.040527775962447034,
+      0.06990320773411647,
+      0.03133640552799677,
+      -0.09003845787140399
+    ],
+    "perSizeMeans": {},
+    "globalMean": 319929.9
+  },
+  "metrics": {
+    "rmse": 349486.33752387896,
+    "mae": 181067.5613617612,
+    "r2": 0.6911309825850771
+  },
+  "perSizeRmse": {
+    "5": 27924.680094695796,
+    "6": 27115.9683606816,
+    "7": 98931.0143963835,
+    "8": 369906.81058958,
+    "9": 743492.9666133623
+  },
+  "baseline": {
+    "model": {
+      "version": 1,
+      "modelType": "baseline",
+      "features": [
+        "boardSize",
+        "allExactCombinationCountMin",
+        "allExactCombinationCountMax",
+        "allExactCombinationCountStd",
+        "allAlwaysRequiredCountMax",
+        "allAlwaysRequiredCountStd",
+        "allNeverUsedCountMax",
+        "allNeverUsedCountStd"
+      ],
+      "perSizeMeans": {
+        "5": 59483.333333333336,
+        "6": 114075.6,
+        "7": 215154.66666666666,
+        "8": 444850,
+        "9": 1008097.3333333334
+      },
+      "globalMean": 319929.9
+    },
+    "metrics": {
+      "rmse": 508957.0084808827,
+      "mae": 249946.7878787878,
+      "r2": 0.3449474529774055
+    },
+    "perSizeRmse": {
+      "5": 34470.245305835066,
+      "6": 33692.48731878765,
+      "7": 129604.29162668789,
+      "8": 1101335.960880542,
+      "9": 698003.7923107542
+    }
+  },
+  "ridgeCandidates": [
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.1,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 349486.33752387896,
+        "mae": 181067.5613617612,
+        "r2": 0.6911309825850771
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.01,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 350831.86548391066,
+        "mae": 180242.1722285665,
+        "r2": 0.6887481030734999
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.001,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 351148.8862407037,
+        "mae": 180220.3202731034,
+        "r2": 0.6881853383790192
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.0001,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 351183.6662905914,
+        "mae": 180219.1446587159,
+        "r2": 0.6881235670507437
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 351187.56769171025,
+        "mae": 180219.02608146498,
+        "r2": 0.6881166375609076
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 1,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 361071.2027701154,
+        "mae": 193306.44205805633,
+        "r2": 0.6703146518052421
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 1,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 380588.3772641646,
+        "mae": 206737.59713535523,
+        "r2": 0.6337100659761321
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.1,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 381001.80802548584,
+        "mae": 217560.7443381021,
+        "r2": 0.6329138368368874
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.01,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 385041.05770387634,
+        "mae": 224622.47597958532,
+        "r2": 0.6250891365277389
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.001,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 385849.92551805417,
+        "mae": 225699.85231077578,
+        "r2": 0.6235123080235514
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.0001,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 385937.92140544305,
+        "mae": 225813.2224748461,
+        "r2": 0.6233405669187737
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0,
+        "transform": "none"
+      },
+      "metrics": {
+        "rmse": 385947.7842612935,
+        "mae": 225825.8856446183,
+        "r2": 0.6233213151948265
+      }
+    }
+  ],
+  "predictionForGame27": 25.40242132689882
+}

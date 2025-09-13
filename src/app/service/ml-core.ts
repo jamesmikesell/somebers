@@ -30,69 +30,122 @@ export interface TrainingSample {
 export const FEATURE_SPEC: FeatureSpec = {
   keys: [
     'boardSize',
-    'rowsAndColumnsRequiredSumAvg',
-    'rowsAndColumnsRequiredSumRms',
-    'rowsAndColumnsValuesRmsAvg',
-    'rowsAndColumnsValuesRmsRms',
-    'rowsAndColumnsRequiredSumMin',
-    'rowsAndColumnsRequiredSumMax',
-    'rowsAndColumnsValuesRmsMin',
-    'rowsAndColumnsValuesRmsMax',
-    'groupsRequiredSumAvg',
-    'groupsRequiredSumRms',
-    'groupsValuesRmsAvg',
-    'groupsValuesRmsRms',
-    'groupsRequiredSumMin',
-    'groupsRequiredSumMax',
-    'groupsValuesRmsMin',
-    'groupsValuesRmsMax',
+    // 'rowsAndColumnsRequiredSumAvg',
+    // 'rowsAndColumnsRequiredSumRms',
+    // 'rowsAndColumnsValuesRmsAvg',
+    // 'rowsAndColumnsValuesRmsRms',
+    // 'rowsAndColumnsRequiredSumMin',
+    // 'rowsAndColumnsRequiredSumMax',
+    // 'rowsAndColumnsValuesRmsMin',
+    // 'rowsAndColumnsValuesRmsMax',
+    // 'groupsRequiredSumAvg',
+    // 'groupsRequiredSumRms',
+    // 'groupsValuesRmsAvg',
+    // 'groupsValuesRmsRms',
+    // 'groupsRequiredSumMin',
+    // 'groupsRequiredSumMax',
+    // 'groupsValuesRmsMin',
+    // 'groupsValuesRmsMax',
     // Aggregates of exactCombinationCount for rows, columns, groups
-    'rowExactCombinationCountMean',
-    'rowExactCombinationCountMin',
-    'rowExactCombinationCountMax',
-    'rowExactCombinationCountStd',
-    'rowExactCombinationCountSum',
-    'columnExactCombinationCountMean',
-    'columnExactCombinationCountMin',
-    'columnExactCombinationCountMax',
-    'columnExactCombinationCountStd',
-    'columnExactCombinationCountSum',
-    'groupExactCombinationCountMean',
-    'groupExactCombinationCountMin',
-    'groupExactCombinationCountMax',
-    'groupExactCombinationCountStd',
-    'groupExactCombinationCountSum',
-    'rowsAndColumnsExactCombinationCountMean',
-    'rowsAndColumnsExactCombinationCountMin',
-    'rowsAndColumnsExactCombinationCountMax',
-    'rowsAndColumnsExactCombinationCountStd',
-    'allExactCombinationCountMean',
+    // 'rowExactCombinationCountMean',
+    // 'rowExactCombinationCountMin',
+    // 'rowExactCombinationCountMax',
+    // 'rowExactCombinationCountStd',
+    // 'rowExactCombinationCountSum',
+    // 'columnExactCombinationCountMean',
+    // 'columnExactCombinationCountMin',
+    // 'columnExactCombinationCountMax',
+    // 'columnExactCombinationCountStd',
+    // 'columnExactCombinationCountSum',
+    // 'groupExactCombinationCountMean',
+    // 'groupExactCombinationCountMin',
+    // 'groupExactCombinationCountMax',
+    // 'groupExactCombinationCountStd',
+    // 'groupExactCombinationCountSum',
+    // 'rowsAndColumnsExactCombinationCountMean',
+    // 'rowsAndColumnsExactCombinationCountMin',
+    // 'rowsAndColumnsExactCombinationCountMax',
+    // 'rowsAndColumnsExactCombinationCountStd',
+    // 'rowsAndColumnsExactCombinationCountSum',
+    // 'allExactCombinationCountMean',
     'allExactCombinationCountMin',
     'allExactCombinationCountMax',
     'allExactCombinationCountStd',
+    // 'allExactCombinationCountSum',
     //
-    'maxStates',
-    'cellCount',
-    'rowRequiredRatioMean',
-    'rowRequiredRatioMin',
-    'rowRequiredRatioMax',
-    'rowRequiredRatioStd',
-    'colRequiredRatioMean',
-    'colRequiredRatioMin',
-    'colRequiredRatioMax',
-    'colRequiredRatioStd',
-    'groupRequiredRatioMean',
-    'groupRequiredRatioMin',
-    'groupRequiredRatioMax',
-    'groupRequiredRatioStd',
-    'rowAndColumnRequiredRatioMean',
-    'rowAndColumnRequiredRatioMin',
-    'rowAndColumnRequiredRatioMax',
-    'rowAndColumnRequiredRatioStd',
-    'allRequiredRatioMean',
-    'allRequiredRatioMin',
-    'allRequiredRatioMax',
-    'allRequiredRatioStd',
+    // 'maxStates',
+    // 'cellCount',
+    // 'rowRequiredRatioMean',
+    // 'rowRequiredRatioMin',
+    // 'rowRequiredRatioMax',
+    // 'rowRequiredRatioStd',
+    // 'colRequiredRatioMean',
+    // 'colRequiredRatioMin',
+    // 'colRequiredRatioMax',
+    // 'colRequiredRatioStd',
+    // 'groupRequiredRatioMean',
+    // 'groupRequiredRatioMin',
+    // 'groupRequiredRatioMax',
+    // 'groupRequiredRatioStd',
+    // 'rowAndColumnRequiredRatioMean',
+    // 'rowAndColumnRequiredRatioMin',
+    // 'rowAndColumnRequiredRatioMax',
+    // 'rowAndColumnRequiredRatioStd',
+    // 'allRequiredRatioMean',
+    // 'allRequiredRatioMin',
+    // 'allRequiredRatioMax',
+    // 'allRequiredRatioStd',
+
+    // Aggregates for alwaysRequiredCount
+    // 'rowAlwaysRequiredCountMean',
+    // 'rowAlwaysRequiredCountMin',
+    // 'rowAlwaysRequiredCountMax',
+    // 'rowAlwaysRequiredCountStd',
+    // 'columnAlwaysRequiredCountMean',
+    // 'columnAlwaysRequiredCountMin',
+    // 'columnAlwaysRequiredCountMax',
+    // 'columnAlwaysRequiredCountStd',
+    // 'rowsAndColumnsAlwaysRequiredCountMean',
+    // 'rowsAndColumnsAlwaysRequiredCountMin',
+    // 'rowsAndColumnsAlwaysRequiredCountMax',
+    // 'rowsAndColumnsAlwaysRequiredCountStd',
+
+    // Aggregates for neverUsedCount
+    // 'rowNeverUsedCountMean',
+    // 'rowNeverUsedCountMin',
+    // 'rowNeverUsedCountMax',
+    // 'rowNeverUsedCountStd',
+    // 'columnNeverUsedCountMean',
+    // 'columnNeverUsedCountMin',
+    // 'columnNeverUsedCountMax',
+    // 'columnNeverUsedCountStd',
+    // 'rowsAndColumnsNeverUsedCountMean',
+    // 'rowsAndColumnsNeverUsedCountMin',
+    // 'rowsAndColumnsNeverUsedCountMax',
+    // 'rowsAndColumnsNeverUsedCountStd',
+
+    // Group aggregates for new metrics
+    // 'groupAlwaysRequiredCountMean',
+    // 'groupAlwaysRequiredCountMin',
+    // 'groupAlwaysRequiredCountMax',
+    // 'groupAlwaysRequiredCountStd',
+    // 'groupAlwaysRequiredCountSum',
+    // 'groupNeverUsedCountMean',
+    // 'groupNeverUsedCountMin',
+    // 'groupNeverUsedCountMax',
+    // 'groupNeverUsedCountStd',
+
+    // All (rows+columns+groups) aggregates for new metrics
+    // 'allAlwaysRequiredCountMean',
+    // 'allAlwaysRequiredCountMin',
+    'allAlwaysRequiredCountMax',
+    'allAlwaysRequiredCountStd',
+    // 'allAlwaysRequiredCountSum', //----------------
+    // 'allNeverUsedCountMean',
+    // 'allNeverUsedCountMin',
+    'allNeverUsedCountMax',
+    'allNeverUsedCountStd',
+    // 'allNeverUsedCountSum', //----------------
 
   ],
 };
@@ -144,6 +197,27 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const rowAndColRatioAgg = agg([...rowRatio, ...colRatio])
   const allRatioAgg = agg([...rowRatio, ...colRatio, ...groupRatio])
 
+  // New metrics: alwaysRequiredCount and neverUsedCount
+  const rowAlways = stats.rows.map(s => s.alwaysRequiredCount);
+  const colAlways = stats.columns.map(s => s.alwaysRequiredCount);
+  const grpAlways = stats.groups.map(s => s.alwaysRequiredCount);
+  const rcAlways = [...rowAlways, ...colAlways];
+  const rowAlwaysAgg = agg(rowAlways);
+  const colAlwaysAgg = agg(colAlways);
+  const rcAlwaysAgg = agg(rcAlways);
+  const grpAlwaysAgg = agg(grpAlways);
+  const allAlwaysAgg = agg([...rcAlways, ...grpAlways]);
+
+  const rowNever = stats.rows.map(s => s.neverUsedCount);
+  const colNever = stats.columns.map(s => s.neverUsedCount);
+  const grpNever = stats.groups.map(s => s.neverUsedCount);
+  const rcNever = [...rowNever, ...colNever];
+  const rowNeverAgg = agg(rowNever);
+  const colNeverAgg = agg(colNever);
+  const rcNeverAgg = agg(rcNever);
+  const grpNeverAgg = agg(grpNever);
+  const allNeverAgg = agg([...rcNever, ...grpNever]);
+
 
   let features: GameStatFeatures = {
     boardSize: stats.totals.rowsEvaluated,
@@ -184,10 +258,12 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     rowsAndColumnsExactCombinationCountMin: rowsAndColumnsAgg.min,
     rowsAndColumnsExactCombinationCountMax: rowsAndColumnsAgg.max,
     rowsAndColumnsExactCombinationCountStd: rowsAndColumnsAgg.std,
+    rowsAndColumnsExactCombinationCountSum: rowsAndColumnsAgg.sum,
     allExactCombinationCountMean: allAgg.mean,
     allExactCombinationCountMin: allAgg.min,
     allExactCombinationCountMax: allAgg.max,
     allExactCombinationCountStd: allAgg.std,
+    allExactCombinationCountSum: allAgg.sum,
     //
     maxStates: Math.pow(2, stats.totals.columnsEvaluated * stats.totals.columnsEvaluated),
     cellCount: stats.totals.columnsEvaluated * stats.totals.columnsEvaluated,
@@ -212,6 +288,58 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     allRequiredRatioMin: allRatioAgg.min,
     allRequiredRatioMax: allRatioAgg.max,
     allRequiredRatioStd: allRatioAgg.std,
+
+    // alwaysRequiredCount aggregates
+    rowAlwaysRequiredCountMean: rowAlwaysAgg.mean,
+    rowAlwaysRequiredCountMin: rowAlwaysAgg.min,
+    rowAlwaysRequiredCountMax: rowAlwaysAgg.max,
+    rowAlwaysRequiredCountStd: rowAlwaysAgg.std,
+    columnAlwaysRequiredCountMean: colAlwaysAgg.mean,
+    columnAlwaysRequiredCountMin: colAlwaysAgg.min,
+    columnAlwaysRequiredCountMax: colAlwaysAgg.max,
+    columnAlwaysRequiredCountStd: colAlwaysAgg.std,
+    rowsAndColumnsAlwaysRequiredCountMean: rcAlwaysAgg.mean,
+    rowsAndColumnsAlwaysRequiredCountMin: rcAlwaysAgg.min,
+    rowsAndColumnsAlwaysRequiredCountMax: rcAlwaysAgg.max,
+    rowsAndColumnsAlwaysRequiredCountStd: rcAlwaysAgg.std,
+
+    // neverUsedCount aggregates
+    rowNeverUsedCountMean: rowNeverAgg.mean,
+    rowNeverUsedCountMin: rowNeverAgg.min,
+    rowNeverUsedCountMax: rowNeverAgg.max,
+    rowNeverUsedCountStd: rowNeverAgg.std,
+    columnNeverUsedCountMean: colNeverAgg.mean,
+    columnNeverUsedCountMin: colNeverAgg.min,
+    columnNeverUsedCountMax: colNeverAgg.max,
+    columnNeverUsedCountStd: colNeverAgg.std,
+    rowsAndColumnsNeverUsedCountMean: rcNeverAgg.mean,
+    rowsAndColumnsNeverUsedCountMin: rcNeverAgg.min,
+    rowsAndColumnsNeverUsedCountMax: rcNeverAgg.max,
+    rowsAndColumnsNeverUsedCountStd: rcNeverAgg.std,
+
+    // group aggregates for new metrics
+    groupAlwaysRequiredCountMean: grpAlwaysAgg.mean,
+    groupAlwaysRequiredCountMin: grpAlwaysAgg.min,
+    groupAlwaysRequiredCountMax: grpAlwaysAgg.max,
+    groupAlwaysRequiredCountStd: grpAlwaysAgg.std,
+    groupAlwaysRequiredCountSum: grpAlwaysAgg.sum,
+    groupNeverUsedCountMean: grpNeverAgg.mean,
+    groupNeverUsedCountMin: grpNeverAgg.min,
+    groupNeverUsedCountMax: grpNeverAgg.max,
+    groupNeverUsedCountStd: grpNeverAgg.std,
+
+    // all aggregates (rows+columns+groups)
+    allAlwaysRequiredCountMean: allAlwaysAgg.mean,
+    allAlwaysRequiredCountMin: allAlwaysAgg.min,
+    allAlwaysRequiredCountMax: allAlwaysAgg.max,
+    allAlwaysRequiredCountStd: allAlwaysAgg.std,
+    allAlwaysRequiredCountSum: allAlwaysAgg.sum,
+    allNeverUsedCountMean: allNeverAgg.mean,
+    allNeverUsedCountMin: allNeverAgg.min,
+    allNeverUsedCountMax: allNeverAgg.max,
+    allNeverUsedCountStd: allNeverAgg.std,
+    allNeverUsedCountSum: allNeverAgg.sum,
+
 
   };
 
@@ -316,13 +444,16 @@ export function r2(yTrue: number[], yPred: number[]): number {
 }
 
 // Solve (A)x = b using Gaussian elimination with partial pivoting
-export function solveLinearSystem(A: number[][], b: number[]): number[] {
+export function solveLinearSystem(A: number[][], b: number[], warn?: (msg: string) => void): number[] {
   const n = A.length;
   const M = A.map((row, i) => [...row, b[i]]);
   for (let i = 0; i < n; i++) {
     let maxRow = i;
     for (let k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[maxRow][i])) maxRow = k;
-    if (Math.abs(M[maxRow][i]) < 1e-12) continue;
+    if (Math.abs(M[maxRow][i]) < 1e-12) {
+      if (warn) warn(`solve: near-singular pivot at row ${i} (|pivot|<1e-12); solution may be unstable`);
+      continue;
+    }
     [M[i], M[maxRow]] = [M[maxRow], M[i]];
     const pivot = M[i][i];
     for (let j = i; j <= n; j++) M[i][j] /= pivot;
@@ -348,9 +479,26 @@ export function predictBaseline(model: BaselineModelJson, sample: TrainingSample
   return m ?? model.globalMean;
 }
 
-export function trainRidge(train: TrainingSample[], lambda: number, transform: TargetTransform): RidgeModelJson {
+export function trainRidge(train: TrainingSample[], lambda: number, transform: TargetTransform, logWarn?: (msg: string) => void): RidgeModelJson {
+  const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
   const xRaw = train.map((s) => s.features);
   const yRaw = train.map((s) => s.target);
+  // Detect non-finite or extremely large inputs
+  let badCount = 0;
+  const badExamples: string[] = [];
+  for (let i = 0; i < xRaw.length; i++) {
+    const row = xRaw[i];
+    for (let j = 0; j < row.length; j++) {
+      const v = row[j];
+      if (!Number.isFinite(v) || Math.abs(v) > 1e12) {
+        badCount++;
+        if (badExamples.length < 5) badExamples.push(`game=${train[i].gameNumber} featIdx=${j} val=${v}`);
+        break;
+      }
+    }
+  }
+  if (badCount > 0) (logWarn ?? warn)(`trainRidge: detected ${badCount} samples with non-finite or huge feature values; examples: ${badExamples.join('; ')}`);
+  if (lambda === 0) (logWarn ?? warn)('trainRidge: lambda=0 (no regularization); solution may be unstable');
   const { means, stds, X } = standardize(xRaw);
   const y = transform === 'log1p' ? yRaw.map((v) => Math.log1p(Math.max(0, v))) : yRaw.slice();
 
@@ -368,7 +516,8 @@ export function trainRidge(train: TrainingSample[], lambda: number, transform: T
     }
   }
   for (let j = 1; j <= d; j++) ZtZ[j][j] += lambda; // no penalty on intercept
-  const weights = solveLinearSystem(ZtZ, Zty);
+  const weights = solveLinearSystem(ZtZ, Zty, (m) => (logWarn ?? warn)(`ridge: ${m}`));
+  if (weights.some((w) => !Number.isFinite(w))) (logWarn ?? warn)('trainRidge: solved weights contain non-finite values');
 
   const perSizeMeans: Record<string, number> = {};
   const globalMean = mean(train.map((s) => s.target));
@@ -398,6 +547,8 @@ export function evaluate<T extends ModelJson>(pred: (s: TrainingSample) => numbe
   const yTrue = valid.map((s) => s.target);
   const yPred = valid.map(pred);
   const metrics: EvaluationMetrics = { rmse: rmse(yTrue, yPred), mae: mae(yTrue, yPred), r2: r2(yTrue, yPred) };
+  if (!Number.isFinite(metrics.rmse) || !Number.isFinite(metrics.mae) || !Number.isFinite(metrics.r2))
+    console.warn('[ml-core] evaluate: metrics contain non-finite values (rmse/mae/r2) — check features and model conditioning');
   const bySize = groupBy(valid.map((v, i) => ({ v, i })), (o) => o.v.boardSize);
   const perSizeRmse: Record<string, number> = {};
   for (const size of Object.keys(bySize)) {
@@ -408,9 +559,16 @@ export function evaluate<T extends ModelJson>(pred: (s: TrainingSample) => numbe
 }
 
 export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
-  const samples = rawStats.map(toSample).filter((x): x is TrainingSample => !!x);
+  const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
+  const mapped = rawStats.map((r) => ({ raw: r, sample: toSample(r) }));
+  const dropped = mapped.filter((m) => !m.sample);
+  if (dropped.length) warn(`toSample: skipped ${dropped.length} record(s) due to missing/invalid features; examples gameNumbers: ${dropped.slice(0, 5).map((m) => m.raw.gameNumber).join(', ')}`);
+  const samples = mapped.map((m) => m.sample).filter((x): x is TrainingSample => !!x);
   if (!samples.length) throw new Error('No training samples available.');
   const { train, valid } = stratifiedSplit(samples, seed);
+  const d = FEATURE_SPEC.keys.length;
+  if (train.length < d) warn(`dataset: training samples (${train.length}) < feature count (${d}); model may be underdetermined or singular`);
+  else if (train.length / d < 5) warn(`dataset: low samples-to-features ratio ${(train.length / d).toFixed(2)}; consider reducing features or adding data`);
 
   const baseline = trainBaseline(train);
   const baselineEval = evaluate((s) => predictBaseline(baseline, s), valid, baseline);
@@ -419,7 +577,7 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
   const transforms: TargetTransform[] = ['none', 'log1p'];
   const ridgeEvals: ModelEvaluationResult<RidgeModelJson>[] = [];
   for (const t of transforms) for (const l of lambdas) {
-    const model = trainRidge(train, l, t);
+    const model = trainRidge(train, l, t, warn);
     ridgeEvals.push(evaluate((s) => predictRidge(model, s), valid, model));
   }
 
@@ -427,4 +585,3 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
   for (const r of ridgeEvals) if (r.metrics.rmse < best.metrics.rmse) best = r as ModelEvaluationResult<ModelJson>;
   return { best, baseline: baselineEval, ridgeCandidates: ridgeEvals };
 }
-

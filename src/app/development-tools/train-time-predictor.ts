@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import { BaselineModelJson, ModelEvaluationResult, ModelJson, RidgeModelJson } from '../model/ml-types';
-import { trainBestModel } from '../service/ml-core';
+import { evaluate, stratifiedSplit, trainBestModel, TrainingSample } from '../service/ml-core';
 import { buildRawGameStatForGameNumber, computeStatsFromBackupFile } from './training-data-loader';
 import { predictBaseline, predictRidge, toSample } from '../service/ml-core';
 
@@ -18,11 +18,19 @@ function main(): void {
   const { best, baseline, ridgeCandidates } = trainBestModel(rawStats, 1337);
   console.log('Training complete');
 
+  // Also compute training-set metrics for the selected model
+  const samples = rawStats.map(toSample).filter((x): x is TrainingSample => !!x);
+  const { train } = stratifiedSplit(samples, 1337);
+  const trainEval: ModelEvaluationResult<ModelJson> = (best.model.modelType === 'baseline'
+    ? evaluate((s) => predictBaseline(best.model as BaselineModelJson, s), train, best.model as BaselineModelJson)
+    : evaluate((s) => predictRidge(best.model as RidgeModelJson, s), train, best.model as RidgeModelJson)) as unknown as ModelEvaluationResult<ModelJson>;
+
   // Predict for game #27
   const sample27 = toSample(buildRawGameStatForGameNumber(27))!;
-  const pred27 = best.model.modelType === 'baseline'
+  let pred27 = best.model.modelType === 'baseline'
     ? predictBaseline(best.model as BaselineModelJson, sample27)
     : predictRidge(best.model as RidgeModelJson, sample27);
+  pred27 = pred27 / 1000 / 60;
 
   // Persist artifacts
   const modelPath = 'public/difficulty-ml-model.json';
@@ -42,9 +50,9 @@ function main(): void {
 
   console.log('Training complete');
   console.log('');
-  modelStats(best);
+  modelStats(best, trainEval);
   console.log('');
-  console.log('Prediction for game #27 (ms):', Math.round(pred27));
+  console.log('Prediction for game #27 (minutes):', pred27.toFixed(1));
 
 
   // Generate predictions for game boards 10 -> 2010 (inclusive), sort, and persist
@@ -59,7 +67,9 @@ function main(): void {
       : predictRidge(best.model as RidgeModelJson, sample);
     predictions.push({ gameNumber, predictedMs: yhat });
   }
-  let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => x.predictedMs);
+
+  predictions.forEach(x => x.predictedMs = Math.round(x.predictedMs))
+  let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => Math.round(x.predictedMs));
   writeFileSync('src/app/development-tools/ml-predictions-2k-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
   writeFileSync('src/app/development-tools/ml-predictions-2k-games.json', JSON.stringify(predictions, null, 2), 'utf8');
   // Also persist a public copy with just the sorted times for use in-app
@@ -85,13 +95,14 @@ function main(): void {
 
   // Console summary
   console.log('');
-  modelStats(best);
+  modelStats(best, trainEval);
   console.log('');
-  console.log('Prediction for game #27 (ms):', Math.round(pred27));
+  console.log('Prediction for game #27 (minutes):', pred27.toFixed(1));
 }
 
-function modelStats(best: ModelEvaluationResult<ModelJson>): void {
+function modelStats(best: ModelEvaluationResult<ModelJson>, trainEval?: ModelEvaluationResult<ModelJson>): void {
   console.log('Best model:', best.model.modelType, best.model.modelType === 'ridge' ? (best.model as RidgeModelJson).lambda + '/' + (best.model as RidgeModelJson).transform : 'baseline');
+  if (trainEval) console.log('Training RMSE:', trainEval.metrics.rmse.toFixed(2), 'MAE:', trainEval.metrics.mae.toFixed(2), 'R2:', trainEval.metrics.r2.toFixed(3));
   console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'R2:', best.metrics.r2.toFixed(3));
 }
 
