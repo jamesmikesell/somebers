@@ -77,7 +77,10 @@ export class EstimatedDifficultyComponent implements OnChanges {
           const data = await r.json();
           if (!Array.isArray(data))
             return undefined;
-          return (data as unknown[]).map(Number).filter((v) => Number.isFinite(v)).sort() as number[];
+
+          let times = (data as unknown[]).map(Number).filter((v) => Number.isFinite(v));
+          times.sort((a, b) => a - b);
+          return times;
         })
         .catch((err: unknown): number[] | undefined => {
           console.warn('EstimatedDifficultyComponent: failed to load times', err);
