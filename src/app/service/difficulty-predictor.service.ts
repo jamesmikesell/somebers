@@ -169,4 +169,10 @@ export interface GameStatFeatures {
   //
   allAlwaysRequiredCountSum: number;
   allNeverUsedCountSum: number;
+  //
+  allNeverAndAlwaysCountMean: number;
+  allNeverAndAlwaysCountMin: number;
+  allNeverAndAlwaysCountMax: number;
+  allNeverAndAlwaysCountStd: number;
+  allNeverAndAlwaysCountSum: number;
 }

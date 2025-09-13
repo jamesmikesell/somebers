@@ -146,7 +146,12 @@ export const FEATURE_SPEC: FeatureSpec = {
     'allNeverUsedCountMax',
     'allNeverUsedCountStd',
     // 'allNeverUsedCountSum',
-
+    //
+    // 'allNeverAndAlwaysCountMean',
+    // 'allNeverAndAlwaysCountMin',
+    'allNeverAndAlwaysCountMax',
+    'allNeverAndAlwaysCountStd',
+    // 'allNeverAndAlwaysCountSum',
   ],
 };
 
@@ -217,6 +222,11 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const rcNeverAgg = agg(rcNever);
   const grpNeverAgg = agg(grpNever);
   const allNeverAgg = agg([...rcNever, ...grpNever]);
+
+  const rowAlwaysAndNever = stats.rows.map(s => s.alwaysRequiredCount + s.neverUsedCount);
+  const colAlwaysAndNever = stats.columns.map(s => s.alwaysRequiredCount + s.neverUsedCount);
+  const grpAlwaysAndNever = stats.groups.map(s => s.alwaysRequiredCount + s.neverUsedCount);
+  const allNeverAndAlwaysAgg = agg([...rowAlwaysAndNever, ...colAlwaysAndNever, ...grpAlwaysAndNever])
 
 
   let features: GameStatFeatures = {
@@ -339,6 +349,14 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     allNeverUsedCountMax: allNeverAgg.max,
     allNeverUsedCountStd: allNeverAgg.std,
     allNeverUsedCountSum: allNeverAgg.sum,
+
+    allNeverAndAlwaysCountMean: allNeverAndAlwaysAgg.mean,
+    allNeverAndAlwaysCountMin: allNeverAndAlwaysAgg.min,
+    allNeverAndAlwaysCountMax: allNeverAndAlwaysAgg.max,
+    allNeverAndAlwaysCountStd: allNeverAndAlwaysAgg.std,
+    allNeverAndAlwaysCountSum: allNeverAndAlwaysAgg.sum,
+
+
   };
 
   let x: GameStatWithBoard = { gameNumber }
