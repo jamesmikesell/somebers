@@ -30,69 +30,122 @@ export interface TrainingSample {
 export const FEATURE_SPEC: FeatureSpec = {
   keys: [
     'boardSize',
-    'rowsAndColumnsRequiredSumAvg',
-    'rowsAndColumnsRequiredSumRms',
-    'rowsAndColumnsValuesRmsAvg',
-    'rowsAndColumnsValuesRmsRms',
-    'rowsAndColumnsRequiredSumMin',
-    'rowsAndColumnsRequiredSumMax',
-    'rowsAndColumnsValuesRmsMin',
-    'rowsAndColumnsValuesRmsMax',
-    'groupsRequiredSumAvg',
-    'groupsRequiredSumRms',
-    'groupsValuesRmsAvg',
-    'groupsValuesRmsRms',
-    'groupsRequiredSumMin',
-    'groupsRequiredSumMax',
-    'groupsValuesRmsMin',
-    'groupsValuesRmsMax',
+    // 'rowsAndColumnsRequiredSumAvg',
+    // 'rowsAndColumnsRequiredSumRms',
+    // 'rowsAndColumnsValuesRmsAvg',
+    // 'rowsAndColumnsValuesRmsRms',
+    // 'rowsAndColumnsRequiredSumMin',
+    // 'rowsAndColumnsRequiredSumMax',
+    // 'rowsAndColumnsValuesRmsMin',
+    // 'rowsAndColumnsValuesRmsMax',
+    // 'groupsRequiredSumAvg',
+    // 'groupsRequiredSumRms',
+    // 'groupsValuesRmsAvg',
+    // 'groupsValuesRmsRms',
+    // 'groupsRequiredSumMin',
+    // 'groupsRequiredSumMax',
+    // 'groupsValuesRmsMin',
+    // 'groupsValuesRmsMax',
     // Aggregates of exactCombinationCount for rows, columns, groups
-    'rowExactCombinationCountMean',
-    'rowExactCombinationCountMin',
-    'rowExactCombinationCountMax',
-    'rowExactCombinationCountStd',
-    'rowExactCombinationCountSum',
-    'columnExactCombinationCountMean',
-    'columnExactCombinationCountMin',
-    'columnExactCombinationCountMax',
-    'columnExactCombinationCountStd',
-    'columnExactCombinationCountSum',
-    'groupExactCombinationCountMean',
-    'groupExactCombinationCountMin',
-    'groupExactCombinationCountMax',
-    'groupExactCombinationCountStd',
-    'groupExactCombinationCountSum',
-    'rowsAndColumnsExactCombinationCountMean',
-    'rowsAndColumnsExactCombinationCountMin',
-    'rowsAndColumnsExactCombinationCountMax',
-    'rowsAndColumnsExactCombinationCountStd',
-    'allExactCombinationCountMean',
+    // 'rowExactCombinationCountMean',
+    // 'rowExactCombinationCountMin',
+    // 'rowExactCombinationCountMax',
+    // 'rowExactCombinationCountStd',
+    // 'rowExactCombinationCountSum',
+    // 'columnExactCombinationCountMean',
+    // 'columnExactCombinationCountMin',
+    // 'columnExactCombinationCountMax',
+    // 'columnExactCombinationCountStd',
+    // 'columnExactCombinationCountSum',
+    // 'groupExactCombinationCountMean',
+    // 'groupExactCombinationCountMin',
+    // 'groupExactCombinationCountMax',
+    // 'groupExactCombinationCountStd',
+    // 'groupExactCombinationCountSum',
+    // 'rowsAndColumnsExactCombinationCountMean',
+    // 'rowsAndColumnsExactCombinationCountMin',
+    // 'rowsAndColumnsExactCombinationCountMax',
+    // 'rowsAndColumnsExactCombinationCountStd',
+    // 'rowsAndColumnsExactCombinationCountSum',
+    // 'allExactCombinationCountMean',
     'allExactCombinationCountMin',
     'allExactCombinationCountMax',
     'allExactCombinationCountStd',
+    // 'allExactCombinationCountSum',
     //
-    'maxStates',
-    'cellCount',
-    'rowRequiredRatioMean',
-    'rowRequiredRatioMin',
-    'rowRequiredRatioMax',
-    'rowRequiredRatioStd',
-    'colRequiredRatioMean',
-    'colRequiredRatioMin',
-    'colRequiredRatioMax',
-    'colRequiredRatioStd',
-    'groupRequiredRatioMean',
-    'groupRequiredRatioMin',
-    'groupRequiredRatioMax',
-    'groupRequiredRatioStd',
-    'rowAndColumnRequiredRatioMean',
-    'rowAndColumnRequiredRatioMin',
-    'rowAndColumnRequiredRatioMax',
-    'rowAndColumnRequiredRatioStd',
-    'allRequiredRatioMean',
-    'allRequiredRatioMin',
-    'allRequiredRatioMax',
-    'allRequiredRatioStd',
+    // 'maxStates',
+    // 'cellCount',
+    // 'rowRequiredRatioMean',
+    // 'rowRequiredRatioMin',
+    // 'rowRequiredRatioMax',
+    // 'rowRequiredRatioStd',
+    // 'colRequiredRatioMean',
+    // 'colRequiredRatioMin',
+    // 'colRequiredRatioMax',
+    // 'colRequiredRatioStd',
+    // 'groupRequiredRatioMean',
+    // 'groupRequiredRatioMin',
+    // 'groupRequiredRatioMax',
+    // 'groupRequiredRatioStd',
+    // 'rowAndColumnRequiredRatioMean',
+    // 'rowAndColumnRequiredRatioMin',
+    // 'rowAndColumnRequiredRatioMax',
+    // 'rowAndColumnRequiredRatioStd',
+    // 'allRequiredRatioMean',
+    // 'allRequiredRatioMin',
+    // 'allRequiredRatioMax',
+    // 'allRequiredRatioStd',
+
+    // Aggregates for alwaysRequiredCount
+    // 'rowAlwaysRequiredCountMean',
+    // 'rowAlwaysRequiredCountMin',
+    // 'rowAlwaysRequiredCountMax',
+    // 'rowAlwaysRequiredCountStd',
+    // 'columnAlwaysRequiredCountMean',
+    // 'columnAlwaysRequiredCountMin',
+    // 'columnAlwaysRequiredCountMax',
+    // 'columnAlwaysRequiredCountStd',
+    // 'rowsAndColumnsAlwaysRequiredCountMean',
+    // 'rowsAndColumnsAlwaysRequiredCountMin',
+    // 'rowsAndColumnsAlwaysRequiredCountMax',
+    // 'rowsAndColumnsAlwaysRequiredCountStd',
+
+    // Aggregates for neverUsedCount
+    // 'rowNeverUsedCountMean',
+    // 'rowNeverUsedCountMin',
+    // 'rowNeverUsedCountMax',
+    // 'rowNeverUsedCountStd',
+    // 'columnNeverUsedCountMean',
+    // 'columnNeverUsedCountMin',
+    // 'columnNeverUsedCountMax',
+    // 'columnNeverUsedCountStd',
+    // 'rowsAndColumnsNeverUsedCountMean',
+    // 'rowsAndColumnsNeverUsedCountMin',
+    // 'rowsAndColumnsNeverUsedCountMax',
+    // 'rowsAndColumnsNeverUsedCountStd',
+
+    // Group aggregates for new metrics
+    // 'groupAlwaysRequiredCountMean',
+    // 'groupAlwaysRequiredCountMin',
+    // 'groupAlwaysRequiredCountMax',
+    // 'groupAlwaysRequiredCountStd',
+    // 'groupAlwaysRequiredCountSum',
+    // 'groupNeverUsedCountMean',
+    // 'groupNeverUsedCountMin',
+    // 'groupNeverUsedCountMax',
+    // 'groupNeverUsedCountStd',
+
+    // All (rows+columns+groups) aggregates for new metrics
+    // 'allAlwaysRequiredCountMean',
+    // 'allAlwaysRequiredCountMin',
+    'allAlwaysRequiredCountMax',
+    'allAlwaysRequiredCountStd',
+    // 'allAlwaysRequiredCountSum',
+    // 'allNeverUsedCountMean',
+    // 'allNeverUsedCountMin',
+    'allNeverUsedCountMax',
+    'allNeverUsedCountStd',
+    // 'allNeverUsedCountSum',
 
   ],
 };
@@ -144,6 +197,27 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const rowAndColRatioAgg = agg([...rowRatio, ...colRatio])
   const allRatioAgg = agg([...rowRatio, ...colRatio, ...groupRatio])
 
+  // New metrics: alwaysRequiredCount and neverUsedCount
+  const rowAlways = stats.rows.map(s => s.alwaysRequiredCount);
+  const colAlways = stats.columns.map(s => s.alwaysRequiredCount);
+  const grpAlways = stats.groups.map(s => s.alwaysRequiredCount);
+  const rcAlways = [...rowAlways, ...colAlways];
+  const rowAlwaysAgg = agg(rowAlways);
+  const colAlwaysAgg = agg(colAlways);
+  const rcAlwaysAgg = agg(rcAlways);
+  const grpAlwaysAgg = agg(grpAlways);
+  const allAlwaysAgg = agg([...rcAlways, ...grpAlways]);
+
+  const rowNever = stats.rows.map(s => s.neverUsedCount);
+  const colNever = stats.columns.map(s => s.neverUsedCount);
+  const grpNever = stats.groups.map(s => s.neverUsedCount);
+  const rcNever = [...rowNever, ...colNever];
+  const rowNeverAgg = agg(rowNever);
+  const colNeverAgg = agg(colNever);
+  const rcNeverAgg = agg(rcNever);
+  const grpNeverAgg = agg(grpNever);
+  const allNeverAgg = agg([...rcNever, ...grpNever]);
+
 
   let features: GameStatFeatures = {
     boardSize: stats.totals.rowsEvaluated,
@@ -184,10 +258,12 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     rowsAndColumnsExactCombinationCountMin: rowsAndColumnsAgg.min,
     rowsAndColumnsExactCombinationCountMax: rowsAndColumnsAgg.max,
     rowsAndColumnsExactCombinationCountStd: rowsAndColumnsAgg.std,
+    rowsAndColumnsExactCombinationCountSum: rowsAndColumnsAgg.sum,
     allExactCombinationCountMean: allAgg.mean,
     allExactCombinationCountMin: allAgg.min,
     allExactCombinationCountMax: allAgg.max,
     allExactCombinationCountStd: allAgg.std,
+    allExactCombinationCountSum: allAgg.sum,
     //
     maxStates: Math.pow(2, stats.totals.columnsEvaluated * stats.totals.columnsEvaluated),
     cellCount: stats.totals.columnsEvaluated * stats.totals.columnsEvaluated,
@@ -213,6 +289,56 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     allRequiredRatioMax: allRatioAgg.max,
     allRequiredRatioStd: allRatioAgg.std,
 
+    // alwaysRequiredCount aggregates
+    rowAlwaysRequiredCountMean: rowAlwaysAgg.mean,
+    rowAlwaysRequiredCountMin: rowAlwaysAgg.min,
+    rowAlwaysRequiredCountMax: rowAlwaysAgg.max,
+    rowAlwaysRequiredCountStd: rowAlwaysAgg.std,
+    columnAlwaysRequiredCountMean: colAlwaysAgg.mean,
+    columnAlwaysRequiredCountMin: colAlwaysAgg.min,
+    columnAlwaysRequiredCountMax: colAlwaysAgg.max,
+    columnAlwaysRequiredCountStd: colAlwaysAgg.std,
+    rowsAndColumnsAlwaysRequiredCountMean: rcAlwaysAgg.mean,
+    rowsAndColumnsAlwaysRequiredCountMin: rcAlwaysAgg.min,
+    rowsAndColumnsAlwaysRequiredCountMax: rcAlwaysAgg.max,
+    rowsAndColumnsAlwaysRequiredCountStd: rcAlwaysAgg.std,
+
+    // neverUsedCount aggregates
+    rowNeverUsedCountMean: rowNeverAgg.mean,
+    rowNeverUsedCountMin: rowNeverAgg.min,
+    rowNeverUsedCountMax: rowNeverAgg.max,
+    rowNeverUsedCountStd: rowNeverAgg.std,
+    columnNeverUsedCountMean: colNeverAgg.mean,
+    columnNeverUsedCountMin: colNeverAgg.min,
+    columnNeverUsedCountMax: colNeverAgg.max,
+    columnNeverUsedCountStd: colNeverAgg.std,
+    rowsAndColumnsNeverUsedCountMean: rcNeverAgg.mean,
+    rowsAndColumnsNeverUsedCountMin: rcNeverAgg.min,
+    rowsAndColumnsNeverUsedCountMax: rcNeverAgg.max,
+    rowsAndColumnsNeverUsedCountStd: rcNeverAgg.std,
+
+    // group aggregates for new metrics
+    groupAlwaysRequiredCountMean: grpAlwaysAgg.mean,
+    groupAlwaysRequiredCountMin: grpAlwaysAgg.min,
+    groupAlwaysRequiredCountMax: grpAlwaysAgg.max,
+    groupAlwaysRequiredCountStd: grpAlwaysAgg.std,
+    groupAlwaysRequiredCountSum: grpAlwaysAgg.sum,
+    groupNeverUsedCountMean: grpNeverAgg.mean,
+    groupNeverUsedCountMin: grpNeverAgg.min,
+    groupNeverUsedCountMax: grpNeverAgg.max,
+    groupNeverUsedCountStd: grpNeverAgg.std,
+
+    // all aggregates (rows+columns+groups)
+    allAlwaysRequiredCountMean: allAlwaysAgg.mean,
+    allAlwaysRequiredCountMin: allAlwaysAgg.min,
+    allAlwaysRequiredCountMax: allAlwaysAgg.max,
+    allAlwaysRequiredCountStd: allAlwaysAgg.std,
+    allAlwaysRequiredCountSum: allAlwaysAgg.sum,
+    allNeverUsedCountMean: allNeverAgg.mean,
+    allNeverUsedCountMin: allNeverAgg.min,
+    allNeverUsedCountMax: allNeverAgg.max,
+    allNeverUsedCountStd: allNeverAgg.std,
+    allNeverUsedCountSum: allNeverAgg.sum,
   };
 
   let x: GameStatWithBoard = { gameNumber }

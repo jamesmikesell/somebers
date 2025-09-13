@@ -91,10 +91,12 @@ export interface GameStatFeatures {
   rowsAndColumnsExactCombinationCountMin: number;
   rowsAndColumnsExactCombinationCountMax: number;
   rowsAndColumnsExactCombinationCountStd: number;
+  rowsAndColumnsExactCombinationCountSum: number;
   allExactCombinationCountMean: number;
   allExactCombinationCountMin: number;
   allExactCombinationCountMax: number;
   allExactCombinationCountStd: number;
+  allExactCombinationCountSum: number;
   //
   maxStates: number;
   cellCount: number;
@@ -119,4 +121,52 @@ export interface GameStatFeatures {
   allRequiredRatioMax: number;
   allRequiredRatioStd: number;
   //
+  // New metrics: alwaysRequired and neverUsed counts (aggregated)
+  rowAlwaysRequiredCountMean: number;
+  rowAlwaysRequiredCountMin: number;
+  rowAlwaysRequiredCountMax: number;
+  rowAlwaysRequiredCountStd: number;
+  columnAlwaysRequiredCountMean: number;
+  columnAlwaysRequiredCountMin: number;
+  columnAlwaysRequiredCountMax: number;
+  columnAlwaysRequiredCountStd: number;
+  rowsAndColumnsAlwaysRequiredCountMean: number;
+  rowsAndColumnsAlwaysRequiredCountMin: number;
+  rowsAndColumnsAlwaysRequiredCountMax: number;
+  rowsAndColumnsAlwaysRequiredCountStd: number;
+
+  rowNeverUsedCountMean: number;
+  rowNeverUsedCountMin: number;
+  rowNeverUsedCountMax: number;
+  rowNeverUsedCountStd: number;
+  columnNeverUsedCountMean: number;
+  columnNeverUsedCountMin: number;
+  columnNeverUsedCountMax: number;
+  columnNeverUsedCountStd: number;
+  rowsAndColumnsNeverUsedCountMean: number;
+  rowsAndColumnsNeverUsedCountMin: number;
+  rowsAndColumnsNeverUsedCountMax: number;
+  rowsAndColumnsNeverUsedCountStd: number;
+  // Group aggregates for new metrics
+  groupAlwaysRequiredCountMean: number;
+  groupAlwaysRequiredCountMin: number;
+  groupAlwaysRequiredCountMax: number;
+  groupAlwaysRequiredCountStd: number;
+  groupAlwaysRequiredCountSum: number;
+  groupNeverUsedCountMean: number;
+  groupNeverUsedCountMin: number;
+  groupNeverUsedCountMax: number;
+  groupNeverUsedCountStd: number;
+  // All aggregates (rows+columns+groups)
+  allAlwaysRequiredCountMean: number;
+  allAlwaysRequiredCountMin: number;
+  allAlwaysRequiredCountMax: number;
+  allAlwaysRequiredCountStd: number;
+  allNeverUsedCountMean: number;
+  allNeverUsedCountMin: number;
+  allNeverUsedCountMax: number;
+  allNeverUsedCountStd: number;
+  //
+  allAlwaysRequiredCountSum: number;
+  allNeverUsedCountSum: number;
 }

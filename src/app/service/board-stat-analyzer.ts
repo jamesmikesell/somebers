@@ -89,6 +89,8 @@ export class BoardStatAnalyzer {
       requiredIndices: stat.requiredIndices.slice(),
       exactCombinationCount: possibleCorrect.exact,
       nonExactCombinationCount: nonExact,
+      alwaysRequiredCount: possibleCorrect.alwaysRequiredCount,
+      neverUsedCount: possibleCorrect.neverUsedCount,
       valuesRms: BoardStatAnalyzer.rms(stat.values),
     };
   }
@@ -110,14 +112,23 @@ export class BoardStatAnalyzer {
     const n = values.length;
     const total = 1 << n; // includes empty subset
     let exact = 0;
+    let andMask = (1 << n) - 1; // start with all bits set within n
+    let orMask = 0;
     for (let mask = 0; mask < total; mask++) {
       let sum = 0;
       for (let i = 0; i < n; i++) {
         if (mask & (1 << i)) sum += values[i];
       }
-      if (sum === target) exact++;
+      if (sum === target) {
+        exact++;
+        andMask &= mask;
+        orMask |= mask;
+      }
     }
-    return { exact, total };
+    const alwaysRequiredCount = BoardStatAnalyzer.popcount(andMask & ((1 << n) - 1));
+    const neverUsedCount = n - BoardStatAnalyzer.popcount(orMask & ((1 << n) - 1));
+    if (exact === 0) return { exact, total, alwaysRequiredCount: 0, neverUsedCount: 0 };
+    return { exact, total, alwaysRequiredCount, neverUsedCount };
   }
 
   private static mean(values: number[]): number {
@@ -133,6 +144,13 @@ export class BoardStatAnalyzer {
     for (let i = 0; i < values.length; i++) s2 += values[i] * values[i];
     return Math.sqrt(s2 / values.length);
   }
+
+  private static popcount(x: number): number {
+    x = x >>> 0;
+    x = x - ((x >>> 1) & 0x55555555);
+    x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
+    return (((x + (x >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
+  }
 }
 
 
@@ -145,6 +163,8 @@ class LinearStat {
 interface PossiblyCorrectSolutions {
   exact: number;
   total: number
+  alwaysRequiredCount: number;
+  neverUsedCount: number;
 }
 
 
@@ -171,6 +191,8 @@ export interface SectionStats {
   requiredIndices: number[];
   exactCombinationCount: number;
   nonExactCombinationCount: number;
+  alwaysRequiredCount: number;
+  neverUsedCount: number;
   valuesRms: number;
 }
 
@@ -180,4 +202,3 @@ export interface SectionAggregates {
   valuesRmsAvg: number;
   valuesRmsRms: number;
 }
-
