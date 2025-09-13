@@ -1,7 +1,7 @@
 # TODO
 
+- bug: undoing moves after a column / color group is hidden doesn't unhide their styling
 - difficulty prediction
-  - calculate how many cells are known to be required / unusable
   - ratio of average row value vs required total
   - ratio of cells that are X value vs required total
     - though, shouldn't both of the above metrics already be reflected in the #of possible correct ratio?
@@ -27,6 +27,7 @@
 
 # Done
 
+- difficulty prediction - calculate how many cells are known to be required / unusable
 - look at a few thousand boards to get an idea of min / max timeSpent to convert timeSpent into a difficulty
 - temp cell selection: ability to highlight cells temporarily to mark that you're using them for mental math
 - show empty grid for completed games
