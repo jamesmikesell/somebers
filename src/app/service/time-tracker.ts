@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs';
+import { Observable, share, Subject, takeUntil } from 'rxjs';
 
 
 
@@ -6,6 +6,7 @@ export class TimeTracker {
   private startTime: number | null = null;
   private cumulativeTime = 0;
   private manuallyPaused = false;
+  private destroy$ = new Subject<void>();
 
   private readonly browserStateSubject = new Subject<{
     active: boolean;
@@ -14,10 +15,42 @@ export class TimeTracker {
   }>();
 
   readonly browserState$ = this.browserStateSubject.asObservable();
-
+  readonly syncedTimer$: Observable<number>;
 
   constructor() {
     this.init();
+
+    this.syncedTimer$ = new Observable<number>(subscriber => {
+      let timeoutId: number;
+
+      const scheduleNext = () => {
+        if (this.startTime === null) return;
+
+        const currentTime = this.getTotalTime();
+        const delay = ((Math.floor(currentTime / 1000) + 1) * 1000) - currentTime + 10;
+
+        timeoutId = setTimeout(() => {
+          if (this.startTime !== null) {
+            subscriber.next(this.getTotalTime());
+            scheduleNext();
+          }
+        }, delay);
+      };
+
+      const browserStateSubscription = this.browserState$.subscribe(() => {
+        clearTimeout(timeoutId);
+        scheduleNext();
+      });
+
+      scheduleNext();
+      return () => {
+        clearTimeout(timeoutId);
+        browserStateSubscription.unsubscribe();
+      };
+    }).pipe(
+      share(),
+      takeUntil(this.destroy$),
+    );
   }
 
 
@@ -62,6 +95,7 @@ export class TimeTracker {
     if (this.doPause())
       this.emitBrowser(false, "destroy");
 
+    this.destroy$.next();
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     window.removeEventListener('beforeunload', this.onPageUnload);
     window.removeEventListener('pagehide', this.onPageUnload);

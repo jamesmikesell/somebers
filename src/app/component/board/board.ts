@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { filter, first, interval, pairwise, Subject, takeUntil } from 'rxjs';
+import { filter, first, interval, Observable, pairwise, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
@@ -117,17 +117,17 @@ export class Board implements OnInit, OnDestroy {
 
 
   private configureTimeTracking(): void {
-    interval(1000).pipe(
+    this.timeTracker.syncedTimer$.pipe(
       takeUntil(this.destroy)
-    ).subscribe(() => {
+    ).subscribe(time => {
       if (this.stats) {
         let previous = this.previousGames.get(this.gameNumber);
         if (previous && previous.completed)
           return
 
-        this.stats.timeSpent = this.timeTracker.getTotalTime()
+        this.stats.timeSpent = time;
       }
-    })
+    });
 
     this.timeTracker.browserState$
       .pipe(
