@@ -175,4 +175,7 @@ export interface GameStatFeatures {
   allNeverAndAlwaysCountMax: number;
   allNeverAndAlwaysCountStd: number;
   allNeverAndAlwaysCountSum: number;
+  //
+  deductionIterations: number;
+  unresolvedCellCountAfterDeduction: number;
 }

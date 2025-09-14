@@ -152,6 +152,9 @@ export const FEATURE_SPEC: FeatureSpec = {
     'allNeverAndAlwaysCountMax',
     'allNeverAndAlwaysCountStd',
     // 'allNeverAndAlwaysCountSum',
+    // 
+    // 'deductionIterations',
+    // 'unresolvedCellCountAfterDeduction',
   ],
 };
 
@@ -203,9 +206,9 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const allRatioAgg = agg([...rowRatio, ...colRatio, ...groupRatio])
 
   // New metrics: alwaysRequiredCount and neverUsedCount
-  const rowAlways = stats.rows.map(s => s.alwaysRequiredCount);
-  const colAlways = stats.columns.map(s => s.alwaysRequiredCount);
-  const grpAlways = stats.groups.map(s => s.alwaysRequiredCount);
+  const rowAlways = stats.rows.map(s => s.firstIterationGuaranteedRequiredCellCount);
+  const colAlways = stats.columns.map(s => s.firstIterationGuaranteedRequiredCellCount);
+  const grpAlways = stats.groups.map(s => s.firstIterationGuaranteedRequiredCellCount);
   const rcAlways = [...rowAlways, ...colAlways];
   const rowAlwaysAgg = agg(rowAlways);
   const colAlwaysAgg = agg(colAlways);
@@ -213,9 +216,9 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const grpAlwaysAgg = agg(grpAlways);
   const allAlwaysAgg = agg([...rcAlways, ...grpAlways]);
 
-  const rowNever = stats.rows.map(s => s.neverUsedCount);
-  const colNever = stats.columns.map(s => s.neverUsedCount);
-  const grpNever = stats.groups.map(s => s.neverUsedCount);
+  const rowNever = stats.rows.map(s => s.firstIterationGuaranteedUnusableCellCount);
+  const colNever = stats.columns.map(s => s.firstIterationGuaranteedUnusableCellCount);
+  const grpNever = stats.groups.map(s => s.firstIterationGuaranteedUnusableCellCount);
   const rcNever = [...rowNever, ...colNever];
   const rowNeverAgg = agg(rowNever);
   const colNeverAgg = agg(colNever);
@@ -223,9 +226,9 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const grpNeverAgg = agg(grpNever);
   const allNeverAgg = agg([...rcNever, ...grpNever]);
 
-  const rowAlwaysAndNever = stats.rows.map(s => s.alwaysRequiredCount + s.neverUsedCount);
-  const colAlwaysAndNever = stats.columns.map(s => s.alwaysRequiredCount + s.neverUsedCount);
-  const grpAlwaysAndNever = stats.groups.map(s => s.alwaysRequiredCount + s.neverUsedCount);
+  const rowAlwaysAndNever = stats.rows.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
+  const colAlwaysAndNever = stats.columns.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
+  const grpAlwaysAndNever = stats.groups.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
   const allNeverAndAlwaysAgg = agg([...rowAlwaysAndNever, ...colAlwaysAndNever, ...grpAlwaysAndNever])
 
 
@@ -356,7 +359,8 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     allNeverAndAlwaysCountStd: allNeverAndAlwaysAgg.std,
     allNeverAndAlwaysCountSum: allNeverAndAlwaysAgg.sum,
 
-
+    deductionIterations: stats.totals.deductionIterations,
+    unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
   };
 
   let x: GameStatWithBoard = { gameNumber }

@@ -50,6 +50,8 @@ function main(): void {
 
   console.log('Training complete');
   console.log('');
+  logWeights(best)
+  console.log('');
   modelStats(best, trainEval);
   console.log('');
   console.log('Prediction for game #27 (minutes):', pred27.toFixed(1));
@@ -79,6 +81,16 @@ function main(): void {
     console.warn('Failed to write public/difficulty-ml-predicted-times.json', err);
   }
 
+}
+
+function modelStats(best: ModelEvaluationResult<ModelJson>, trainEval?: ModelEvaluationResult<ModelJson>): void {
+  console.log('Best model:', best.model.modelType, best.model.modelType === 'ridge' ? (best.model as RidgeModelJson).lambda + '/' + (best.model as RidgeModelJson).transform : 'baseline');
+  if (trainEval) console.log('Training RMSE:', trainEval.metrics.rmse.toFixed(2), 'MAE:', trainEval.metrics.mae.toFixed(2), 'R2:', trainEval.metrics.r2.toFixed(3));
+  console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'R2:', best.metrics.r2.toFixed(3));
+}
+
+
+function logWeights(best: ModelEvaluationResult<ModelJson>): void {
   // Print weights sorted by absolute value (feature name and weight)
   if (best.model.modelType === 'ridge') {
     const ridge = best.model as RidgeModelJson;
@@ -93,17 +105,6 @@ function main(): void {
     console.log('Baseline model selected: no feature weights to display.');
   }
 
-  // Console summary
-  console.log('');
-  modelStats(best, trainEval);
-  console.log('');
-  console.log('Prediction for game #27 (minutes):', pred27.toFixed(1));
-}
-
-function modelStats(best: ModelEvaluationResult<ModelJson>, trainEval?: ModelEvaluationResult<ModelJson>): void {
-  console.log('Best model:', best.model.modelType, best.model.modelType === 'ridge' ? (best.model as RidgeModelJson).lambda + '/' + (best.model as RidgeModelJson).transform : 'baseline');
-  if (trainEval) console.log('Training RMSE:', trainEval.metrics.rmse.toFixed(2), 'MAE:', trainEval.metrics.mae.toFixed(2), 'R2:', trainEval.metrics.r2.toFixed(3));
-  console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'R2:', best.metrics.r2.toFixed(3));
 }
 
 
