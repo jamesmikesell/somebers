@@ -463,6 +463,56 @@ export function r2(yTrue: number[], yPred: number[]): number {
   return 1 - (ssRes / (ssTot || 1));
 }
 
+export interface FeatureDiagnostics {
+  stds: number[];
+  nzvIndices: number[];
+  highCorrPairs: { i: number; j: number; corr: number }[];
+  maxAbsCorr: number;
+}
+
+export function computeFeatureDiagnostics(train: TrainingSample[], corrThreshold = 0.98, nzvThreshold = 1e-6): FeatureDiagnostics {
+  const Xraw = train.map((s) => s.features);
+  const n = Xraw.length;
+  const d = Xraw[0]?.length ?? 0;
+  const means = new Array(d).fill(0);
+  const vars = new Array(d).fill(0);
+  for (let j = 0; j < d; j++) {
+    let sum = 0;
+    for (let i = 0; i < n; i++) sum += Xraw[i][j];
+    const m = sum / (n || 1);
+    means[j] = m;
+    let vs = 0;
+    for (let i = 0; i < n; i++) {
+      const d0 = Xraw[i][j] - m;
+      vs += d0 * d0;
+    }
+    vars[j] = vs / (n || 1);
+  }
+  const stds = vars.map((v) => Math.sqrt(v));
+  const nzvIndices: number[] = [];
+  for (let j = 0; j < d; j++) if (!Number.isFinite(stds[j]) || stds[j] < nzvThreshold) nzvIndices.push(j);
+
+  // Build standardized X for correlation using raw stds but fallback to 1 to avoid NaN
+  const X: number[][] = Array.from({ length: n }, () => new Array(d).fill(0));
+  for (let i = 0; i < n; i++) for (let j = 0; j < d; j++) X[i][j] = (Xraw[i][j] - means[j]) / (stds[j] || 1);
+
+  const highCorrPairs: { i: number; j: number; corr: number }[] = [];
+  let maxAbsCorr = 0;
+  const cols: number[][] = Array.from({ length: d }, () => new Array(n).fill(0));
+  for (let i = 0; i < n; i++) for (let j = 0; j < d; j++) cols[j][i] = X[i][j];
+  for (let i = 0; i < d; i++) {
+    for (let j = i + 1; j < d; j++) {
+      let dot = 0;
+      for (let k = 0; k < n; k++) dot += cols[i][k] * cols[j][k];
+      const corr = dot / (n || 1);
+      const a = Math.abs(corr);
+      if (a > maxAbsCorr) maxAbsCorr = a;
+      if (a >= corrThreshold) highCorrPairs.push({ i, j, corr });
+    }
+  }
+  return { stds, nzvIndices, highCorrPairs, maxAbsCorr };
+}
+
 // Solve (A)x = b using Gaussian elimination with partial pivoting
 export function solveLinearSystem(A: number[][], b: number[], warn?: (msg: string) => void): number[] {
   const n = A.length;
@@ -555,11 +605,12 @@ export function trainRidge(train: TrainingSample[], lambda: number, transform: T
   };
 }
 
-export function predictRidge(model: RidgeModelJson, sample: TrainingSample): number {
+export function predictRidge(model: RidgeModelJson, sample: TrainingSample, options?: { allowNegative?: boolean }): number {
   const normalizedFeatureValues = sample.features.map((value, index) => (value - model.featureMeans[index]) / (model.featureStds[index] || 1));
   let yhat = model.weights[0];
   for (let j = 0; j < normalizedFeatureValues.length; j++) yhat += model.weights[j + 1] * normalizedFeatureValues[j];
   if (model.transform === 'log1p') yhat = Math.max(0, Math.expm1(yhat));
+  else if (!options?.allowNegative) yhat = Math.max(0, yhat);
   return yhat;
 }
 
@@ -593,15 +644,54 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
   const baseline = trainBaseline(train);
   const baselineEval = evaluate((s) => predictBaseline(baseline, s), valid, baseline);
 
-  const lambdas = [0, 1e-4, 1e-3, 1e-2, 1e-1, 1];
-  const transforms: TargetTransform[] = ['none', 'log1p'];
+  // Feature diagnostics: NZV and high collinearity warnings
+  const diag = computeFeatureDiagnostics(train);
+  if (diag.nzvIndices.length) {
+    const names = diag.nzvIndices.slice(0, 8).map((i) => FEATURE_SPEC.keys[i]).join(', ');
+    warn(`features: ${diag.nzvIndices.length} near-zero-variance feature(s) detected (e.g., ${names})`);
+  }
+  if (diag.highCorrPairs.length) {
+    const examples = diag.highCorrPairs
+      .slice(0, 5)
+      .map((p) => `${FEATURE_SPEC.keys[p.i]}~${FEATURE_SPEC.keys[p.j]}=${p.corr.toFixed(3)}`)
+      .join('; ');
+    warn(`features: ${diag.highCorrPairs.length} highly correlated pair(s) (|corr|>=0.98); examples: ${examples}`);
+  }
+  if (diag.maxAbsCorr > 0.999) warn(`features: max absolute correlation extremely high (${diag.maxAbsCorr.toFixed(5)}); model may be ill-conditioned`);
+
+  // Exclude 0 (unregularized) to avoid unstable weight blow-ups on singular/collinear data
+  const lambdas = [1e-4, 1e-3, 1e-2, 1e-1, 1, 10];
+  // Prefer log transform for strictly-positive targets; we will tie-break later
+  const transforms: TargetTransform[] = ['log1p', 'none'];
   const ridgeEvals: ModelEvaluationResult<RidgeModelJson>[] = [];
   for (const t of transforms) for (const l of lambdas) {
     const model = trainRidge(train, l, t, warn);
     ridgeEvals.push(evaluate((s) => predictRidge(model, s), valid, model));
   }
 
+  // Pick by lowest RMSE; tie-break on smaller weight L2 norm, then prefer log1p
   let best: ModelEvaluationResult<ModelJson> = baselineEval;
-  for (const r of ridgeEvals) if (r.metrics.rmse < best.metrics.rmse) best = r as ModelEvaluationResult<ModelJson>;
+  const weightL2 = (m: RidgeModelJson) => Math.sqrt(m.weights.reduce((s, w) => s + w * w, 0));
+  const isBetter = (a: ModelEvaluationResult<ModelJson>, b: ModelEvaluationResult<ModelJson>): boolean => {
+    const eps = 1e-9;
+    if (a.metrics.rmse + eps < b.metrics.rmse) return true;
+    if (Math.abs(a.metrics.rmse - b.metrics.rmse) <= eps) {
+      if (a.model.modelType === 'ridge' && b.model.modelType === 'ridge') {
+        const la = weightL2(a.model as RidgeModelJson);
+        const lb = weightL2(b.model as RidgeModelJson);
+        if (la + eps < lb) return true;
+        if (Math.abs(la - lb) <= eps) {
+          // final tie-break: prefer log1p
+          const ta = (a.model as RidgeModelJson).transform;
+          const tb = (b.model as RidgeModelJson).transform;
+          if (ta === 'log1p' && tb !== 'log1p') return true;
+        }
+      } else if (a.model.modelType === 'ridge' && b.model.modelType === 'baseline') {
+        return true; // prefer any proper model over baseline with same RMSE
+      }
+    }
+    return false;
+  };
+  for (const r of ridgeEvals) if (isBetter(r as ModelEvaluationResult<ModelJson>, best)) best = r as ModelEvaluationResult<ModelJson>;
   return { best, baseline: baselineEval, ridgeCandidates: ridgeEvals };
 }

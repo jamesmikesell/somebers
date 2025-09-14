@@ -63,6 +63,7 @@ function main(): void {
   const predictions: { gameNumber: number; predictedMs: number }[] = [];
   for (let gameNumber = 0; gameNumber <= boardsToEvaluate; gameNumber++) {
     const sample = toSample(buildRawGameStatForGameNumber(gameNumber));
+    
     if (!sample) continue;
     const yhat = best.model.modelType === 'baseline'
       ? predictBaseline(best.model as BaselineModelJson, sample)
