@@ -18,6 +18,7 @@ import { UndoManager } from '../../service/undo-manager';
 import { WakeLock } from '../../service/wake-lock';
 import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
+import { ConfirmStartOverDialogLauncher } from '../confirm-start-over/confirm-start-over-dialog';
 import { EstimatedDifficultyComponent } from '../estimated-difficulty/estimated-difficulty';
 import { StatsComponent } from '../stats/stats';
 import { Title } from "../title/title";
@@ -60,6 +61,7 @@ export class Board implements OnInit, OnDestroy {
     private boardUiService: BoardUiService,
     private wakeLock: WakeLock,
     private colorOptimizer: ColorGridOptimizerService,
+    private confirmStartOverLauncher: ConfirmStartOverDialogLauncher,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -78,18 +80,24 @@ export class Board implements OnInit, OnDestroy {
     this.boardUiService.boardVisible$.next(true);
     this.wakeLock.enable();
     this.destroy.pipe(first()).subscribe(() => this.wakeLock.disable());
+
     this.boardUiService.undoRequested$
       .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.undoManager.undoLast())
+      .subscribe(() => this.undoManager.undoLast());
     this.boardUiService.setCanUndo(this.undoManager.hasUndo());
+
     if (!(await this.tryLoadGameFromStorage()))
       this.updateGameNumber(this.gameNumber || 1);
+
+    this.setupStartOverMenuHandling();
+    this.boardUiService.setShowStartOver(true);
   }
 
 
   ngOnDestroy(): void {
     this.destroy.next()
     this.boardUiService.boardVisible$.next(false);
+    this.boardUiService.setShowStartOver(false);
     this.timeTracker.destroy();
     this.saveGameState();
   }
@@ -407,6 +415,21 @@ export class Board implements OnInit, OnDestroy {
 
   private calculateStats(): void {
     this.stats = this.statCalculator.calculateStats(this.gameNumber);
+  }
+
+
+  private setupStartOverMenuHandling(): void {
+    this.boardUiService.restartRequested$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        this.confirmStartOverLauncher
+          .open(this.gameNumber)
+          .pipe(takeUntil(this.destroy))
+          .subscribe(confirmed => {
+            if (confirmed)
+              this.playGameAgain();
+          });
+      });
   }
 
 

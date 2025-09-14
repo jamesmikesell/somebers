@@ -24,6 +24,7 @@ export class App implements OnInit, OnDestroy {
   get currentColorMode() { return this.colorModes[this.currentModeIndex] }
   boardVisible = false;
   canUndo = false;
+  showStartOver = false;
 
   private destroy = new Subject<void>();
 
@@ -55,6 +56,10 @@ export class App implements OnInit, OnDestroy {
     this.boardUiService.canUndo$
       .pipe(takeUntil(this.destroy))
       .subscribe(canUndo => setTimeout(() => this.canUndo = canUndo, 0))
+
+    this.boardUiService.showStartOver$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(show => setTimeout(() => this.showStartOver = show, 0))
   }
 
 
@@ -89,6 +94,11 @@ export class App implements OnInit, OnDestroy {
 
     const themeColorMeta = this.getOrCreateThemeColorMeta();
     themeColorMeta.content = computedStyle.backgroundColor;
+  }
+
+
+  requestStartOver(): void {
+    this.boardUiService.requestRestart();
   }
 }
 

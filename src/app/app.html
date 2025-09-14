@@ -23,6 +23,13 @@
       <mat-icon>undo</mat-icon>
       Undo
     </button>
+
+    @if (showStartOver) {
+      <button mat-menu-item (click)="requestStartOver()">
+        <mat-icon>restart_alt</mat-icon>
+        Start Board Over
+      </button>
+    }
   }
 
   <button mat-menu-item routerLink="/documentation">
