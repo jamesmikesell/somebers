@@ -9,6 +9,7 @@
 	},
 	"mounts": [
 		"source=some-numbers-host-node-modules,target=/workspace/host-machine-workspace/node_modules,type=volume",
+		"source=some-numbers-host-git-hooks,target=/workspace/host-machine-workspace/.git/hooks,type=volume",
 		"source=some-numbers-workspace,target=/workspace/container-workspace,type=volume",
 	],
 	"customizations": {
