@@ -70,7 +70,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'allExactCombinationCountMean',
     'allExactCombinationCountMin',
     'allExactCombinationCountMax',
-    'allExactCombinationCountStd',
+    // 'allExactCombinationCountStd', // removing as: 1 highly correlated pair(s) (|corr|>=0.98); examples: allExactCombinationCountMax~allExactCombinationCountStd=0.992
     // 'allExactCombinationCountSum',
     //
     // 'maxStates',
@@ -153,7 +153,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     'allNeverAndAlwaysCountStd',
     // 'allNeverAndAlwaysCountSum',
     // 
-    // 'deductionIterations',
+    'deductionIterations',
     // 'unresolvedCellCountAfterDeduction',
   ],
 };
@@ -424,6 +424,37 @@ export function stratifiedSplit(samples: TrainingSample[], seed = 1337): { train
   return { train, valid };
 }
 
+// Create stratified K-fold splits preserving the distribution of boardSize across folds.
+export function stratifiedKFolds(samples: TrainingSample[], k = 5, seed = 1337): { train: TrainingSample[]; valid: TrainingSample[] }[] {
+  if (k < 2) throw new Error('K-fold requires k >= 2');
+  const bySize = groupBy(samples, (s) => s.boardSize);
+  const rng = mulberry32(seed);
+  // Prepare k buckets for validation indices per class
+  const foldBuckets: Record<string, TrainingSample[][]> = {};
+  for (const size of Object.keys(bySize)) {
+    const bucket = [...bySize[size]];
+    shuffleInPlace(bucket, rng);
+    const foldsForSize: TrainingSample[][] = Array.from({ length: k }, () => [] as TrainingSample[]);
+    for (let i = 0; i < bucket.length; i++) foldsForSize[i % k].push(bucket[i]);
+    foldBuckets[size] = foldsForSize;
+  }
+  const folds: { train: TrainingSample[]; valid: TrainingSample[] }[] = [];
+  for (let f = 0; f < k; f++) {
+    const valid: TrainingSample[] = [];
+    const train: TrainingSample[] = [];
+    for (const size of Object.keys(foldBuckets)) {
+      const foldsForSize = foldBuckets[size];
+      for (let j = 0; j < k; j++) {
+        const list = foldsForSize[j];
+        if (j === f) valid.push(...list);
+        else train.push(...list);
+      }
+    }
+    folds.push({ train, valid });
+  }
+  return folds;
+}
+
 function mean(xs: number[]): number { return xs.reduce((a, b) => a + b, 0) / (xs.length || 1); }
 function variance(xs: number[], m: number): number { return xs.reduce((a, b) => a + (b - m) * (b - m), 0) / (xs.length || 1); }
 
@@ -629,20 +660,40 @@ export function evaluate<T extends ModelJson>(pred: (s: TrainingSample) => numbe
   return { model, metrics, perSizeRmse };
 }
 
-export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
+function evaluateOnArrays<T extends ModelJson>(yTrue: number[], yPred: number[], model: T, valid: TrainingSample[]): ModelEvaluationResult<T> {
+  const metrics: EvaluationMetrics = { rmse: rmse(yTrue, yPred), mae: mae(yTrue, yPred), r2: r2(yTrue, yPred) };
+  const bySize = groupBy(valid.map((v, i) => ({ v, i })), (o) => o.v.boardSize);
+  const perSizeRmse: Record<string, number> = {};
+  for (const size of Object.keys(bySize)) {
+    const idxs = bySize[size].map((o) => o.i);
+    perSizeRmse[size] = rmse(idxs.map((i) => yTrue[i]), idxs.map((i) => yPred[i]));
+  }
+  return { model, metrics, perSizeRmse };
+}
+
+export interface TrainBestOptions {
+  useKFold?: boolean;
+  k?: number;
+  seed?: number;
+}
+
+export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, options?: TrainBestOptions): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
+  console.log(`Training Set Size: ${rawStats.length}`)
   const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
   const mapped = rawStats.map((r) => ({ raw: r, sample: toSample(r) }));
   const dropped = mapped.filter((m) => !m.sample);
   if (dropped.length) warn(`toSample: skipped ${dropped.length} record(s) due to missing/invalid features; examples gameNumbers: ${dropped.slice(0, 5).map((m) => m.raw.gameNumber).join(', ')}`);
   const samples = mapped.map((m) => m.sample).filter((x): x is TrainingSample => !!x);
   if (!samples.length) throw new Error('No training samples available.');
-  const { train, valid } = stratifiedSplit(samples, seed);
+  const useK = !!options?.useKFold;
+  const k = options?.k && options.k >= 2 ? options.k : 5;
+  const { train, valid } = stratifiedSplit(samples, options?.seed ?? seed);
   const d = FEATURE_SPEC.keys.length;
   if (train.length < d) warn(`dataset: training samples (${train.length}) < feature count (${d}); model may be underdetermined or singular`);
   else if (train.length / d < 5) warn(`dataset: low samples-to-features ratio ${(train.length / d).toFixed(2)}; consider reducing features or adding data`);
 
   const baseline = trainBaseline(train);
-  const baselineEval = evaluate((s) => predictBaseline(baseline, s), valid, baseline);
+  const baselineEvalSingle = evaluate((s) => predictBaseline(baseline, s), valid, baseline);
 
   // Feature diagnostics: NZV and high collinearity warnings
   const diag = computeFeatureDiagnostics(train);
@@ -664,13 +715,51 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
   // Prefer log transform for strictly-positive targets; we will tie-break later
   const transforms: TargetTransform[] = ['log1p', 'none'];
   const ridgeEvals: ModelEvaluationResult<RidgeModelJson>[] = [];
-  for (const t of transforms) for (const l of lambdas) {
-    const model = trainRidge(train, l, t, warn);
-    ridgeEvals.push(evaluate((s) => predictRidge(model, s), valid, model));
+  if (!useK) {
+    for (const t of transforms) for (const l of lambdas) {
+      const model = trainRidge(train, l, t, warn);
+      ridgeEvals.push(evaluate((s) => predictRidge(model, s), valid, model));
+    }
+  } else {
+    // K-fold: aggregate metrics across folds to choose hyperparameters
+    const folds = stratifiedKFolds(samples, k, options?.seed ?? seed);
+    for (const t of transforms) for (const l of lambdas) {
+      const yTrueAll: number[] = [];
+      const yPredAll: number[] = [];
+      const validAll: TrainingSample[] = [];
+      for (const fold of folds) {
+        const model = trainRidge(fold.train, l, t, warn);
+        const preds = fold.valid.map((s) => predictRidge(model, s));
+        yTrueAll.push(...fold.valid.map((s) => s.target));
+        yPredAll.push(...preds);
+        validAll.push(...fold.valid);
+      }
+      // Train a final model on all samples for the returned artifact
+      const finalModel = trainRidge(samples, l, t, warn);
+      ridgeEvals.push(evaluateOnArrays(yTrueAll, yPredAll, finalModel, validAll));
+    }
   }
 
   // Pick by lowest RMSE; tie-break on smaller weight L2 norm, then prefer log1p
-  let best: ModelEvaluationResult<ModelJson> = baselineEval;
+  const baselineEval = useK
+    ? (() => {
+      const folds = stratifiedKFolds(samples, k, options?.seed ?? seed);
+      const yTrueAll: number[] = [];
+      const yPredAll: number[] = [];
+      const validAll: TrainingSample[] = [];
+      for (const fold of folds) {
+        const b = trainBaseline(fold.train);
+        const preds = fold.valid.map((s) => predictBaseline(b, s));
+        yTrueAll.push(...fold.valid.map((s) => s.target));
+        yPredAll.push(...preds);
+        validAll.push(...fold.valid);
+      }
+      const finalB = trainBaseline(samples);
+      return evaluateOnArrays(yTrueAll, yPredAll, finalB, validAll);
+    })()
+    : baselineEvalSingle;
+
+  let best: ModelEvaluationResult<ModelJson> = baselineEval as unknown as ModelEvaluationResult<ModelJson>;
   const weightL2 = (m: RidgeModelJson) => Math.sqrt(m.weights.reduce((s, w) => s + w * w, 0));
   const isBetter = (a: ModelEvaluationResult<ModelJson>, b: ModelEvaluationResult<ModelJson>): boolean => {
     const eps = 1e-9;
@@ -693,5 +782,20 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337): {
     return false;
   };
   for (const r of ridgeEvals) if (isBetter(r as ModelEvaluationResult<ModelJson>, best)) best = r as ModelEvaluationResult<ModelJson>;
+  // If using a single split, retrain the chosen model on all samples for production use
+  if (!useK) {
+    const baselineFinal = trainBaseline(samples);
+    const baselineEvalRet: ModelEvaluationResult<BaselineModelJson> = {
+      model: baselineFinal,
+      metrics: baselineEval.metrics,
+      perSizeRmse: baselineEval.perSizeRmse,
+    };
+    if (best.model.modelType === 'ridge') {
+      const m = best.model as RidgeModelJson;
+      const finalRidge = trainRidge(samples, m.lambda, m.transform, warn);
+      best = { model: finalRidge, metrics: best.metrics, perSizeRmse: best.perSizeRmse } as ModelEvaluationResult<ModelJson>;
+    }
+    return { best, baseline: baselineEvalRet, ridgeCandidates: ridgeEvals };
+  }
   return { best, baseline: baselineEval, ridgeCandidates: ridgeEvals };
 }

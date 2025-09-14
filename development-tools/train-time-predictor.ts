@@ -15,7 +15,7 @@ function main(): void {
   const rawStats = computeStatsFromBackupFile();
 
   console.log('Training start');
-  const { best, baseline, ridgeCandidates } = trainBestModel(rawStats, 1337);
+  const { best, baseline, ridgeCandidates } = trainBestModel(rawStats, 1337, { useKFold: true, k: 5 });
   console.log('Training complete');
 
   // Also compute training-set metrics for the selected model
