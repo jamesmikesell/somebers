@@ -1,16 +1,18 @@
 import { writeFileSync } from 'fs';
+import * as path from 'path';
 import { BaselineModelJson, ModelEvaluationResult, ModelJson, RidgeModelJson } from '../src/app/model/ml-types';
-import { evaluate, stratifiedSplit, trainBestModel, TrainingSample } from '../src/app/service/ml-core';
+import { evaluate, predictBaseline, predictRidge, stratifiedSplit, toSample, trainBestModel, TrainingSample } from '../src/app/service/ml-core';
+import { logWeights, modelStats, parseThreadCount } from './predictor-utils';
 import { buildRawGameStatForGameNumber, computeStatsFromBackupFile } from './training-data-loader';
-import { predictBaseline, predictRidge, toSample } from '../src/app/service/ml-core';
+import { WorkerPool } from './workers/worker-pool';
 
 
 
 /*
   Run with:
-  npx ts-node -P tsconfig.node.json --compiler-options '{"module":"CommonJS"}' development-tools/train-time-predictor.ts
+    npx ts-node -P tsconfig.node.json --compiler-options '{"module":"CommonJS"}' development-tools/train-time-predictor.ts --threads=8
 */
-function main(): void {
+async function main(): Promise<void> {
   console.log('Loading and computing stats');
   const rawStats = computeStatsFromBackupFile();
 
@@ -57,21 +59,37 @@ function main(): void {
   console.log('Prediction for game #27 (minutes):', pred27.toFixed(1));
 
 
-  // Generate predictions for game boards 10 -> 2010 (inclusive), sort, and persist
-  let boardsToEvaluate = 2000
-  console.log(`Evaluating difficulty of ${boardsToEvaluate} boards`)
+  let startBoardNumber = 1;
+  let boardsToEvaluate = 2000;
+  const threadCount = parseThreadCount();
+  console.log(`Evaluating difficulty of ${boardsToEvaluate} boards using ${threadCount} thread(s)`);
+
   const predictions: { gameNumber: number; predictedMs: number }[] = [];
-  for (let gameNumber = 0; gameNumber <= boardsToEvaluate; gameNumber++) {
-    const sample = toSample(buildRawGameStatForGameNumber(gameNumber));
-    
-    if (!sample) continue;
-    const yhat = best.model.modelType === 'baseline'
-      ? predictBaseline(best.model as BaselineModelJson, sample)
-      : predictRidge(best.model as RidgeModelJson, sample);
-    predictions.push({ gameNumber, predictedMs: yhat });
+  const genStart = Date.now();
+
+  if (threadCount <= 1) {
+    predictions.push(...predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate));
+  } else {
+    const workerPath = path.resolve(__dirname, 'workers', 'predict-pull.worker.ts');
+    const numbers: number[] = [];
+    for (let gameNumber = startBoardNumber; gameNumber < boardsToEvaluate + startBoardNumber; gameNumber++) numbers.push(gameNumber);
+    try {
+      const pool = new WorkerPool({ workerPath, threads: threadCount, model: best.model, numbers });
+      const parallelResults = await pool.run();
+      predictions.push(...parallelResults);
+    } catch (err) {
+      console.error('Parallel prediction generation failed; falling back to sequential.', err);
+      predictions.length = 0;
+      predictions.push(...predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate));
+    }
   }
 
+  const genSeconds = (Date.now() - genStart) / 1000;
+  console.log(`Generated predictions for ${predictions.length} boards in ${genSeconds.toFixed(2)}s`);
+
   predictions.forEach(x => x.predictedMs = Math.round(x.predictedMs))
+  // Keep deterministic order like the original loop
+  predictions.sort((a, b) => a.gameNumber - b.gameNumber);
   let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => Math.round(x.predictedMs));
   writeFileSync('development-tools/ml-predictions-2k-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
   writeFileSync('development-tools/ml-predictions-2k-games.json', JSON.stringify(predictions, null, 2), 'utf8');
@@ -84,29 +102,20 @@ function main(): void {
 
 }
 
-function modelStats(best: ModelEvaluationResult<ModelJson>, trainEval?: ModelEvaluationResult<ModelJson>): void {
-  console.log('Best model:', best.model.modelType, best.model.modelType === 'ridge' ? (best.model as RidgeModelJson).lambda + '/' + (best.model as RidgeModelJson).transform : 'baseline');
-  if (trainEval) console.log('Training RMSE:', trainEval.metrics.rmse.toFixed(2), 'MAE:', trainEval.metrics.mae.toFixed(2), 'R2:', trainEval.metrics.r2.toFixed(3));
-  console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'R2:', best.metrics.r2.toFixed(3));
-}
-
-
-function logWeights(best: ModelEvaluationResult<ModelJson>): void {
-  // Print weights sorted by absolute value (feature name and weight)
-  if (best.model.modelType === 'ridge') {
-    const ridge = best.model as RidgeModelJson;
-    const names = ['intercept', ...ridge.features];
-    const pairs = names.map((name, i) => ({ name, weight: ridge.weights[i] ?? 0 }));
-    pairs.sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight));
-    console.log('');
-    console.log('Weights (sorted by |weight| desc):');
-    console.log('');
-    for (const { name, weight } of pairs) console.log((weight >= 0 ? " " : "") + weight.toFixed(5) + ': ' + name);
-  } else {
-    console.log('Baseline model selected: no feature weights to display.');
+function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number): { gameNumber: number; predictedMs: number }[] {
+  const out: { gameNumber: number; predictedMs: number }[] = [];
+  for (let gameNumber = startInclusive; gameNumber < endExclusive; gameNumber++) {
+    const sample = toSample(buildRawGameStatForGameNumber(gameNumber));
+    if (!sample) continue;
+    const yhat = model.modelType === 'baseline'
+      ? predictBaseline(model as BaselineModelJson, sample)
+      : predictRidge(model as RidgeModelJson, sample);
+    out.push({ gameNumber, predictedMs: yhat });
   }
-
+  return out;
 }
 
-
-main();
+main().catch((err) => {
+  console.error('train-time-predictor failed', err);
+  process.exit(1);
+});
