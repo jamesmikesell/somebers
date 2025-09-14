@@ -1,13 +1,11 @@
 # TODO
 
-- button to re-do current in progress game
-- bug: undoing moves after a column / color group is hidden doesn't unhide their styling
+- track last X games against par time.
 - difficulty prediction
   - ratio of average row value vs required total
   - ratio of cells that are X value vs required total
     - though, shouldn't both of the above metrics already be reflected in the #of possible correct ratio?
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
-- estimate board difficulty
 - animation when row/col/group total has been reached, even if some cells haven't been cleared
 - Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
 - Positive feedback when breaking previous records 
@@ -28,6 +26,9 @@
 
 # Done
 
+- estimate board difficulty
+- button to re-do current in progress game
+- bug: undoing moves after a column / color group is hidden doesn't unhide their styling
 - difficulty prediction - calculate how many cells are known to be required / unusable
 - look at a few thousand boards to get an idea of min / max timeSpent to convert timeSpent into a difficulty
 - temp cell selection: ability to highlight cells temporarily to mark that you're using them for mental math
