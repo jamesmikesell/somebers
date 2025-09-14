@@ -252,17 +252,23 @@ export class GameBoard {
       row.forEach((cell) => {
         if (completedGroups.has(cell.groupNumber))
           cell.hideBackground = true;
+        else
+          cell.hideBackground = false;
       })
     })
 
     this.goalColumns.forEach((header, index) => {
       if (completedColumns.has(index))
         header.hideBackground = true;
+      else
+        header.hideBackground = false;
     })
 
     this.goalRows.forEach((header, index) => {
       if (completedRows.has(index))
         header.hideBackground = true;
+      else
+        header.hideBackground = false;
     })
   }
 
