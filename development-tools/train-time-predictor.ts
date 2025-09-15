@@ -57,6 +57,7 @@ async function main(): Promise<void> {
   modelStats(best, trainEval);
   console.log('');
   console.log('Prediction for game #27 (minutes):', pred27.toFixed(1));
+  console.log('');
 
 
   let startBoardNumber = 1;

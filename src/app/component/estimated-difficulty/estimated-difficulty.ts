@@ -5,7 +5,8 @@ import { DisplayCell } from '../../model/game-board';
 import { BoardStatAnalyzer } from '../../service/board-stat-analyzer';
 import { DifficultyPredictorService } from '../../service/difficulty-predictor.service';
 import { generateGameBoard } from '../../service/gameboard-generator';
-import { difficultyReportToGameStat, toSample } from '../../service/ml-core';
+import { toSample } from '../../service/ml-core';
+import { difficultyReportToGameStat } from '../../service/ml-difficulty-stats';
 
 @Component({
   selector: 'app-estimated-difficulty',
