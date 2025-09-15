@@ -5,7 +5,7 @@ import { generateGameBoard } from '../src/app/service/gameboard-generator';
 import { difficultyReportToGameStat, RawGenericFeatureSet } from '../src/app/service/ml-core';
 
 
-export function computeStatsFromBackupFile(backupPath = 'development-tools/somebers-backup.somebers.json'): RawGenericFeatureSet[] {
+export function computeStatsFromBackupFile(backupPath = 'development-tools/backup.json'): RawGenericFeatureSet[] {
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 
