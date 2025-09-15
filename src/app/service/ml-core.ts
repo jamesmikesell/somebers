@@ -154,7 +154,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'allNeverAndAlwaysCountSum',
     // 
     'deductionIterations',
-    // 'unresolvedCellCountAfterDeduction',
+    'unresolvedCellCountAfterDeduction',
   ],
 };
 

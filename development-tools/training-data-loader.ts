@@ -29,7 +29,8 @@ export function buildRawGameStatForGameNumber(gameNumber: number): RawGenericFea
   const playArea = generateGameBoard(gameNumber).playArea;
   const stats = BoardStatAnalyzer.evaluate(playArea);
 
-  // console.log(`Game: ${gameNumber} Deduction Iterations: ${stats.totals.deductionIterations} Post-Deduction Cell Count: ${stats.totals.unresolvedCellCountAfterDeduction}`)
+  // if (stats.totals.unresolvedCellCountAfterDeduction)
+  //   console.log(`Game: ${gameNumber} Deduction Iterations: ${stats.totals.deductionIterations} Post-Deduction Cell Count: ${stats.totals.unresolvedCellCountAfterDeduction}`)
 
   return difficultyReportToGameStat(stats, 0, gameNumber);
 }
