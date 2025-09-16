@@ -1,4 +1,4 @@
-import { BoardGroupGenerator } from "./grouping";
+import { BoardGroupGeneratorV1 } from "./grouping.v1";
 
 describe('grid generator', () => {
   const emojis: string[] = ["🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "🟤", "⚫", "⚪"];
@@ -7,7 +7,7 @@ describe('grid generator', () => {
   });
 
   it('should generate 7x7 grid', () => {
-    const grid = new BoardGroupGenerator(5).generateRandomContiguousGroups(7);
+    const grid = new BoardGroupGeneratorV1(5).generateRandomContiguousGroups(7);
     let gridString = grid.map(r => r.map(num => emojis[num - 1] ?? "?").join(" ")).join("\n");
     expect(gridString).toEqual(
       "🟡 🟡 🔴 🔴 🔴 🔴 🟠" + "\n" +
@@ -24,7 +24,7 @@ describe('grid generator', () => {
 
 
   it('should generate 5x5 grid', () => {
-    const grid = new BoardGroupGenerator(42).generateRandomContiguousGroups(5);
+    const grid = new BoardGroupGeneratorV1(42).generateRandomContiguousGroups(5);
     let gridString = grid.map(r => r.map(num => emojis[num - 1] ?? "?").join(" ")).join("\n");
     expect(gridString).toEqual(
       "🔵 🔵 🔵 🟠 🟠" + "\n" +
@@ -38,7 +38,7 @@ describe('grid generator', () => {
 
 
   it('should generate 9x9 grid', () => {
-    const grid = new BoardGroupGenerator(42).generateRandomContiguousGroups(9);
+    const grid = new BoardGroupGeneratorV1(42).generateRandomContiguousGroups(9);
     let gridString = grid.map(r => r.map(num => emojis[num - 1] ?? "?").join(" ")).join("\n");
     expect(gridString).toEqual(
       "⚫ ⚫ ⚫ 🟣 ⚪ ⚪ ⚪ ⚪ ⚪" + "\n" +
