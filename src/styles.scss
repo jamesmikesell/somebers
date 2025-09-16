@@ -3,6 +3,10 @@
 // components according to the Material 3 design spec.
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
+@use '@fontsource/roboto/300.css' as *;
+@use '@fontsource/roboto/400.css' as *;
+@use '@fontsource/roboto/500.css' as *;
+@use 'material-icons/iconfont/material-icons.css' as *;
 @use '@angular/material' as mat;
 
 

@@ -40,9 +40,9 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'requiredSumAllMax',
     // 'requiredSumAllStd',
     // 'requiredSumAllSum',
-    //
+    // 
     'deductionIterations',
-    'unresolvedCellCountAfterDeduction',
+    'percentUnresolvedCellsAfterDeduction',
 
   ],
 };
@@ -100,8 +100,11 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const requiredSumGrp = stats.groups.map(s => s.requiredSum);
   const requiredSumAllAgg = agg([...requiredSumRow, ...requiredSumCol, ...requiredSumGrp])
 
+  const boardSize = stats.totals.rowsEvaluated
+  const cellCount = boardSize * boardSize;
+
   let features: GameStatFeatures = {
-    boardSize: stats.totals.rowsEvaluated,
+    boardSize: boardSize,
 
     firstIterationFalsePositiveSolutionCountAllMean: firstIterationFalsePositiveSolutionCountAllAgg.mean,
     firstIterationFalsePositiveSolutionCountAllMin: firstIterationFalsePositiveSolutionCountAllAgg.min,
@@ -134,7 +137,7 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     requiredSumAllSum: requiredSumAllAgg.sum,
 
     deductionIterations: stats.totals.deductionIterations,
-    unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
+    percentUnresolvedCellsAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction / cellCount,
   };
 
   let x: GameStatWithBoard = { gameNumber }
@@ -190,5 +193,5 @@ export interface GameStatFeatures {
   requiredSumAllSum: number;
   //
   deductionIterations: number;
-  unresolvedCellCountAfterDeduction: number;
+  percentUnresolvedCellsAfterDeduction: number;
 }
