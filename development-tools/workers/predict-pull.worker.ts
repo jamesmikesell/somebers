@@ -15,8 +15,8 @@ type MsgToMain =
   | { t: 'ready' }
   | { t: 'result'; gameNumber: number; predictedMs: number };
 
-function predictOne(model: ModelJson, gameNumber: number): number | null {
-  const sample = toSample(buildRawGameStatForGameNumber(gameNumber));
+async function predictOne(model: ModelJson, gameNumber: number): Promise<number | null> {
+  const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, 2));
   if (!sample) return null;
   const yhat = model.modelType === 'baseline'
     ? predictBaseline(model as BaselineModelJson, sample)
@@ -30,13 +30,15 @@ if (!isMainThread && parentPort) {
 
   const onMessage = (msg: MsgFromMain): void => {
     if (msg.t === 'task') {
-      const yhat = predictOne(model, msg.gameNumber);
-      if (yhat != null) {
-        const out: MsgToMain = { t: 'result', gameNumber: msg.gameNumber, predictedMs: yhat };
-        parentPort!.postMessage(out);
-      }
-      // Ask for the next task regardless of sample success
-      parentPort!.postMessage({ t: 'ready' } satisfies MsgToMain);
+      void (async () => {
+        const yhat = await predictOne(model, msg.gameNumber);
+        if (yhat != null) {
+          const out: MsgToMain = { t: 'result', gameNumber: msg.gameNumber, predictedMs: yhat };
+          parentPort!.postMessage(out);
+        }
+        // Ask for the next task regardless of sample success
+        parentPort!.postMessage({ t: 'ready' } satisfies MsgToMain);
+      })();
     } else if (msg.t === 'no-more') {
       // Graceful shutdown
       parentPort!.off('message', onMessage);

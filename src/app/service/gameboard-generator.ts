@@ -1,9 +1,9 @@
 import { DisplayCell, GameBoard } from '../model/game-board';
-import { BoardGroupGenerator } from '../model/grouping';
+import { BoardGroupGenerator, BoardGroupVersion } from '../model/grouping';
 import { Random } from '../model/random';
 
 
-export function generateGameBoard(gameNumber: number): GameBoard {
+export async function generateGameBoard(gameNumber: number, version: BoardGroupVersion = 1): Promise<GameBoard> {
   let gameSeed = Random.generateFromSeed(gameNumber) * Number.MAX_SAFE_INTEGER;
 
   // This grid offset is to ensure the first few games a player completes start off with small and easy grid sizes [5, 5, 5, 6, 6, 6, 7, 7, 8]
@@ -11,7 +11,9 @@ export function generateGameBoard(gameNumber: number): GameBoard {
   let gridMin = 5;
   let gridMax = 9;
   const gridSize = Math.floor(Random.generateFromSeed(gridStartOffset) * (gridMax - gridMin + 1) + gridMin);
-  const grid = new BoardGroupGenerator(gameNumber).generateRandomContiguousGroups(gridSize);
+
+  const groupGenerator = await BoardGroupGenerator.create(gameNumber, version);
+  const grid = groupGenerator.generateRandomContiguousGroups(gridSize);
 
   let random = new Random(gameSeed);
   let gameBoard = new GameBoard();
@@ -21,7 +23,7 @@ export function generateGameBoard(gameNumber: number): GameBoard {
     cell.groupNumber = cellGroupNumber;
     cell.required = random.next() < 0.4;
 
-    return cell
+    return cell;
   }));
 
   gameBoard.constructBoard(gameNumber);

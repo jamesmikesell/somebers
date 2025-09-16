@@ -87,7 +87,7 @@ export class Board implements OnInit, OnDestroy {
     this.boardUiService.setCanUndo(this.undoManager.hasUndo());
 
     if (!(await this.tryLoadGameFromStorage()))
-      this.updateGameNumber(this.gameNumber || 1);
+      await this.updateGameNumber(this.gameNumber || 1);
 
     this.setupStartOverMenuHandling();
     this.boardUiService.setShowStartOver(true);
@@ -140,21 +140,20 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  changeGameNumberFromUi(gameNumber: number): void {
-    this.saveGameState()
-
-    let previous = this.previousGames.get(gameNumber);
+  async changeGameNumberFromUi(gameNumber: number): Promise<void> {
+    this.saveGameState();
+    const previous = this.previousGames.get(gameNumber);
     if (previous) {
-      this.constructBoardFromPreviousState(previous);
+      await this.constructBoardFromPreviousState(previous);
     } else {
-      this.updateGameNumber(gameNumber);
+      await this.updateGameNumber(gameNumber);
     }
 
-    this.saveGameState()
+    this.saveGameState();
   }
 
 
-  private updateGameNumber(game: number) {
+  private async updateGameNumber(game: number): Promise<void> {
     this.gameNumber = game;
     this.moveHistory = [];
     this.nextGameButtonState = "hidden";
@@ -162,14 +161,14 @@ export class Board implements OnInit, OnDestroy {
     this.timeTracker.reset(0)
     this.timeTracker.manualStart();
 
-    this.buildAndDisplayBoard(game)
+    await this.buildAndDisplayBoard(game)
 
     this.saveGameState();
   }
 
 
-  private buildAndDisplayBoard(game: number): void {
-    this.gameBoard = generateGameBoard(game);
+  private async buildAndDisplayBoard(game: number): Promise<void> {
+    this.gameBoard = await generateGameBoard(game);
 
     let groupGrid = this.gameBoard.playArea.map(row => row.map(cell => cell.groupNumber))
     let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, groupGrid);
@@ -229,9 +228,9 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  playGameAgain(): void {
+  async playGameAgain(): Promise<void> {
     this.previousGames.delete(this.gameNumber);
-    this.updateGameNumber(this.gameNumber);
+    await this.updateGameNumber(this.gameNumber);
     this.saveGameState()
   }
 
@@ -247,26 +246,25 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  platNextUnfinishedGame(): void {
+  async platNextUnfinishedGame(): Promise<void> {
     const allGameNumbers = Array.from(this.previousGames.keys()).sort((a, b) => a - b);
-
     // Find the next game number after current
     for (let i = this.gameNumber + 1; i <= Math.max(...allGameNumbers) + 1; i++) {
       const previousGame = this.previousGames.get(i);
       if (previousGame && !previousGame.completed) {
         // Found a partially completed game
-        this.constructBoardFromPreviousState(previousGame);
+        await this.constructBoardFromPreviousState(previousGame);
         return;
       } else if (!previousGame) {
         // Found an unstarted game number
-        this.changeGameNumberFromUi(i);
+        await this.changeGameNumberFromUi(i);
         return;
       }
     }
 
     // Fallback: create next sequential game
     const maxGameNumber = Math.max(...allGameNumbers);
-    this.changeGameNumberFromUi(maxGameNumber + 1);
+    await this.changeGameNumberFromUi(maxGameNumber + 1);
   }
 
 
@@ -292,7 +290,7 @@ export class Board implements OnInit, OnDestroy {
 
         let previous = this.previousGames.get(this.gameNumber);
         if (previous) {
-          this.constructBoardFromPreviousState(previous);
+          await this.constructBoardFromPreviousState(previous);
           return true
         }
       }
@@ -302,14 +300,14 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
-  private constructBoardFromPreviousState(previous: GameInProgressDtoV3): void {
+  private async constructBoardFromPreviousState(previous: GameInProgressDtoV3): Promise<void> {
     this.gameNumber = previous.gameNumber || 1;
     this.moveHistory = previous.moveHistory ?? [];
     this.nextGameButtonState = "hidden";
     this.undoManager.clear();
     this.timeTracker.reset(previous.timeSpent ?? 0)
     if (previous.completed) {
-      this.buildAndDisplayBoard(this.gameNumber);
+      await this.buildAndDisplayBoard(this.gameNumber);
       this.gameBoard.playArea.forEach(row => row.forEach(cell => {
         cell.required = false;
         cell.status = SelectionStatus.CLEARED;
@@ -346,7 +344,7 @@ export class Board implements OnInit, OnDestroy {
         this.disableAnimationsTemporarily();
         this.timeTracker.manualStart();
       } else {
-        this.updateGameNumber(this.gameNumber);
+        await this.updateGameNumber(this.gameNumber);
       }
     }
 

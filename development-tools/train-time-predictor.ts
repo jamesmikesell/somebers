@@ -14,7 +14,7 @@ import { WorkerPool } from './workers/worker-pool';
 */
 async function main(): Promise<void> {
   console.log('Loading and computing stats');
-  const rawStats = computeStatsFromBackupFile();
+  const rawStats = await computeStatsFromBackupFile();
 
   console.log('Training start');
   const { best, baseline, ridgeCandidates } = trainBestModel(rawStats, 1337, { useKFold: true, k: 5 });
@@ -28,7 +28,7 @@ async function main(): Promise<void> {
     : evaluate((s) => predictRidge(best.model as RidgeModelJson, s), train, best.model as RidgeModelJson)) as unknown as ModelEvaluationResult<ModelJson>;
 
   // Predict for game #27
-  const sample27 = toSample(buildRawGameStatForGameNumber(27))!;
+  const sample27 = toSample(await buildRawGameStatForGameNumber(27))!;
   let pred27 = best.model.modelType === 'baseline'
     ? predictBaseline(best.model as BaselineModelJson, sample27)
     : predictRidge(best.model as RidgeModelJson, sample27);
@@ -69,20 +69,16 @@ async function main(): Promise<void> {
   const genStart = Date.now();
 
   if (threadCount <= 1) {
-    predictions.push(...predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate));
+    predictions.push(...await predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate));
   } else {
     const workerPath = path.resolve(__dirname, 'workers', 'predict-pull.worker.ts');
     const numbers: number[] = [];
-    for (let gameNumber = startBoardNumber; gameNumber < boardsToEvaluate + startBoardNumber; gameNumber++) numbers.push(gameNumber);
-    try {
-      const pool = new WorkerPool({ workerPath, threads: threadCount, model: best.model, numbers });
-      const parallelResults = await pool.run();
-      predictions.push(...parallelResults);
-    } catch (err) {
-      console.error('Parallel prediction generation failed; falling back to sequential.', err);
-      predictions.length = 0;
-      predictions.push(...predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate));
-    }
+    for (let gameNumber = startBoardNumber; gameNumber < boardsToEvaluate + startBoardNumber; gameNumber++)
+      numbers.push(gameNumber);
+
+    const pool = new WorkerPool({ workerPath, threads: threadCount, model: best.model, numbers });
+    const parallelResults = await pool.run();
+    predictions.push(...parallelResults);
   }
 
   const genSeconds = (Date.now() - genStart) / 1000;
@@ -103,10 +99,10 @@ async function main(): Promise<void> {
 
 }
 
-function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number): { gameNumber: number; predictedMs: number }[] {
+async function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number): Promise<{ gameNumber: number; predictedMs: number }[]> {
   const out: { gameNumber: number; predictedMs: number }[] = [];
   for (let gameNumber = startInclusive; gameNumber < endExclusive; gameNumber++) {
-    const sample = toSample(buildRawGameStatForGameNumber(gameNumber));
+    const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, 2));
     if (!sample) continue;
     const yhat = model.modelType === 'baseline'
       ? predictBaseline(model as BaselineModelJson, sample)

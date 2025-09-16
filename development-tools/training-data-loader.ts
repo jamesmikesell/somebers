@@ -4,9 +4,10 @@ import { BoardStatAnalyzer } from '../src/app/service/board-stat-analyzer';
 import { generateGameBoard } from '../src/app/service/gameboard-generator';
 import { RawGenericFeatureSet } from '../src/app/service/ml-core';
 import { difficultyReportToGameStat } from '../src/app/service/ml-difficulty-stats';
+import { BoardGroupVersion } from '../src/app/model/grouping';
 
 
-export function computeStatsFromBackupFile(backupPath = 'development-tools/backup.json'): RawGenericFeatureSet[] {
+export async function computeStatsFromBackupFile(backupPath = 'development-tools/backup.json'): Promise<RawGenericFeatureSet[]> {
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 
@@ -16,7 +17,7 @@ export function computeStatsFromBackupFile(backupPath = 'development-tools/backu
     if ((game.timeSpent ?? 0) <= 15000) continue;
     if ((game.moveHistory?.filter((correctMove) => !correctMove).length ?? 0) > 3) continue;
 
-    const gameBoard = generateGameBoard(game.gameNumber);
+    const gameBoard = await generateGameBoard(game.gameNumber);
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
     const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber)
 
@@ -26,8 +27,8 @@ export function computeStatsFromBackupFile(backupPath = 'development-tools/backu
 }
 
 
-export function buildRawGameStatForGameNumber(gameNumber: number): RawGenericFeatureSet {
-  const playArea = generateGameBoard(gameNumber).playArea;
+export async function buildRawGameStatForGameNumber(gameNumber: number, version: BoardGroupVersion = 1): Promise<RawGenericFeatureSet> {
+  const playArea = (await generateGameBoard(gameNumber, version)).playArea;
   const stats = BoardStatAnalyzer.evaluate(playArea);
 
   // if (stats.totals.unresolvedCellCountAfterDeduction)

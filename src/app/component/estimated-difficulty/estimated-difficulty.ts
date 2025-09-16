@@ -43,7 +43,7 @@ export class EstimatedDifficultyComponent implements OnChanges {
       if (this.playArea && this.playArea.length > 0)
         effectivePlayArea = this.playArea;
       else if (this.gameNumber != null)
-        effectivePlayArea = generateGameBoard(this.gameNumber).playArea;
+        effectivePlayArea = (await generateGameBoard(this.gameNumber)).playArea;
 
 
       if (!effectivePlayArea || effectivePlayArea.length === 0) {

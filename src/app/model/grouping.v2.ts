@@ -1,23 +1,11 @@
-import { BoardGroupGeneratorV1 } from './grouping.v1';
 import { Random } from './random';
 
-export class BoardGroupGenerator {
 
-  private generator: BoardGroupGeneratorV1 | BoardGroupGeneratorV2;
-
-  constructor(seed: number, private version: 1 | 2 = 1) {
-    if (version === 1)
-      this.generator = new BoardGroupGeneratorV1(seed);
-    else if (version === 2)
-      this.generator = new BoardGroupGeneratorV1(seed);
-    else
-      throw new Error("Illegal version");
-  }
-
-
-}
-
-
+/**
+ * V2 Generator. Faster (3x faster than V1). Used for bulk predictions of game times for difficult / percentile stats.
+ * 
+ * Cannot be used during training, without accounting for which generator was used to generate the training data.
+ */
 export class BoardGroupGeneratorV2 {
 
   private randomNumberGenerator: Random;

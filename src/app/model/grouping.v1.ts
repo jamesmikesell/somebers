@@ -1,5 +1,9 @@
 import { Random } from "./random";
 
+
+/**
+ * V1 Generator. Slower (3x slower than V2). Used for in-game board as switching to v2 would change game layouts.
+ */
 export class BoardGroupGeneratorV1 {
 
   private randomNumberGenerator: Random;
