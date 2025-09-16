@@ -11,6 +11,7 @@ if [ -z "$(git status --porcelain)" ]; then
   }
   trap cleanup EXIT
 
+  npm run test -- --watch=false
   rm -rf docs
   rm -rf dist
   version="$(git rev-parse --short HEAD)-$(date +%m%d%y%H%M)"
