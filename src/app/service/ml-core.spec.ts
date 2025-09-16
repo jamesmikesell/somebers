@@ -1,5 +1,6 @@
-import { FEATURE_SPEC, computeFeatureDiagnostics, predictRidge, trainBestModel } from './ml-core';
+import { computeFeatureDiagnostics, predictRidge, trainBestModel } from './ml-core';
 import { RidgeModelJson, ModelJson } from '../model/ml-types';
+import { FEATURE_SPEC } from './ml-difficulty-stats';
 
 describe('ml-core predictRidge', () => {
   function makeModel(overrides: Partial<RidgeModelJson>): RidgeModelJson {

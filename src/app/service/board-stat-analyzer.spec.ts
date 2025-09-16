@@ -33,39 +33,34 @@ describe('DifficultyEstimatorService', () => {
 
     // Rows
     expect(report.rows[0].requiredSum).toBe(4);
-    expect(report.rows[0].values).toEqual([1, 2, 3]);
+    expect(report.rows[0].cellValues).toEqual([1, 2, 3]);
     expect(report.rows[0].requiredIndices).toEqual([0, 2]);
-    expect(report.rows[0].exactCombinationCount).toBe(1); // {1,3}
-    expect(report.rows[0].nonExactCombinationCount).toBe(7);
+    expect(report.rows[0].firstIterationFalsePositiveSolutionCount).toBe(0); // {1,3}
     expect(report.rows[0].valuesRms).toBeCloseTo(Math.sqrt(14 / 3), 10);
 
     expect(report.rows[1].requiredSum).toBe(1);
-    expect(report.rows[1].values).toEqual([2, 1, 1]);
+    expect(report.rows[1].cellValues).toEqual([2, 1, 1]);
     expect(report.rows[1].requiredIndices).toEqual([1]);
-    expect(report.rows[1].exactCombinationCount).toBe(2); // either 1 of the two ones
-    expect(report.rows[1].nonExactCombinationCount).toBe(6);
+    expect(report.rows[1].firstIterationFalsePositiveSolutionCount).toBe(1); // either 1 of the two ones
     expect(report.rows[1].valuesRms).toBeCloseTo(Math.sqrt(2), 10);
 
     // Columns
     expect(report.columns[0].requiredSum).toBe(1);
-    expect(report.columns[0].values).toEqual([1, 2]);
+    expect(report.columns[0].cellValues).toEqual([1, 2]);
     expect(report.columns[0].requiredIndices).toEqual([0]);
-    expect(report.columns[0].exactCombinationCount).toBe(1);
-    expect(report.columns[0].nonExactCombinationCount).toBe(3);
+    expect(report.columns[0].firstIterationFalsePositiveSolutionCount).toBe(0);
     expect(report.columns[0].valuesRms).toBeCloseTo(Math.sqrt(2.5), 10);
 
     expect(report.columns[1].requiredSum).toBe(1);
-    expect(report.columns[1].values).toEqual([2, 1]);
+    expect(report.columns[1].cellValues).toEqual([2, 1]);
     expect(report.columns[1].requiredIndices).toEqual([1]);
-    expect(report.columns[1].exactCombinationCount).toBe(1);
-    expect(report.columns[1].nonExactCombinationCount).toBe(3);
+    expect(report.columns[1].firstIterationFalsePositiveSolutionCount).toBe(0);
     expect(report.columns[1].valuesRms).toBeCloseTo(Math.sqrt(2.5), 10);
 
     expect(report.columns[2].requiredSum).toBe(3);
-    expect(report.columns[2].values).toEqual([3, 1]);
+    expect(report.columns[2].cellValues).toEqual([3, 1]);
     expect(report.columns[2].requiredIndices).toEqual([0]);
-    expect(report.columns[2].exactCombinationCount).toBe(1);
-    expect(report.columns[2].nonExactCombinationCount).toBe(3);
+    expect(report.columns[2].firstIterationFalsePositiveSolutionCount).toBe(0);
     expect(report.columns[2].valuesRms).toBeCloseTo(Math.sqrt(5), 10);
 
     // Groups: sorted by index (groupNumber)
@@ -74,26 +69,18 @@ describe('DifficultyEstimatorService', () => {
     const g1 = report.groups[0];
     expect(g1.index).toBe(1);
     expect(g1.requiredSum).toBe(5);
-    expect(g1.values).toEqual([1, 3, 1]);
+    expect(g1.cellValues).toEqual([1, 3, 1]);
     expect(g1.requiredIndices).toEqual([0, 1, 2]);
-    expect(g1.exactCombinationCount).toBe(1); // only {1,3,1}
-    expect(g1.nonExactCombinationCount).toBe(7);
+    expect(g1.firstIterationFalsePositiveSolutionCount).toBe(0); // only {1,3,1}
     expect(g1.valuesRms).toBeCloseTo(Math.sqrt(11 / 3), 10);
 
     const g2 = report.groups[1];
     expect(g2.index).toBe(2);
     expect(g2.requiredSum).toBe(0);
-    expect(g2.values).toEqual([2, 2, 1]);
+    expect(g2.cellValues).toEqual([2, 2, 1]);
     expect(g2.requiredIndices).toEqual([]);
-    expect(g2.exactCombinationCount).toBe(1); // empty subset
-    expect(g2.nonExactCombinationCount).toBe(7);
+    expect(g2.firstIterationFalsePositiveSolutionCount).toBe(0); // empty subset
     expect(g2.valuesRms).toBeCloseTo(Math.sqrt(3), 10);
-
-    // Summaries
-    expect(report.summaries.groups.requiredSumAvg).toBeCloseTo(2.5, 10);
-    expect(report.summaries.groups.requiredSumRms).toBeCloseTo(Math.sqrt(12.5), 10);
-    expect(report.summaries.groups.valuesRmsAvg).toBeCloseTo((Math.sqrt(11 / 3) + Math.sqrt(3)) / 2, 10);
-    expect(report.summaries.groups.valuesRmsRms).toBeCloseTo(Math.sqrt(((11 / 3) + 3) / 2), 10);
 
   });
 
@@ -103,10 +90,9 @@ describe('DifficultyEstimatorService', () => {
     ];
     const report = BoardStatAnalyzer.evaluate(grid);
     expect(report.rows[0].requiredSum).toBe(0);
-    expect(report.rows[0].values).toEqual([1, 2]);
+    expect(report.rows[0].cellValues).toEqual([1, 2]);
     expect(report.rows[0].requiredIndices).toEqual([]);
-    expect(report.rows[0].exactCombinationCount).toBe(1);
-    expect(report.rows[0].nonExactCombinationCount).toBe(3);
+    expect(report.rows[0].firstIterationFalsePositiveSolutionCount).toBe(0);
     expect(report.rows[0].valuesRms).toBeCloseTo(Math.sqrt((1 * 1 + 2 * 2) / 2), 10);
   });
 
@@ -118,11 +104,10 @@ describe('DifficultyEstimatorService', () => {
     ];
     const report = BoardStatAnalyzer.evaluate(grid);
     expect(report.columns.length).toBe(1);
-    expect(report.columns[0].values).toEqual([2, 3]);
+    expect(report.columns[0].cellValues).toEqual([2, 3]);
     expect(report.columns[0].requiredSum).toBe(5);
     expect(report.columns[0].requiredIndices).toEqual([0, 1]);
-    expect(report.columns[0].exactCombinationCount).toBe(1); // {2,3}
-    expect(report.columns[0].nonExactCombinationCount).toBe(3);
+    expect(report.columns[0].firstIterationFalsePositiveSolutionCount).toBe(0); // {2,3}
     expect(report.columns[0].valuesRms).toBeCloseTo(Math.sqrt((2 * 2 + 3 * 3) / 2), 10);
   });
 
