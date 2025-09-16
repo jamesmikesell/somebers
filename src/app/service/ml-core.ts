@@ -345,10 +345,25 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
   if (!samples.length) throw new Error('No training samples available.');
   const useK = !!options?.useKFold;
   const k = options?.k && options.k >= 2 ? options.k : 5;
-  const { train, valid } = stratifiedSplit(samples, options?.seed ?? seed);
+  const seedToUse = options?.seed ?? seed;
+  let folds: { train: TrainingSample[]; valid: TrainingSample[] }[] = [];
+  let train: TrainingSample[] = [];
+  let valid: TrainingSample[] = [];
+  if (useK) {
+    folds = stratifiedKFolds(samples, k, seedToUse);
+    train = samples;
+    valid = [];
+  } else {
+    ({ train, valid } = stratifiedSplit(samples, seedToUse));
+  }
   const d = FEATURE_SPEC.keys.length;
-  if (train.length < d) warn(`dataset: training samples (${train.length}) < feature count (${d}); model may be underdetermined or singular`);
-  else if (train.length / d < 5) warn(`dataset: low samples-to-features ratio ${(train.length / d).toFixed(2)}; consider reducing features or adding data`);
+  const trainCounts = useK ? folds.map((f) => f.train.length) : [train.length];
+  const minTrain = trainCounts.length ? Math.min(...trainCounts) : 0;
+  const ratioLabel = useK ? 'min fold training samples' : 'training samples';
+  if (minTrain < d)
+    warn(`dataset: ${ratioLabel} (${minTrain}) < feature count (${d}); model may be underdetermined or singular`);
+  else if (minTrain / d < 5)
+    warn(`dataset: low samples-to-features ratio ${(minTrain / d).toFixed(2)} (based on ${ratioLabel}); consider reducing features or adding data`);
 
   const baseline = trainBaseline(train);
   const baselineEvalSingle = evaluate((s) => predictBaseline(baseline, s), valid, baseline);
@@ -380,7 +395,6 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
     }
   } else {
     // K-fold: aggregate metrics across folds to choose hyperparameters
-    const folds = stratifiedKFolds(samples, k, options?.seed ?? seed);
     for (const t of transforms) for (const l of lambdas) {
       const yTrueAll: number[] = [];
       const yPredAll: number[] = [];
@@ -401,7 +415,6 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
   // Pick by lowest RMSE; tie-break on smaller weight L2 norm, then prefer log1p
   const baselineEval = useK
     ? (() => {
-      const folds = stratifiedKFolds(samples, k, options?.seed ?? seed);
       const yTrueAll: number[] = [];
       const yPredAll: number[] = [];
       const validAll: TrainingSample[] = [];
