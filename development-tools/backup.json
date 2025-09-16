@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "currentGameNumber": 975,
+  "currentGameNumber": 81,
   "inProgressGames": [
     {
       "completed": true,
@@ -16747,514 +16747,8 @@
       "timeSpent": 339232
     },
     {
-      "completed": false,
+      "completed": true,
       "gameNumber": 78,
-      "grid": [
-        [
-          {
-            "status": 2,
-            "required": false,
-            "value": 8,
-            "groupNumber": 8
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 6,
-            "groupNumber": 8
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 8,
-            "groupNumber": 8
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 7,
-            "groupNumber": 2
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 8,
-            "groupNumber": 2
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 6,
-            "groupNumber": 2
-          },
-          {
-            "status": 1,
-            "required": true,
-            "value": 1,
-            "groupNumber": 2
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 6,
-            "groupNumber": 2
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 4,
-            "groupNumber": 2
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": false,
-            "value": 9,
-            "groupNumber": 8
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 9,
-            "groupNumber": 8
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 2,
-            "groupNumber": 8
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 6,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 3,
-            "groupNumber": 3
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 3,
-            "groupNumber": 2
-          },
-          {
-            "status": 2,
-            "required": false,
-            "value": 3,
-            "groupNumber": 2
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 9,
-            "groupNumber": 2
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 8,
-            "groupNumber": 4
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": true,
-            "value": 2,
-            "groupNumber": 8
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 7,
-            "groupNumber": 8
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 3,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 5,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 1,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 1,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 1,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 4
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": true,
-            "value": 6,
-            "groupNumber": 8
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 5,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 2,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 7,
-            "groupNumber": 3
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 5,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 5,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 6,
-            "groupNumber": 4
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 9,
-            "groupNumber": 4
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": false,
-            "value": 8,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 8,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 5,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 3,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 1,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 6,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 9,
-            "groupNumber": 4
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 4
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": true,
-            "value": 2,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 7,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 1,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 3,
-            "groupNumber": 6
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 5,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 5,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 8,
-            "groupNumber": 9
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 7,
-            "groupNumber": 4
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 3,
-            "groupNumber": 4
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 7,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 1,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 2,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 6,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 2,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 7,
-            "groupNumber": 7
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 5,
-            "groupNumber": 4
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 4,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 7,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 3,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 5,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 1,
-            "groupNumber": 7
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 8,
-            "groupNumber": 7
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 2,
-            "groupNumber": 7
-          }
-        ],
-        [
-          {
-            "status": 0,
-            "required": true,
-            "value": 1,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 4,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 8,
-            "groupNumber": 5
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 3,
-            "groupNumber": 1
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 5,
-            "groupNumber": 7
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 2,
-            "groupNumber": 7
-          },
-          {
-            "status": 0,
-            "required": true,
-            "value": 5,
-            "groupNumber": 7
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 7,
-            "groupNumber": 7
-          },
-          {
-            "status": 0,
-            "required": false,
-            "value": 7,
-            "groupNumber": 7
-          }
-        ]
-      ],
       "moveHistory": [
         {
           "timestamp": 1757965496028,
@@ -17299,9 +16793,289 @@
         {
           "timestamp": 1757965509053,
           "correct": true
+        },
+        {
+          "timestamp": 1757971244856,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971303037,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971912737,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971913520,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971914175,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971915710,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971916478,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971927357,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971928081,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971928116,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971928704,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971942571,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971943264,
+          "correct": true
+        },
+        {
+          "timestamp": 1757971965347,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972036589,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972047648,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972048219,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972054494,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972058495,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972068260,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972175586,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972176611,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972178444,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972178847,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972182176,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972182663,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972183336,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972184936,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972198755,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972199110,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972199570,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972199945,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972239086,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972244916,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972256376,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972256768,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972257344,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972257398,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972287083,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972314009,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972314448,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972316081,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972324388,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972324686,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972331248,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972331553,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972331855,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972335537,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972335992,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972338008,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972340951,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972341419,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972341590,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972346343,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972356035,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972356241,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972356338,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972371022,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972371403,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972371599,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972378908,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972379322,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972389923,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972390373,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972400943,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972401162,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972403365,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972404340,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972407005,
+          "correct": true
+        },
+        {
+          "timestamp": 1757972409180,
+          "correct": true
         }
       ],
-      "timeSpent": 106209
+      "timeSpent": 902102
     },
     {
       "completed": true,
@@ -17409,6 +17183,540 @@
         }
       ],
       "timeSpent": 38347
+    },
+    {
+      "completed": true,
+      "gameNumber": 79,
+      "moveHistory": [
+        {
+          "timestamp": 1757975658133,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975660739,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975661294,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975661847,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975664016,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975664369,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975668942,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975670774,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975670976,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975671345,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975672673,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975673071,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975690301,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975692354,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975695320,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975699233,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975700141,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975704495,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975705016,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975705672,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975706075,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975706495,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975707587,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975710983,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975711403,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975712899,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975717565,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975718027,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975719227,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975719621,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975721631,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975721690,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975722749,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975754846,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975755177,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975755332,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975760321,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975760749,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975814452,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975814761,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975815830,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975823113,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975823390,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975823692,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975824039,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975824344,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975832320,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975832841,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975834217,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975849872,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975882200,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975888439,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975888907,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975889077,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975891282,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975895160,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975895886,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975900358,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975900776,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975901181,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975903850,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975904073,
+          "correct": false
+        },
+        {
+          "timestamp": 1757975911538,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975914977,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975916981,
+          "correct": true
+        }
+      ],
+      "timeSpent": 264462
+    },
+    {
+      "completed": true,
+      "gameNumber": 80,
+      "moveHistory": [
+        {
+          "timestamp": 1757975998712,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975999217,
+          "correct": true
+        },
+        {
+          "timestamp": 1757975999941,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976001705,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976002815,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976080290,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976080556,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976086187,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976091903,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976092493,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976097050,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976107089,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976108862,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976127516,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976128229,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976131168,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976131538,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976153800,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976154544,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976164092,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976164629,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976176887,
+          "correct": false
+        },
+        {
+          "timestamp": 1757976215712,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976226047,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976226339,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976226649,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976226927,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976256182,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976256439,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976257060,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976257669,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976260429,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976262634,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976265084,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976265276,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976275524,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976275962,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976276938,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976281126,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976282353,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976282701,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976324225,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976335061,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976335435,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976335660,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976335802,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976345766,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976345873,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976357687,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976358030,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976358460,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976361487,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976361784,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976369554,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976370260,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976370271,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976375022,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976395717,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976397133,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976398560,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976399217,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976403117,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976403254,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976405972,
+          "correct": true
+        },
+        {
+          "timestamp": 1757976406613,
+          "correct": true
+        }
+      ],
+      "timeSpent": 413779
     }
   ]
 }
