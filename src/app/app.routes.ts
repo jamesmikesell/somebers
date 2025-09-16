@@ -1,38 +1,33 @@
 import { Routes } from '@angular/router';
-import { BackupComponent } from './component/backup/backup';
-import { Board } from './component/board/board';
-import { Documentation } from './component/documentation/documentation';
-import { ExportComponent } from './component/export/export';
-import { SettingsComponent } from './component/settings/settings';
-import { TransferComplete } from './component/transfer-complete/transfer-complete';
+
 
 export const routes: Routes = [
   {
     path: '',
-    component: Board
+    loadComponent: () => import('./component/board/board').then(m => m.Board)
   },
   {
     path: 'documentation',
-    component: Documentation
+    loadComponent: () => import('./component/documentation/documentation').then(m => m.Documentation)
   },
   {
     path: 'settings',
-    component: SettingsComponent,
+    loadComponent: () => import('./component/settings/settings').then(m => m.SettingsComponent),
   },
   {
     path: 'export',
-    component: ExportComponent,
+    loadComponent: () => import('./component/export/export').then(m => m.ExportComponent),
   },
   {
     path: 'backup',
-    component: BackupComponent,
+    loadComponent: () => import('./component/backup/backup').then(m => m.BackupComponent),
   },
   {
     path: 'transferComplete',
-    component: TransferComplete,
+    loadComponent: () => import('./component/transfer-complete/transfer-complete').then(m => m.TransferComplete),
   },
   {
     path: '**',
-    component: Board
+    loadComponent: () => import('./component/board/board').then(m => m.Board)
   },
 ];
