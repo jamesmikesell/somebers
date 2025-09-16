@@ -51,13 +51,13 @@ export class BoardStatAnalyzer {
 
     const rowsReport: SectionStats[] = rowBases.map((stat, i) => {
       const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.requiredSum);
-      subsetsEvaluated += possibleCorrect.total;
+      subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
     });
 
     const colsReport: SectionStats[] = colBases.map((stat, i) => {
       const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.requiredSum);
-      subsetsEvaluated += possibleCorrect.total;
+      subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
     });
 
@@ -65,7 +65,7 @@ export class BoardStatAnalyzer {
     const groupsReport: SectionStats[] = groupsSorted.map(groupNumber => {
       const stat = groupsMap.get(groupNumber)!;
       const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.requiredSum);
-      subsetsEvaluated += possibleCorrect.total;
+      subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, groupNumber, possibleCorrect)
     });
 
@@ -83,10 +83,6 @@ export class BoardStatAnalyzer {
       rows: rowsReport,
       columns: colsReport,
       groups: groupsReport,
-      summaries: {
-        rowsAndColumns: BoardStatAnalyzer.summarize([...rowsReport, ...colsReport]),
-        groups: BoardStatAnalyzer.summarize(groupsReport),
-      },
       totals: {
         rowsEvaluated: grid.length,
         columnsEvaluated: grid[0].length,
@@ -100,31 +96,17 @@ export class BoardStatAnalyzer {
 
 
   private static GenerateSectionStats(stat: LinearStat, i: number, possibleCorrect: PossiblyCorrectSolutions): SectionStats {
-    const nonExact = possibleCorrect.total - possibleCorrect.exact;
     return {
       index: i,
       requiredSum: stat.requiredSum,
-      values: stat.values.slice(),
+      cellValues: stat.values.slice(),
       requiredIndices: stat.requiredIndices.slice(),
-      exactCombinationCount: possibleCorrect.exact,
-      nonExactCombinationCount: nonExact,
+      firstIterationFalsePositiveSolutionCount: possibleCorrect.exact - 1,
       firstIterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
       firstIterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
       valuesRms: BoardStatAnalyzer.rms(stat.values),
     };
   }
-
-
-  private static summarize(sections: SectionStats[]): SectionAggregates {
-    const requiredSums = sections.map(s => s.requiredSum);
-    const valuesRms = sections.map(s => s.valuesRms);
-    return {
-      requiredSumAvg: BoardStatAnalyzer.mean(requiredSums),
-      requiredSumRms: BoardStatAnalyzer.rms(requiredSums),
-      valuesRmsAvg: BoardStatAnalyzer.mean(valuesRms),
-      valuesRmsRms: BoardStatAnalyzer.rms(valuesRms),
-    };
-  };
 
 
   private static countSubsets(values: number[], target: number): PossiblyCorrectSolutions {
@@ -146,8 +128,8 @@ export class BoardStatAnalyzer {
     }
     const alwaysRequiredCount = BoardStatAnalyzer.popcount(andMask & ((1 << n) - 1));
     const neverUsedCount = n - BoardStatAnalyzer.popcount(orMask & ((1 << n) - 1));
-    if (exact === 0) return { exact, total, alwaysRequiredCount: 0, neverUsedCount: 0 };
-    return { exact, total, alwaysRequiredCount, neverUsedCount };
+    if (exact === 0) return { exact, totalIterations: total, alwaysRequiredCount: 0, neverUsedCount: 0 };
+    return { exact, totalIterations: total, alwaysRequiredCount, neverUsedCount };
   }
 
   private static mean(values: number[]): number {
@@ -289,7 +271,7 @@ class LinearStat {
 
 interface PossiblyCorrectSolutions {
   exact: number;
-  total: number
+  totalIterations: number
   alwaysRequiredCount: number;
   neverUsedCount: number;
 }
@@ -299,10 +281,6 @@ export interface DifficultyReport {
   rows: SectionStats[];
   columns: SectionStats[];
   groups: SectionStats[];
-  summaries: {
-    rowsAndColumns: SectionAggregates;
-    groups: SectionAggregates;
-  };
   totals: {
     rowsEvaluated: number;
     columnsEvaluated: number;
@@ -316,18 +294,10 @@ export interface DifficultyReport {
 export interface SectionStats {
   index: number;
   requiredSum: number;
-  values: number[];
+  cellValues: number[];
   requiredIndices: number[];
-  exactCombinationCount: number;
-  nonExactCombinationCount: number;
+  firstIterationFalsePositiveSolutionCount: number;
   firstIterationGuaranteedRequiredCellCount: number;
   firstIterationGuaranteedUnusableCellCount: number;
   valuesRms: number;
-}
-
-export interface SectionAggregates {
-  requiredSumAvg: number;
-  requiredSumRms: number;
-  valuesRmsAvg: number;
-  valuesRmsRms: number;
 }

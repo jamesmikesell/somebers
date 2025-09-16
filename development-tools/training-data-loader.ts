@@ -2,7 +2,8 @@ import { readFileSync } from 'fs';
 import { SavedGameStateV3 } from '../src/app/model/saved-game-data/saved-game-data.v3';
 import { BoardStatAnalyzer } from '../src/app/service/board-stat-analyzer';
 import { generateGameBoard } from '../src/app/service/gameboard-generator';
-import { difficultyReportToGameStat, RawGenericFeatureSet } from '../src/app/service/ml-core';
+import { RawGenericFeatureSet } from '../src/app/service/ml-core';
+import { difficultyReportToGameStat } from '../src/app/service/ml-difficulty-stats';
 
 
 export function computeStatsFromBackupFile(backupPath = 'development-tools/backup.json'): RawGenericFeatureSet[] {

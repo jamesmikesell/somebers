@@ -1,5 +1,6 @@
 # TODO
 
+- use difficulty for affirmation selection
 - track last X games against par time.
 - difficulty prediction
   - ratio of average row value vs required total
