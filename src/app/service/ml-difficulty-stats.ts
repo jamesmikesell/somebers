@@ -41,6 +41,13 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'requiredSumAllStd',
     // 'requiredSumAllSum',
     // 
+    // 'cellCountLargerThanTargetAllMean',
+    // 'cellCountLargerThanTargetAllMin',
+    // 'cellCountLargerThanTargetAllMax',
+    // 'cellCountLargerThanTargetAllStd',
+    // 'cellCountLargerThanTargetAllSum',
+    // 'cellCountLargerThanTargetAllPercent',
+    // 
     'deductionIterations',
     'percentUnresolvedCellsAfterDeduction',
 
@@ -71,7 +78,10 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     return { mean, min, max, std, sum };
   };
 
-
+  const cellCountLargerThanTargetRow = stats.rows.map(s => s.cellValues.filter(c => c > s.requiredSum).length)
+  const cellCountLargerThanTargetCol = stats.columns.map(s => s.cellValues.filter(c => c > s.requiredSum).length)
+  const cellCountLargerThanTargetGrp = stats.groups.map(s => s.cellValues.filter(c => c > s.requiredSum).length)
+  const cellCountLargerThanTargetAllAgg = agg([...cellCountLargerThanTargetRow, ...cellCountLargerThanTargetCol, ...cellCountLargerThanTargetGrp]);
 
   const firstIterationFalsePositiveSolutionCountRow = stats.rows.map(s => s.firstIterationFalsePositiveSolutionCount);
   const firstIterationFalsePositiveSolutionCountCol = stats.columns.map(s => s.firstIterationFalsePositiveSolutionCount);
@@ -136,6 +146,13 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     requiredSumAllStd: requiredSumAllAgg.std,
     requiredSumAllSum: requiredSumAllAgg.sum,
 
+    cellCountLargerThanTargetAllMean: cellCountLargerThanTargetAllAgg.mean,
+    cellCountLargerThanTargetAllMin: cellCountLargerThanTargetAllAgg.min,
+    cellCountLargerThanTargetAllMax: cellCountLargerThanTargetAllAgg.max,
+    cellCountLargerThanTargetAllStd: cellCountLargerThanTargetAllAgg.std,
+    cellCountLargerThanTargetAllSum: cellCountLargerThanTargetAllAgg.sum,
+    cellCountLargerThanTargetAllPercent: cellCountLargerThanTargetAllAgg.sum / cellCount,
+
     deductionIterations: stats.totals.deductionIterations,
     percentUnresolvedCellsAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction / cellCount,
   };
@@ -191,6 +208,13 @@ export interface GameStatFeatures {
   requiredSumAllMax: number;
   requiredSumAllStd: number;
   requiredSumAllSum: number;
+  //
+  cellCountLargerThanTargetAllMean: number;
+  cellCountLargerThanTargetAllMin: number;
+  cellCountLargerThanTargetAllMax: number;
+  cellCountLargerThanTargetAllStd: number;
+  cellCountLargerThanTargetAllSum: number;
+  cellCountLargerThanTargetAllPercent: number;
   //
   deductionIterations: number;
   percentUnresolvedCellsAfterDeduction: number;
