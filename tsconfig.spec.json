@@ -12,6 +12,6 @@
     "src/**/*.ts"
   ],
   "exclude": [
-    "src/app/development-tools/**/*.ts"
+    "development-tools/**/*.ts"
   ]
 }

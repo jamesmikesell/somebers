@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs';
-import { SavedGameStateV3 } from '../model/saved-game-data/saved-game-data.v3';
-import { BoardStatAnalyzer } from '../service/board-stat-analyzer';
-import { generateGameBoard } from '../service/gameboard-generator';
-import { difficultyReportToGameStat, RawGenericFeatureSet } from '../service/ml-core';
+import { SavedGameStateV3 } from '../src/app/model/saved-game-data/saved-game-data.v3';
+import { BoardStatAnalyzer } from '../src/app/service/board-stat-analyzer';
+import { generateGameBoard } from '../src/app/service/gameboard-generator';
+import { difficultyReportToGameStat, RawGenericFeatureSet } from '../src/app/service/ml-core';
 
 
-export function computeStatsFromBackupFile(backupPath = 'src/app/development-tools/somebers-backup.somebers.json'): RawGenericFeatureSet[] {
+export function computeStatsFromBackupFile(backupPath = 'development-tools/somebers-backup.somebers.json'): RawGenericFeatureSet[] {
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 

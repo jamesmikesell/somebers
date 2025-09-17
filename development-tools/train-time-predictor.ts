@@ -1,14 +1,14 @@
 import { writeFileSync } from 'fs';
-import { BaselineModelJson, ModelEvaluationResult, ModelJson, RidgeModelJson } from '../model/ml-types';
-import { evaluate, stratifiedSplit, trainBestModel, TrainingSample } from '../service/ml-core';
+import { BaselineModelJson, ModelEvaluationResult, ModelJson, RidgeModelJson } from '../src/app/model/ml-types';
+import { evaluate, stratifiedSplit, trainBestModel, TrainingSample } from '../src/app/service/ml-core';
 import { buildRawGameStatForGameNumber, computeStatsFromBackupFile } from './training-data-loader';
-import { predictBaseline, predictRidge, toSample } from '../service/ml-core';
+import { predictBaseline, predictRidge, toSample } from '../src/app/service/ml-core';
 
 
 
 /*
   Run with:
-  npx ts-node -P tsconfig.node.json --compiler-options '{"module":"CommonJS"}' src/app/development-tools/train-time-predictor.ts
+  npx ts-node -P tsconfig.node.json --compiler-options '{"module":"CommonJS"}' development-tools/train-time-predictor.ts
 */
 function main(): void {
   console.log('Loading and computing stats');
@@ -46,7 +46,7 @@ function main(): void {
       .sort((a, b) => a.metrics.rmse - b.metrics.rmse),
     predictionForGame27: pred27,
   };
-  writeFileSync('src/app/development-tools/ml-training-results.json', JSON.stringify(results, null, 2), 'utf8');
+  writeFileSync('development-tools/ml-training-results.json', JSON.stringify(results, null, 2), 'utf8');
 
   console.log('Training complete');
   console.log('');
@@ -72,8 +72,8 @@ function main(): void {
 
   predictions.forEach(x => x.predictedMs = Math.round(x.predictedMs))
   let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => Math.round(x.predictedMs));
-  writeFileSync('src/app/development-tools/ml-predictions-2k-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
-  writeFileSync('src/app/development-tools/ml-predictions-2k-games.json', JSON.stringify(predictions, null, 2), 'utf8');
+  writeFileSync('development-tools/ml-predictions-2k-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
+  writeFileSync('development-tools/ml-predictions-2k-games.json', JSON.stringify(predictions, null, 2), 'utf8');
   // Also persist a public copy with just the sorted times for use in-app
   try {
     writeFileSync('public/difficulty-ml-predicted-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');

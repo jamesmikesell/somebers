@@ -1,4 +1,4 @@
-import { Random } from "../model/random";
+import { Random } from "../src/app/model/random";
 
 export class BoardPatternFinder {
 

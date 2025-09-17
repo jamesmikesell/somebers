@@ -8,7 +8,7 @@
     "outDir": "./out-tsc/node",
   },
   "include": [
-    "src/app/development-tools/**/*.ts"
+    "development-tools/**/*.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts"
