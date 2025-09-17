@@ -1,5 +1,6 @@
 # TODO
 
+- display warning on UI if board can't be completed using first-principals
 - use difficulty for affirmation selection
 - track last X games against par time.
 - difficulty prediction

@@ -31,7 +31,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 
     // 'firstIterationActionableCellCountMean',
     // 'firstIterationActionableCellCountMin',
-    'firstIterationActionableCellCountMax',
+    // 'firstIterationActionableCellCountMax',
     'firstIterationActionableCellCountStd',
     // 'firstIterationActionableCellCountSum',
     //
@@ -49,6 +49,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'cellCountLargerThanTargetAllPercent',
     // 
     'deductionIterations',
+    'unresolvedCellCountAfterDeduction',
     'percentUnresolvedCellsAfterDeduction',
 
   ],
@@ -154,6 +155,7 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     cellCountLargerThanTargetAllPercent: cellCountLargerThanTargetAllAgg.sum / cellCount,
 
     deductionIterations: stats.totals.deductionIterations,
+    unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
     percentUnresolvedCellsAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction / cellCount,
   };
 
@@ -217,5 +219,6 @@ export interface GameStatFeatures {
   cellCountLargerThanTargetAllPercent: number;
   //
   deductionIterations: number;
+  unresolvedCellCountAfterDeduction: number;
   percentUnresolvedCellsAfterDeduction: number;
 }
