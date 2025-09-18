@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { filter, first, interval, Observable, pairwise, Subject, takeUntil } from 'rxjs';
+import { filter, first, pairwise, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
@@ -21,7 +21,7 @@ import { CellComponent } from '../cell/cell.component';
 import { ConfirmStartOverDialogLauncher } from '../confirm-start-over/confirm-start-over-dialog';
 import { EstimatedDifficultyComponent } from '../estimated-difficulty/estimated-difficulty';
 import { StatsComponent } from '../stats/stats';
-import { Title } from "../title/title";
+import { Title } from '../title/title';
 import { AppColors } from './colors';
 
 @Component({
