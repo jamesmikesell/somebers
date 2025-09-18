@@ -85,9 +85,19 @@
     </div>
   }
 
-  <div class="game-board-section">
-    <div class="container">
-      <table class="game-table">
+  <div class="game-board-section" #boardSection>
+    <div
+      class="board-layout"
+      #boardLayout
+      [class.layout-horizontal]="layoutMode === 'horizontal'"
+      [class.layout-vertical]="layoutMode === 'vertical'"
+    >
+      <div
+        class="container board-container"
+        #boardContainer
+        [style.marginLeft.px]="layoutMode === 'horizontal' ? boardHorizontalOffset : null"
+      >
+        <table class="game-table">
         @for (row of gameBoard.fullBoard; track $index; let rowIndex = $index) {
           <tr>
             @for (cell of row; track $index; let colIndex = $index) {
@@ -137,6 +147,21 @@
           </tr>
         }
       </table>
+      </div>
+
+      <div
+        class="scratch-container"
+        #scratchContainer
+        [class.inline]="layoutMode === 'vertical'"
+        [class.side]="layoutMode === 'horizontal'"
+      >
+        <app-scratch-pad [verticalMode]="layoutMode === 'horizontal'"></app-scratch-pad>
+      </div>
+
+      <div class="scratch-measure" aria-hidden="true">
+        <app-scratch-pad #scratchMeasureHorizontal></app-scratch-pad>
+        <app-scratch-pad #scratchMeasureVertical [verticalMode]="true"></app-scratch-pad>
+      </div>
     </div>
   </div>
 </div>

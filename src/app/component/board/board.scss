@@ -28,6 +28,62 @@
   margin-right: 20px;
 }
 
+.board-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.board-layout.layout-horizontal {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.board-layout.layout-vertical .scratch-container.inline {
+  margin-top: 12px;
+}
+
+.board-layout.layout-horizontal .scratch-container.side {
+  margin-left: 16px;
+}
+
+.board-layout.layout-horizontal .board-container {
+  margin-right: 0;
+}
+
+.board-layout.layout-vertical .board-container {
+  margin-left: 0 !important;
+}
+
+.board-container {
+  flex: 0 0 auto;
+}
+
+.scratch-container {
+  flex: 0 0 auto;
+  display: flex;
+  align-self: center;
+}
+
+.scratch-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scratch-measure app-scratch-pad {
+  display: inline-block;
+  margin: 0;
+}
+
 .centered {
   display: flex;
   justify-content: center;

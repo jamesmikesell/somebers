@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostBinding,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { filter, first, pairwise, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
@@ -22,15 +31,25 @@ import { ConfirmStartOverDialogLauncher } from '../confirm-start-over/confirm-st
 import { EstimatedDifficultyComponent } from '../estimated-difficulty/estimated-difficulty';
 import { StatsComponent } from '../stats/stats';
 import { Title } from '../title/title';
+import { ScratchPadComponent } from '../scratch-pad/scratch-pad';
+import { LayoutMode, ScratchPadLayoutController } from './scratch-pad-layout';
 import { AppColors } from './colors';
 
 @Component({
   selector: 'app-board',
-  imports: [...MATERIAL_IMPORTS, CommonModule, CellComponent, StatsComponent, Title, EstimatedDifficultyComponent],
+  imports: [
+    ...MATERIAL_IMPORTS,
+    CommonModule,
+    CellComponent,
+    StatsComponent,
+    Title,
+    EstimatedDifficultyComponent,
+    ScratchPadComponent,
+  ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
-export class Board implements OnInit, OnDestroy {
+export class Board implements OnInit, OnDestroy, AfterViewInit {
 
   @HostBinding('style.--columnCount')
   get columnCount() {
@@ -47,12 +66,45 @@ export class Board implements OnInit, OnDestroy {
   stats: GameStats;
 
 
+  layoutMode: LayoutMode = 'vertical';
+  boardHorizontalOffset = 0;
   private previousGames = new Map<number, GameInProgressDtoV3>();
   private moveHistory: MoveHistoryDtoV1[] = [];
   private undoManager: UndoManager;
   private destroy = new Subject<void>();
   private statCalculator: StatCalculator;
   private timeTracker = new TimeTracker();
+  private layoutController: ScratchPadLayoutController;
+
+  @ViewChild('boardLayout')
+  set boardLayout(ref: ElementRef<HTMLElement> | undefined) {
+    this.layoutController.setBoardLayout(ref?.nativeElement);
+  }
+
+  @ViewChild('boardContainer')
+  set boardContainer(ref: ElementRef<HTMLElement> | undefined) {
+    this.layoutController.setBoardContainer(ref?.nativeElement);
+  }
+
+  @ViewChild('scratchContainer')
+  set scratchContainer(ref: ElementRef<HTMLElement> | undefined) {
+    this.layoutController.setScratchContainer(ref?.nativeElement);
+  }
+
+  @ViewChild('boardSection', { static: true })
+  set boardSection(ref: ElementRef<HTMLElement>) {
+    this.layoutController.setBoardSection(ref.nativeElement);
+  }
+
+  @ViewChild('scratchMeasureHorizontal')
+  set scratchMeasureHorizontal(ref: ElementRef<HTMLElement> | undefined) {
+    this.layoutController.setScratchMeasureHorizontal(ref?.nativeElement);
+  }
+
+  @ViewChild('scratchMeasureVertical')
+  set scratchMeasureVertical(ref: ElementRef<HTMLElement> | undefined) {
+    this.layoutController.setScratchMeasureVertical(ref?.nativeElement);
+  }
 
   constructor(
     private celebrationService: CelebrationService,
@@ -61,6 +113,7 @@ export class Board implements OnInit, OnDestroy {
     private wakeLock: WakeLock,
     private colorOptimizer: ColorGridOptimizerService,
     private confirmStartOverLauncher: ConfirmStartOverDialogLauncher,
+    private ngZone: NgZone,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -72,6 +125,13 @@ export class Board implements OnInit, OnDestroy {
     if (savedShapesMode !== null)
       this.shapesMode = JSON.parse(savedShapesMode);
 
+    this.layoutController = new ScratchPadLayoutController(
+      this.ngZone,
+      state => {
+        this.layoutMode = state.layoutMode;
+        this.boardHorizontalOffset = state.boardOffset;
+      },
+    );
   }
 
 
@@ -93,12 +153,18 @@ export class Board implements OnInit, OnDestroy {
   }
 
 
+  ngAfterViewInit(): void {
+    this.layoutController.scheduleMeasurement();
+  }
+
+
   ngOnDestroy(): void {
     this.destroy.next()
     this.boardUiService.boardVisible$.next(false);
     this.boardUiService.setShowStartOver(false);
     this.timeTracker.destroy();
     this.saveGameState();
+    this.layoutController.destroy();
   }
 
 
@@ -179,6 +245,7 @@ export class Board implements OnInit, OnDestroy {
     }))
 
     this.disableAnimationsTemporarily();
+    this.layoutController.scheduleMeasurement();
   }
 
 
@@ -345,6 +412,7 @@ export class Board implements OnInit, OnDestroy {
     }
 
     this.calculateStats();
+    this.layoutController.scheduleMeasurement();
   }
 
 
