@@ -61,6 +61,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   gameBoard = new GameBoard();
   devMode = false;
   shapesMode: boolean = false;
+  scratchPadVisible: boolean = true;
   nextGameButtonState: "hidden" | "show-animated" | "show-instant" = "hidden";
   disableAnimations = false;
   stats: GameStats;
@@ -124,6 +125,10 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     const savedShapesMode = localStorage.getItem('shapesModeEnabled');
     if (savedShapesMode !== null)
       this.shapesMode = JSON.parse(savedShapesMode);
+
+    const savedScratchPadVisibility = localStorage.getItem('scratchPadVisible');
+    if (savedScratchPadVisibility !== null)
+      this.scratchPadVisible = JSON.parse(savedScratchPadVisibility);
 
     this.layoutController = new ScratchPadLayoutController(
       this.ngZone,

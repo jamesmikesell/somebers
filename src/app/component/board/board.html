@@ -149,19 +149,26 @@
       </table>
       </div>
 
-      <div
-        class="scratch-container"
-        #scratchContainer
-        [class.inline]="layoutMode === 'vertical'"
-        [class.side]="layoutMode === 'horizontal'"
-      >
-        <app-scratch-pad [verticalMode]="layoutMode === 'horizontal'"></app-scratch-pad>
-      </div>
+      @if (scratchPadVisible) {
+        <div
+          class="scratch-container"
+          #scratchContainer
+          [class.inline]="layoutMode === 'vertical'"
+          [class.side]="layoutMode === 'horizontal'"
+        >
+          <app-scratch-pad
+            [verticalMode]="layoutMode === 'horizontal'"
+          ></app-scratch-pad>
+        </div>
 
-      <div class="scratch-measure" aria-hidden="true">
-        <app-scratch-pad #scratchMeasureHorizontal></app-scratch-pad>
-        <app-scratch-pad #scratchMeasureVertical [verticalMode]="true"></app-scratch-pad>
-      </div>
+        <div class="scratch-measure" aria-hidden="true">
+          <app-scratch-pad #scratchMeasureHorizontal></app-scratch-pad>
+          <app-scratch-pad
+            #scratchMeasureVertical
+            [verticalMode]="true"
+          ></app-scratch-pad>
+        </div>
+      }
     </div>
   </div>
 </div>

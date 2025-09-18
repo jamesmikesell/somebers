@@ -31,6 +31,7 @@ export class SettingsComponent implements OnInit {
   deleteConfirmation = '';
   devModeEnabled: boolean = false;
   shapesModeEnabled: boolean = false;
+  scratchPadVisible: boolean = true;
   AppVersion = AppVersion;
 
 
@@ -39,12 +40,23 @@ export class SettingsComponent implements OnInit {
     if (savedShapesMode !== null) {
       this.shapesModeEnabled = JSON.parse(savedShapesMode);
     }
+
+    const savedScratchPadVisibility = localStorage.getItem('scratchPadVisible');
+    if (savedScratchPadVisibility !== null) {
+      this.scratchPadVisible = JSON.parse(savedScratchPadVisibility);
+    }
   }
 
 
   onShapesModeChange(event: MatSlideToggleChange): void {
     this.shapesModeEnabled = event.checked;
     localStorage.setItem('shapesModeEnabled', JSON.stringify(this.shapesModeEnabled));
+  }
+
+
+  onScratchPadVisibleChange(event: MatSlideToggleChange): void {
+    this.scratchPadVisible = event.checked;
+    localStorage.setItem('scratchPadVisible', JSON.stringify(this.scratchPadVisible));
   }
 
 

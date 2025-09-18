@@ -14,6 +14,19 @@
       providing an alternative visual cue for players who may have difficulty
       distinguishing colors.
     </p>
+
+    <mat-slide-toggle
+      [(ngModel)]="scratchPadVisible"
+      (change)="onScratchPadVisibleChange($event)"
+    >
+      Show Scratch Pad
+    </mat-slide-toggle>
+    <p>
+      Controls whether the
+      <a routerLink="/documentation" fragment="scratch-pad">scratch pad</a> is
+      displayed next to the board. More info about the scratch pad can be found
+      in the.
+    </p>
   </section>
 
   <section class="settings-section">
@@ -55,8 +68,7 @@
     </button>
   </section>
 
-  @if (devModeEnabled) {
-  }
+  @if (devModeEnabled) {}
 </div>
 
 <div class="version">v. {{ AppVersion.VERSION }}</div>
