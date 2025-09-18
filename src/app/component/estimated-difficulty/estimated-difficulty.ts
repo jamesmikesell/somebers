@@ -57,8 +57,9 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
       this.firstPrincipalViolationWarning = "";
       if (difficultyAnalysis.totals.unresolvedCellCountAfterDeduction > 0) {
-        let resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
-        this.firstPrincipalViolationWarning = `FP+ ${resolvableCells}`
+        const unresolvedCells = difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
+        const resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - unresolvedCells;
+        this.firstPrincipalViolationWarning = `FP+ ${unresolvedCells}-${resolvableCells}`
       }
 
       const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, 0, 0))!;
