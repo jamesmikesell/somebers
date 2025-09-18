@@ -95,61 +95,67 @@
       <div
         class="container board-container"
         #boardContainer
-        [style.marginLeft.px]="layoutMode === 'horizontal' ? boardHorizontalOffset : null"
+        [style.marginLeft.px]="
+          layoutMode === 'horizontal' ? boardHorizontalOffset : null
+        "
       >
         <table class="game-table">
-        @for (row of gameBoard.fullBoard; track $index; let rowIndex = $index) {
-          <tr>
-            @for (cell of row; track $index; let colIndex = $index) {
-              <td
-                [class.shape-border-top]="
-                  shapesMode && !cell?.hideBackground && cell?.borderTop
-                "
-                [class.shape-border-left]="
-                  shapesMode && !cell?.hideBackground && cell?.borderLeft
-                "
-                [class.shape-border-right]="
-                  shapesMode && !cell?.hideBackground && cell?.borderRight
-                "
-                [class.shape-border-bottom]="
-                  shapesMode && !cell?.hideBackground && cell?.borderBottom
-                "
-              >
-                @if (rowIndex === 0 && colIndex === 0) {
-                  <app-cell
-                    [displayType]="'blank'"
-                    [columnCount]="columnCount"
-                    [shapesMode]="shapesMode"
-                  ></app-cell>
-                } @else if (
-                  rowIndex === 0 || (rowIndex > 0 && colIndex === 0)
-                ) {
-                  <app-cell
-                    [displayType]="'header'"
-                    [cell]="cell"
-                    [columnCount]="columnCount"
-                    [shapesMode]="shapesMode"
-                    [disableAnimation]="disableAnimations"
-                  ></app-cell>
-                } @else {
-                  <app-cell
-                    [displayType]="'standard'"
-                    [cell]="cell"
-                    [columnCount]="columnCount"
-                    [shapesMode]="shapesMode"
-                    [disableAnimation]="disableAnimations"
-                    (used)="use($event)"
-                    (cleared)="clear($event)"
-                  ></app-cell>
-                }
-              </td>
-            }
-          </tr>
-        }
-      </table>
+          @for (
+            row of gameBoard.fullBoard;
+            track $index;
+            let rowIndex = $index
+          ) {
+            <tr>
+              @for (cell of row; track $index; let colIndex = $index) {
+                <td
+                  [class.shape-border-top]="
+                    shapesMode && !cell?.hideBackground && cell?.borderTop
+                  "
+                  [class.shape-border-left]="
+                    shapesMode && !cell?.hideBackground && cell?.borderLeft
+                  "
+                  [class.shape-border-right]="
+                    shapesMode && !cell?.hideBackground && cell?.borderRight
+                  "
+                  [class.shape-border-bottom]="
+                    shapesMode && !cell?.hideBackground && cell?.borderBottom
+                  "
+                >
+                  @if (rowIndex === 0 && colIndex === 0) {
+                    <app-cell
+                      [displayType]="'blank'"
+                      [columnCount]="columnCount"
+                      [shapesMode]="shapesMode"
+                    ></app-cell>
+                  } @else if (
+                    rowIndex === 0 || (rowIndex > 0 && colIndex === 0)
+                  ) {
+                    <app-cell
+                      [displayType]="'header'"
+                      [cell]="cell"
+                      [columnCount]="columnCount"
+                      [shapesMode]="shapesMode"
+                      [disableAnimation]="disableAnimations"
+                    ></app-cell>
+                  } @else {
+                    <app-cell
+                      [displayType]="'standard'"
+                      [cell]="cell"
+                      [columnCount]="columnCount"
+                      [shapesMode]="shapesMode"
+                      [disableAnimation]="disableAnimations"
+                      (used)="use($event)"
+                      (cleared)="clear($event)"
+                    ></app-cell>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </table>
       </div>
 
-      @if (scratchPadVisible) {
+      @if (scratchPadVisible && nextGameButtonState === "hidden") {
         <div
           class="scratch-container"
           #scratchContainer
