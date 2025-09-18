@@ -20,18 +20,18 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'firstIterationGuaranteedRequiredCellCountMean',
     // 'firstIterationGuaranteedRequiredCellCountMin',
     'firstIterationGuaranteedRequiredCellCountMax',
-    // 'firstIterationGuaranteedRequiredCellCountStd',
+    'firstIterationGuaranteedRequiredCellCountStd',
     // 'firstIterationGuaranteedRequiredCellCountSum',
     // 
     // 'firstIterationGuaranteedUnusableCellCountAllMean',
     // 'firstIterationGuaranteedUnusableCellCountAllMin',
     'firstIterationGuaranteedUnusableCellCountAllMax',
-    // 'firstIterationGuaranteedUnusableCellCountAllStd',
+    'firstIterationGuaranteedUnusableCellCountAllStd',
     // 'firstIterationGuaranteedUnusableCellCountAllSum',
     // 
     // 'firstIterationActionableCellCountMean',
-    // 'firstIterationActionableCellCountMin',
-    // 'firstIterationActionableCellCountMax',
+    'firstIterationActionableCellCountMin',
+    'firstIterationActionableCellCountMax',
     'firstIterationActionableCellCountStd',
     // 'firstIterationActionableCellCountSum',
     //
