@@ -31,6 +31,20 @@
   text-align: center;
 }
 
+.label-short {
+  display: none;
+}
+
+@media (max-width: 410px) {
+  .stat-label .label-short {
+    display: inline;
+  }
+
+  .stat-label .label-full {
+    display: none;
+  }
+}
+
 
 .stat-item.clickable .stat-value {
   display: inline-flex;

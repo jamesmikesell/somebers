@@ -1,10 +1,16 @@
 <div class="stat-container">
   <div class="stat-item">
-    <span class="stat-label">Board Mistakes</span>
+    <span class="stat-label">
+      <span class="label-full">Board Mistakes</span>
+      <span class="label-short">Mstks</span>
+    </span>
     <span class="stat-value">{{ mistakes }}</span>
   </div>
   <div class="stat-item">
-    <span class="stat-label">Streak</span>
+    <span class="stat-label">
+      <span class="label-full">Streak</span>
+      <span class="label-short">Strk</span>
+    </span>
     <div class="streak-value-wrapper">
       @if (showRedOrb) {
         <div class="red-orb"></div>
@@ -49,8 +55,13 @@
       title="Change period"
     >
       <span class="stat-label">
-        Best Streak {{ displayedStreak.displayTimeline }}</span
-      >
+        <span class="label-full">
+          Best Streak {{ displayedStreak.displayTimelineFull }}
+        </span>
+        <span class="label-short">
+          Best Strk {{ displayedStreak.displayTimelineAbbreviated }}
+        </span>
+      </span>
       <span class="stat-value">
         <span class="cycle-icon left" aria-hidden="true">‹</span>
         {{ displayedStreak.streak }}
@@ -64,11 +75,20 @@
     title="Change metric"
   >
     <span class="stat-label">
-      @if (secondaryDisplayIndex === 0) {
-        Last {{ accuracyHistory | number: "1.0-0" }} Moves
-      } @else {
-        Time Spent
-      }
+      <span class="label-full">
+        @if (secondaryDisplayIndex === 0) {
+          Last {{ accuracyHistory | number: "1.0-0" }} Moves
+        } @else {
+          Time Spent
+        }
+      </span>
+      <span class="label-short">
+        @if (secondaryDisplayIndex === 0) {
+          {{ accuracyHistory | number: "1.0-0" }} Moves
+        } @else {
+          Time
+        }
+      </span>
     </span>
     <span class="stat-value">
       <span class="cycle-icon left" aria-hidden="true">‹</span>

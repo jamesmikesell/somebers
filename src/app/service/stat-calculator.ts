@@ -38,35 +38,43 @@ export class StatCalculator {
     return {
       streaks: [
         {
-          displayTimeline: "Past 24 hours",
+          displayTimelineFull: "Past 24 hours",
+          displayTimelineAbbreviated: "24h",
           streak: this.getMaxStreakSinceDays(1),
         },
         {
-          displayTimeline: "Past 3 days",
+          displayTimelineFull: "Past 3 days",
+          displayTimelineAbbreviated: "3d",
           streak: this.getMaxStreakSinceDays(3),
         },
         {
-          displayTimeline: "Past 5 days",
+          displayTimelineFull: "Past 5 days",
+          displayTimelineAbbreviated: "5d",
           streak: this.getMaxStreakSinceDays(5),
         },
         {
-          displayTimeline: "Past 7 days",
+          displayTimelineFull: "Past 7 days",
+          displayTimelineAbbreviated: "7d",
           streak: this.getMaxStreakSinceDays(7),
         },
         {
-          displayTimeline: "Past 14 days",
+          displayTimelineFull: "Past 14 days",
+          displayTimelineAbbreviated: "14d",
           streak: this.getMaxStreakSinceDays(14),
         },
         {
-          displayTimeline: "Past 30 days",
+          displayTimelineFull: "Past 30 days",
+          displayTimelineAbbreviated: "30d",
           streak: this.getMaxStreakSinceDays(30),
         },
         {
-          displayTimeline: "Past year",
+          displayTimelineFull: "Past year",
+          displayTimelineAbbreviated: "1y",
           streak: this.getMaxStreakSinceDays(365.25),
         },
         {
-          displayTimeline: "Forever",
+          displayTimelineFull: "Forever",
+          displayTimelineAbbreviated: "Forever",
           streak: this.getMaxStreakSinceDays(undefined),
         },
       ],
@@ -135,6 +143,7 @@ export interface GameStats {
 
 
 export interface StreakPeriod {
-  displayTimeline: string;
+  displayTimelineFull: string;
+  displayTimelineAbbreviated: string;
   streak: number;
 }
