@@ -3,10 +3,11 @@
     <strong>Difficulty</strong>
     <span>{{ percentileLabel }}</span>
     @if (firstPrincipalViolationWarning) {
-      <div>
+      <span>•</span>
+      <span>
         <mat-icon class="warning-icon">report_problem</mat-icon>
         <span>{{ firstPrincipalViolationWarning }}</span>
-      </div>
+      </span>
     }
     <span>•</span>
     <strong>Par Time</strong>
