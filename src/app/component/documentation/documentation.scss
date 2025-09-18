@@ -16,11 +16,9 @@
 
 .callout {
   border: 1px solid var(--mat-sys-outline-variant);
-  background: color-mix(
-    in oklab,
-    var(--mat-sys-primary) 10%,
-    var(--mat-sys-surface)
-  );
+  background: color-mix(in oklab,
+      var(--mat-sys-primary) 10%,
+      var(--mat-sys-surface));
   border-radius: 12px;
   padding: 12px 14px;
   margin: 0.75rem 0;
@@ -31,13 +29,10 @@
   border-width: 2px;
   border-color: var(--mat-sys-primary);
   /* Make this visibly different from the standard callout */
-  background: color-mix(
-    in oklab,
-    var(--mat-sys-primary) 24%,
-    var(--mat-sys-surface)
-  );
-  box-shadow: 0 8px 20px
-    color-mix(in oklab, var(--mat-sys-primary) 26%, transparent);
+  background: color-mix(in oklab,
+      var(--mat-sys-primary) 24%,
+      var(--mat-sys-surface));
+  box-shadow: 0 8px 20px color-mix(in oklab, var(--mat-sys-primary) 26%, transparent);
   padding: 14px 16px;
   /* Accent left rail for emphasis */
   border-left-width: 6px;
@@ -78,4 +73,19 @@
 
 .version {
   margin-bottom: 15px;
+}
+
+
+.icon-container {
+  display: inline;
+}
+
+.warning-icon {
+  color: light-dark(#ee0000, #ff3a3a);
+  font-size: 1em;
+  height: unset;
+  width: unset;
+  margin-bottom: -0.15em;
+  margin-right: 0.2em;
+  margin-left: 0.1em;
 }

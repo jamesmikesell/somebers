@@ -40,7 +40,6 @@ export class Board implements OnInit, OnDestroy {
   gameNumber: number = 1;
   SelectionStatus = SelectionStatus;
   gameBoard = new GameBoard();
-  solvable = true;
   devMode = false;
   shapesMode: boolean = false;
   nextGameButtonState: "hidden" | "show-animated" | "show-instant" = "hidden";
@@ -178,8 +177,6 @@ export class Board implements OnInit, OnDestroy {
       cell.colorDark = colorAssignmentsDark.colorByNumber.get(cell.groupNumber);
       cell.colorLight = colorAssignmentsLight.colorByNumber.get(cell.groupNumber);
     }))
-
-    this.solvable = this.gameBoard.solvable;
 
     this.disableAnimationsTemporarily();
   }
@@ -339,7 +336,6 @@ export class Board implements OnInit, OnDestroy {
         this.gameBoard = new GameBoard();
         this.gameBoard.playArea = grid;
         this.gameBoard.constructBoard(this.gameNumber);
-        this.solvable = this.gameBoard.solvable;
         this.gameBoard.recalculateSelectedHeaders();
         this.disableAnimationsTemporarily();
         this.timeTracker.manualStart();

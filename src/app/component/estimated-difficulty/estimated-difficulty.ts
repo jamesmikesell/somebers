@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from "@angular/material/icon";
 import { DisplayCell } from '../../model/game-board';
 import { BoardStatAnalyzer } from '../../service/board-stat-analyzer';
 import { DifficultyPredictorService } from '../../service/difficulty-predictor.service';
@@ -11,7 +12,7 @@ import { difficultyReportToGameStat } from '../../service/ml-difficulty-stats';
 @Component({
   selector: 'app-estimated-difficulty',
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './estimated-difficulty.html',
   styleUrl: './estimated-difficulty.scss',
 })
@@ -21,6 +22,7 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
   percentileLabel = '–';
   estimatedTimeLabel = '–';
+  firstPrincipalViolationWarning = ""
 
   private timesPromise?: Promise<number[] | undefined>;
 
@@ -52,6 +54,13 @@ export class EstimatedDifficultyComponent implements OnChanges {
       }
 
       const difficultyAnalysis = BoardStatAnalyzer.evaluate(effectivePlayArea);
+
+      this.firstPrincipalViolationWarning = "";
+      if (difficultyAnalysis.totals.unresolvedCellCountAfterDeduction > 0) {
+        let resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
+        this.firstPrincipalViolationWarning = `FP+ ${resolvableCells}`
+      }
+
       const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, 0, 0))!;
       const msForDifficulty = await this.predictor.predictGameModel(stats);
       if (msForDifficulty != null) {
@@ -63,6 +72,7 @@ export class EstimatedDifficultyComponent implements OnChanges {
       }
     } catch (e) {
       console.warn('Prediction failed', e);
+      this.firstPrincipalViolationWarning = "";
       this.percentileLabel = '–';
       this.estimatedTimeLabel = '–';
     }
