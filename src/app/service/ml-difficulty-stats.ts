@@ -30,7 +30,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'firstIterationGuaranteedUnusableCellCountAllSum',
     // 
     // 'firstIterationActionableCellCountMean',
-    'firstIterationActionableCellCountMin',
+    // 'firstIterationActionableCellCountMin', // for all row/col/grp what is the min number of cells where an guaranteed action can be performed.. on many boards there tends to be at one row/col/grp where nothing can be done
     'firstIterationActionableCellCountMax',
     'firstIterationActionableCellCountStd',
     // 'firstIterationActionableCellCountSum',
