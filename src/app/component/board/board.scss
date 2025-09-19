@@ -42,22 +42,25 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+
+  .board-container {
+    margin-right: 0;
+  }
+
+  .scratch-container.side {
+    margin-left: 16px;
+  }
 }
 
-.board-layout.layout-vertical .scratch-container.inline {
-  margin-top: 12px;
-}
 
-.board-layout.layout-horizontal .scratch-container.side {
-  margin-left: 16px;
-}
+.board-layout.layout-vertical {
+  .scratch-container.inline {
+    margin-top: 12px;
+  }
 
-.board-layout.layout-horizontal .board-container {
-  margin-right: 0;
-}
-
-.board-layout.layout-vertical .board-container {
-  margin-left: 0 !important;
+  .board-container {
+    margin-left: 0 !important;
+  }
 }
 
 .board-container {
