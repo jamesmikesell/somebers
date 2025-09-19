@@ -226,11 +226,66 @@
       Open <strong>Safari</strong> and navigate to
       <code>https://somebers.com</code>.
     </li>
-    <li>Tap the <strong>Share</strong> button.</li>
     <li>
-      Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.
+      Tap the <strong>Share</strong> button (you may need to click the
+      <code>...</code> menu button to find the share option)
     </li>
+    <li>Click the <code>... more </code> button</li>
+    <li>Click <code>Add to Home Screen</code></li>
+    <li>Click the <code>Add</code> button</li>
   </ol>
+  <div class="ios-install-video">
+    <p class="note">
+      Prefer a walkthrough? Choose your device to watch an install demo with
+      full controls.
+    </p>
+    <div class="ios-install-video__buttons">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="setIosVideo('iphone')"
+        [class.active]="selectedIosVideo === 'iphone'"
+      >
+        <mat-icon>play_circle</mat-icon>
+        Watch iPhone demo
+      </button>
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="setIosVideo('ipad')"
+        [class.active]="selectedIosVideo === 'ipad'"
+      >
+        <mat-icon>play_circle</mat-icon>
+        Watch iPad demo
+      </button>
+    </div>
+    @switch (selectedIosVideo) {
+      @case ("iphone") {
+        <video
+          controls
+          playsinline
+          class="ios-install-video__player"
+          src="/install-iphone.mp4"
+          preload="metadata"
+          (loadedmetadata)="onIosVideoLoaded($event)"
+        >
+          Your browser does not support the installation demo video.
+        </video>
+      }
+      @case ("ipad") {
+        <video
+          controls
+          playsinline
+          class="ios-install-video__player"
+          src="/install-ipad.mp4"
+          preload="metadata"
+          (loadedmetadata)="onIosVideoLoaded($event)"
+        >
+          Your browser does not support the installation demo video.
+        </video>
+      }
+    }
+  </div>
 
   <h3>Android</h3>
   <ul>

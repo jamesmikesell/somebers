@@ -12,5 +12,30 @@ import { InstallComponent } from '../install/install.component';
 })
 export class Documentation {
   AppVersion = AppVersion;
+  selectedIosVideo: IosDevice | null = null;
+
+  setIosVideo(device: IosDevice): void {
+    if (this.selectedIosVideo === device) {
+      this.selectedIosVideo = null;
+      return;
+    }
+
+    this.selectedIosVideo = device;
+  }
+
+  onIosVideoLoaded(event: Event): void {
+    const video = event.target as HTMLVideoElement | null;
+    if (!video) {
+      return;
+    }
+
+    try {
+      video.defaultPlaybackRate = 0.5;
+      video.playbackRate = 0.5;
+    } catch (error) {
+      console.warn('Unable to set playback rate for iOS install video', error);
+    }
+  }
 }
- 
+
+type IosDevice = 'iphone' | 'ipad';
