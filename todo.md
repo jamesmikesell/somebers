@@ -1,5 +1,6 @@
 # TODO
 
+- post to social media
 - abacas at bottom to help with mental math
 - display warning on UI if board can't be completed using first-principals
 - use difficulty for affirmation selection

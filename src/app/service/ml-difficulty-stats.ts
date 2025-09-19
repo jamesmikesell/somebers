@@ -48,9 +48,9 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'cellCountLargerThanTargetAllSum',
     // 'cellCountLargerThanTargetAllPercent',
     // 
-    'deductionIterations',
-    'unresolvedCellCountAfterDeduction',
-    'percentUnresolvedCellsAfterDeduction',
+    // 'deductionIterations',
+    // 'unresolvedCellCountAfterDeduction',
+    // 'percentUnresolvedCellsAfterDeduction',
 
   ],
 };
