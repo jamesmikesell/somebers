@@ -128,25 +128,37 @@ export class GameBoard {
   }
 
 
-  clearColumn(colIndex: number): void {
-    const columnCells = this.playArea.map(row => row[colIndex])
-    if (this.areRequiredCellsSelected(columnCells)) {
-      columnCells.forEach(cell => {
-        if (!cell.required)
-          cell.status = SelectionStatus.CLEARED;
-      });
-    }
+  clearColumn(colIndex: number): DisplayCell[] {
+    const columnCells = this.playArea.map(row => row[colIndex]);
+    if (!this.areRequiredCellsSelected(columnCells))
+      return [];
+
+    const newlyCleared: DisplayCell[] = [];
+    columnCells.forEach(cell => {
+      if (!cell.required && cell.status !== SelectionStatus.CLEARED) {
+        cell.status = SelectionStatus.CLEARED;
+        newlyCleared.push(cell);
+      }
+    });
+
+    return newlyCleared;
   }
 
   
-  clearRow(rowIndex: number): void {
+  clearRow(rowIndex: number): DisplayCell[] {
     const row = this.playArea[rowIndex];
-    if (this.areRequiredCellsSelected(row)) {
-      row.forEach(cell => {
-        if (!cell.required)
-          cell.status = SelectionStatus.CLEARED;
-      });
-    }
+    if (!this.areRequiredCellsSelected(row))
+      return [];
+
+    const newlyCleared: DisplayCell[] = [];
+    row.forEach(cell => {
+      if (!cell.required && cell.status !== SelectionStatus.CLEARED) {
+        cell.status = SelectionStatus.CLEARED;
+        newlyCleared.push(cell);
+      }
+    });
+
+    return newlyCleared;
   }
 
 

@@ -42,6 +42,7 @@ export class SectionCompletionAnimator {
   private sequence = Promise.resolve();
   private readonly pendingTimers = new Set<number>();
   private readonly activeCells = new Set<DisplayCell>();
+  private autoClearHandler?: (cells: DisplayCell[]) => void;
   private readonly animationCompletedSubject = new Subject<void>();
   readonly animationCompleted$ = this.animationCompletedSubject.asObservable();
 
@@ -54,6 +55,11 @@ export class SectionCompletionAnimator {
 
     if (!enabled)
       this.resetAll();
+  }
+
+
+  setAutoClearHandler(handler: (cells: DisplayCell[]) => void): void {
+    this.autoClearHandler = handler;
   }
 
   dispose(): void {
@@ -73,26 +79,31 @@ export class SectionCompletionAnimator {
     if (!sections.length)
       return;
 
+    const autoClearedDuringRun: DisplayCell[] = [];
+
     this.sequence = this.sequence
-      .then(() => this.runInSeries(sections))
+      .then(() => this.runInSeries(sections, autoClearedDuringRun))
       .then(() => {
+        if (autoClearedDuringRun.length)
+          this.autoClearHandler?.(autoClearedDuringRun.slice());
+
         if (!this.animationCompletedSubject.closed)
           this.animationCompletedSubject.next();
       });
   }
 
-  private runInSeries(sections: SectionSchedule[]): Promise<void> {
+  private runInSeries(sections: SectionSchedule[], autoCleared: DisplayCell[]): Promise<void> {
     return sections.reduce(
-      (prev, section) => prev.then(() => this.runSection(section)),
+      (prev, section) => prev.then(() => this.runSection(section, autoCleared)),
       Promise.resolve(),
     );
   }
 
-  private runSection(section: SectionSchedule): Promise<void> {
+  private runSection(section: SectionSchedule, autoCleared: DisplayCell[]): Promise<void> {
     if (!section.segments.length)
       return Promise.resolve();
 
-    section.segments.forEach(segment => this.scheduleGlow(segment));
+    section.segments.forEach(segment => this.scheduleGlow(segment, autoCleared));
 
     return new Promise(resolve => {
       const timer = window.setTimeout(() => {
@@ -104,14 +115,14 @@ export class SectionCompletionAnimator {
     });
   }
 
-  private scheduleGlow(segment: GlowSegment): void {
+  private scheduleGlow(segment: GlowSegment, autoCleared: DisplayCell[]): void {
     const timer = window.setTimeout(() => {
       this.pendingTimers.delete(timer);
 
       if (!this.enabled)
         return;
 
-      this.activateCell(segment.cell, segment.variant);
+      this.activateCell(segment.cell, segment.variant, autoCleared);
 
       const clearTimer = window.setTimeout(() => {
         this.pendingTimers.delete(clearTimer);
@@ -124,14 +135,18 @@ export class SectionCompletionAnimator {
     this.pendingTimers.add(timer);
   }
 
-  private activateCell(cell: DisplayCell, variant: GlowVariant): void {
+  private activateCell(cell: DisplayCell, variant: GlowVariant, autoCleared: DisplayCell[]): void {
     cell.glowVariant = variant;
     cell.glowCycle = (cell.glowCycle ?? 0) + 1;
     cell.glowActive = true;
     this.activeCells.add(cell);
 
-    if (this.autoClearUnneededCells && this.shouldAutoClearCell(cell, variant))
+    if (this.autoClearUnneededCells && this.shouldAutoClearCell(cell, variant)) {
+      const wasCleared = cell.status === SelectionStatus.CLEARED;
       cell.status = SelectionStatus.CLEARED;
+      if (!wasCleared)
+        autoCleared.push(cell);
+    }
   }
 
   private clearCell(cell: DisplayCell, variant: GlowVariant): void {

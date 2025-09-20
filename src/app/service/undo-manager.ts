@@ -1,4 +1,4 @@
-import { GameBoard, SelectionStatus } from '../model/game-board';
+import { DisplayCell, GameBoard, SelectionStatus } from '../model/game-board';
 import { MoveHistoryDtoV1 } from '../model/saved-game-data/move-history-dto.v1';
 
 
@@ -18,15 +18,24 @@ export class UndoManager {
   }
 
 
-  pushCell(kind: "select" | "clear", cell: any, next: SelectionStatus,): void {
-    const coords = this.findCellCoordinates(cell);
-    const entry: UndoEntry = {
-      kind,
-      row: coords?.row,
-      col: coords?.col,
-      newStatus: next,
-    };
-    this.stack.push(entry);
+  pushCells(actions: UndoCellActionPayload[], options?: UndoPushOptions): void {
+    const resolved = actions
+      .map(action => this.buildUndoCellAction(action))
+      .filter((action): action is UndoCellAction => action != null);
+
+    if (!resolved.length)
+      return;
+
+    if (options?.appendToPrevious) {
+      const last = this.peekLast();
+      if (last?.kind === 'cells') {
+        last.actions.push(...resolved);
+        this.deps.undoEnabledStateChange(true);
+        return;
+      }
+    }
+
+    this.stack.push({ kind: 'cells', actions: resolved });
     this.deps.undoEnabledStateChange(true);
   }
 
@@ -44,17 +53,15 @@ export class UndoManager {
       return;
 
     switch (last.kind) {
-      case 'select':
-      case 'clear': {
-        if (last.row == null || last.col == null)
-          break;
-
+      case 'cells': {
         const gb = this.deps.getGameBoard();
-        const cell = gb.playArea[last.row]?.[last.col];
-        if (cell) {
-          cell.status = SelectionStatus.NONE;
-          cell.invalidMove = false;
-        }
+        last.actions.forEach(action => {
+          const cell = gb.playArea[action.row]?.[action.col];
+          if (cell) {
+            cell.status = SelectionStatus.NONE;
+            cell.invalidMove = false;
+          }
+        });
         break;
       }
       case 'mistake': {
@@ -69,7 +76,25 @@ export class UndoManager {
   }
 
 
-  private findCellCoordinates(target: any): { row: number; col: number } | null {
+  private peekLast(): UndoEntry | undefined {
+    return this.stack[this.stack.length - 1];
+  }
+
+
+  private buildUndoCellAction(action: UndoCellActionPayload): UndoCellAction | null {
+    const coords = this.findCellCoordinates(action.cell);
+    if (!coords)
+      return null;
+
+    return {
+      kind: action.kind,
+      row: coords.row,
+      col: coords.col,
+    };
+  }
+
+
+  private findCellCoordinates(target: DisplayCell): { row: number; col: number } | null {
     const cells = this.deps.getGameBoard().playArea;
     for (let r = 0; r < cells.length; r++) {
       const row = cells[r];
@@ -84,14 +109,35 @@ export class UndoManager {
 }
 
 
-type UndoKind = 'select' | 'clear' | 'mistake';
+type UndoEntry = UndoCellsEntry | UndoMistakeEntry;
 
 
-interface UndoEntry {
-  kind: UndoKind;
-  row?: number;
-  col?: number;
-  newStatus?: SelectionStatus;
+interface UndoCellsEntry {
+  kind: 'cells';
+  actions: UndoCellAction[];
+}
+
+
+interface UndoMistakeEntry {
+  kind: 'mistake';
+}
+
+
+interface UndoCellAction {
+  kind: 'select' | 'clear';
+  row: number;
+  col: number;
+}
+
+
+export interface UndoCellActionPayload {
+  kind: 'select' | 'clear';
+  cell: DisplayCell;
+}
+
+
+export interface UndoPushOptions {
+  appendToPrevious?: boolean;
 }
 
 

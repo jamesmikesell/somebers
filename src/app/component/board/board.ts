@@ -131,6 +131,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.sectionAnimator.setEnabled(sectionCompletionAnimationEnabled);
     let autoClearUnneededCells = this.settingsService.getAutoClearUnneededCells();
     this.sectionAnimator.setAutoComplete(autoClearUnneededCells);
+    this.sectionAnimator.setAutoClearHandler(cells => this.recordAutoClearedCells(cells));
     this.sectionAnimator.animationCompleted$
       .pipe(takeUntil(this.destroy))
       .subscribe(() => {
@@ -192,6 +193,17 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       },
       undoEnabledStateChange: (canUndo: boolean) => this.boardUiService.setCanUndo(canUndo),
     });
+  }
+
+
+  private recordAutoClearedCells(cells: DisplayCell[]): void {
+    if (!cells.length)
+      return;
+
+    this.undoManager.pushCells(
+      cells.map(cell => ({ kind: 'clear', cell, nextStatus: SelectionStatus.CLEARED })),
+      { appendToPrevious: true },
+    );
   }
 
 
@@ -272,7 +284,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     if (cell.required) {
       cell.status = SelectionStatus.SELECTED;
       this.updateMoveHistory(true)
-      this.undoManager.pushCell('select', cell, SelectionStatus.SELECTED);
+      this.undoManager.pushCells([
+        { kind: 'select', cell },
+      ]);
       this.gameBoard.recalculateSelectedHeaders();
       this.sectionAnimator.handleCellUsed(this.gameBoard, cell);
     } else {
@@ -295,7 +309,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     if (!cell.required) {
       cell.status = SelectionStatus.CLEARED;
       this.updateMoveHistory(true)
-      this.undoManager.pushCell('clear', cell, SelectionStatus.CLEARED);
+      this.undoManager.pushCells([
+        { kind: 'clear', cell },
+      ]);
     } else {
       this.updateMoveHistory(false)
       this.undoManager.pushMistake();
@@ -311,10 +327,16 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     if (rowIndex > 0 && colIndex > 0)
       return;
 
+    let autoCleared: DisplayCell[] = [];
     if (rowIndex === 0 && colIndex > 0)
-      this.gameBoard.clearColumn(colIndex - 1)
+      autoCleared = this.gameBoard.clearColumn(colIndex - 1);
     else if (colIndex === 0 && rowIndex > 0)
-      this.gameBoard.clearRow(rowIndex - 1)
+      autoCleared = this.gameBoard.clearRow(rowIndex - 1);
+
+    if (autoCleared.length)
+      this.undoManager.pushCells(
+        autoCleared.map(cell => ({ kind: 'clear', cell, nextStatus: SelectionStatus.CLEARED })),
+      );
 
     this.saveGameState();
     this.checkComplete();
