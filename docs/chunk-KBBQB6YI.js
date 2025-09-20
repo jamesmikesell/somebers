@@ -1,0 +1,1 @@
+var t=class n{constructor(r){this.seed=r}next(){return n.generateFromSeed(this.seed++)}static generateFromSeed(r){let e=r+=1831565813;return e=Math.imul(e^e>>>15,e|1),e^=e+Math.imul(e^e>>>7,e|61),((e^e>>>14)>>>0)/4294967296}};export{t as a};
