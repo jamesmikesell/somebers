@@ -85,3 +85,9 @@ button {
 .overscroll {
   margin-bottom: 50vh;
 }
+
+.transparent-backdrop,
+.transparent-backdrop .mat-mdc-dialog-surface {
+  background: transparent !important;
+  box-shadow: none !important;
+}

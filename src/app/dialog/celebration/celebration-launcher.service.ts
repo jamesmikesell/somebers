@@ -56,7 +56,8 @@ export class CelebrationLauncherService {
 
     this.dialogRef = this.dialog.open(CelebrationDialog, {
       data: finalConfig,
-      panelClass: 'celebration-dialog-panel',
+      backdropClass: 'transparent-backdrop',
+      panelClass: 'transparent-backdrop',
       hasBackdrop: false,
       autoFocus: false,
       restoreFocus: false,
