@@ -9,16 +9,17 @@ export function modelStats(best: ModelEvaluationResult<ModelJson>, trainEval?: M
   );
   if (trainEval) console.log('Training RMSE:', trainEval.metrics.rmse.toFixed(2), 'MAE:', trainEval.metrics.mae.toFixed(2), 'R2:', trainEval.metrics.r2.toFixed(3));
   console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'R2:', best.metrics.r2.toFixed(3));
-  if (trainEval && Object.keys(trainEval.perSizeRmse ?? {}).length) {
-    console.log('Training RMSE by board size:');
-    for (const size of Object.keys(trainEval.perSizeRmse).sort((a, b) => Number(a) - Number(b)))
-      console.log(`  ${size}: ${trainEval.perSizeRmse[size].toFixed(2)}`);
-  }
-  if (Object.keys(best.perSizeRmse ?? {}).length) {
-    console.log('Validation RMSE by board size:');
-    for (const size of Object.keys(best.perSizeRmse).sort((a, b) => Number(a) - Number(b)))
-      console.log(`  ${size}: ${best.perSizeRmse[size].toFixed(2)}`);
-  }
+  const logPerSize = (label: string, rmseBySize: Record<string, number>, maeBySize: Record<string, number>) => {
+    if (!rmseBySize || !Object.keys(rmseBySize).length) return;
+    console.log(`${label} metrics by board size:`);
+    for (const size of Object.keys(rmseBySize).sort((a, b) => Number(a) - Number(b))) {
+      const rmseVal = rmseBySize[size];
+      const maeVal = maeBySize?.[size];
+      console.log(`  ${size}: RMSE=${rmseVal.toFixed(2)} MAE=${maeVal != null ? maeVal.toFixed(2) : 'n/a'}`);
+    }
+  };
+  if (trainEval) logPerSize('Training', trainEval.perSizeRmse, trainEval.perSizeMae);
+  logPerSize('Validation', best.perSizeRmse, best.perSizeMae);
 }
 
 export function logWeights(best: ModelEvaluationResult<ModelJson>): void {

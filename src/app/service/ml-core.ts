@@ -311,22 +311,30 @@ export function evaluate<T extends ModelJson>(pred: (s: TrainingSample) => numbe
     console.warn('[ml-core] evaluate: metrics contain non-finite values (rmse/mae/r2) — check features and model conditioning');
   const bySize = groupBy(valid.map((v, i) => ({ v, i })), (o) => o.v.boardSize);
   const perSizeRmse: Record<string, number> = {};
+  const perSizeMae: Record<string, number> = {};
   for (const size of Object.keys(bySize)) {
     const idxs = bySize[size].map((o) => o.i);
-    perSizeRmse[size] = rmse(idxs.map((i) => yTrue[i]), idxs.map((i) => yPred[i]));
+    const yTrueSize = idxs.map((i) => yTrue[i]);
+    const yPredSize = idxs.map((i) => yPred[i]);
+    perSizeRmse[size] = rmse(yTrueSize, yPredSize);
+    perSizeMae[size] = mae(yTrueSize, yPredSize);
   }
-  return { model, metrics, perSizeRmse };
+  return { model, metrics, perSizeRmse, perSizeMae };
 }
 
 function evaluateOnArrays<T extends ModelJson>(yTrue: number[], yPred: number[], model: T, valid: TrainingSample[]): ModelEvaluationResult<T> {
   const metrics: EvaluationMetrics = { rmse: rmse(yTrue, yPred), mae: mae(yTrue, yPred), r2: r2(yTrue, yPred) };
   const bySize = groupBy(valid.map((v, i) => ({ v, i })), (o) => o.v.boardSize);
   const perSizeRmse: Record<string, number> = {};
+  const perSizeMae: Record<string, number> = {};
   for (const size of Object.keys(bySize)) {
     const idxs = bySize[size].map((o) => o.i);
-    perSizeRmse[size] = rmse(idxs.map((i) => yTrue[i]), idxs.map((i) => yPred[i]));
+    const yTrueSize = idxs.map((i) => yTrue[i]);
+    const yPredSize = idxs.map((i) => yPred[i]);
+    perSizeRmse[size] = rmse(yTrueSize, yPredSize);
+    perSizeMae[size] = mae(yTrueSize, yPredSize);
   }
-  return { model, metrics, perSizeRmse };
+  return { model, metrics, perSizeRmse, perSizeMae };
 }
 
 export interface TrainBestOptions {
@@ -460,11 +468,17 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
       model: baselineFinal,
       metrics: baselineEval.metrics,
       perSizeRmse: baselineEval.perSizeRmse,
+      perSizeMae: baselineEval.perSizeMae,
     };
     if (best.model.modelType === 'ridge') {
       const m = best.model as RidgeModelJson;
       const finalRidge = trainRidge(samples, m.lambda, m.transform, warn);
-      best = { model: finalRidge, metrics: best.metrics, perSizeRmse: best.perSizeRmse } as ModelEvaluationResult<ModelJson>;
+      best = {
+        model: finalRidge,
+        metrics: best.metrics,
+        perSizeRmse: best.perSizeRmse,
+        perSizeMae: best.perSizeMae,
+      } as ModelEvaluationResult<ModelJson>;
     }
     return { best, baseline: baselineEvalRet, ridgeCandidates: ridgeEvals };
   }

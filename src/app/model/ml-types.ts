@@ -45,5 +45,5 @@ export interface ModelEvaluationResult<TModel extends ModelJson> {
   model: TModel;
   metrics: EvaluationMetrics;
   perSizeRmse: Record<string, number>;
+  perSizeMae: Record<string, number>;
 }
-
