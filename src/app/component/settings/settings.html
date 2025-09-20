@@ -27,6 +27,18 @@
       displayed next to the board. More info about the scratch pad can be found
       in the.
     </p>
+
+    <mat-slide-toggle
+      [(ngModel)]="sectionCompletionAnimationEnabled"
+      (change)="onSectionCompletionAnimationChange($event)"
+    >
+      Enable Section Completion Animations
+    </mat-slide-toggle>
+    <p>
+      Plays a cascading glow across rows, columns, or groups when they meet
+      their target value but still have open cells, highlighting the progress
+      you've made.
+    </p>
   </section>
 
   <section class="settings-section">

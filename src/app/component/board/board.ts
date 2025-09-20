@@ -33,6 +33,9 @@ import { StatsComponent } from '../stats/stats';
 import { Title } from '../title/title';
 import { AppColors } from './colors';
 import { LayoutMode, ScratchPadLayoutController } from './scratch-pad-layout';
+import { SectionCompletionAnimator } from './section-completion-animator';
+
+const SECTION_COMPLETION_ANIMATION_STORAGE_KEY = 'sectionCompletionAnimationEnabled';
 
 @Component({
   selector: 'app-board',
@@ -75,6 +78,8 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   private statCalculator: StatCalculator;
   private timeTracker = new TimeTracker();
   private layoutController: ScratchPadLayoutController;
+  private sectionAnimator = new SectionCompletionAnimator();
+  private sectionCompletionAnimationEnabled = true;
 
   @ViewChild('boardLayout')
   set boardLayout(ref: ElementRef<HTMLElement> | undefined) {
@@ -129,6 +134,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     if (savedScratchPadVisibility !== null)
       this.scratchPadVisible = JSON.parse(savedScratchPadVisibility);
 
+    this.sectionCompletionAnimationEnabled = this.readSectionCompletionPreference();
+    this.sectionAnimator.setEnabled(this.sectionCompletionAnimationEnabled);
+
     this.layoutController = new ScratchPadLayoutController(
       this.ngZone,
       state => {
@@ -169,6 +177,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.timeTracker.destroy();
     this.saveGameState();
     this.layoutController.destroy();
+    this.sectionAnimator.dispose();
   }
 
 
@@ -264,6 +273,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       this.updateMoveHistory(true)
       this.undoManager.pushCell('select', cell, SelectionStatus.SELECTED);
       this.gameBoard.recalculateSelectedHeaders();
+      this.sectionAnimator.handleCellUsed(this.gameBoard, cell);
     } else {
       this.updateMoveHistory(false)
       this.undoManager.pushMistake();
@@ -519,6 +529,20 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   private vibrate(): void {
     if ("vibrate" in navigator) {
       navigator.vibrate([100, 50, 100]);
+    }
+  }
+
+
+  private readSectionCompletionPreference(): boolean {
+    try {
+      const stored = localStorage.getItem(SECTION_COMPLETION_ANIMATION_STORAGE_KEY);
+      if (stored === null)
+        return true;
+
+      return JSON.parse(stored) !== false;
+    } catch (err) {
+      console.error('Failed to read section completion preference', err);
+      return true;
     }
   }
 

@@ -5,6 +5,9 @@
     class="cell cell-bg cell-fade bg-muted"
     [class.hidden]="cell.hideBackground"
     [class.disable-animation]="disableAnimation"
+    [class.glow-active]="cell?.glowActive"
+    [attr.data-glow-variant]="cell?.glowVariant ?? null"
+    [attr.data-glow-cycle]="cell?.glowCycle ?? null"
     [style.--columnCount]="columnCount"
   >
     @if (!cell.hideBackground) {
@@ -24,6 +27,9 @@
     [class.processing]="cell.processing && !isMagnifiedView"
     [class.disable-animation]="disableAnimation"
     [class.shape]="shapesMode"
+    [class.glow-active]="!isMagnifiedView && cell?.glowActive"
+    [attr.data-glow-variant]="cell?.glowVariant ?? null"
+    [attr.data-glow-cycle]="cell?.glowCycle ?? null"
     [style.--columnCount]="columnCount"
   >
     <div class="corner-number">

@@ -348,6 +348,9 @@ export class DisplayCell implements GameCell {
   hideBackground = false;
   highlighted = false
   processing = false;
+  glowActive = false;
+  glowVariant?: string;
+  glowCycle = 0;
   borderTop = false;
   borderLeft = false;
   borderRight = false;

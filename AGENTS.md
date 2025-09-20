@@ -16,7 +16,7 @@ This repo hosts Somebers, an Angular SPA deployed as static pages. Follow these 
 - `npm run startExternal`: Serve on `0.0.0.0` with local SSL certs.
 - `npm run startExternalOffline`: Dev serve using production config.
 - `npm run build`: Production build (base href `/`).
-- `npm test`: Run unit tests (Karma + Jasmine).
+- `npm run testNoWatch -- [--include path/to/spec]`: Preferred command for running Karma unit tests without watch mode. If the sandbox blocks port 9876, re-run the same command with elevated permissions in the shell call so Karma can bind the port.
 - `./deploy.sh`: Stamp version, update `public/version.json`, build, push static site to `deploy` branch (`docs/`).
 
 ## Coding Style & Naming Conventions

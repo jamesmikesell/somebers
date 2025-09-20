@@ -32,6 +32,7 @@ export class SettingsComponent implements OnInit {
   devModeEnabled: boolean = false;
   shapesModeEnabled: boolean = false;
   scratchPadVisible: boolean = true;
+  sectionCompletionAnimationEnabled: boolean = true;
   AppVersion = AppVersion;
 
 
@@ -45,6 +46,10 @@ export class SettingsComponent implements OnInit {
     if (savedScratchPadVisibility !== null) {
       this.scratchPadVisible = JSON.parse(savedScratchPadVisibility);
     }
+
+    const savedSectionAnimation = localStorage.getItem('sectionCompletionAnimationEnabled');
+    if (savedSectionAnimation !== null)
+      this.sectionCompletionAnimationEnabled = JSON.parse(savedSectionAnimation);
   }
 
 
@@ -57,6 +62,12 @@ export class SettingsComponent implements OnInit {
   onScratchPadVisibleChange(event: MatSlideToggleChange): void {
     this.scratchPadVisible = event.checked;
     localStorage.setItem('scratchPadVisible', JSON.stringify(this.scratchPadVisible));
+  }
+
+
+  onSectionCompletionAnimationChange(event: MatSlideToggleChange): void {
+    this.sectionCompletionAnimationEnabled = event.checked;
+    localStorage.setItem('sectionCompletionAnimationEnabled', JSON.stringify(this.sectionCompletionAnimationEnabled));
   }
 
 
