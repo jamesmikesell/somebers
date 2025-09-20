@@ -50,7 +50,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 
     // 'deductionIterations',
     // 'unresolvedCellCountAfterDeduction',
-    // 'percentUnresolvedCellsAfterDeduction',
+    'percentUnresolvedCellsAfterDeduction',
 
   ],
 };
