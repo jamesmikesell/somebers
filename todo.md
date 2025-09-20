@@ -1,14 +1,8 @@
 # TODO
 
 - post to social media
-- abacas at bottom to help with mental math
-- display warning on UI if board can't be completed using first-principals
 - use difficulty for affirmation selection
 - track last X games against par time.
-- difficulty prediction
-  - ratio of average row value vs required total
-  - ratio of cells that are X value vs required total
-    - though, shouldn't both of the above metrics already be reflected in the #of possible correct ratio?
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
 - animation when row/col/group total has been reached, even if some cells haven't been cleared
 - Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
@@ -30,6 +24,8 @@
 
 # Done
 
+- display warning on UI if board can't be completed using first-principals
+- abacas at bottom to help with mental math
 - estimate board difficulty
 - button to re-do current in progress game
 - bug: undoing moves after a column / color group is hidden doesn't unhide their styling

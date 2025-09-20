@@ -28,12 +28,18 @@ export const FEATURE_SPEC: FeatureSpec = {
     'firstIterationGuaranteedUnusableCellCountAllMax',
     'firstIterationGuaranteedUnusableCellCountAllStd',
     // 'firstIterationGuaranteedUnusableCellCountAllSum',
+    //
+    // 'firstIterationActionableCellCountGrpMean',
+    // 'firstIterationActionableCellCountGrpMin',
+    'firstIterationActionableCellCountGrpMax',
+    'firstIterationActionableCellCountGrpStd',
+    // 'firstIterationActionableCellCountGrpSum',
     // 
-    // 'firstIterationActionableCellCountMean',
-    // 'firstIterationActionableCellCountMin', // for all row/col/grp what is the min number of cells where an guaranteed action can be performed.. on many boards there tends to be at one row/col/grp where nothing can be done
-    'firstIterationActionableCellCountMax',
-    'firstIterationActionableCellCountStd',
-    // 'firstIterationActionableCellCountSum',
+    // 'firstIterationActionableCellAllCountMean',
+    // 'firstIterationActionableCellAllCountMin', // for all row/col/grp what is the min number of cells where an guaranteed action can be performed.. on many boards there tends to be at one row/col/grp where nothing can be done
+    'firstIterationActionableCellAllCountMax',
+    'firstIterationActionableCellAllCountStd',
+    // 'firstIterationActionableCellAllCountSum',
     //
     // 'requiredSumAllMean',
     // 'requiredSumAllMin',
@@ -101,10 +107,11 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
   const firstIterationGuaranteedUnusableCellCountGrp = stats.groups.map(s => s.firstIterationGuaranteedUnusableCellCount);
   const firstIterationGuaranteedUnusableCellCountAllAgg = agg([...firstIterationGuaranteedUnusableCellCountRow, ...firstIterationGuaranteedUnusableCellCountCol, ...firstIterationGuaranteedUnusableCellCountGrp]);
 
-  const firstIterationActionableCellCountRow = stats.rows.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationActionableCellCountCol = stats.columns.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
+  const firstIterationActionableCellAllCountRow = stats.rows.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
+  const firstIterationActionableCellAllCountCol = stats.columns.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
   const firstIterationActionableCellCountGrp = stats.groups.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationActionableCellCountAllAgg = agg([...firstIterationActionableCellCountRow, ...firstIterationActionableCellCountCol, ...firstIterationActionableCellCountGrp])
+  const firstIterationActionableCellAllCountAllAgg = agg([...firstIterationActionableCellAllCountRow, ...firstIterationActionableCellAllCountCol, ...firstIterationActionableCellCountGrp])
+  const firstIterationActionableCellAllCountGroupAgg = agg([...firstIterationActionableCellCountGrp])
 
   const requiredSumRow = stats.rows.map(s => s.requiredSum);
   const requiredSumCol = stats.columns.map(s => s.requiredSum);
@@ -135,11 +142,17 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     firstIterationGuaranteedUnusableCellCountAllStd: firstIterationGuaranteedUnusableCellCountAllAgg.std,
     firstIterationGuaranteedUnusableCellCountAllSum: firstIterationGuaranteedUnusableCellCountAllAgg.sum,
 
-    firstIterationActionableCellCountMean: firstIterationActionableCellCountAllAgg.mean,
-    firstIterationActionableCellCountMin: firstIterationActionableCellCountAllAgg.min,
-    firstIterationActionableCellCountMax: firstIterationActionableCellCountAllAgg.max,
-    firstIterationActionableCellCountStd: firstIterationActionableCellCountAllAgg.std,
-    firstIterationActionableCellCountSum: firstIterationActionableCellCountAllAgg.sum,
+    firstIterationActionableCellAllCountMean: firstIterationActionableCellAllCountAllAgg.mean,
+    firstIterationActionableCellAllCountMin: firstIterationActionableCellAllCountAllAgg.min,
+    firstIterationActionableCellAllCountMax: firstIterationActionableCellAllCountAllAgg.max,
+    firstIterationActionableCellAllCountStd: firstIterationActionableCellAllCountAllAgg.std,
+    firstIterationActionableCellAllCountSum: firstIterationActionableCellAllCountAllAgg.sum,
+
+    firstIterationActionableCellCountGrpMean: firstIterationActionableCellAllCountGroupAgg.mean,
+    firstIterationActionableCellCountGrpMin: firstIterationActionableCellAllCountGroupAgg.min,
+    firstIterationActionableCellCountGrpMax: firstIterationActionableCellAllCountGroupAgg.max,
+    firstIterationActionableCellCountGrpStd: firstIterationActionableCellAllCountGroupAgg.std,
+    firstIterationActionableCellCountGrpSum: firstIterationActionableCellAllCountGroupAgg.sum,
 
     requiredSumAllMean: requiredSumAllAgg.mean,
     requiredSumAllMin: requiredSumAllAgg.min,
@@ -199,11 +212,17 @@ export interface GameStatFeatures {
   firstIterationGuaranteedUnusableCellCountAllStd: number;
   firstIterationGuaranteedUnusableCellCountAllSum: number;
   //
-  firstIterationActionableCellCountMean: number;
-  firstIterationActionableCellCountMin: number;
-  firstIterationActionableCellCountMax: number;
-  firstIterationActionableCellCountStd: number;
-  firstIterationActionableCellCountSum: number;
+  firstIterationActionableCellAllCountMean: number;
+  firstIterationActionableCellAllCountMin: number;
+  firstIterationActionableCellAllCountMax: number;
+  firstIterationActionableCellAllCountStd: number;
+  firstIterationActionableCellAllCountSum: number;
+  //
+  firstIterationActionableCellCountGrpMean: number;
+  firstIterationActionableCellCountGrpMin: number;
+  firstIterationActionableCellCountGrpMax: number;
+  firstIterationActionableCellCountGrpStd: number;
+  firstIterationActionableCellCountGrpSum: number;
   //
   requiredSumAllMean: number;
   requiredSumAllMin: number;
