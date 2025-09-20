@@ -39,6 +39,17 @@
       their target value but still have open cells, highlighting the progress
       you've made.
     </p>
+
+    <mat-slide-toggle
+      [(ngModel)]="autoClearCellsEnabled"
+      (change)="onAutoClearCellsChange($event)"
+    >
+      Auto Clear Cells
+    </mat-slide-toggle>
+    <p>
+      Unusable cells in completed sections will be automatically cleared and
+      removed.
+    </p>
   </section>
 
   <section class="settings-section">

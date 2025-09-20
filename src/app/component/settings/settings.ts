@@ -34,6 +34,7 @@ export class SettingsComponent implements OnInit {
   shapesModeEnabled: boolean = false;
   scratchPadVisible: boolean = true;
   sectionCompletionAnimationEnabled: boolean = true;
+  autoClearCellsEnabled: boolean = false;
   AppVersion = AppVersion;
 
   constructor(private settingsService: SettingsService) {}
@@ -42,6 +43,7 @@ export class SettingsComponent implements OnInit {
     this.shapesModeEnabled = this.settingsService.getShapesModeEnabled();
     this.scratchPadVisible = this.settingsService.getScratchPadVisible();
     this.sectionCompletionAnimationEnabled = this.settingsService.getSectionCompletionAnimationEnabled();
+    this.autoClearCellsEnabled = this.settingsService.getAutoClearUnneededCells();
   }
 
 
@@ -60,6 +62,12 @@ export class SettingsComponent implements OnInit {
   onSectionCompletionAnimationChange(event: MatSlideToggleChange): void {
     this.sectionCompletionAnimationEnabled = event.checked;
     this.settingsService.setSectionCompletionAnimationEnabled(this.sectionCompletionAnimationEnabled);
+  }
+
+
+  onAutoClearCellsChange(event: MatSlideToggleChange): void {
+    this.autoClearCellsEnabled = event.checked;
+    this.settingsService.setAutoClearUnneededCells(this.autoClearCellsEnabled);
   }
 
 

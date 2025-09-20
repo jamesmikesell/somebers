@@ -9,6 +9,7 @@ export class SettingsService {
     shapesModeEnabled: 'shapesModeEnabled',
     scratchPadVisible: 'scratchPadVisible',
     sectionCompletionAnimationEnabled: 'sectionCompletionAnimationEnabled',
+    autoClearUnneededCells: 'autoClearUnneededCells',
     bestStreakDisplay: 'bestStreakDisplay',
     statsSecondaryDisplay: 'statsSecondaryDisplay',
   } as const;
@@ -47,6 +48,14 @@ export class SettingsService {
 
   setSectionCompletionAnimationEnabled(enabled: boolean): void {
     this.setBoolean(this.storageKeys.sectionCompletionAnimationEnabled, enabled);
+  }
+
+  getAutoClearUnneededCells(): boolean {
+    return this.getBoolean(this.storageKeys.autoClearUnneededCells, false);
+  }
+
+  setAutoClearUnneededCells(enabled: boolean): void {
+    this.setBoolean(this.storageKeys.autoClearUnneededCells, enabled);
   }
 
   getBestStreakDisplay(): number {

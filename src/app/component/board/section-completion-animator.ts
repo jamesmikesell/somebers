@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
 
 const CELL_CASCADE_DURATION = 200; // ms until last standard cell starts its glow
@@ -35,10 +36,18 @@ interface CellWithIndex {
 }
 
 export class SectionCompletionAnimator {
+
   private enabled = true;
+  private autoClearUnneededCells = false;
   private sequence = Promise.resolve();
   private readonly pendingTimers = new Set<number>();
   private readonly activeCells = new Set<DisplayCell>();
+  private readonly animationCompletedSubject = new Subject<void>();
+  readonly animationCompleted$ = this.animationCompletedSubject.asObservable();
+
+  setAutoComplete(autoClearUnneededCells: boolean) {
+    this.autoClearUnneededCells = autoClearUnneededCells;
+  }
 
   setEnabled(enabled: boolean): void {
     this.enabled = enabled;
@@ -49,6 +58,7 @@ export class SectionCompletionAnimator {
 
   dispose(): void {
     this.resetAll();
+    this.animationCompletedSubject.complete();
   }
 
   handleCellUsed(board: GameBoard, cell: DisplayCell): void {
@@ -63,7 +73,12 @@ export class SectionCompletionAnimator {
     if (!sections.length)
       return;
 
-    this.sequence = this.sequence.then(() => this.runInSeries(sections));
+    this.sequence = this.sequence
+      .then(() => this.runInSeries(sections))
+      .then(() => {
+        if (!this.animationCompletedSubject.closed)
+          this.animationCompletedSubject.next();
+      });
   }
 
   private runInSeries(sections: SectionSchedule[]): Promise<void> {
@@ -114,6 +129,9 @@ export class SectionCompletionAnimator {
     cell.glowCycle = (cell.glowCycle ?? 0) + 1;
     cell.glowActive = true;
     this.activeCells.add(cell);
+
+    if (this.autoClearUnneededCells && this.shouldAutoClearCell(cell, variant))
+      cell.status = SelectionStatus.CLEARED;
   }
 
   private clearCell(cell: DisplayCell, variant: GlowVariant): void {
@@ -135,6 +153,16 @@ export class SectionCompletionAnimator {
 
     this.activeCells.clear();
     this.sequence = Promise.resolve();
+  }
+
+  private shouldAutoClearCell(cell: DisplayCell, variant: GlowVariant): boolean {
+    if (cell.required)
+      return false;
+
+    if (cell.status === SelectionStatus.CLEARED)
+      return false;
+
+    return variant === 'row' || variant === 'column' || variant === 'group';
   }
 
   private findCellLocation(board: GameBoard, target: DisplayCell): CellLocation | null {
@@ -261,8 +289,13 @@ export class SectionCompletionAnimator {
       return null;
 
     const headerCandidate = this.findGroupHeader(groupCells);
-    const nonHeaderCells = groupCells.filter(item => item !== headerCandidate);
-    const { cells: orderedCells, delays } = this.orderGroupCells(nonHeaderCells, headerCandidate);
+    const includeHeaderInClearSequence = this.autoClearUnneededCells
+      && this.shouldAutoClearCell(headerCandidate.cell, 'group');
+    const orderingCandidates = includeHeaderInClearSequence
+      ? [...groupCells]
+      : groupCells.filter(item => item !== headerCandidate);
+
+    const { cells: orderedCells, delays } = this.orderGroupCells(orderingCandidates, headerCandidate);
 
     const schedule = this.buildSectionSchedule(
       orderedCells,
