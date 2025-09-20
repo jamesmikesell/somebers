@@ -19,8 +19,8 @@ export class App implements OnInit, OnDestroy {
     { mode: 'light', cssScheme: 'light', label: 'Theme (Light)', icon: 'light_mode' },
     { mode: 'dark', cssScheme: 'dark', label: 'Theme (Dark)', icon: 'dark_mode' }
   ];
-  currentModeIndex = 0;
-  get currentColorMode() { return this.colorModes[this.currentModeIndex] }
+  currentColorModeIndex = 0;
+  get currentColorMode() { return this.colorModes[this.currentColorModeIndex] }
   boardVisible = false;
   canUndo = false;
   showStartOver = false;
@@ -35,11 +35,11 @@ export class App implements OnInit, OnDestroy {
     _pwaInstallService: PwaInstallService,
   ) {
     versionCheckService.startVersionCheck();
-    const savedMode = localStorage.getItem('colorMode');
-    if (savedMode) {
-      const savedModeIndex = this.colorModes.findIndex(m => m.mode === savedMode);
-      if (savedModeIndex > -1) {
-        this.currentModeIndex = savedModeIndex;
+    const colorMode = localStorage.getItem('colorMode');
+    if (colorMode) {
+      const colorModeIndex = this.colorModes.findIndex(m => m.mode === colorMode);
+      if (colorModeIndex > -1) {
+        this.currentColorModeIndex = colorModeIndex;
       }
     }
 
@@ -68,7 +68,7 @@ export class App implements OnInit, OnDestroy {
 
 
   toggleColorMode() {
-    this.currentModeIndex = (this.currentModeIndex + 1) % this.colorModes.length;
+    this.currentColorModeIndex = (this.currentColorModeIndex + 1) % this.colorModes.length;
     this.setColorMode();
     localStorage.setItem('colorMode', this.currentColorMode.mode);
   }
