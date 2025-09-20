@@ -1,11 +1,10 @@
 # TODO
 
+- undo button doesn't undo auto cleared cells / cells cleared by double click of header
 - post to social media
 - use difficulty for affirmation selection
 - track last X games against par time.
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
-- animation when row/col/group total has been reached, even if some cells haven't been cleared
-- Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
 - Positive feedback when breaking previous records 
 - documentation note on cheating
 - multi-player: pvp
@@ -24,6 +23,8 @@
 
 # Done
 
+- animation when row/col/group total has been reached, even if some cells haven't been cleared
+- Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
 - display warning on UI if board can't be completed using first-principals
 - abacas at bottom to help with mental math
 - estimate board difficulty
