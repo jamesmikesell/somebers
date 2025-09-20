@@ -30,9 +30,9 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'firstIterationGuaranteedUnusableCellCountAllSum',
     //
     // 'firstIterationActionableCellCountGrpMean',
-    // 'firstIterationActionableCellCountGrpMin',
+    'firstIterationActionableCellCountGrpMin',
     'firstIterationActionableCellCountGrpMax',
-    'firstIterationActionableCellCountGrpStd',
+    // 'firstIterationActionableCellCountGrpStd',
     // 'firstIterationActionableCellCountGrpSum',
     // 
     // 'firstIterationActionableCellAllCountMean',
