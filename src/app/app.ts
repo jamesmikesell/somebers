@@ -4,6 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { MATERIAL_IMPORTS } from './material-imports';
 import { BoardUiService } from './service/board-ui.service';
 import { PwaInstallService } from './service/pwa-install.service';
+import { ColorModeSetting, SettingsService } from './service/settings.service';
 import { VersionCheckService } from './service/version-check.service';
 
 @Component({
@@ -33,15 +34,13 @@ export class App implements OnInit, OnDestroy {
     public boardUiService: BoardUiService,
     // Force early construction so it can capture beforeinstallprompt events
     _pwaInstallService: PwaInstallService,
+    private settingsService: SettingsService,
   ) {
     versionCheckService.startVersionCheck();
-    const colorMode = localStorage.getItem('colorMode');
-    if (colorMode) {
-      const colorModeIndex = this.colorModes.findIndex(m => m.mode === colorMode);
-      if (colorModeIndex > -1) {
-        this.currentColorModeIndex = colorModeIndex;
-      }
-    }
+    const colorMode = this.settingsService.getColorMode();
+    const colorModeIndex = this.colorModes.findIndex(m => m.mode === colorMode);
+    if (colorModeIndex > -1)
+      this.currentColorModeIndex = colorModeIndex;
 
     this.setColorMode();
   }
@@ -70,7 +69,7 @@ export class App implements OnInit, OnDestroy {
   toggleColorMode() {
     this.currentColorModeIndex = (this.currentColorModeIndex + 1) % this.colorModes.length;
     this.setColorMode();
-    localStorage.setItem('colorMode', this.currentColorMode.mode);
+    this.settingsService.setColorMode(this.currentColorMode.mode);
   }
 
 
@@ -103,7 +102,7 @@ export class App implements OnInit, OnDestroy {
 
 
 interface ColorMode {
-  mode: "light" | "dark" | "auto";
+  mode: ColorModeSetting;
   cssScheme: "light" | "dark" | "light dark";
   label: string;
   icon: string;

@@ -1,6 +1,7 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { DurationPipe } from '../../pipe/duration.pipe';
+import { SettingsService } from '../../service/settings.service';
 import { GameStats, StreakPeriod } from '../../service/stat-calculator';
 
 @Component({
@@ -35,6 +36,8 @@ export class StatsComponent implements OnInit {
 
 
   private displayedStreakIndex = 0;
+
+  constructor(private settingsService: SettingsService) {}
 
 
   private updateStats(val: GameStats): void {
@@ -105,15 +108,15 @@ export class StatsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.displayedStreakIndex = +(localStorage.getItem('bestStreakDisplay') ?? 0);
-    this.secondaryDisplayIndex = +(localStorage.getItem('statsSecondaryDisplay') ?? 0) % 2;
+    this.displayedStreakIndex = this.settingsService.getBestStreakDisplay();
+    this.secondaryDisplayIndex = this.settingsService.getStatsSecondaryDisplay();
     this.updateDisplayedStreak();
   }
 
 
   cycleBestStreakWindow(): void {
     this.displayedStreakIndex = (this.displayedStreakIndex + 1) % this.currentStats.streaks.length;
-    localStorage.setItem('bestStreakDisplay', this.displayedStreakIndex.toString());
+    this.settingsService.setBestStreakDisplay(this.displayedStreakIndex);
     this.updateDisplayedStreak();
   }
 
@@ -127,7 +130,7 @@ export class StatsComponent implements OnInit {
 
   cycleSecondaryMetric(): void {
     this.secondaryDisplayIndex = (this.secondaryDisplayIndex + 1) % 2;
-    localStorage.setItem('statsSecondaryDisplay', this.secondaryDisplayIndex.toString());
+    this.settingsService.setStatsSecondaryDisplay(this.secondaryDisplayIndex);
   }
 
 }

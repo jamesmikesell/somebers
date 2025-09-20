@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 import { openDB } from 'idb';
 import { AppVersion } from '../../app-version';
 import { IdbService } from '../../service/idb.service';
+import { SettingsService } from '../../service/settings.service';
 import { InstallComponent } from '../install/install.component';
 
 @Component({
@@ -35,39 +36,30 @@ export class SettingsComponent implements OnInit {
   sectionCompletionAnimationEnabled: boolean = true;
   AppVersion = AppVersion;
 
+  constructor(private settingsService: SettingsService) {}
 
   ngOnInit(): void {
-    const savedShapesMode = localStorage.getItem('shapesModeEnabled');
-    if (savedShapesMode !== null) {
-      this.shapesModeEnabled = JSON.parse(savedShapesMode);
-    }
-
-    const savedScratchPadVisibility = localStorage.getItem('scratchPadVisible');
-    if (savedScratchPadVisibility !== null) {
-      this.scratchPadVisible = JSON.parse(savedScratchPadVisibility);
-    }
-
-    const savedSectionAnimation = localStorage.getItem('sectionCompletionAnimationEnabled');
-    if (savedSectionAnimation !== null)
-      this.sectionCompletionAnimationEnabled = JSON.parse(savedSectionAnimation);
+    this.shapesModeEnabled = this.settingsService.getShapesModeEnabled();
+    this.scratchPadVisible = this.settingsService.getScratchPadVisible();
+    this.sectionCompletionAnimationEnabled = this.settingsService.getSectionCompletionAnimationEnabled();
   }
 
 
   onShapesModeChange(event: MatSlideToggleChange): void {
     this.shapesModeEnabled = event.checked;
-    localStorage.setItem('shapesModeEnabled', JSON.stringify(this.shapesModeEnabled));
+    this.settingsService.setShapesModeEnabled(this.shapesModeEnabled);
   }
 
 
   onScratchPadVisibleChange(event: MatSlideToggleChange): void {
     this.scratchPadVisible = event.checked;
-    localStorage.setItem('scratchPadVisible', JSON.stringify(this.scratchPadVisible));
+    this.settingsService.setScratchPadVisible(this.scratchPadVisible);
   }
 
 
   onSectionCompletionAnimationChange(event: MatSlideToggleChange): void {
     this.sectionCompletionAnimationEnabled = event.checked;
-    localStorage.setItem('sectionCompletionAnimationEnabled', JSON.stringify(this.sectionCompletionAnimationEnabled));
+    this.settingsService.setSectionCompletionAnimationEnabled(this.sectionCompletionAnimationEnabled);
   }
 
 
@@ -90,7 +82,7 @@ export class SettingsComponent implements OnInit {
   async deleteAllData(): Promise<void> {
     if (this.canDelete) {
       try {
-        localStorage.clear();
+        this.settingsService.clearAllSettings();
       } catch (e) {
         console.error(e)
       }

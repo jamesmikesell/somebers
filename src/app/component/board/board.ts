@@ -22,6 +22,7 @@ import { BoardUiService } from '../../service/board-ui.service';
 import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
 import { generateGameBoard } from '../../service/gameboard-generator';
 import { SaveDataService } from '../../service/save-data.service';
+import { SettingsService } from '../../service/settings.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { TimeTracker } from '../../service/time-tracker';
 import { UndoManager } from '../../service/undo-manager';
@@ -34,8 +35,6 @@ import { Title } from '../title/title';
 import { AppColors } from './colors';
 import { LayoutMode, ScratchPadLayoutController } from './scratch-pad-layout';
 import { SectionCompletionAnimator } from './section-completion-animator';
-
-const SECTION_COMPLETION_ANIMATION_STORAGE_KEY = 'sectionCompletionAnimationEnabled';
 
 @Component({
   selector: 'app-board',
@@ -119,6 +118,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     private colorOptimizer: ColorGridOptimizerService,
     private confirmStartOverLauncher: ConfirmStartOverDialogLauncher,
     private ngZone: NgZone,
+    private settingsService: SettingsService,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -126,15 +126,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.statCalculator = new StatCalculator(this.previousGames);
     this.configureUndo();
 
-    const savedShapesMode = localStorage.getItem('shapesModeEnabled');
-    if (savedShapesMode !== null)
-      this.shapesMode = JSON.parse(savedShapesMode);
-
-    const savedScratchPadVisibility = localStorage.getItem('scratchPadVisible');
-    if (savedScratchPadVisibility !== null)
-      this.scratchPadVisible = JSON.parse(savedScratchPadVisibility);
-
-    this.sectionCompletionAnimationEnabled = this.readSectionCompletionPreference();
+    this.shapesMode = this.settingsService.getShapesModeEnabled();
+    this.scratchPadVisible = this.settingsService.getScratchPadVisible();
+    this.sectionCompletionAnimationEnabled = this.settingsService.getSectionCompletionAnimationEnabled();
     this.sectionAnimator.setEnabled(this.sectionCompletionAnimationEnabled);
 
     this.layoutController = new ScratchPadLayoutController(
@@ -532,18 +526,5 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-
-  private readSectionCompletionPreference(): boolean {
-    try {
-      const stored = localStorage.getItem(SECTION_COMPLETION_ANIMATION_STORAGE_KEY);
-      if (stored === null)
-        return true;
-
-      return JSON.parse(stored) !== false;
-    } catch (err) {
-      console.error('Failed to read section completion preference', err);
-      return true;
-    }
-  }
 
 }
