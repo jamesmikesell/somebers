@@ -228,19 +228,24 @@
   animation: wiggle 0.8s ease-in-out;
 }
 
-@keyframes spinDashed {
-  to {
-    transform: rotate(360deg);
+@keyframes shrinkDashed {
+  0% {
+    transform: scale(2);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }
 
 .processing::after {
   content: '';
   position: absolute;
-  inset: -6px;
-  border: 3px dashed light-dark(rgb(0, 106, 255), rgba(0, 200, 255, 0.8));
+  inset: calc(10cqmin / var(--columnCount));
+  border: calc(3cqmin / var(--columnCount)) dashed light-dark(rgb(0, 106, 255), rgba(0, 200, 255, 0.8));
   border-radius: 50%;
-  animation: spinDashed 4s ease-in-out infinite;
+  transform-origin: center;
+  animation: shrinkDashed 1s ease-out forwards;
   z-index: 1;
 }
 
