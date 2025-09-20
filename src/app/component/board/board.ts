@@ -78,7 +78,6 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   private timeTracker = new TimeTracker();
   private layoutController: ScratchPadLayoutController;
   private sectionAnimator = new SectionCompletionAnimator();
-  private sectionCompletionAnimationEnabled = true;
 
   @ViewChild('boardLayout')
   set boardLayout(ref: ElementRef<HTMLElement> | undefined) {
@@ -128,8 +127,16 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
     this.shapesMode = this.settingsService.getShapesModeEnabled();
     this.scratchPadVisible = this.settingsService.getScratchPadVisible();
-    this.sectionCompletionAnimationEnabled = this.settingsService.getSectionCompletionAnimationEnabled();
-    this.sectionAnimator.setEnabled(this.sectionCompletionAnimationEnabled);
+    let sectionCompletionAnimationEnabled = this.settingsService.getSectionCompletionAnimationEnabled();
+    this.sectionAnimator.setEnabled(sectionCompletionAnimationEnabled);
+    let autoClearUnneededCells = this.settingsService.getAutoClearUnneededCells();
+    this.sectionAnimator.setAutoComplete(autoClearUnneededCells);
+    this.sectionAnimator.animationCompleted$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        this.saveGameState();
+        this.checkComplete();
+      });
 
     this.layoutController = new ScratchPadLayoutController(
       this.ngZone,
