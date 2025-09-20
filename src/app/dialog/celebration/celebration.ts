@@ -1,70 +1,70 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { CelebrationConfig, CelebrationService } from '../../service/celebration';
-
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CelebrationConfig } from './celebration-launcher.service';
 
 @Component({
-  selector: 'app-celebration',
+  standalone: true,
   imports: [],
   templateUrl: './celebration.html',
   styleUrl: './celebration.scss',
   encapsulation: ViewEncapsulation.ShadowDom,
 })
-export class CelebrationComponent implements OnInit, OnDestroy {
+export class CelebrationDialog implements AfterViewInit, OnDestroy {
+
   @ViewChild('overlay', { static: false }) overlay!: ElementRef<HTMLDivElement>;
 
-  isActive = false;
-  config: CelebrationConfig | null = null;
+  isActive = true;
+  config: CelebrationConfig;
 
-  private subscriptions = new Subscription();
   private animationIds: number[] = [];
+  private autoCloseId: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private celebrationService: CelebrationService) { }
 
-  ngOnInit() {
-    this.subscriptions.add(
-      this.celebrationService.isActive$.subscribe(active => {
-        this.isActive = active;
-        if (active) {
-          setTimeout(() => this.startAnimations(), 100); // Small delay for DOM
-        } else {
-          this.stopAnimations();
-        }
-      })
-    );
-
-    this.subscriptions.add(
-      this.celebrationService.config$.subscribe(config => {
-        this.config = config;
-      })
-    );
-
-    // Listen for ESC key
-    document.addEventListener('keydown', this.handleKeydown.bind(this));
+  constructor(
+    private dialogRef: MatDialogRef<CelebrationDialog, void>,
+    @Inject(MAT_DIALOG_DATA) config: CelebrationConfig,
+  ) {
+    this.config = config;
   }
 
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
-    this.stopAnimations();
-    document.removeEventListener('keydown', this.handleKeydown.bind(this));
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.startAnimations(), 100);
+    const duration = this.config.duration ?? 8000;
+    this.autoCloseId = setTimeout(() => this.close(), duration);
   }
 
-  close() {
-    this.celebrationService.hide();
-  }
 
-  private handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape' && this.isActive) {
-      this.close();
+  ngOnDestroy(): void {
+    this.isActive = false;
+    if (this.autoCloseId !== null) {
+      clearTimeout(this.autoCloseId);
+      this.autoCloseId = null;
     }
+    this.stopAnimations();
   }
 
-  private startAnimations() {
-    if (!this.overlay?.nativeElement) return;
+
+  close(): void {
+    if (!this.isActive) return;
+
+    this.isActive = false;
+    if (this.autoCloseId !== null) {
+      clearTimeout(this.autoCloseId);
+      this.autoCloseId = null;
+    }
+    this.stopAnimations();
+    this.dialogRef.close();
+  }
+
+
+  private startAnimations(): void {
+    if (!this.overlay?.nativeElement || !this.isActive) return;
 
     this.createConfetti();
     this.createFireworks();
   }
+
 
   private stopAnimations() {
     // Clear all animations
@@ -77,6 +77,7 @@ export class CelebrationComponent implements OnInit, OnDestroy {
       elements.forEach(el => el.remove());
     }
   }
+
 
   private createConfetti() {
     const overlay = this.overlay.nativeElement;
@@ -105,6 +106,7 @@ export class CelebrationComponent implements OnInit, OnDestroy {
 
     addConfetti();
   }
+
 
   private animateConfetti(confetti: HTMLElement) {
     const startTime = performance.now();
@@ -137,6 +139,7 @@ export class CelebrationComponent implements OnInit, OnDestroy {
     this.animationIds.push(id);
   }
 
+
   private createFireworks() {
     const overlay = this.overlay.nativeElement;
 
@@ -166,6 +169,7 @@ export class CelebrationComponent implements OnInit, OnDestroy {
       setTimeout(createFirework, i * 200);
     }
   }
+
 
   private animateFireworkSpark(spark: HTMLElement, centerX: number, centerY: number, index: number) {
     const angle = (index / 12) * Math.PI * 2;
@@ -199,10 +203,4 @@ export class CelebrationComponent implements OnInit, OnDestroy {
     const id = requestAnimationFrame(animate);
     this.animationIds.push(id);
   }
-}
-
-
-
-interface AnimationFrame {
-  id: number;
 }

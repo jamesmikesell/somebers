@@ -9,15 +9,16 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { filter, first, pairwise, Subject, takeUntil } from 'rxjs';
+import { filter, first, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
+import { CelebrationLauncherService } from '../../dialog/celebration/celebration-launcher.service';
+import { ConfirmStartOverDialogLauncher } from '../../dialog/confirm-start-over/confirm-start-over-dialog';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
 import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progress.v3';
 import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v1';
 import { BoardUiService } from '../../service/board-ui.service';
-import { CelebrationService } from '../../service/celebration';
 import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
 import { generateGameBoard } from '../../service/gameboard-generator';
 import { SaveDataService } from '../../service/save-data.service';
@@ -25,15 +26,13 @@ import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { TimeTracker } from '../../service/time-tracker';
 import { UndoManager } from '../../service/undo-manager';
 import { WakeLock } from '../../service/wake-lock';
-import { AFFIRMATIONS } from '../celebration/affirmations';
 import { CellComponent } from '../cell/cell.component';
-import { ConfirmStartOverDialogLauncher } from '../confirm-start-over/confirm-start-over-dialog';
 import { EstimatedDifficultyComponent } from '../estimated-difficulty/estimated-difficulty';
+import { ScratchPadComponent } from '../scratch-pad/scratch-pad';
 import { StatsComponent } from '../stats/stats';
 import { Title } from '../title/title';
-import { ScratchPadComponent } from '../scratch-pad/scratch-pad';
-import { LayoutMode, ScratchPadLayoutController } from './scratch-pad-layout';
 import { AppColors } from './colors';
+import { LayoutMode, ScratchPadLayoutController } from './scratch-pad-layout';
 
 @Component({
   selector: 'app-board',
@@ -108,7 +107,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   }
 
   constructor(
-    private celebrationService: CelebrationService,
+    private celebrationLauncherService: CelebrationLauncherService,
     private saveDataService: SaveDataService,
     private boardUiService: BoardUiService,
     private wakeLock: WakeLock,
@@ -505,42 +504,14 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       this.undoManager.clear();
       const boardSize = this.gameBoard.playArea.length;
       const mistakes = this.stats.mistakesCurrentBoard;
-      const affirmationsCount = AFFIRMATIONS.length;
-
-      // Normalize board size (5-9) to a 0-1 range
-      const normalizedBoardSize = Math.max(0, Math.min(1, (boardSize - 5) / 4));
-
-      // Normalize mistakes. More mistakes on a larger board is less of a factor.
-      // Making mistakes on more than 5% of cells is considered max penalty.
-      const mistakeFactor = Math.min(1, mistakes / (boardSize * boardSize * 0.05));
-
-      // Bias: 0 for "bad" performance (high mistakes, small board), 1 for "good" performance (low mistakes, large board)
-      const bias = (normalizedBoardSize * 0.2) + ((1 - mistakeFactor) * 0.8);
-
-      // Convert bias to a power for Math.pow.
-      // A power > 1 biases random numbers towards 0 (start of the list).
-      // A power < 1 biases random numbers towards 1 (end of the list).
-      const power = Math.pow(4, 1 - 2 * bias);
-
-      const randomValue = Math.pow(Math.random(), power);
-      const randomIndex = Math.max(0, Math.min(affirmationsCount - 1, Math.floor(randomValue * affirmationsCount)));
-
-      let affirmation = AFFIRMATIONS[randomIndex];
-
-      this.celebrationService.show({
-        title: affirmation.title,
-        subtitle: affirmation.subTitle,
-      });
-
-      this.celebrationService.isActive$.pipe(
-        pairwise(),
-        first(([wasActive, isActive]) => wasActive && !isActive),
-      ).subscribe(() => {
-        setTimeout(() => {
-          this.nextGameButtonState = "show-animated";
-        }, 250);
-      });
-
+      
+      this.celebrationLauncherService.openAutoPickMessage(mistakes, boardSize)
+        .pipe(takeUntil(this.destroy))
+        .subscribe(() => {
+          setTimeout(() => {
+            this.nextGameButtonState = "show-animated";
+          }, 250);
+        });
     }
   }
 

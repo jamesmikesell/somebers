@@ -4,7 +4,6 @@ import { MATERIAL_IMPORTS } from '../../material-imports';
 import { map, Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-confirm-start-over-dialog',
   standalone: true,
   imports: [...MATERIAL_IMPORTS],
   templateUrl: './confirm-start-over-dialog.html',
