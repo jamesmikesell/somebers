@@ -128,6 +128,35 @@ export class GameBoard {
   }
 
 
+  clearColumn(colIndex: number): void {
+    const columnCells = this.playArea.map(row => row[colIndex])
+    if (this.areRequiredCellsSelected(columnCells)) {
+      columnCells.forEach(cell => {
+        if (!cell.required)
+          cell.status = SelectionStatus.CLEARED;
+      });
+    }
+  }
+
+  
+  clearRow(rowIndex: number): void {
+    const row = this.playArea[rowIndex];
+    if (this.areRequiredCellsSelected(row)) {
+      row.forEach(cell => {
+        if (!cell.required)
+          cell.status = SelectionStatus.CLEARED;
+      });
+    }
+  }
+
+
+  private areRequiredCellsSelected(cells: DisplayCell[]): boolean {
+    return cells
+      .filter(cell => cell.required)
+      .every(cell => cell.status === SelectionStatus.SELECTED);
+  }
+
+
   private fixUnsolvableRectangle(rect: UnsolvableRect): void {
     const rectCells = [
       this.playArea[rect.r1][rect.c1],

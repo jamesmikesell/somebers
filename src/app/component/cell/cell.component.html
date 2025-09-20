@@ -51,6 +51,7 @@
 } @else if (displayType === "header") {
   <div
     appGesture
+    (doubleTap)="headerDoubleTapped.emit()"
     (longPress)="isMagnified = true"
     (allGesturesComplete)="gestureComplete()"
   >

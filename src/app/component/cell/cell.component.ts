@@ -27,6 +27,7 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Output() used = new EventEmitter<DisplayCell>();
   @Output() cleared = new EventEmitter<DisplayCell>();
+  @Output() headerDoubleTapped = new EventEmitter<void>();
 
 
   @ViewChild('positionFinder', { static: false }) positionFinder!: ElementRef<HTMLDivElement>;

@@ -300,6 +300,20 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
+  async onHeaderDoubleTap(rowIndex: number, colIndex: number): Promise<void> {
+    if (rowIndex > 0 && colIndex > 0)
+      return;
+
+    if (rowIndex === 0 && colIndex > 0)
+      this.gameBoard.clearColumn(colIndex - 1)
+    else if (colIndex === 0 && rowIndex > 0)
+      this.gameBoard.clearRow(rowIndex - 1)
+
+    this.saveGameState();
+    this.checkComplete();
+  }
+
+
   async playGameAgain(): Promise<void> {
     this.previousGames.delete(this.gameNumber);
     await this.updateGameNumber(this.gameNumber);
@@ -508,7 +522,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       this.undoManager.clear();
       const boardSize = this.gameBoard.playArea.length;
       const mistakes = this.stats.mistakesCurrentBoard;
-      
+
       this.celebrationLauncherService.openAutoPickMessage(mistakes, boardSize)
         .pipe(takeUntil(this.destroy))
         .subscribe(() => {
