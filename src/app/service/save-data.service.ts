@@ -56,14 +56,8 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
   async load(): Promise<T | null | undefined> {
     await this.repo.init();
     let appData = await this.repo.getAppData();
-    if (!appData) {
-      try {
-        appData = this.repo.getLocalStorageVersion();
-      } catch (e) {
-        console.warn('Error parsing saved data.', e);
-        return undefined;
-      }
-    }
+    if (!appData)
+      return undefined;
 
     try {
       return await this.migrate(appData);
