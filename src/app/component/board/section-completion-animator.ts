@@ -214,8 +214,17 @@ export class SectionCompletionAnimator {
     if (!header)
       return null;
 
-    const target = header.value ?? 0;
-    const current = header.currentSelectionSum ?? 0;
+    let target = 0
+    let current = 0;
+    board.playArea.forEach((row, ri) => row.forEach((cell, _ci) => {
+      if (ri === rowIndex) {
+        if (cell.required)
+          target += cell.value;
+        if (cell.status === SelectionStatus.SELECTED)
+          current += cell.value;
+      }
+    }))
+
     if (!target || current !== target)
       return null;
 
@@ -243,8 +252,17 @@ export class SectionCompletionAnimator {
     if (!header)
       return null;
 
-    const target = header.value ?? 0;
-    const current = header.currentSelectionSum ?? 0;
+    let target = 0
+    let current = 0;
+    board.playArea.forEach((row, _ri) => row.forEach((cell, ci) => {
+      if (ci === colIndex) {
+        if (cell.required)
+          target += cell.value;
+        if (cell.status === SelectionStatus.SELECTED)
+          current += cell.value;
+      }
+    }))
+
     if (!target || current !== target)
       return null;
 
@@ -278,24 +296,26 @@ export class SectionCompletionAnimator {
       return null;
 
     const groupCells: CellWithIndex[] = [];
+    let target = 0;
+    let current = 0;
     for (let row = 0; row < board.playArea.length; row++) {
       for (let col = 0; col < board.playArea[row].length; col++) {
         const candidate = board.playArea[row][col];
-        if (candidate?.groupNumber === groupNumber)
+        if (candidate?.groupNumber === groupNumber) {
           groupCells.push({ cell: candidate, row, col });
+          if (candidate.required)
+            target += candidate.value;
+          if (candidate.status === SelectionStatus.SELECTED)
+            current += candidate.value;
+        }
       }
     }
 
     if (!groupCells.length)
       return null;
 
-    const target = this.extractGroupTarget(groupCells);
     if (!target)
       return null;
-
-    const current = groupCells
-      .filter(item => item.cell.status === SelectionStatus.SELECTED)
-      .reduce((sum, item) => sum + (item.cell.value ?? 0), 0);
 
     if (current !== target)
       return null;
@@ -418,10 +438,10 @@ export class SectionCompletionAnimator {
     return cells.some(cell => cell.status === SelectionStatus.NONE);
   }
 
-  private extractGroupTarget(cells: CellWithIndex[]): number {
-    const withTargets = cells.find(item => typeof item.cell.colorGroupGoal === 'number');
-    return withTargets?.cell.colorGroupGoal ?? 0;
-  }
+  // private extractGroupTarget(cells: CellWithIndex[]): number {
+  //   const withTargets = cells.find(item => typeof item.cell.colorGroupGoal === 'number');
+  //   return withTargets?.cell.colorGroupGoal ?? 0;
+  // }
 
   private findGroupHeader(cells: CellWithIndex[]): CellWithIndex {
     let topLeft = cells[0];
