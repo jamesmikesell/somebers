@@ -344,9 +344,16 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
 
   async playGameAgain(): Promise<void> {
-    this.previousGames.delete(this.gameNumber);
-    await this.updateGameNumber(this.gameNumber);
-    this.saveGameState()
+    this.confirmStartOverLauncher
+      .open(this.gameNumber)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async confirmed => {
+        if (confirmed) {
+          this.previousGames.delete(this.gameNumber);
+          await this.updateGameNumber(this.gameNumber);
+          this.saveGameState()
+        }
+      });
   }
 
 
@@ -535,13 +542,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.boardUiService.restartRequested$
       .pipe(takeUntil(this.destroy))
       .subscribe(() => {
-        this.confirmStartOverLauncher
-          .open(this.gameNumber)
-          .pipe(takeUntil(this.destroy))
-          .subscribe(confirmed => {
-            if (confirmed)
-              this.playGameAgain();
-          });
+        this.playGameAgain();
       });
   }
 
