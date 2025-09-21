@@ -1,19 +1,16 @@
 # TODO
 
-- undo button doesn't undo auto cleared cells / cells cleared by double click of header
+- tutorial mode
 - post to social media
 - use difficulty for affirmation selection
 - track last X games against par time.
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
 - Positive feedback when breaking previous records 
-- documentation note on cheating
 - multi-player: pvp
 - multi-player: co-op
 - leader board
 - ability to play board again and compare against previous attempts
 - ability to play board again and not ruin streak history
-- warn that playing board again will ruin streak history
-- tutorial mode
 - sounds
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - configuration to be able to show/hide running calculated sums
@@ -23,6 +20,9 @@
 
 # Done
 
+- warn that playing board again will ruin streak history
+- documentation note on cheating
+- undo button doesn't undo auto cleared cells / cells cleared by double click of header
 - animation when row/col/group total has been reached, even if some cells haven't been cleared
 - Another thing you could do in regards to having a completed row/column with values that need removed - make the grey cell animate somehow and when you tap it, it removes all cells that are irrelevant (do some cool animations!!)
 - display warning on UI if board can't be completed using first-principals
