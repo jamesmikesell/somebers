@@ -193,6 +193,10 @@ export class SectionCompletionAnimator {
   private buildEligibleSections(board: GameBoard, cell: DisplayCell, location: CellLocation): SectionSchedule[] {
     const sections: SectionSchedule[] = [];
 
+    const groupSection = this.buildGroupSection(board, cell);
+    if (groupSection)
+      sections.push(groupSection);
+
     const rowSection = this.buildRowSection(board, location);
     if (rowSection)
       sections.push(rowSection);
@@ -200,10 +204,6 @@ export class SectionCompletionAnimator {
     const columnSection = this.buildColumnSection(board, location);
     if (columnSection)
       sections.push(columnSection);
-
-    const groupSection = this.buildGroupSection(board, cell);
-    if (groupSection)
-      sections.push(groupSection);
 
     return sections;
   }
