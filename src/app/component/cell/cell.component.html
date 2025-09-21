@@ -13,7 +13,7 @@
     @if (!cell.hideBackground) {
       <div class="corner-number top right">
         @if (rowColCurrentSumVisible && cell.currentSelectionSum) {
-          <span style="font-size: 0.5em">𝛴</span>
+          <span class="super-label">𝛴</span>
           {{ cell.currentSelectionSum }}
         }
       </div>
@@ -37,6 +37,12 @@
   >
     <div class="corner-number top left">
       {{ cell.colorGroupGoal }}
+    </div>
+    <div class="corner-number top right">
+      @if (colorGroupCurrentSelectionSumVisible && cell.currentSelectionSum) {
+        <span class="super-label">𝛴</span>
+        {{ cell.currentSelectionSum }}
+      }
     </div>
     <div
       class="main-number"

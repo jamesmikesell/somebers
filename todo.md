@@ -1,9 +1,6 @@
 # TODO
 
-- current sum for color group 
-- current sum for color group setting toggle
-- current sum header setting toggle
-- cell animation service thing shouldn't be using the headers to determine if the goal has been met (don't use .currentSelectionSum)
+- record ios 18 screen recordings, try to pick the correct version automatically.
 - tutorial mode
 - post to social media
 - use difficulty for affirmation selection
@@ -24,6 +21,10 @@
 
 # Done
 
+- current sum for color group 
+- current sum for color group setting toggle
+- current sum header setting toggle
+- cell animation service thing shouldn't be using the headers to determine if the goal has been met (don't use .currentSelectionSum)
 - warn that playing board again will ruin streak history
 - documentation note on cheating
 - undo button doesn't undo auto cleared cells / cells cleared by double click of header

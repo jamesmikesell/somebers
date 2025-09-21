@@ -13,6 +13,7 @@ export class SettingsService {
     bestStreakDisplay: 'bestStreakDisplay',
     statsSecondaryDisplay: 'statsSecondaryDisplay',
     rowAndColumnCurrentSelectionSumVisible: 'rowAndColumnCurrentSelectionSumVisible',
+    colorGroupCurrentSelectionSumVisible: 'colorGroupCurrentSelectionSumVisible',
   } as const;
 
   getColorMode(): ColorModeSetting {
@@ -65,6 +66,14 @@ export class SettingsService {
 
   setRowAndColumnCurrentSelectionSumVisible(visible: boolean): void {
     this.setBoolean(this.storageKeys.rowAndColumnCurrentSelectionSumVisible, visible);
+  }
+
+  getColorGroupCurrentSelectionSumVisible(): boolean {
+    return this.getBoolean(this.storageKeys.colorGroupCurrentSelectionSumVisible, false);
+  }
+
+  setColorGroupCurrentSelectionSumVisible(visible: boolean): void {
+    this.setBoolean(this.storageKeys.colorGroupCurrentSelectionSumVisible, visible);
   }
 
   getBestStreakDisplay(): number {

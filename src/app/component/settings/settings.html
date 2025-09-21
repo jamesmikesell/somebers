@@ -27,6 +27,17 @@
     </p>
 
     <mat-slide-toggle
+      [(ngModel)]="colorGroupCurrentSelectionSumVisible"
+      (change)="onColorGroupCurrentSelectionSumVisibleChange($event)"
+    >
+      Show Color Group Current Sum
+    </mat-slide-toggle>
+    <p>
+      Controls whether standard cells display in the upper-right corner the
+      current sum of selected cells.
+    </p>
+
+    <mat-slide-toggle
       [(ngModel)]="scratchPadVisible"
       (change)="onScratchPadVisibleChange($event)"
     >

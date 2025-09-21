@@ -36,9 +36,10 @@ export class SettingsComponent implements OnInit {
   sectionCompletionAnimationEnabled: boolean = true;
   autoClearCellsEnabled: boolean = false;
   rowAndColumnCurrentSelectionSumVisible: boolean = true;
+  colorGroupCurrentSelectionSumVisible: boolean = false;
   AppVersion = AppVersion;
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(private settingsService: SettingsService) { }
 
   ngOnInit(): void {
     this.shapesModeEnabled = this.settingsService.getShapesModeEnabled();
@@ -47,6 +48,7 @@ export class SettingsComponent implements OnInit {
     this.autoClearCellsEnabled = this.settingsService.getAutoClearUnneededCells();
     this.rowAndColumnCurrentSelectionSumVisible =
       this.settingsService.getRowAndColumnCurrentSelectionSumVisible();
+    this.colorGroupCurrentSelectionSumVisible = this.settingsService.getColorGroupCurrentSelectionSumVisible();
   }
 
 
@@ -78,6 +80,14 @@ export class SettingsComponent implements OnInit {
     this.rowAndColumnCurrentSelectionSumVisible = event.checked;
     this.settingsService.setRowAndColumnCurrentSelectionSumVisible(
       this.rowAndColumnCurrentSelectionSumVisible,
+    );
+  }
+
+
+  onColorGroupCurrentSelectionSumVisibleChange(event: MatSlideToggleChange): void {
+    this.colorGroupCurrentSelectionSumVisible = event.checked;
+    this.settingsService.setColorGroupCurrentSelectionSumVisible(
+      this.colorGroupCurrentSelectionSumVisible,
     );
   }
 

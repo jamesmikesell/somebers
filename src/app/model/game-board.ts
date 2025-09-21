@@ -114,11 +114,21 @@ export class GameBoard {
     this.goalColumns.forEach(single => single.currentSelectionSum = 0)
     this.goalRows.forEach(single => single.currentSelectionSum = 0)
 
+    let groupHeaderCellByGroupNumber = new Map<number, DisplayCell>();
+
     this.playArea.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
+        let groupHeaderCell = groupHeaderCellByGroupNumber.get(cell.groupNumber)
+        if (!groupHeaderCell) {
+          groupHeaderCell = cell;
+          groupHeaderCellByGroupNumber.set(cell.groupNumber, groupHeaderCell);
+          groupHeaderCell.currentSelectionSum = 0;
+        }
+
         if (cell.status === SelectionStatus.SELECTED) {
           this.goalColumns[colIndex].currentSelectionSum += cell.value;
           this.goalRows[rowIndex].currentSelectionSum += cell.value;
+          groupHeaderCell.currentSelectionSum += cell.value;
         }
       })
     })
@@ -144,7 +154,7 @@ export class GameBoard {
     return newlyCleared;
   }
 
-  
+
   clearRow(rowIndex: number): DisplayCell[] {
     const row = this.playArea[rowIndex];
     if (!this.areRequiredCellsSelected(row))

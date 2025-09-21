@@ -67,6 +67,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   disableAnimations = false;
   stats: GameStats;
   rowColCurrentSumVisible: boolean = true;
+  colorGroupCurrentSumVisible: boolean = false;
 
 
   layoutMode: LayoutMode = 'vertical';
@@ -133,6 +134,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     let autoClearUnneededCells = this.settingsService.getAutoClearUnneededCells();
     this.sectionAnimator.setAutoComplete(autoClearUnneededCells);
     this.rowColCurrentSumVisible = this.settingsService.getRowAndColumnCurrentSelectionSumVisible();
+    this.colorGroupCurrentSumVisible = this.settingsService.getColorGroupCurrentSelectionSumVisible();
     this.sectionAnimator.setAutoClearHandler(cells => this.recordAutoClearedCells(cells));
     this.sectionAnimator.animationCompleted$
       .pipe(takeUntil(this.destroy))
