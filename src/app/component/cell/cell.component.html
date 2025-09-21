@@ -11,8 +11,11 @@
     [style.--columnCount]="columnCount"
   >
     @if (!cell.hideBackground) {
-      <div class="corner-number">
-        {{ cell.groupNumber }}
+      <div class="corner-number top right">
+        @if (cell.currentSelectionSum) {
+          <span style="font-size: 0.5em">𝛴</span>
+          {{ cell.currentSelectionSum }}
+        }
       </div>
       <div class="main-number">{{ cell.value }}</div>
     }
@@ -32,8 +35,8 @@
     [attr.data-glow-cycle]="cell?.glowCycle ?? null"
     [style.--columnCount]="columnCount"
   >
-    <div class="corner-number">
-      {{ cell.colorGroupGoalDisplayValue }}
+    <div class="corner-number top left">
+      {{ cell.colorGroupGoal }}
     </div>
     <div
       class="main-number"

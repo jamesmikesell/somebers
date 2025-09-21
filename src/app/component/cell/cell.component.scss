@@ -164,13 +164,27 @@
 
 .corner-number {
   position: absolute;
-  top: 0cqmin;
-  left: 0cqmin;
   font-size: calc(21cqmin / var(--columnCount));
-  padding-left: calc(3.9cqmin / var(--columnCount) );
-  padding-right: calc(3.9cqmin / var(--columnCount) );
-  border-radius: calc(6cqmin / var(--columnCount) );
+  padding-left: calc(3.9cqmin / var(--columnCount));
+  padding-right: calc(3.9cqmin / var(--columnCount));
+  border-radius: calc(6cqmin / var(--columnCount));
   text-align: center;
+}
+
+.corner-number.left {
+  left: 0cqmin;
+}
+
+.corner-number.right {
+  right: 0cqmin;
+}
+
+.corner-number.top {
+  top: 0cqmin;
+}
+
+.corner-number.bottom {
+  bottom: 0cqmin;
 }
 
 .hidden .corner-number {

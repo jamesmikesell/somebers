@@ -215,7 +215,7 @@ export class SectionCompletionAnimator {
       return null;
 
     const target = header.value ?? 0;
-    const current = header.groupNumber ?? 0;
+    const current = header.currentSelectionSum ?? 0;
     if (!target || current !== target)
       return null;
 
@@ -244,7 +244,7 @@ export class SectionCompletionAnimator {
       return null;
 
     const target = header.value ?? 0;
-    const current = header.groupNumber ?? 0;
+    const current = header.currentSelectionSum ?? 0;
     if (!target || current !== target)
       return null;
 
@@ -419,8 +419,8 @@ export class SectionCompletionAnimator {
   }
 
   private extractGroupTarget(cells: CellWithIndex[]): number {
-    const withTargets = cells.find(item => typeof item.cell.colorGroupGoalDisplayValue === 'number');
-    return withTargets?.cell.colorGroupGoalDisplayValue ?? 0;
+    const withTargets = cells.find(item => typeof item.cell.colorGroupGoal === 'number');
+    return withTargets?.cell.colorGroupGoal ?? 0;
   }
 
   private findGroupHeader(cells: CellWithIndex[]): CellWithIndex {

@@ -51,7 +51,7 @@ export class GameBoard {
         cellsByGroup.set(cell.groupNumber, cells);
 
         if (!goalColorGroups.get(cell.groupNumber)) {
-          cell.colorGroupGoalDisplayValue = 0
+          cell.colorGroupGoal = 0
           goalColorGroups.set(cell.groupNumber, cell);
         }
 
@@ -70,7 +70,7 @@ export class GameBoard {
           this.goalRows[rowIndex].value += cell.value;
           this.goalColumns[colIndex].value += cell.value;
 
-          goalColorGroups.get(cell.groupNumber).colorGroupGoalDisplayValue += cell.value;
+          goalColorGroups.get(cell.groupNumber).colorGroupGoal += cell.value;
         }
       }));
 
@@ -96,7 +96,7 @@ export class GameBoard {
       }
 
       {
-        let headerCellFromEmptyGroup = Array.from(goalColorGroups.values()).find(cell => !cell.colorGroupGoalDisplayValue);
+        let headerCellFromEmptyGroup = Array.from(goalColorGroups.values()).find(cell => !cell.colorGroupGoal);
         if (headerCellFromEmptyGroup) {
           let groupCells = cellsByGroup.get(headerCellFromEmptyGroup.groupNumber);
           let cellIndex = Math.floor(random.next() * (groupCells.length - 1));
@@ -111,20 +111,20 @@ export class GameBoard {
 
 
   recalculateSelectedHeaders(): void {
-    this.goalColumns.forEach(single => single.groupNumber = 0)
-    this.goalRows.forEach(single => single.groupNumber = 0)
+    this.goalColumns.forEach(single => single.currentSelectionSum = 0)
+    this.goalRows.forEach(single => single.currentSelectionSum = 0)
 
     this.playArea.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         if (cell.status === SelectionStatus.SELECTED) {
-          this.goalColumns[colIndex].groupNumber += cell.value;
-          this.goalRows[rowIndex].groupNumber += cell.value;
+          this.goalColumns[colIndex].currentSelectionSum += cell.value;
+          this.goalRows[rowIndex].currentSelectionSum += cell.value;
         }
       })
     })
 
-    this.goalColumns.forEach(single => single.groupNumber = single.groupNumber || undefined)
-    this.goalRows.forEach(single => single.groupNumber = single.groupNumber || undefined)
+    this.goalColumns.forEach(single => single.currentSelectionSum = single.currentSelectionSum || undefined)
+    this.goalRows.forEach(single => single.currentSelectionSum = single.currentSelectionSum || undefined)
   }
 
 
@@ -384,7 +384,7 @@ export class DisplayCell implements GameCell {
   value: number;
   groupNumber: number;
 
-  colorGroupGoalDisplayValue: number;
+  // colorGroupGoalDisplayValue: number;
   invalidMove: boolean = false;
   hideBackground = false;
   highlighted = false
@@ -398,6 +398,8 @@ export class DisplayCell implements GameCell {
   borderBottom = false;
   colorDark: string;
   colorLight: string;
+  currentSelectionSum: number;
+  colorGroupGoal: number;
 
   constructor(
   ) { }
