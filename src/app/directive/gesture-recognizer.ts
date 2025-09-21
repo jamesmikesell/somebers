@@ -46,7 +46,7 @@ export class GestureRecognizer {
 
     // Set default configuration
     this.config = {
-      minSwipeDistance: config.minSwipeDistance ?? 50,
+      minSwipeDistance: config.minSwipeDistance ?? 75,
       maxSwipeDuration: config.maxSwipeDuration ?? 300,
       maxTapDuration: config.maxTapDuration ?? 200,
       maxTapMovement: config.maxTapMovement ?? 10,
