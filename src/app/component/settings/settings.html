@@ -16,6 +16,17 @@
     </p>
 
     <mat-slide-toggle
+      [(ngModel)]="rowAndColumnCurrentSelectionSumVisible"
+      (change)="onRowAndColumnCurrentSelectionSumVisibleChange($event)"
+    >
+      Show Row / Column Current Sum
+    </mat-slide-toggle>
+    <p>
+      Controls whether row and column headers display in the upper-right corner
+      the current sum of selected cells.
+    </p>
+
+    <mat-slide-toggle
       [(ngModel)]="scratchPadVisible"
       (change)="onScratchPadVisibleChange($event)"
     >

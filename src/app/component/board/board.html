@@ -136,7 +136,10 @@
                       [columnCount]="columnCount"
                       [shapesMode]="shapesMode"
                       [disableAnimation]="disableAnimations"
-                      (headerDoubleTapped)="onHeaderDoubleTap(rowIndex, colIndex)"
+                      [rowColCurrentSumVisible]="rowColCurrentSumVisible"
+                      (headerDoubleTapped)="
+                        onHeaderDoubleTap(rowIndex, colIndex)
+                      "
                     ></app-cell>
                   } @else {
                     <app-cell

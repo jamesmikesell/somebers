@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AppVersion } from '../../app-version';
-import { Title } from '../title/title';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { InstallComponent } from '../install/install.component';
+import { Title } from '../title/title';
 
 @Component({
   selector: 'app-documentation',
-  imports: [Title, InstallComponent, ...MATERIAL_IMPORTS],
+  imports: [Title, InstallComponent, ...MATERIAL_IMPORTS, RouterLink],
   templateUrl: './documentation.html',
   styleUrl: './documentation.scss',
 })

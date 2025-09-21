@@ -24,6 +24,7 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() columnCount!: number;
   @Input() shapesMode = false;
   @Input() disableAnimation = false;
+  @Input() rowColCurrentSumVisible = true;
 
   @Output() used = new EventEmitter<DisplayCell>();
   @Output() cleared = new EventEmitter<DisplayCell>();

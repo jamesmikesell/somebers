@@ -66,6 +66,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   nextGameButtonState: "hidden" | "show-animated" | "show-instant" = "hidden";
   disableAnimations = false;
   stats: GameStats;
+  rowColCurrentSumVisible: boolean = true;
 
 
   layoutMode: LayoutMode = 'vertical';
@@ -131,6 +132,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.sectionAnimator.setEnabled(sectionCompletionAnimationEnabled);
     let autoClearUnneededCells = this.settingsService.getAutoClearUnneededCells();
     this.sectionAnimator.setAutoComplete(autoClearUnneededCells);
+    this.rowColCurrentSumVisible = this.settingsService.getRowAndColumnCurrentSelectionSumVisible();
     this.sectionAnimator.setAutoClearHandler(cells => this.recordAutoClearedCells(cells));
     this.sectionAnimator.animationCompleted$
       .pipe(takeUntil(this.destroy))

@@ -35,6 +35,7 @@ export class SettingsComponent implements OnInit {
   scratchPadVisible: boolean = true;
   sectionCompletionAnimationEnabled: boolean = true;
   autoClearCellsEnabled: boolean = false;
+  rowAndColumnCurrentSelectionSumVisible: boolean = true;
   AppVersion = AppVersion;
 
   constructor(private settingsService: SettingsService) {}
@@ -44,6 +45,8 @@ export class SettingsComponent implements OnInit {
     this.scratchPadVisible = this.settingsService.getScratchPadVisible();
     this.sectionCompletionAnimationEnabled = this.settingsService.getSectionCompletionAnimationEnabled();
     this.autoClearCellsEnabled = this.settingsService.getAutoClearUnneededCells();
+    this.rowAndColumnCurrentSelectionSumVisible =
+      this.settingsService.getRowAndColumnCurrentSelectionSumVisible();
   }
 
 
@@ -68,6 +71,14 @@ export class SettingsComponent implements OnInit {
   onAutoClearCellsChange(event: MatSlideToggleChange): void {
     this.autoClearCellsEnabled = event.checked;
     this.settingsService.setAutoClearUnneededCells(this.autoClearCellsEnabled);
+  }
+
+
+  onRowAndColumnCurrentSelectionSumVisibleChange(event: MatSlideToggleChange): void {
+    this.rowAndColumnCurrentSelectionSumVisible = event.checked;
+    this.settingsService.setRowAndColumnCurrentSelectionSumVisible(
+      this.rowAndColumnCurrentSelectionSumVisible,
+    );
   }
 
 

@@ -12,6 +12,7 @@ export class SettingsService {
     autoClearUnneededCells: 'autoClearUnneededCells',
     bestStreakDisplay: 'bestStreakDisplay',
     statsSecondaryDisplay: 'statsSecondaryDisplay',
+    rowAndColumnCurrentSelectionSumVisible: 'rowAndColumnCurrentSelectionSumVisible',
   } as const;
 
   getColorMode(): ColorModeSetting {
@@ -56,6 +57,14 @@ export class SettingsService {
 
   setAutoClearUnneededCells(enabled: boolean): void {
     this.setBoolean(this.storageKeys.autoClearUnneededCells, enabled);
+  }
+
+  getRowAndColumnCurrentSelectionSumVisible(): boolean {
+    return this.getBoolean(this.storageKeys.rowAndColumnCurrentSelectionSumVisible, true);
+  }
+
+  setRowAndColumnCurrentSelectionSumVisible(visible: boolean): void {
+    this.setBoolean(this.storageKeys.rowAndColumnCurrentSelectionSumVisible, visible);
   }
 
   getBestStreakDisplay(): number {

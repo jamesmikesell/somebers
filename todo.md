@@ -1,5 +1,9 @@
 # TODO
 
+- current sum for color group 
+- current sum for color group setting toggle
+- current sum header setting toggle
+- cell animation service thing shouldn't be using the headers to determine if the goal has been met (don't use .currentSelectionSum)
 - tutorial mode
 - post to social media
 - use difficulty for affirmation selection

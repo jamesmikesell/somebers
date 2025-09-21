@@ -12,7 +12,7 @@
   >
     @if (!cell.hideBackground) {
       <div class="corner-number top right">
-        @if (cell.currentSelectionSum) {
+        @if (rowColCurrentSumVisible && cell.currentSelectionSum) {
           <span style="font-size: 0.5em">𝛴</span>
           {{ cell.currentSelectionSum }}
         }
