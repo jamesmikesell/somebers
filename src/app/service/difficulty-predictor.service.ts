@@ -1,4 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { ModelJson } from '../model/ml-types';
 import { TrainingSample, predictRidge } from './ml-core';
 
@@ -6,7 +8,7 @@ import { TrainingSample, predictRidge } from './ml-core';
 export class DifficultyPredictorService {
   private packagedModelPromise?: Promise<ModelJson | undefined>;
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   // Predict strictly using the downloaded packaged model (for Difficulty percentile display)
   async predictGameModel(features: TrainingSample): Promise<number | undefined> {
@@ -25,12 +27,7 @@ export class DifficultyPredictorService {
 
   private async loadPackagedModel(): Promise<ModelJson | undefined> {
     if (!this.packagedModelPromise) {
-      this.packagedModelPromise = fetch('difficulty-ml-model.json', { cache: 'no-cache' })
-        .then(async (r: Response): Promise<ModelJson | undefined> => {
-          if (!r.ok)
-            return undefined;
-          return (await r.json()) as ModelJson;
-        })
+      this.packagedModelPromise = firstValueFrom(this.http.get<ModelJson>('difficulty-ml-model.json'))
         .catch((err: unknown): ModelJson | undefined => {
           console.warn('TimePredictorService: failed to load packaged model', err);
           return undefined;
@@ -41,5 +38,4 @@ export class DifficultyPredictorService {
 
 
 }
-
 

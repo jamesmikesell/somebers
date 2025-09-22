@@ -1,6 +1,6 @@
 # TODO
 
-- record ios 18 screen recordings, try to pick the correct version automatically.
+- record iOS 18 screen recordings, try to pick the correct version automatically.
 - tutorial mode
 - post to social media
 - use difficulty for affirmation selection
@@ -21,6 +21,8 @@
 
 # Done
 
+- fix doc on color groups
+- SW wait until refresh to use any new assets.
 - current sum for color group 
 - current sum for color group setting toggle
 - current sum header setting toggle

@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from "@angular/material/icon";
+import { firstValueFrom } from 'rxjs';
 import { DisplayCell } from '../../model/game-board';
 import { BoardStatAnalyzer } from '../../service/board-stat-analyzer';
 import { DifficultyPredictorService } from '../../service/difficulty-predictor.service';
@@ -29,6 +31,7 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
   constructor(
     private predictor: DifficultyPredictorService,
+    private http: HttpClient,
   ) { }
 
 
@@ -82,15 +85,12 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
   private async loadPredictedSolveTimesList(): Promise<number[] | undefined> {
     if (!this.timesPromise) {
-      this.timesPromise = fetch('difficulty-ml-predicted-times.json', { cache: 'no-cache' })
-        .then(async (r: Response): Promise<number[] | undefined> => {
-          if (!r.ok)
-            return undefined;
-          const data = await r.json();
+      this.timesPromise = firstValueFrom(this.http.get<number[]>('difficulty-ml-predicted-times.json'))
+        .then((data: number[]): number[] | undefined => {
           if (!Array.isArray(data))
             return undefined;
 
-          let times = (data as unknown[]).map(Number).filter((v) => Number.isFinite(v));
+          const times = data.filter((value) => Number.isFinite(value));
           times.sort((a, b) => a - b);
           return times;
         })
