@@ -9,6 +9,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { filter, first, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { CelebrationLauncherService } from '../../dialog/celebration/celebration-launcher.service';
@@ -18,6 +19,7 @@ import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board'
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
 import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progress.v3';
 import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v1';
+import { LockService } from '../../service/app-lock.service';
 import { BoardUiService } from '../../service/board-ui.service';
 import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
 import { generateGameBoard } from '../../service/gameboard-generator';
@@ -80,6 +82,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   private timeTracker = new TimeTracker();
   private layoutController: ScratchPadLayoutController;
   private sectionAnimator = new SectionCompletionAnimator();
+  private lockLostNavigated = false;
 
   @ViewChild('boardLayout')
   set boardLayout(ref: ElementRef<HTMLElement> | undefined) {
@@ -120,6 +123,8 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     private confirmStartOverLauncher: ConfirmStartOverDialogLauncher,
     private ngZone: NgZone,
     private settingsService: SettingsService,
+    private lockService: LockService,
+    private router: Router,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -154,6 +159,12 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
 
   async ngOnInit(): Promise<void> {
+    const hasLock = await this.ensureAppLock();
+    if (!hasLock)
+      return;
+
+    this.monitorLock();
+
     this.boardUiService.boardVisible$.next(true);
     this.wakeLock.enable();
     this.destroy.pipe(first()).subscribe(() => this.wakeLock.disable());
@@ -184,6 +195,60 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.saveGameState();
     this.layoutController.destroy();
     this.sectionAnimator.dispose();
+    this.lockService.releaseLock().catch(error => {
+      if (this.isAbortError(error))
+        return;
+
+      console.error('Failed to release app lock', error);
+    });
+  }
+
+
+  private monitorLock(): void {
+    this.lockService.lockLost$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.handleLockLost());
+  }
+
+
+  private async ensureAppLock(): Promise<boolean> {
+    if (this.lockService.hasLock)
+      return true;
+
+    try {
+      await this.lockService.acquireLock();
+    } catch (error) {
+      console.error('Failed to acquire lock', error);
+      await this.router.navigateByUrl('/resume');
+      return false;
+    }
+
+    if (!this.lockService.hasLock) {
+      await this.router.navigateByUrl('/resume');
+      return false;
+    }
+
+    return true;
+  }
+
+
+  private handleLockLost(): void {
+    if (this.lockLostNavigated)
+      return;
+
+    this.lockLostNavigated = true;
+    this.ngZone.run(() => {
+      this.boardUiService.boardVisible$.next(false);
+      this.boardUiService.setShowStartOver(false);
+      this.router.navigateByUrl('/resume').catch(error => {
+        console.error('Failed to navigate after losing app lock', error);
+      });
+    });
+  }
+
+
+  private isAbortError(error: unknown): error is DOMException {
+    return error instanceof DOMException && error.name === 'AbortError';
   }
 
 

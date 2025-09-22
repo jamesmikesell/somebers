@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./component/backup/backup').then(m => m.BackupComponent),
   },
   {
+    path: 'resume',
+    loadComponent: () => import('./component/resume/resume').then(m => m.ResumeComponent),
+  },
+  {
     path: '**',
     loadComponent: () => import('./component/board/board').then(m => m.Board)
   },

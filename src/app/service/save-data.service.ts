@@ -5,6 +5,7 @@ import { SavedGameStateV0 } from '../model/saved-game-data/saved-game-data.v0';
 import { SavedGameStateV1 } from '../model/saved-game-data/saved-game-data.v1';
 import { SavedGameStateV2 } from '../model/saved-game-data/saved-game-data.v2';
 import { SavedGameStateV3 } from '../model/saved-game-data/saved-game-data.v3';
+import { LockService } from './app-lock.service';
 import { SaveDataRepositoryService } from './save-data-repository.service';
 
 
@@ -15,8 +16,8 @@ import { SaveDataRepositoryService } from './save-data-repository.service';
 export class SaveDataService {
   service: SaveDataPrivateService<SavedGameStateV3>;
 
-  constructor(private repo: SaveDataRepositoryService) {
-    this.service = new SaveDataPrivateService<SavedGameStateV3>(this.repo);
+  constructor(repo: SaveDataRepositoryService, lockService: LockService) {
+    this.service = new SaveDataPrivateService<SavedGameStateV3>(repo, lockService);
   }
 
 }
@@ -33,17 +34,26 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
     SavedGameStateV3,
   ];
 
-  constructor(private repo: SaveDataRepositoryService) {
+  constructor(
+    private repo: SaveDataRepositoryService,
+    private lockService: LockService,
+  ) {
     this.checkForDuplicateVersionDtos();
   }
 
 
   saveNoWait(gameState: T): void {
+    if (!this.lockService.hasLock)
+      return;
+
     this.save(gameState).catch(e => console.error(e));
   }
 
 
   async save(gameState: T): Promise<void> {
+    if (!this.lockService.hasLock)
+      return;
+
     let wrapper: DataSaveWrapper<DataSaveVersion> = {
       version: gameState.version,
       data: gameState,

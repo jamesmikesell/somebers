@@ -1,6 +1,7 @@
 # TODO
 
-- record iOS 18 screen recordings, try to pick the correct version automatically.
+- add note on what par time is
+- organize documentation, add links
 - tutorial mode
 - post to social media
 - use difficulty for affirmation selection
@@ -21,6 +22,8 @@
 
 # Done
 
+- multiple tabs cause race condition with data saving
+- record iOS 18 screen recordings, try to pick the correct version automatically.
 - fix doc on color groups
 - SW wait until refresh to use any new assets.
 - current sum for color group 
