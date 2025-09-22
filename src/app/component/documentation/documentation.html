@@ -232,6 +232,37 @@
   </div>
 
   <h3>iOS (iPhone / iPad)</h3>
+  <div class="ios-install-video">
+    <p class="note">
+      Prefer a walkthrough? Pick the video that matches your device and iOS
+      version.
+    </p>
+    <div class="ios-install-video__buttons">
+      @for (option of iosVideoOptions; track option.id) {
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="setIosVideo(option)"
+          [class.active]="selectedIosVideo?.id === option.id"
+        >
+          <mat-icon>play_circle</mat-icon>
+          {{ option.buttonLabel }}
+        </button>
+      }
+    </div>
+    @if (selectedIosVideo) {
+      <video
+        controls
+        playsinline
+        class="ios-install-video__player"
+        [src]="selectedIosVideo.src"
+        preload="metadata"
+        (loadedmetadata)="onIosVideoLoaded($event)"
+      >
+        Your browser does not support the installation demo video.
+      </video>
+    }
+  </div>
   <p class="note">For best results on iOS, use Safari.</p>
   <ol>
     <li>
@@ -246,58 +277,6 @@
     <li>Click <code>Add to Home Screen</code></li>
     <li>Click the <code>Add</code> button</li>
   </ol>
-  <div class="ios-install-video">
-    <p class="note">
-      Prefer a walkthrough? Choose your device to watch an install demo with
-      full controls.
-    </p>
-    <div class="ios-install-video__buttons">
-      <button
-        mat-stroked-button
-        type="button"
-        (click)="setIosVideo('iphone')"
-        [class.active]="selectedIosVideo === 'iphone'"
-      >
-        <mat-icon>play_circle</mat-icon>
-        Watch iPhone demo
-      </button>
-      <button
-        mat-stroked-button
-        type="button"
-        (click)="setIosVideo('ipad')"
-        [class.active]="selectedIosVideo === 'ipad'"
-      >
-        <mat-icon>play_circle</mat-icon>
-        Watch iPad demo
-      </button>
-    </div>
-    @switch (selectedIosVideo) {
-      @case ("iphone") {
-        <video
-          controls
-          playsinline
-          class="ios-install-video__player"
-          src="/install-iphone.mp4"
-          preload="metadata"
-          (loadedmetadata)="onIosVideoLoaded($event)"
-        >
-          Your browser does not support the installation demo video.
-        </video>
-      }
-      @case ("ipad") {
-        <video
-          controls
-          playsinline
-          class="ios-install-video__player"
-          src="/install-ipad.mp4"
-          preload="metadata"
-          (loadedmetadata)="onIosVideoLoaded($event)"
-        >
-          Your browser does not support the installation demo video.
-        </video>
-      }
-    }
-  </div>
 
   <h3>Android</h3>
   <ul>

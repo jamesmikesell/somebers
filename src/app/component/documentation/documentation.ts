@@ -13,15 +13,51 @@ import { Title } from '../title/title';
 })
 export class Documentation {
   AppVersion = AppVersion;
-  selectedIosVideo: IosDevice | null = null;
 
-  setIosVideo(device: IosDevice): void {
-    if (this.selectedIosVideo === device) {
-      this.selectedIosVideo = null;
+  readonly iosVideoOptions: readonly IosVideoOption[] = [
+    {
+      id: 'iphone-18',
+      buttonLabel: 'Watch iPhone demo (iOS 18 and earlier)',
+      src: '/install-iphone-ios-18.mp4',
+    },
+    {
+      id: 'iphone-26',
+      buttonLabel: 'Watch iPhone demo (iOS 26 and newer)',
+      src: '/install-iphone-ios-26.mp4',
+    },
+    {
+      id: 'ipad-18',
+      buttonLabel: 'Watch iPad demo (iOS 18 and earlier)',
+      src: '/install-ipad-ios-18.mp4',
+    },
+    {
+      id: 'ipad-26',
+      buttonLabel: 'Watch iPad demo (iOS 26 and newer)',
+      src: '/install-ipad-ios-26.mp4',
+    },
+  ];
+
+  selectedIosVideoId: string | null = null;
+
+  get selectedIosVideo(): IosVideoOption | null {
+    if (!this.selectedIosVideoId) {
+      return null;
+    }
+
+    return (
+      this.iosVideoOptions.find(
+        (option) => option.id === this.selectedIosVideoId,
+      ) ?? null
+    );
+  }
+
+  setIosVideo(option: IosVideoOption): void {
+    if (this.selectedIosVideoId === option.id) {
+      this.selectedIosVideoId = null;
       return;
     }
 
-    this.selectedIosVideo = device;
+    this.selectedIosVideoId = option.id;
   }
 
   onIosVideoLoaded(event: Event): void {
@@ -39,4 +75,8 @@ export class Documentation {
   }
 }
 
-type IosDevice = 'iphone' | 'ipad';
+interface IosVideoOption {
+  id: string;
+  buttonLabel: string;
+  src: string;
+}
