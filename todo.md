@@ -1,6 +1,6 @@
 # TODO
 
-- add note on what par time is
+- add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
 - organize documentation, add links
 - tutorial mode
 - post to social media
@@ -22,6 +22,7 @@
 
 # Done
 
+- add note on what par time is
 - multiple tabs cause race condition with data saving
 - record iOS 18 screen recordings, try to pick the correct version automatically.
 - fix doc on color groups

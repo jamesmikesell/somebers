@@ -1,9 +1,5 @@
 <app-title></app-title>
 
-<div class="title">
-  <h1>How to Play</h1>
-</div>
-
 <div class="page overscroll">
   <p>
     Welcome to <em>Some Numbers</em>, or as Tony calls 'em, "Somebers". Though
@@ -25,6 +21,12 @@
     <em>one</em> valid solution. Find it by pure deduction—no guessing needed.
   </div>
 
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <br />
   <h2>🎯 The Goal</h2>
   <ul>
     <li>
@@ -49,6 +51,12 @@
     <em>all three</em> rules at once.
   </p>
 
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <br />
   <h2>✋ Core Gameplay</h2>
   <ol>
     <li>
@@ -57,13 +65,13 @@
     </li>
     <li>
       <strong>Select required cells:</strong> <em>Tap</em> or
-      <em>swipe up</em> a cell to <strong>select</strong> (circle) it — “this
-      number <em>is</em> part of the solution.”
+      <em>swipe up</em> on a cell to <strong>select</strong> (circle) it — “this
+      number <em>must</em> be part of the solution.”
     </li>
     <li>
       <strong>Hide unused cells:</strong> <em>Double-tap</em> or
       <em>swipe down</em> (or <em>right-click</em> on desktop) to
-      <strong>remove</strong> a number — “this number <em>is not</em> part of
+      <strong>remove</strong> a number — “this number <em>cannot</em> be part of
       the solution.”
     </li>
     <li>
@@ -75,6 +83,12 @@
     </li>
   </ol>
 
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <br />
   <h2>🖥️ / 👆 Controls</h2>
   <ul>
     <li>
@@ -89,7 +103,8 @@
           >
         </li>
         <li>
-          Long-press, then slide → <strong>Temporary highlight</strong>
+          Long-press, then slide left/right→
+          <strong>Temporary highlight</strong>
           <span class="note">
             (shows a red/white diamond as a visual marker).
           </span>
@@ -102,21 +117,18 @@
     <li>
       <strong>Desktop</strong>
       <ul>
-        <li>Click → <strong>Select (circle)</strong></li>
-        <li>Double-click or Right-click → <strong>Remove</strong></li>
-        <li>
-          Click-and-hold, then drag → <strong>Temporary highlight</strong>
-          <span class="note">
-            (shows a red/white diamond as a visual marker).
-          </span>
-          Click and hold until the magnified view appears, then — without
-          releasing the mouse — drag slightly left or right to toggle the
-          highlight on or off.
-        </li>
+        <li>All of the controls listed above, plus...</li>
+        <li>Right-click → <strong>Remove</strong> number.</li>
       </ul>
     </li>
   </ul>
 
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <br />
   <h2>🧠 Tips &amp; Tricks</h2>
   <ul>
     <li>
@@ -125,9 +137,16 @@
       row.
     </li>
     <li>
-      <strong>Auto-clear satisfied lines:</strong> Once you've selected every
-      required cell in a row or column, double-tap that header to
-      <strong>automatically hide</strong> any remaining cells in that line.
+      <strong>No guessing:</strong> Only select or clear a number when you're
+      positive that's the only option for that number.
+    </li>
+    <li>
+      <strong>Cross-check both ways:</strong> A choice must fit the row
+      <em>and</em> the column. If it breaks either total, it's out.
+    </li>
+    <li>
+      <strong>Leverage color groups:</strong> Use the group's tiny top-left
+      total to lock in or eliminate cells inside that color.
     </li>
     <li>
       <strong>Spot running totals:</strong> The upper-right corner of each
@@ -137,12 +156,9 @@
       challenge.
     </li>
     <li>
-      <strong>Cross-check both ways:</strong> A choice must fit the row
-      <em>and</em> the column. If it breaks either total, it's out.
-    </li>
-    <li>
-      <strong>Leverage color groups:</strong> Use the group's tiny top-left
-      total to lock in or eliminate cells inside that color.
+      <strong>Auto-clear satisfied lines:</strong> Once you've selected every
+      required cell in a row or column, double-tap that header to
+      <strong>automatically hide</strong> any remaining cells in that line.
     </li>
     <li>
       <strong>Use temporary highlights:</strong> (see
@@ -158,8 +174,15 @@
       back to 10 when you want to start fresh.
     </li>
     <li>
-      <strong>No guessing:</strong> Logical deduction will always get you to the
-      unique solution.
+      <strong>Stat toggles:</strong> some of the stats are surrounded by
+      <code>&lt;</code> <code>&gt;</code> indicating they can be clicked to
+      display different stats.
+    </li>
+    <li>
+      <code>Par Time</code> • This is the amount of time the game thinks it
+      would take for a seasoned veteran to solve the displayed board. Click
+      through the stats to see your time on each board, and how you speed
+      compares.
     </li>
     <li>
       <span>
@@ -193,23 +216,27 @@
         out that precious winning streak… but let's be honest, Tony's mom would
         roll her eyes and remind you: <q>You're only cheating yourself.</q>
       </p>
-      <p>
-        So, use Undo when the game messes up. Abuse it, and hey — that victory
-        will taste about as authentic as a dish of
-        <em>tagliatelle al tartufo</em> from a gas station.
-      </p>
+      So, use Undo when the game messes up. Abuse it, and hey — that victory
+      will taste about as authentic as a dish of
+      <em>tagliatelle al tartufo</em> from a gas station.
+    </li>
+    <li>
+      Check out the <a routerLink="/settings">Settings</a> for additional game
+      options.
     </li>
   </ul>
 
-  <h2>🌟 The Big Picture</h2>
-  <p>
-    Think of it as Sudoku's more colorfully adorned cousin: instead of fitting
-    numbers <em>into</em> cells, you're uncovering the
-    <strong>truth</strong> about which existing numbers belong. Select what must
-    remain, remove what cannot, and when rows, columns, and color groups all add
-    up perfectly—you win. 🎉
-  </p>
-
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
   <br /><br /><br />
   <a id="installation"></a>
   <h2>📲 Installing (Optional)</h2>
