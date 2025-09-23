@@ -70,7 +70,7 @@ export class BoardStatAnalyzer {
     });
 
     // Run iterative deduction based on sums to select/clear guaranteed cells
-    const { iterations: deductionIterations, unresolved: unresolvedCellCount } = BoardStatAnalyzer.iterativeDeduction(
+    const { iterations: deductionIterations, unresolved: unresolvedCellCount, unresolvedCountsPerIteration } = BoardStatAnalyzer.iterativeDeduction(
       grid,
       rowBases,
       colBases,
@@ -90,6 +90,7 @@ export class BoardStatAnalyzer {
         subsetsEvaluated,
         deductionIterations,
         unresolvedCellCountAfterDeduction: unresolvedCellCount,
+        unresolvedCountsPerIteration,
       },
     };
   }
@@ -104,7 +105,6 @@ export class BoardStatAnalyzer {
       firstIterationFalsePositiveSolutionCount: possibleCorrect.exact - 1,
       firstIterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
       firstIterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
-      valuesRms: BoardStatAnalyzer.rms(stat.values),
     };
   }
 
@@ -130,20 +130,6 @@ export class BoardStatAnalyzer {
     const neverUsedCount = n - BoardStatAnalyzer.popcount(orMask & ((1 << n) - 1));
     if (exact === 0) return { exact, totalIterations: total, alwaysRequiredCount: 0, neverUsedCount: 0 };
     return { exact, totalIterations: total, alwaysRequiredCount, neverUsedCount };
-  }
-
-  private static mean(values: number[]): number {
-    if (values.length === 0) return 0;
-    let s = 0;
-    for (let i = 0; i < values.length; i++) s += values[i];
-    return s / values.length;
-  }
-
-  private static rms(values: number[]): number {
-    if (values.length === 0) return 0;
-    let s2 = 0;
-    for (let i = 0; i < values.length; i++) s2 += values[i] * values[i];
-    return Math.sqrt(s2 / values.length);
   }
 
   private static popcount(x: number): number {
@@ -209,12 +195,13 @@ export class BoardStatAnalyzer {
     groupsSorted: number[],
     groupsMap: Map<number, LinearStat>,
     groupIndexMap: Map<number, Array<{ r: number; c: number }>>,
-  ): { iterations: number; unresolved: number } {
+  ): DeductionStats {
     // Maintain a local status map; also reflect to grid cells if they expose a status field
     const rows = grid.length;
     const cols = grid[0].length;
     const statusMap: SelectionStatus[][] = Array.from({ length: rows }, () => new Array<SelectionStatus>(cols).fill(SelectionStatus.NONE));
 
+    const unresolvedCountsPerIteration: number[] = [];
     let iterations = 0;
     while (true) {
       let changed = false;
@@ -252,13 +239,21 @@ export class BoardStatAnalyzer {
         }
       }
 
+      let unresolved = 0;
+      for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) if (statusMap[r][c] === SelectionStatus.NONE) unresolved++;
+      unresolvedCountsPerIteration.push(unresolved)
+
       if (!changed) break;
       iterations++;
     }
 
     let unresolved = 0;
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) if (statusMap[r][c] === SelectionStatus.NONE) unresolved++;
-    return { iterations, unresolved };
+    return {
+      iterations,
+      unresolved,
+      unresolvedCountsPerIteration,
+    };
   }
 }
 
@@ -288,6 +283,7 @@ export interface DifficultyReport {
     subsetsEvaluated: number;
     deductionIterations: number;
     unresolvedCellCountAfterDeduction: number;
+    unresolvedCountsPerIteration: number[]
   };
 }
 
@@ -299,5 +295,11 @@ export interface SectionStats {
   firstIterationFalsePositiveSolutionCount: number;
   firstIterationGuaranteedRequiredCellCount: number;
   firstIterationGuaranteedUnusableCellCount: number;
-  valuesRms: number;
 }
+
+
+interface DeductionStats {
+  iterations: number;
+  unresolved: number
+  unresolvedCountsPerIteration: number[]
+} 

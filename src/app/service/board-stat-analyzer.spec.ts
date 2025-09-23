@@ -36,32 +36,27 @@ describe('DifficultyEstimatorService', () => {
     expect(report.rows[0].cellValues).toEqual([1, 2, 3]);
     expect(report.rows[0].requiredIndices).toEqual([0, 2]);
     expect(report.rows[0].firstIterationFalsePositiveSolutionCount).toBe(0); // {1,3}
-    expect(report.rows[0].valuesRms).toBeCloseTo(Math.sqrt(14 / 3), 10);
 
     expect(report.rows[1].requiredSum).toBe(1);
     expect(report.rows[1].cellValues).toEqual([2, 1, 1]);
     expect(report.rows[1].requiredIndices).toEqual([1]);
     expect(report.rows[1].firstIterationFalsePositiveSolutionCount).toBe(1); // either 1 of the two ones
-    expect(report.rows[1].valuesRms).toBeCloseTo(Math.sqrt(2), 10);
 
     // Columns
     expect(report.columns[0].requiredSum).toBe(1);
     expect(report.columns[0].cellValues).toEqual([1, 2]);
     expect(report.columns[0].requiredIndices).toEqual([0]);
     expect(report.columns[0].firstIterationFalsePositiveSolutionCount).toBe(0);
-    expect(report.columns[0].valuesRms).toBeCloseTo(Math.sqrt(2.5), 10);
 
     expect(report.columns[1].requiredSum).toBe(1);
     expect(report.columns[1].cellValues).toEqual([2, 1]);
     expect(report.columns[1].requiredIndices).toEqual([1]);
     expect(report.columns[1].firstIterationFalsePositiveSolutionCount).toBe(0);
-    expect(report.columns[1].valuesRms).toBeCloseTo(Math.sqrt(2.5), 10);
 
     expect(report.columns[2].requiredSum).toBe(3);
     expect(report.columns[2].cellValues).toEqual([3, 1]);
     expect(report.columns[2].requiredIndices).toEqual([0]);
     expect(report.columns[2].firstIterationFalsePositiveSolutionCount).toBe(0);
-    expect(report.columns[2].valuesRms).toBeCloseTo(Math.sqrt(5), 10);
 
     // Groups: sorted by index (groupNumber)
     expect(report.groups.map(g => g.index)).toEqual([1, 2]);
@@ -72,7 +67,6 @@ describe('DifficultyEstimatorService', () => {
     expect(g1.cellValues).toEqual([1, 3, 1]);
     expect(g1.requiredIndices).toEqual([0, 1, 2]);
     expect(g1.firstIterationFalsePositiveSolutionCount).toBe(0); // only {1,3,1}
-    expect(g1.valuesRms).toBeCloseTo(Math.sqrt(11 / 3), 10);
 
     const g2 = report.groups[1];
     expect(g2.index).toBe(2);
@@ -80,7 +74,6 @@ describe('DifficultyEstimatorService', () => {
     expect(g2.cellValues).toEqual([2, 2, 1]);
     expect(g2.requiredIndices).toEqual([]);
     expect(g2.firstIterationFalsePositiveSolutionCount).toBe(0); // empty subset
-    expect(g2.valuesRms).toBeCloseTo(Math.sqrt(3), 10);
 
   });
 
@@ -93,7 +86,6 @@ describe('DifficultyEstimatorService', () => {
     expect(report.rows[0].cellValues).toEqual([1, 2]);
     expect(report.rows[0].requiredIndices).toEqual([]);
     expect(report.rows[0].firstIterationFalsePositiveSolutionCount).toBe(0);
-    expect(report.rows[0].valuesRms).toBeCloseTo(Math.sqrt((1 * 1 + 2 * 2) / 2), 10);
   });
 
   it('handles a column with multiple required cells', () => {
@@ -108,7 +100,6 @@ describe('DifficultyEstimatorService', () => {
     expect(report.columns[0].requiredSum).toBe(5);
     expect(report.columns[0].requiredIndices).toEqual([0, 1]);
     expect(report.columns[0].firstIterationFalsePositiveSolutionCount).toBe(0); // {2,3}
-    expect(report.columns[0].valuesRms).toBeCloseTo(Math.sqrt((2 * 2 + 3 * 3) / 2), 10);
   });
 
 

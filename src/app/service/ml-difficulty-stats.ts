@@ -59,6 +59,12 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'unresolvedCellCountAfterDeduction',
     'percentUnresolvedCellsAfterDeduction',
     //
+    'percentUnresolvedCellsAfterDeductionI1',
+    'percentUnresolvedCellsAfterDeductionI2',
+    // 'percentUnresolvedCellsAfterDeductionI3',
+    // 'percentUnresolvedCellsAfterDeductionI4',
+    // 'percentUnresolvedCellsAfterDeductionI5',
+    //
     'autoCompleteWasAvailable',
   ],
 };
@@ -174,6 +180,12 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
     percentUnresolvedCellsAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction / cellCount,
 
+    percentUnresolvedCellsAfterDeductionI1: (stats.totals.unresolvedCountsPerIteration[0] ?? 0) / cellCount,
+    percentUnresolvedCellsAfterDeductionI2: (stats.totals.unresolvedCountsPerIteration[1] ?? 0) / cellCount,
+    percentUnresolvedCellsAfterDeductionI3: (stats.totals.unresolvedCountsPerIteration[2] ?? 0) / cellCount,
+    percentUnresolvedCellsAfterDeductionI4: (stats.totals.unresolvedCountsPerIteration[3] ?? 0) / cellCount,
+    percentUnresolvedCellsAfterDeductionI5: (stats.totals.unresolvedCountsPerIteration[4] ?? 0) / cellCount,
+
     autoCompleteWasAvailable: autoCompletionAvailable ? 1 : 0,
   };
 
@@ -246,6 +258,12 @@ export interface GameStatFeatures {
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;
   percentUnresolvedCellsAfterDeduction: number;
+  //
+  percentUnresolvedCellsAfterDeductionI1: number;
+  percentUnresolvedCellsAfterDeductionI2: number;
+  percentUnresolvedCellsAfterDeductionI3: number;
+  percentUnresolvedCellsAfterDeductionI4: number;
+  percentUnresolvedCellsAfterDeductionI5: number;
   //
   autoCompleteWasAvailable: number;
 }
