@@ -4,7 +4,6 @@
 - organize documentation, add links
 - tutorial mode
 - post to social media
-- use difficulty for affirmation selection
 - track last X games against par time.
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
 - Positive feedback when breaking previous records 
@@ -14,14 +13,15 @@
 - ability to play board again and compare against previous attempts
 - ability to play board again and not ruin streak history
 - sounds
-- current sum of selected cells in a color group, shown in top right corner perhaps
-- configuration to be able to show/hide running calculated sums
 - temp cell selection: optionally do math for selected cells
 - stats of fail counts based on grid size, time spent per game, per size
 - ability to sync game state across devices
 
 # Done
 
+- configuration to be able to show/hide running calculated sums
+- current sum of selected cells in a color group, shown in top right corner perhaps
+- use difficulty for affirmation selection
 - add note on what par time is
 - multiple tabs cause race condition with data saving
 - record iOS 18 screen recordings, try to pick the correct version automatically.
