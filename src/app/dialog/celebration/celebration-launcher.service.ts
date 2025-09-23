@@ -32,12 +32,14 @@ export class CelebrationLauncherService {
     // Bias: 0 for "bad" performance (high mistakes, easy board), 1 for "good" performance (low mistakes, hard board)
     const bias = (difficultyPercentile * 0.3) + ((1 - mistakeFactor) * 0.7);
 
-    // Convert bias to a power for Math.pow.
-    // A power > 1 biases random numbers towards 0 (start of the list).
-    // A power < 1 biases random numbers towards 1 (end of the list).
-    const power = Math.pow(4, 1 - 2 * bias);
+    const skewStrength = 3;
+    const u = Math.random();
+    // logit transform: maps uniform [0,1] → (-∞, ∞)
+    const shifted = Math.log(u / (1 - u));
 
-    const randomValue = Math.pow(Math.random(), power);
+    // inverse-logit with bias applied
+    const randomValue = 1 / (1 + Math.exp(-shifted - skewStrength * (bias - 0.5)));
+
     const affirmationsCount = AFFIRMATIONS.length;
     const randomIndex = Math.max(0, Math.min(affirmationsCount - 1, Math.floor(randomValue * affirmationsCount)));
 
