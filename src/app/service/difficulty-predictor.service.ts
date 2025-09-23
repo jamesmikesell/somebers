@@ -1,12 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { DisplayCell } from '../model/game-board';
 import { ModelJson } from '../model/ml-types';
-import { TrainingSample, predictRidge } from './ml-core';
+import { BoardStatAnalyzer } from './board-stat-analyzer';
+import { generateGameBoard } from './gameboard-generator';
+import { TrainingSample, predictRidge, toSample } from './ml-core';
+import { difficultyReportToGameStat } from './ml-difficulty-stats';
 
 @Injectable({ providedIn: 'root' })
 export class DifficultyPredictorService {
   private packagedModelPromise?: Promise<ModelJson | undefined>;
+  private timesPromise?: Promise<number[] | undefined>;
 
   constructor(private http: HttpClient) { }
 
@@ -25,6 +30,55 @@ export class DifficultyPredictorService {
   }
 
 
+  async getDifficultyEstimates(gameNumberOrArea: DisplayCell[][] | number): Promise<DifficultyDisplayDetails> {
+    let effectivePlayArea: DisplayCell[][];
+    if (typeof gameNumberOrArea === "number")
+      effectivePlayArea = (await generateGameBoard(gameNumberOrArea)).playArea;
+    else
+      effectivePlayArea = gameNumberOrArea;
+
+    if (!effectivePlayArea || effectivePlayArea.length === 0)
+      return undefined;
+
+    const difficultyAnalysis = BoardStatAnalyzer.evaluate(effectivePlayArea);
+
+    const unresolvedCells = difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
+    const resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - unresolvedCells;
+
+    const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, 0, 0))!;
+    const estimatedSolveTime = await this.predictGameModel(stats);
+    const percentile = await this.getPercentile(estimatedSolveTime);
+
+
+    return {
+      estimatedSolveTime: estimatedSolveTime,
+      percentile: percentile,
+      firstPrincipalUnResoledCellCount: unresolvedCells,
+      firstPrincipalResolvableCellCount: resolvableCells,
+    };
+  }
+
+
+  private async getPercentile(ms: number): Promise<number> {
+    const times = await this.loadPredictedSolveTimesList();
+    if (!times || times.length === 0)
+      return undefined;
+
+    const n = times.length;
+    // Binary search insertion index (number of values <= ms)
+    let lo = 0, hi = n;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (times[mid] <= ms)
+        lo = mid + 1;
+      else
+        hi = mid;
+    }
+    const percentile = (lo / n);
+    return percentile;
+  }
+
+
   private async loadPackagedModel(): Promise<ModelJson | undefined> {
     if (!this.packagedModelPromise) {
       this.packagedModelPromise = firstValueFrom(this.http.get<ModelJson>('difficulty-ml-model.json'))
@@ -37,5 +91,31 @@ export class DifficultyPredictorService {
   }
 
 
+  private async loadPredictedSolveTimesList(): Promise<number[] | undefined> {
+    if (!this.timesPromise) {
+      this.timesPromise = firstValueFrom(this.http.get<number[]>('difficulty-ml-predicted-times.json'))
+        .then((data: number[]): number[] | undefined => {
+          if (!Array.isArray(data))
+            return undefined;
+
+          const times = data.filter((value) => Number.isFinite(value));
+          times.sort((a, b) => a - b);
+          return times;
+        })
+        .catch((err: unknown): number[] | undefined => {
+          console.warn('EstimatedDifficultyComponent: failed to load times', err);
+          return undefined;
+        });
+    }
+    return this.timesPromise;
+  }
+
 }
 
+
+export interface DifficultyDisplayDetails {
+  percentile: number;
+  estimatedSolveTime: number;
+  firstPrincipalUnResoledCellCount: number;
+  firstPrincipalResolvableCellCount: number;
+}

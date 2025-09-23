@@ -1,15 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from "@angular/material/icon";
-import { firstValueFrom } from 'rxjs';
 import { DisplayCell } from '../../model/game-board';
-import { BoardStatAnalyzer } from '../../service/board-stat-analyzer';
-import { DifficultyPredictorService } from '../../service/difficulty-predictor.service';
-import { generateGameBoard } from '../../service/gameboard-generator';
-import { toSample } from '../../service/ml-core';
-import { difficultyReportToGameStat } from '../../service/ml-difficulty-stats';
+import { DifficultyDisplayDetails, DifficultyPredictorService } from '../../service/difficulty-predictor.service';
 
 @Component({
   selector: 'app-estimated-difficulty',
@@ -26,12 +20,9 @@ export class EstimatedDifficultyComponent implements OnChanges {
   estimatedTimeLabel = '–';
   firstPrincipalViolationWarning = ""
 
-  private timesPromise?: Promise<number[] | undefined>;
-
 
   constructor(
     private predictor: DifficultyPredictorService,
-    private http: HttpClient,
   ) { }
 
 
@@ -42,89 +33,27 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
 
   private async updatePrediction(): Promise<void> {
+    this.firstPrincipalViolationWarning = "";
+    this.percentileLabel = '-';
+    this.estimatedTimeLabel = '-';
+
     try {
-      let effectivePlayArea: DisplayCell[][];
-
+      let difficultyDetails: DifficultyDisplayDetails;
       if (this.playArea && this.playArea.length > 0)
-        effectivePlayArea = this.playArea;
+        difficultyDetails = await this.predictor.getDifficultyEstimates(this.playArea)
       else if (this.gameNumber != null)
-        effectivePlayArea = (await generateGameBoard(this.gameNumber)).playArea;
+        difficultyDetails = await this.predictor.getDifficultyEstimates(this.gameNumber)
 
-
-      if (!effectivePlayArea || effectivePlayArea.length === 0) {
-        this.percentileLabel = '–';
+      if (!difficultyDetails)
         return;
-      }
 
-      const difficultyAnalysis = BoardStatAnalyzer.evaluate(effectivePlayArea);
+      if (difficultyDetails.firstPrincipalUnResoledCellCount > 0)
+        this.firstPrincipalViolationWarning = `FP+ ${difficultyDetails.firstPrincipalUnResoledCellCount}-${difficultyDetails.firstPrincipalResolvableCellCount}`
 
-      this.firstPrincipalViolationWarning = "";
-      if (difficultyAnalysis.totals.unresolvedCellCountAfterDeduction > 0) {
-        const unresolvedCells = difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
-        const resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - unresolvedCells;
-        this.firstPrincipalViolationWarning = `FP+ ${unresolvedCells}-${resolvableCells}`
-      }
-
-      const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, 0, 0))!;
-      const msForDifficulty = await this.predictor.predictGameModel(stats);
-      if (msForDifficulty != null) {
-        await this.updatePercentile(msForDifficulty);
-        this.estimatedTimeLabel = this.formatMs(msForDifficulty);
-      } else {
-        this.percentileLabel = '–';
-        this.estimatedTimeLabel = '–';
-      }
+      this.percentileLabel = `${(difficultyDetails.percentile * 100).toFixed(1)}`;
+      this.estimatedTimeLabel = this.formatMs(difficultyDetails.estimatedSolveTime);
     } catch (e) {
       console.warn('Prediction failed', e);
-      this.firstPrincipalViolationWarning = "";
-      this.percentileLabel = '–';
-      this.estimatedTimeLabel = '–';
-    }
-  }
-
-
-  private async loadPredictedSolveTimesList(): Promise<number[] | undefined> {
-    if (!this.timesPromise) {
-      this.timesPromise = firstValueFrom(this.http.get<number[]>('difficulty-ml-predicted-times.json'))
-        .then((data: number[]): number[] | undefined => {
-          if (!Array.isArray(data))
-            return undefined;
-
-          const times = data.filter((value) => Number.isFinite(value));
-          times.sort((a, b) => a - b);
-          return times;
-        })
-        .catch((err: unknown): number[] | undefined => {
-          console.warn('EstimatedDifficultyComponent: failed to load times', err);
-          return undefined;
-        });
-    }
-    return this.timesPromise;
-  }
-
-
-  private async updatePercentile(ms: number): Promise<void> {
-    try {
-      const times = await this.loadPredictedSolveTimesList();
-      if (!times || times.length === 0) {
-        this.percentileLabel = '–';
-        return;
-      }
-      const n = times.length;
-      // Binary search insertion index (number of values <= ms)
-      let lo = 0, hi = n;
-      while (lo < hi) {
-        const mid = (lo + hi) >>> 1;
-        if (times[mid] <= ms)
-          lo = mid + 1;
-        else
-          hi = mid;
-      }
-      const percentile = (lo / n) * 100;
-      this.percentileLabel = `${percentile.toFixed(1)}`;
-    } catch (e) {
-      console.warn('Percentile computation failed', e);
-      this.percentileLabel = '–';
     }
   }
 

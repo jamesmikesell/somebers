@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, tap } from 'rxjs';
-import { CelebrationDialog } from './celebration';
+import { DisplayCell } from '../../model/game-board';
+import { DifficultyPredictorService } from '../../service/difficulty-predictor.service';
 import { AFFIRMATIONS } from './affirmations';
+import { CelebrationDialog } from './celebration';
 
 
 @Injectable({ providedIn: 'root' })
@@ -10,21 +12,25 @@ export class CelebrationLauncherService {
   private dialogRef: MatDialogRef<CelebrationDialog, void> | null = null;
 
 
-  constructor(private dialog: MatDialog) { }
+  constructor(
+    private dialog: MatDialog,
+    private difficultyEstimationService: DifficultyPredictorService,
+  ) { }
 
 
-  openAutoPickMessage(mistakes: number, boardSize: number): Observable<void> {
-    const affirmationsCount = AFFIRMATIONS.length;
+  async openAutoPickMessage(mistakes: number, playArea: DisplayCell[][]): Promise<Observable<void>> {
+    let difficultyPercentile = 0;
+    try {
+      const difficultyDetails = await this.difficultyEstimationService.getDifficultyEstimates(playArea);
+      difficultyPercentile = difficultyDetails.percentile;
+    } catch (error) {
+      console.error(error);
+    }
 
-    // Normalize board size (5-9) to a 0-1 range
-    const normalizedBoardSize = Math.max(0, Math.min(1, (boardSize - 5) / 4));
+    const mistakeFactor = Math.min(1, mistakes / 3);
 
-    // Normalize mistakes. More mistakes on a larger board is less of a factor.
-    // Making mistakes on more than 5% of cells is considered max penalty.
-    const mistakeFactor = Math.min(1, mistakes / (boardSize * boardSize * 0.05));
-
-    // Bias: 0 for "bad" performance (high mistakes, small board), 1 for "good" performance (low mistakes, large board)
-    const bias = (normalizedBoardSize * 0.2) + ((1 - mistakeFactor) * 0.8);
+    // Bias: 0 for "bad" performance (high mistakes, easy board), 1 for "good" performance (low mistakes, hard board)
+    const bias = (difficultyPercentile * 0.3) + ((1 - mistakeFactor) * 0.7);
 
     // Convert bias to a power for Math.pow.
     // A power > 1 biases random numbers towards 0 (start of the list).
@@ -32,6 +38,7 @@ export class CelebrationLauncherService {
     const power = Math.pow(4, 1 - 2 * bias);
 
     const randomValue = Math.pow(Math.random(), power);
+    const affirmationsCount = AFFIRMATIONS.length;
     const randomIndex = Math.max(0, Math.min(affirmationsCount - 1, Math.floor(randomValue * affirmationsCount)));
 
     let affirmation = AFFIRMATIONS[randomIndex];

@@ -616,13 +616,13 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  private checkComplete(): void {
+  private async checkComplete(): Promise<void> {
     if (this.gameBoard.isComplete()) {
       this.undoManager.clear();
-      const boardSize = this.gameBoard.playArea.length;
       const mistakes = this.stats.mistakesCurrentBoard;
+      const playArea = this.gameBoard.playArea;
 
-      this.celebrationLauncherService.openAutoPickMessage(mistakes, boardSize)
+      (await this.celebrationLauncherService.openAutoPickMessage(mistakes, playArea))
         .pipe(takeUntil(this.destroy))
         .subscribe(() => {
           setTimeout(() => {
