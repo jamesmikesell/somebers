@@ -19,7 +19,9 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
 
     const gameBoard = await generateGameBoard(game.gameNumber);
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
-    const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber)
+    const completionTime = game.moveHistory[game.moveHistory.length - 1].timestamp;
+    const autoCompletionAvailable = completionTime > 1758406785000;
+    const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber, autoCompletionAvailable)
 
     out.push(s);
   }

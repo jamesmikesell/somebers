@@ -40,6 +40,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     'firstIterationActionableCellAllCountMax',
     'firstIterationActionableCellAllCountStd',
     // 'firstIterationActionableCellAllCountSum',
+    // 'firstIterationActionableCellAllCountPercent',
     //
     // 'requiredSumAllMean',
     // 'requiredSumAllMin',
@@ -57,12 +58,13 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'deductionIterations',
     // 'unresolvedCellCountAfterDeduction',
     'percentUnresolvedCellsAfterDeduction',
-
+    //
+    'autoCompleteWasAvailable',
   ],
 };
 
 
-export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
+export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number, autoCompletionAvailable = true): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
   const agg = (xs: number[]) => {
     const n = xs.length || 1;
     let sum = 0;
@@ -147,6 +149,7 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     firstIterationActionableCellAllCountMax: firstIterationActionableCellAllCountAllAgg.max,
     firstIterationActionableCellAllCountStd: firstIterationActionableCellAllCountAllAgg.std,
     firstIterationActionableCellAllCountSum: firstIterationActionableCellAllCountAllAgg.sum,
+    firstIterationActionableCellAllCountPercent: firstIterationActionableCellAllCountAllAgg.sum / cellCount,
 
     firstIterationActionableCellCountGrpMean: firstIterationActionableCellAllCountGroupAgg.mean,
     firstIterationActionableCellCountGrpMin: firstIterationActionableCellAllCountGroupAgg.min,
@@ -170,6 +173,8 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     deductionIterations: stats.totals.deductionIterations,
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
     percentUnresolvedCellsAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction / cellCount,
+
+    autoCompleteWasAvailable: autoCompletionAvailable ? 1 : 0,
   };
 
   let x: GameStatWithBoard = { gameNumber }
@@ -217,6 +222,7 @@ export interface GameStatFeatures {
   firstIterationActionableCellAllCountMax: number;
   firstIterationActionableCellAllCountStd: number;
   firstIterationActionableCellAllCountSum: number;
+  firstIterationActionableCellAllCountPercent: number;
   //
   firstIterationActionableCellCountGrpMean: number;
   firstIterationActionableCellCountGrpMin: number;
@@ -240,4 +246,6 @@ export interface GameStatFeatures {
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;
   percentUnresolvedCellsAfterDeduction: number;
+  //
+  autoCompleteWasAvailable: number;
 }
