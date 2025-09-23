@@ -4,56 +4,67 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class WakeLock {
+
+  screenWakeLocked = false;
+
   private sentinel: WakeLockSentinel | null = null;
-  private hasUserInteracted = false;
+  private wakeLockRequested = false;
+  private wakeLockRefreshTimer: number;
 
-  async enable(): Promise<boolean> {
-    if (!navigator.wakeLock)
-      return false;
 
-    // If no user interaction yet, wait for it
-    if (!this.hasUserInteracted) {
-      this.waitForUserInteraction();
-      return false;
-    }
-
-    return this.request();
+  enable(): void {
+    this.wakeLockRequested = true;
+    this.wakeLockInternal();
   }
 
+
+  private wakeLockInternal(): void {
+    this.clearRefreshTimer();
+
+    if (!this.wakeLockRequested)
+      return;
+
+    let response = navigator.wakeLock.request('screen');
+    response.then((result) => {
+      // console.log("wake locked");
+      this.screenWakeLocked = true;
+      this.sentinel = result;
+
+      result.onrelease = () => {
+        // console.log("wake lock released");
+        this.screenWakeLocked = false;
+        this.tryWakeLock();
+      };
+    }).catch(err => {
+      // console.log("wake lock error", err);
+      this.screenWakeLocked = false;
+      this.tryWakeLock();
+    });
+  }
+
+
   async disable(): Promise<void> {
+    // console.log("wake lock disabled")
+    this.clearRefreshTimer()
+    this.wakeLockRequested = false;
     if (this.sentinel) {
       await this.sentinel.release();
       this.sentinel = null;
     }
   }
 
-  private async request(): Promise<boolean> {
-    try {
-      this.sentinel = await navigator.wakeLock.request('screen');
 
-      // Auto-reacquire when page becomes visible again
-      this.sentinel.addEventListener('release', () => {
-        this.sentinel = null;
-        if (document.visibilityState === 'visible') {
-          this.request();
-        }
-      });
-
-      return true;
-    } catch {
-      return false;
-    }
+  private clearRefreshTimer(): void {
+    // console.log("refresh timer canceled")
+    clearTimeout(this.wakeLockRefreshTimer)
   }
 
-  private waitForUserInteraction(): void {
-    const handleInteraction = () => {
-      this.hasUserInteracted = true;
-      this.request();
-      document.removeEventListener('click', handleInteraction);
-      document.removeEventListener('keydown', handleInteraction);
-    };
 
-    document.addEventListener('click', handleInteraction, { once: true });
-    document.addEventListener('keydown', handleInteraction, { once: true });
+  private tryWakeLock(): void {
+    // console.log("will try wake lock in 5 seconds")
+    this.wakeLockRefreshTimer = setTimeout(() => {
+      if (this.wakeLockRequested)
+        this.enable();
+    }, 5000);
   }
 }
