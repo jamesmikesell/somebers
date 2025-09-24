@@ -1,4 +1,9 @@
-<div class="scratch-pad" role="group" aria-label="Scratch pad controls" [class.vertical-mode]="verticalMode">
+<div
+  class="scratch-pad"
+  role="group"
+  aria-label="Scratch pad controls"
+  [class.vertical-mode]="verticalMode"
+>
   <button
     mat-mini-fab
     type="button"
@@ -10,7 +15,11 @@
     <mat-icon>do_not_disturb_on</mat-icon>
   </button>
 
-  <div class="scratch-pad__display" aria-live="polite" (dblclick)="reset()">
+  <div
+    class="scratch-pad__display no-select"
+    aria-live="polite"
+    (dblclick)="reset()"
+  >
     <div class="scratch-pad__label big">Scratch Pad</div>
     <div class="scratch-pad__label small">S-Pad</div>
     <div class="scratch-pad__value">{{ value }}</div>
