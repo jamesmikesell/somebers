@@ -102,42 +102,50 @@
   </section>
 
   <section class="settings-section">
-    <h2>Install App</h2>
-    <app-install #inst="appInstall"></app-install>
-    @if (!inst.canInstall && !inst.isInstalled) {
-      <p>
-        Your browser does not support automatic installation here, however you
-        may still be able to install it by following the
-        <a routerLink="/documentation" fragment="installation"
-          >installation instructions</a
-        >
-        for your platform.
-      </p>
-    }
+    <mat-card>
+      <mat-card-content>
+        <h2>Install App</h2>
+        <app-install #inst="appInstall"></app-install>
+        @if (!inst.canInstall && !inst.isInstalled) {
+          <p>
+            Your browser does not support automatic installation here, however
+            you may still be able to install it by following the
+            <a routerLink="/documentation" fragment="installation"
+              >installation instructions</a
+            >
+            for your platform.
+          </p>
+        }
+      </mat-card-content>
+    </mat-card>
   </section>
 
   <section class="settings-section">
-    <h2>Clear All Saved Data</h2>
-    <p>
-      This will permanently delete all your saved game data, including your
-      progress and statistics. This action cannot be undone.
-    </p>
-    <mat-form-field>
-      <mat-label>Type "delete all data" to confirm</mat-label>
-      <input
-        matInput
-        [(ngModel)]="deleteConfirmation"
-        (ngModelChange)="onDeleteInputChange()"
-      />
-    </mat-form-field>
-    <button
-      matButton="outlined"
-      color="warn"
-      [disabled]="!canDelete"
-      (click)="deleteAllData()"
-    >
-      Delete All Data
-    </button>
+    <mat-card>
+      <mat-card-content>
+        <h2>Clear All Saved Data</h2>
+        <p>
+          This will permanently delete all your saved game data, including your
+          progress and statistics. This action cannot be undone.
+        </p>
+        <mat-form-field>
+          <mat-label>Type "delete all data" to confirm</mat-label>
+          <input
+            matInput
+            [(ngModel)]="deleteConfirmation"
+            (ngModelChange)="onDeleteInputChange()"
+          />
+        </mat-form-field>
+        <button
+          matButton="outlined"
+          color="warn"
+          [disabled]="!canDelete"
+          (click)="deleteAllData()"
+        >
+          Delete All Data
+        </button>
+      </mat-card-content>
+    </mat-card>
   </section>
 
   @if (devModeEnabled) {}
