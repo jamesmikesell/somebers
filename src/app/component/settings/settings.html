@@ -3,75 +3,102 @@
 
   <section class="settings-section">
     <h2>Display Settings</h2>
-    <mat-slide-toggle
-      [(ngModel)]="shapesModeEnabled"
-      (change)="onShapesModeChange($event)"
-    >
-      Enable Shapes Mode
-    </mat-slide-toggle>
-    <p>
-      When enabled, color-coded groups will display a unique shape in each cell,
-      providing an alternative visual cue for players who may have difficulty
-      distinguishing colors.
-    </p>
+    <div class="settings-option-group">
+      <mat-card class="settings-option-card">
+        <mat-card-content>
+          <mat-slide-toggle
+            [(ngModel)]="shapesModeEnabled"
+            (change)="onShapesModeChange($event)"
+          >
+            Shapes Mode
+          </mat-slide-toggle>
+          <p class="settings-option-description">
+            When enabled, color-coded groups display a unique shape in each
+            cell, providing an alternative visual cue for players who may have
+            difficulty distinguishing colors.
+          </p>
+        </mat-card-content>
+      </mat-card>
 
-    <mat-slide-toggle
-      [(ngModel)]="rowAndColumnCurrentSelectionSumVisible"
-      (change)="onRowAndColumnCurrentSelectionSumVisibleChange($event)"
-    >
-      Show Row / Column Current Sum
-    </mat-slide-toggle>
-    <p>
-      Controls whether row and column headers display in the upper-right corner
-      the current sum of selected cells.
-    </p>
+      <mat-card class="settings-option-card">
+        <mat-card-content>
+          <mat-slide-toggle
+            [(ngModel)]="rowAndColumnCurrentSelectionSumVisible"
+            (change)="onRowAndColumnCurrentSelectionSumVisibleChange($event)"
+          >
+            Show Row / Column Current Sum
+          </mat-slide-toggle>
+          <p class="settings-option-description">
+            Controls whether row and column headers display the current sum of
+            selected cells in their upper-right corner.
+          </p>
+        </mat-card-content>
+      </mat-card>
 
-    <mat-slide-toggle
-      [(ngModel)]="colorGroupCurrentSelectionSumVisible"
-      (change)="onColorGroupCurrentSelectionSumVisibleChange($event)"
-    >
-      Show Color Group Current Sum
-    </mat-slide-toggle>
-    <p>
-      Controls whether the sum of selected cells in a color group displays in
-      the color groups first cell's upper-right corner.
-    </p>
+      <mat-card class="settings-option-card">
+        <mat-card-content>
+          <mat-slide-toggle
+            [(ngModel)]="colorGroupCurrentSelectionSumVisible"
+            (change)="onColorGroupCurrentSelectionSumVisibleChange($event)"
+          >
+            Show Color Group Current Sum
+          </mat-slide-toggle>
+          <p class="settings-option-description">
+            Controls whether a color group's first cell displays the sum of the
+            group's currently selected cells in the upper-right corner.
+          </p>
+        </mat-card-content>
+      </mat-card>
 
-    <mat-slide-toggle
-      [(ngModel)]="scratchPadVisible"
-      (change)="onScratchPadVisibleChange($event)"
-    >
-      Show Scratch Pad
-    </mat-slide-toggle>
-    <p>
-      Controls whether the
-      <a routerLink="/documentation" fragment="scratch-pad">scratch pad</a> is
-      displayed next to the board. More info about the scratch pad can be found
-      in the.
-    </p>
+      <mat-card class="settings-option-card">
+        <mat-card-content>
+          <mat-slide-toggle
+            [(ngModel)]="scratchPadVisible"
+            (change)="onScratchPadVisibleChange($event)"
+          >
+            Show Scratch Pad
+          </mat-slide-toggle>
+          <p class="settings-option-description">
+            Controls whether the
+            <a routerLink="/documentation" fragment="scratch-pad"
+              >scratch pad</a
+            >
+            displays next to the board. More information lives in the
+            documentation.
+          </p>
+        </mat-card-content>
+      </mat-card>
 
-    <mat-slide-toggle
-      [(ngModel)]="sectionCompletionAnimationEnabled"
-      (change)="onSectionCompletionAnimationChange($event)"
-    >
-      Enable Section Completion Animations
-    </mat-slide-toggle>
-    <p>
-      Plays a cascading glow across rows, columns, or groups when they meet
-      their target value but still have open cells, highlighting the progress
-      you've made.
-    </p>
+      <mat-card class="settings-option-card">
+        <mat-card-content>
+          <mat-slide-toggle
+            [(ngModel)]="sectionCompletionAnimationEnabled"
+            (change)="onSectionCompletionAnimationChange($event)"
+          >
+            Section Completion Animations
+          </mat-slide-toggle>
+          <p class="settings-option-description">
+            Plays a cascading glow across rows, columns, or groups when they
+            meet their target value, signalling remaining cell can be cleared.
+          </p>
+        </mat-card-content>
+      </mat-card>
 
-    <mat-slide-toggle
-      [(ngModel)]="autoClearCellsEnabled"
-      (change)="onAutoClearCellsChange($event)"
-    >
-      Auto Clear Cells
-    </mat-slide-toggle>
-    <p>
-      Unusable cells in completed sections will be automatically cleared and
-      removed.
-    </p>
+      <mat-card class="settings-option-card">
+        <mat-card-content>
+          <mat-slide-toggle
+            [(ngModel)]="autoClearCellsEnabled"
+            (change)="onAutoClearCellsChange($event)"
+          >
+            Auto Clear Cells
+          </mat-slide-toggle>
+          <p class="settings-option-description">
+            Unusable cells in completed sections will be automatically cleared
+            and removed.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </section>
 
   <section class="settings-section">
