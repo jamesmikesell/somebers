@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+import { rmSync, writeFileSync } from 'fs';
 import * as path from 'path';
 import { BaselineModelJson, ModelEvaluationResult, ModelJson, RidgeModelJson } from '../src/app/model/ml-types';
 import { evaluate, predictBaseline, predictRidge, stratifiedSplit, toSample, trainBestModel, TrainingSample } from '../src/app/service/ml-core';
@@ -89,15 +89,19 @@ async function main(): Promise<void> {
   // Keep deterministic order like the original loop
   predictions.sort((a, b) => a.gameNumber - b.gameNumber);
   let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => Math.round(x.predictedMs));
-  writeFileSync('development-tools/ml-predictions-2k-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
-  writeFileSync('development-tools/ml-predictions-2k-games.json', JSON.stringify(predictions, null, 2), 'utf8');
-  // Also persist a public copy with just the sorted times for use in-app
-  try {
-    writeFileSync('public/difficulty-ml-predicted-times.json', JSON.stringify(next1kTimes, null, 2), 'utf8');
-  } catch (err) {
-    console.warn('Failed to write public/difficulty-ml-predicted-times.json', err);
+
+  const predictedGameTimes = 'development-tools/ml-predictions-2k-games.json';
+  const predictedTimes = 'public/difficulty-ml-predicted-times.json';
+  rmSync(predictedGameTimes, { force: true })
+  rmSync(predictedTimes, { force: true })
+  if ((next1kTimes[0] ?? 0) <= 0) {
+    rmSync(modelPath, { force: true })
+    console.error("\n!!!!!!!\n!  Negative or instant completion time predicted... There's a problem with the model.\n!!!!!!!\n")
+    process.exit(1);
   }
 
+  writeFileSync(predictedGameTimes, JSON.stringify(predictions, null, 2), 'utf8');
+  writeFileSync(predictedTimes, JSON.stringify(next1kTimes, null, 2), 'utf8');
 }
 
 async function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number): Promise<{ gameNumber: number; predictedMs: number }[]> {

@@ -15,7 +15,7 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
   for (const game of savedState.inProgressGames ?? []) {
     if (!game?.completed) continue;
     if ((game.timeSpent ?? 0) <= 15000) continue;
-    if ((game.moveHistory?.filter((correctMove) => !correctMove).length ?? 0) > 3) continue;
+    if ((game.moveHistory?.filter((correctMove) => !correctMove).length ?? 0) > 10) continue;
 
     const gameBoard = await generateGameBoard(game.gameNumber);
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
