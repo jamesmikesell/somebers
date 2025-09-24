@@ -21,17 +21,17 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'firstIterationGuaranteedRequiredCellCountMin',
     'firstIterationGuaranteedRequiredCellCountMax',
     'firstIterationGuaranteedRequiredCellCountStd',
-    // 'firstIterationGuaranteedRequiredCellCountSum',
+    'firstIterationGuaranteedRequiredCellCountSum',
     // 
     // 'firstIterationGuaranteedUnusableCellCountAllMean',
     // 'firstIterationGuaranteedUnusableCellCountAllMin',
     'firstIterationGuaranteedUnusableCellCountAllMax',
     'firstIterationGuaranteedUnusableCellCountAllStd',
-    // 'firstIterationGuaranteedUnusableCellCountAllSum',
+    'firstIterationGuaranteedUnusableCellCountAllSum',
     //
     // 'firstIterationActionableCellCountGrpMean',
-    'firstIterationActionableCellCountGrpMin',
-    'firstIterationActionableCellCountGrpMax',
+    // 'firstIterationActionableCellCountGrpMin',
+    // 'firstIterationActionableCellCountGrpMax',
     // 'firstIterationActionableCellCountGrpStd',
     // 'firstIterationActionableCellCountGrpSum',
     // 
@@ -39,8 +39,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'firstIterationActionableCellAllCountMin', // for all row/col/grp what is the min number of cells where an guaranteed action can be performed.. on many boards there tends to be at one row/col/grp where nothing can be done
     'firstIterationActionableCellAllCountMax',
     'firstIterationActionableCellAllCountStd',
-    // 'firstIterationActionableCellAllCountSum',
-    // 'firstIterationActionableCellAllCountPercent',
+    'firstIterationActionableCellAllCountSum',
     //
     // 'requiredSumAllMean',
     // 'requiredSumAllMin',
@@ -52,8 +51,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'cellCountLargerThanTargetAllMin',
     // 'cellCountLargerThanTargetAllMax',
     // 'cellCountLargerThanTargetAllStd',
-    // 'cellCountLargerThanTargetAllSum',
-    // 'cellCountLargerThanTargetAllPercent',
+    'cellCountLargerThanTargetAllSum',
     // 
     // 'deductionIterations',
     // 'unresolvedCellCountAfterDeduction',
@@ -128,40 +126,42 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
 
   const boardSize = stats.totals.rowsEvaluated
   const cellCount = boardSize * boardSize;
-
+  // const maxCellCount = 9 * 9;
+  // const minCellCount = 5 * 5;
+  // const boardSizeCellCountRatio = (cellCount - minCellCount) / (maxCellCount - minCellCount)
+  const boardSizeRatio = (boardSize - 5) / (9 - 5);
   let features: GameStatFeatures = {
-    boardSize: boardSize,
+    boardSize: boardSizeRatio,
 
     firstIterationFalsePositiveSolutionCountAllMean: firstIterationFalsePositiveSolutionCountAllAgg.mean,
-    firstIterationFalsePositiveSolutionCountAllMin: firstIterationFalsePositiveSolutionCountAllAgg.min,
-    firstIterationFalsePositiveSolutionCountAllMax: firstIterationFalsePositiveSolutionCountAllAgg.max,
+    firstIterationFalsePositiveSolutionCountAllMin: firstIterationFalsePositiveSolutionCountAllAgg.min / Math.pow(2, boardSize),
+    firstIterationFalsePositiveSolutionCountAllMax: firstIterationFalsePositiveSolutionCountAllAgg.max / Math.pow(2, boardSize),
     firstIterationFalsePositiveSolutionCountAllStd: firstIterationFalsePositiveSolutionCountAllAgg.std,
-    firstIterationFalsePositiveSolutionCountAllSum: firstIterationFalsePositiveSolutionCountAllAgg.sum,
+    firstIterationFalsePositiveSolutionCountAllSum: firstIterationFalsePositiveSolutionCountAllAgg.sum / (Math.pow(2, boardSize) * 3),
 
-    firstIterationGuaranteedRequiredCellCountMean: firstIterationGuaranteedRequiredCellCountAllAgg.mean,
-    firstIterationGuaranteedRequiredCellCountMin: firstIterationGuaranteedRequiredCellCountAllAgg.min,
-    firstIterationGuaranteedRequiredCellCountMax: firstIterationGuaranteedRequiredCellCountAllAgg.max,
-    firstIterationGuaranteedRequiredCellCountStd: firstIterationGuaranteedRequiredCellCountAllAgg.std,
-    firstIterationGuaranteedRequiredCellCountSum: firstIterationGuaranteedRequiredCellCountAllAgg.sum,
+    firstIterationGuaranteedRequiredCellCountMean: firstIterationGuaranteedRequiredCellCountAllAgg.mean / boardSize,
+    firstIterationGuaranteedRequiredCellCountMin: firstIterationGuaranteedRequiredCellCountAllAgg.min / boardSize,
+    firstIterationGuaranteedRequiredCellCountMax: firstIterationGuaranteedRequiredCellCountAllAgg.max / boardSize,
+    firstIterationGuaranteedRequiredCellCountStd: firstIterationGuaranteedRequiredCellCountAllAgg.std / boardSize,
+    firstIterationGuaranteedRequiredCellCountSum: firstIterationGuaranteedRequiredCellCountAllAgg.sum / boardSize / 3,
 
-    firstIterationGuaranteedUnusableCellCountAllMean: firstIterationGuaranteedUnusableCellCountAllAgg.mean,
-    firstIterationGuaranteedUnusableCellCountAllMin: firstIterationGuaranteedUnusableCellCountAllAgg.min,
-    firstIterationGuaranteedUnusableCellCountAllMax: firstIterationGuaranteedUnusableCellCountAllAgg.max,
-    firstIterationGuaranteedUnusableCellCountAllStd: firstIterationGuaranteedUnusableCellCountAllAgg.std,
-    firstIterationGuaranteedUnusableCellCountAllSum: firstIterationGuaranteedUnusableCellCountAllAgg.sum,
+    firstIterationGuaranteedUnusableCellCountAllMean: firstIterationGuaranteedUnusableCellCountAllAgg.mean / boardSize,
+    firstIterationGuaranteedUnusableCellCountAllMin: firstIterationGuaranteedUnusableCellCountAllAgg.min / boardSize,
+    firstIterationGuaranteedUnusableCellCountAllMax: firstIterationGuaranteedUnusableCellCountAllAgg.max / boardSize,
+    firstIterationGuaranteedUnusableCellCountAllStd: firstIterationGuaranteedUnusableCellCountAllAgg.std / boardSize,
+    firstIterationGuaranteedUnusableCellCountAllSum: firstIterationGuaranteedUnusableCellCountAllAgg.sum / boardSize / 3,
 
-    firstIterationActionableCellAllCountMean: firstIterationActionableCellAllCountAllAgg.mean,
-    firstIterationActionableCellAllCountMin: firstIterationActionableCellAllCountAllAgg.min,
-    firstIterationActionableCellAllCountMax: firstIterationActionableCellAllCountAllAgg.max,
-    firstIterationActionableCellAllCountStd: firstIterationActionableCellAllCountAllAgg.std,
-    firstIterationActionableCellAllCountSum: firstIterationActionableCellAllCountAllAgg.sum,
-    firstIterationActionableCellAllCountPercent: firstIterationActionableCellAllCountAllAgg.sum / cellCount,
+    firstIterationActionableCellAllCountMean: firstIterationActionableCellAllCountAllAgg.mean / boardSize,
+    firstIterationActionableCellAllCountMin: firstIterationActionableCellAllCountAllAgg.min / boardSize,
+    firstIterationActionableCellAllCountMax: firstIterationActionableCellAllCountAllAgg.max / boardSize,
+    firstIterationActionableCellAllCountStd: firstIterationActionableCellAllCountAllAgg.std / boardSize,
+    firstIterationActionableCellAllCountSum: firstIterationActionableCellAllCountAllAgg.sum / boardSize / 3,
 
-    firstIterationActionableCellCountGrpMean: firstIterationActionableCellAllCountGroupAgg.mean,
-    firstIterationActionableCellCountGrpMin: firstIterationActionableCellAllCountGroupAgg.min,
-    firstIterationActionableCellCountGrpMax: firstIterationActionableCellAllCountGroupAgg.max,
-    firstIterationActionableCellCountGrpStd: firstIterationActionableCellAllCountGroupAgg.std,
-    firstIterationActionableCellCountGrpSum: firstIterationActionableCellAllCountGroupAgg.sum,
+    firstIterationActionableCellCountGrpMean: firstIterationActionableCellAllCountGroupAgg.mean / boardSize,
+    firstIterationActionableCellCountGrpMin: firstIterationActionableCellAllCountGroupAgg.min / boardSize,
+    firstIterationActionableCellCountGrpMax: firstIterationActionableCellAllCountGroupAgg.max / boardSize,
+    firstIterationActionableCellCountGrpStd: firstIterationActionableCellAllCountGroupAgg.std / boardSize,
+    firstIterationActionableCellCountGrpSum: firstIterationActionableCellAllCountGroupAgg.sum / boardSize / 3,
 
     requiredSumAllMean: requiredSumAllAgg.mean,
     requiredSumAllMin: requiredSumAllAgg.min,
@@ -169,12 +169,11 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     requiredSumAllStd: requiredSumAllAgg.std,
     requiredSumAllSum: requiredSumAllAgg.sum,
 
-    cellCountLargerThanTargetAllMean: cellCountLargerThanTargetAllAgg.mean,
-    cellCountLargerThanTargetAllMin: cellCountLargerThanTargetAllAgg.min,
-    cellCountLargerThanTargetAllMax: cellCountLargerThanTargetAllAgg.max,
-    cellCountLargerThanTargetAllStd: cellCountLargerThanTargetAllAgg.std,
-    cellCountLargerThanTargetAllSum: cellCountLargerThanTargetAllAgg.sum,
-    cellCountLargerThanTargetAllPercent: cellCountLargerThanTargetAllAgg.sum / cellCount,
+    cellCountLargerThanTargetAllMean: cellCountLargerThanTargetAllAgg.mean / boardSize,
+    cellCountLargerThanTargetAllMin: cellCountLargerThanTargetAllAgg.min / boardSize,
+    cellCountLargerThanTargetAllMax: cellCountLargerThanTargetAllAgg.max / boardSize,
+    cellCountLargerThanTargetAllStd: cellCountLargerThanTargetAllAgg.std / boardSize,
+    cellCountLargerThanTargetAllSum: cellCountLargerThanTargetAllAgg.sum / boardSize / 3,
 
     deductionIterations: stats.totals.deductionIterations,
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
@@ -234,7 +233,6 @@ export interface GameStatFeatures {
   firstIterationActionableCellAllCountMax: number;
   firstIterationActionableCellAllCountStd: number;
   firstIterationActionableCellAllCountSum: number;
-  firstIterationActionableCellAllCountPercent: number;
   //
   firstIterationActionableCellCountGrpMean: number;
   firstIterationActionableCellCountGrpMin: number;
@@ -253,7 +251,6 @@ export interface GameStatFeatures {
   cellCountLargerThanTargetAllMax: number;
   cellCountLargerThanTargetAllStd: number;
   cellCountLargerThanTargetAllSum: number;
-  cellCountLargerThanTargetAllPercent: number;
   //
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;

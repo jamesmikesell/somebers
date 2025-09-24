@@ -1,8 +1,6 @@
 # TODO
 
 - ML: stats on first iteration actionable... if a cell is removed when scanning a column, we probably shouldn't "remove" it from the row / group scan until iteration 2.
-- ML: actionable cells as a percent
-- ML: actionable cells on more than just first iteration
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
 - organize documentation, add links
 - tutorial mode
@@ -22,6 +20,7 @@
 
 # Done
 
+- ML: actionable cells on more than just first iteration
 - configuration to be able to show/hide running calculated sums
 - current sum of selected cells in a color group, shown in top right corner perhaps
 - use difficulty for affirmation selection

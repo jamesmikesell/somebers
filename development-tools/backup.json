@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "currentGameNumber": 662,
+  "currentGameNumber": 168,
   "inProgressGames": [
     {
       "completed": true,
@@ -32022,6 +32022,490 @@
         }
       ],
       "timeSpent": 37933
+    },
+    {
+      "completed": true,
+      "gameNumber": 162,
+      "moveHistory": [
+        {
+          "timestamp": 1758673065912,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673066464,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673069185,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673069640,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673070127,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673073778,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673074241,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673085968,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673135930,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673136809,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673149054,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673150888,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673196012,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673201223,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673202248,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673206709,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673258989,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673259516,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673282082,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673282516,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673287574,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673297864,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673298207,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673298611,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673318440,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673334079,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673334567,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673335030,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673342709,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673344657,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673349555,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673355636,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673360709,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673361239,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673368482,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673371733,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673381044,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673381609,
+          "correct": true
+        },
+        {
+          "timestamp": 1758673386307,
+          "correct": true
+        }
+      ],
+      "timeSpent": 332596
+    },
+    {
+      "completed": false,
+      "gameNumber": 168,
+      "grid": [
+        [
+          {
+            "status": 2,
+            "required": false,
+            "value": 8,
+            "groupNumber": 2
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 7,
+            "groupNumber": 2
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 9,
+            "groupNumber": 2
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 3,
+            "groupNumber": 3
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 2,
+            "groupNumber": 4
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 4,
+            "groupNumber": 4
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 8,
+            "groupNumber": 4
+          }
+        ],
+        [
+          {
+            "status": 0,
+            "required": true,
+            "value": 9,
+            "groupNumber": 2
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 4,
+            "groupNumber": 2
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 9,
+            "groupNumber": 3
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 2,
+            "groupNumber": 3
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 6,
+            "groupNumber": 4
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 4,
+            "groupNumber": 4
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 5,
+            "groupNumber": 4
+          }
+        ],
+        [
+          {
+            "status": 0,
+            "required": false,
+            "value": 9,
+            "groupNumber": 2
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 5,
+            "groupNumber": 2
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 9,
+            "groupNumber": 3
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 1,
+            "groupNumber": 6
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 3,
+            "groupNumber": 6
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 9,
+            "groupNumber": 6
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 5,
+            "groupNumber": 4
+          }
+        ],
+        [
+          {
+            "status": 0,
+            "required": true,
+            "value": 9,
+            "groupNumber": 5
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 9,
+            "groupNumber": 3
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 8,
+            "groupNumber": 3
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 2,
+            "groupNumber": 6
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 8,
+            "groupNumber": 6
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 4,
+            "groupNumber": 6
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 3,
+            "groupNumber": 1
+          }
+        ],
+        [
+          {
+            "status": 0,
+            "required": false,
+            "value": 3,
+            "groupNumber": 5
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 2,
+            "groupNumber": 3
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 2,
+            "groupNumber": 7
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 5,
+            "groupNumber": 6
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 7,
+            "groupNumber": 7
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 6,
+            "groupNumber": 1
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 8,
+            "groupNumber": 1
+          }
+        ],
+        [
+          {
+            "status": 0,
+            "required": true,
+            "value": 2,
+            "groupNumber": 5
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 9,
+            "groupNumber": 5
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 6,
+            "groupNumber": 7
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 2,
+            "groupNumber": 7
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 8,
+            "groupNumber": 7
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 6,
+            "groupNumber": 1
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 9,
+            "groupNumber": 1
+          }
+        ],
+        [
+          {
+            "status": 0,
+            "required": true,
+            "value": 6,
+            "groupNumber": 5
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 5,
+            "groupNumber": 5
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 6,
+            "groupNumber": 5
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 1,
+            "groupNumber": 7
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 4,
+            "groupNumber": 7
+          },
+          {
+            "status": 0,
+            "required": true,
+            "value": 1,
+            "groupNumber": 1
+          },
+          {
+            "status": 0,
+            "required": false,
+            "value": 1,
+            "groupNumber": 1
+          }
+        ]
+      ],
+      "moveHistory": [
+        {
+          "timestamp": 1758673465451,
+          "correct": true
+        }
+      ],
+      "timeSpent": 125126
     }
   ]
 }
