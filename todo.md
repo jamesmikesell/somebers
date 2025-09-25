@@ -1,6 +1,5 @@
 # TODO
 
-- there's a bug where if multiple cell glow animations are happening at the end of the game, the congratulations flashes twice
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
 - organize documentation, add links
@@ -21,6 +20,7 @@
 
 # Done
 
+- there's a bug where if multiple cell glow animations are happening at the end of the game, the congratulations flashes twice
 - add tip that you can skip a game and come back.
 - ML: actionable cells on more than just first iteration
 - configuration to be able to show/hide running calculated sums
