@@ -176,6 +176,9 @@ export class SectionCompletionAnimator {
     if (cell.status === SelectionStatus.CLEARED)
       return false;
 
+    if (variant === 'group-header')
+      return true;
+
     return variant === 'row' || variant === 'column' || variant === 'group';
   }
 
@@ -323,11 +326,7 @@ export class SectionCompletionAnimator {
       return null;
 
     const headerCandidate = this.findGroupHeader(groupCells);
-    const includeHeaderInClearSequence = this.autoClearUnneededCells
-      && this.shouldAutoClearCell(headerCandidate.cell, 'group');
-    const orderingCandidates = includeHeaderInClearSequence
-      ? [...groupCells]
-      : groupCells.filter(item => item !== headerCandidate);
+    const orderingCandidates = groupCells.filter(item => item !== headerCandidate);
 
     const { cells: orderedCells, delays } = this.orderGroupCells(orderingCandidates, headerCandidate);
 
