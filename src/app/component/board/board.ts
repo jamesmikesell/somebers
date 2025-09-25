@@ -83,6 +83,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   private layoutController: ScratchPadLayoutController;
   private sectionAnimator = new SectionCompletionAnimator();
   private lockLostNavigated = false;
+  private celebratingGameNumber: number = undefined;
 
   @ViewChild('boardLayout')
   set boardLayout(ref: ElementRef<HTMLElement> | undefined) {
@@ -315,6 +316,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
   private async updateGameNumber(game: number): Promise<void> {
     this.gameNumber = game;
+    this.celebratingGameNumber = undefined;
     this.moveHistory = [];
     this.nextGameButtonState = "hidden";
     this.undoManager.clear();
@@ -493,6 +495,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
   private async constructBoardFromPreviousState(previous: GameInProgressDtoV3): Promise<void> {
     this.gameNumber = previous.gameNumber || 1;
+    this.celebratingGameNumber = undefined;
     this.moveHistory = previous.moveHistory ?? [];
     this.nextGameButtonState = "hidden";
     this.undoManager.clear();
@@ -617,7 +620,8 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
 
   private async checkComplete(): Promise<void> {
-    if (this.gameBoard.isComplete()) {
+    if (this.gameBoard.isComplete() && this.celebratingGameNumber === undefined) {
+      this.celebratingGameNumber = this.gameNumber;
       this.undoManager.clear();
       const mistakes = this.stats.mistakesCurrentBoard;
       const playArea = this.gameBoard.playArea;
