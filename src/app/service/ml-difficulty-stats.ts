@@ -64,11 +64,13 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'percentUnresolvedCellsAfterDeductionI5',
     //
     'autoCompleteWasAvailable',
+    //
+    'gameDateAsPercent',
   ],
 };
 
 
-export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number, autoCompletionAvailable = true): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
+export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number, gameDateAsPercent: number, autoCompletionAvailable = true): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
   const agg = (xs: number[]) => {
     const n = xs.length || 1;
     let sum = 0;
@@ -186,6 +188,8 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     percentUnresolvedCellsAfterDeductionI5: (stats.totals.unresolvedCountsPerIteration[4] ?? 0) / cellCount,
 
     autoCompleteWasAvailable: autoCompletionAvailable ? 1 : 0,
+
+    gameDateAsPercent: gameDateAsPercent,
   };
 
   let x: GameStatWithBoard = { gameNumber }
@@ -263,4 +267,6 @@ export interface GameStatFeatures {
   percentUnresolvedCellsAfterDeductionI5: number;
   //
   autoCompleteWasAvailable: number;
+  //
+  gameDateAsPercent: number;
 }

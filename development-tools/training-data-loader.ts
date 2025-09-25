@@ -11,6 +11,14 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 
+  const completionTimes = savedState.inProgressGames
+    .filter(x => x.completed && x.timeSpent > 15000 && x.moveHistory && x.moveHistory.length)
+    .map(x => x.moveHistory[x.moveHistory.length - 1].timestamp)
+
+  const firstGameDate = Math.min(...completionTimes);
+  const lastGameDate = Math.max(...completionTimes);
+  const gameDatesDiff = lastGameDate - firstGameDate;
+
   const out: RawGenericFeatureSet[] = [];
   for (const game of savedState.inProgressGames ?? []) {
     if (!game?.completed) continue;
@@ -21,7 +29,9 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
     const completionTime = game.moveHistory[game.moveHistory.length - 1].timestamp;
     const autoCompletionAvailable = completionTime > 1758406785000;
-    const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber, autoCompletionAvailable)
+    const gameDateAsPercent = (game.moveHistory[game.moveHistory.length - 1].timestamp - firstGameDate) / gameDatesDiff;
+
+    const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber, gameDateAsPercent, autoCompletionAvailable)
 
     out.push(s);
   }
@@ -39,5 +49,5 @@ export async function buildRawGameStatForGameNumber(gameNumber: number, version:
   //     + `Deduction Iterations: ${stats.totals.deductionIterations}  `
   //     + `Post-Deduction Cell Count: ${stats.totals.unresolvedCellCountAfterDeduction.toString().padStart(2, " ")}`)
 
-  return difficultyReportToGameStat(stats, 0, gameNumber);
+  return difficultyReportToGameStat(stats, 0, gameNumber, 1);
 }

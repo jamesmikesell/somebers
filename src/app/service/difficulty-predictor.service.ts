@@ -45,7 +45,7 @@ export class DifficultyPredictorService {
     const unresolvedCells = difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
     const resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - unresolvedCells;
 
-    const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, 0, 0))!;
+    const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, 0, 0, 1))!;
     const estimatedSolveTime = await this.predictGameModel(stats);
     const percentile = await this.getPercentile(estimatedSolveTime);
 
