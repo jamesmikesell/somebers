@@ -1,6 +1,7 @@
 # TODO
 
-- ML: stats on first iteration actionable... if a cell is removed when scanning a column, we probably shouldn't "remove" it from the row / group scan until iteration 2.
+- there's a bug where if multiple cell glow animations are happening at the end of the game, the congratulations flashes twice
+- consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
 - organize documentation, add links
 - tutorial mode
@@ -20,6 +21,7 @@
 
 # Done
 
+- add tip that you can skip a game and come back.
 - ML: actionable cells on more than just first iteration
 - configuration to be able to show/hide running calculated sums
 - current sum of selected cells in a color group, shown in top right corner perhaps
@@ -97,6 +99,7 @@
 
 # Not Gonna Do
 
+- ML: stats on first iteration actionable... if a cell is removed when scanning a column, we probably shouldn't "remove" it from the row / group scan until iteration 2.
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
 - Create a queue of pending moves and If one of the first moves fails, prevent failure of the others
 - temp cell selection: cells are highlighted in consistent color depending on when they were highlighted
