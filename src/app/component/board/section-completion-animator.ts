@@ -137,7 +137,6 @@ export class SectionCompletionAnimator {
 
   private activateCell(cell: DisplayCell, variant: GlowVariant, autoCleared: DisplayCell[]): void {
     cell.glowVariant = variant;
-    cell.glowCycle = (cell.glowCycle ?? 0) + 1;
     cell.glowActive = true;
     this.activeCells.add(cell);
 
