@@ -5,11 +5,17 @@
     [class.active]="isActive"
     #overlay
   >
-    <div class="pulse-bg"></div>
+    <canvas
+      #canvas
+      class="celebration-canvas"
+      aria-hidden="true"
+    ></canvas>
     <button class="close-btn" (click)="close()">&times;</button>
-    <div class="celebration-content">
-      <div class="celebration-title">{{ config?.title }}</div>
-      <div class="celebration-subtitle">{{ config?.subtitle }}</div>
-    </div>
+    @if (!webglSupported) {
+      <div class="celebration-fallback">
+        <div class="celebration-title">{{ config?.title }}</div>
+        <div class="celebration-subtitle">{{ config?.subtitle }}</div>
+      </div>
+    }
   </div>
 }
