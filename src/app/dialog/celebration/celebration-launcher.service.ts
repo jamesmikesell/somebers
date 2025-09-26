@@ -48,6 +48,7 @@ export class CelebrationLauncherService {
     return this.open({
       title: affirmation.title,
       subtitle: affirmation.subTitle,
+      duration: 20000
     });
   }
 
