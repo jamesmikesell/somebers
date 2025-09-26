@@ -1,6 +1,7 @@
 # TODO
 
-- text occasionally selected....
+- disable wake lock on completed board
+- text occasionally selected, esp when double clicking to reset scratch pad....
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
 - organize documentation, add links

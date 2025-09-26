@@ -167,7 +167,6 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.monitorLock();
 
     this.boardUiService.boardVisible$.next(true);
-    this.wakeLock.enable();
     this.destroy.pipe(first()).subscribe(() => this.wakeLock.disable());
 
     this.boardUiService.undoRequested$
@@ -322,6 +321,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.undoManager.clear();
     this.timeTracker.reset(0)
     this.timeTracker.manualStart();
+    this.wakeLock.enable()
 
     await this.buildAndDisplayBoard(game)
 
@@ -510,6 +510,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       this.gameBoard.recalculateSelectedHeaders();
       this.gameBoard.isComplete()
       this.nextGameButtonState = "show-instant";
+      this.wakeLock.disable();
     } else {
       if (previous.grid) {
         let colorGroupGrid = previous.grid.map(row => row.map(cell => cell.groupNumber))
@@ -536,6 +537,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
         this.gameBoard.recalculateSelectedHeaders();
         this.disableAnimationsTemporarily();
         this.timeTracker.manualStart();
+        this.wakeLock.enable();
       } else {
         await this.updateGameNumber(this.gameNumber);
       }
@@ -629,6 +631,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       (await this.celebrationLauncherService.openAutoPickMessage(mistakes, playArea))
         .pipe(takeUntil(this.destroy))
         .subscribe(() => {
+          this.wakeLock.disable();
           setTimeout(() => {
             this.nextGameButtonState = "show-animated";
           }, 250);
