@@ -11,6 +11,8 @@ interface ConfettiHandles {
   size?: number;
   resolution?: WebGLUniformLocation | null;
   time?: WebGLUniformLocation | null;
+  angle?: number;
+  ratio?: number;
 }
 
 interface TextHandles {
@@ -51,6 +53,8 @@ export class CelebrationWebglRenderer {
   private confettiPositionBuffer: WebGLBuffer | null = null;
   private confettiColorBuffer: WebGLBuffer | null = null;
   private confettiSizeBuffer: WebGLBuffer | null = null;
+  private confettiAngleBuffer: WebGLBuffer | null = null;
+  private confettiRatioBuffer: WebGLBuffer | null = null;
   private fireworkPositionBuffer: WebGLBuffer | null = null;
   private fireworkColorBuffer: WebGLBuffer | null = null;
   private fireworkSizeBuffer: WebGLBuffer | null = null;
@@ -74,7 +78,11 @@ export class CelebrationWebglRenderer {
   private readonly confettiFlutterPhase = new Float32Array(this.confettiCount);
   private readonly confettiFlutterSpeed = new Float32Array(this.confettiCount);
   private readonly confettiFlutterMagnitude = new Float32Array(this.confettiCount);
+  private readonly confettiAngles = new Float32Array(this.confettiCount);
+  private readonly confettiAngularVelocity = new Float32Array(this.confettiCount);
+  private readonly confettiAspectRatios = new Float32Array(this.confettiCount);
   private confettiInitialized = false;
+  private confettiNeedsRatioUpload = false;
 
   private readonly fireworksPerBurst = 48;
   private readonly fireworkPoolSize = this.fireworksPerBurst * 6;
@@ -173,6 +181,14 @@ export class CelebrationWebglRenderer {
       this.gl.deleteBuffer(this.confettiSizeBuffer);
       this.confettiSizeBuffer = null;
     }
+    if (this.confettiAngleBuffer) {
+      this.gl.deleteBuffer(this.confettiAngleBuffer);
+      this.confettiAngleBuffer = null;
+    }
+    if (this.confettiRatioBuffer) {
+      this.gl.deleteBuffer(this.confettiRatioBuffer);
+      this.confettiRatioBuffer = null;
+    }
     if (this.fireworkPositionBuffer) {
       this.gl.deleteBuffer(this.fireworkPositionBuffer);
       this.fireworkPositionBuffer = null;
@@ -223,8 +239,18 @@ export class CelebrationWebglRenderer {
     );
 
     this.confettiProgram = this.linkProgram(
-      `attribute vec2 a_position;\n      attribute vec3 a_color;\n      attribute float a_size;\n\n      uniform vec2 u_resolution;\n      uniform float u_time;\n\n      varying vec3 v_color;\n      varying float v_time;\n\n      void main() {\n        vec2 zeroToOne = a_position / u_resolution;\n        zeroToOne.y = 1.0 - zeroToOne.y;\n        vec2 clip = zeroToOne * 2.0 - 1.0;\n        gl_Position = vec4(clip, 0.0, 1.0);\n        gl_PointSize = a_size;\n        v_color = a_color;\n        v_time = u_time;\n      }`,
-      `precision mediump float;\n\n      varying vec3 v_color;\n      varying float v_time;\n\n      void main() {\n        vec2 coord = gl_PointCoord - vec2(0.5);\n        if (dot(coord, coord) > 0.24) {\n          discard;\n        }\n        float sparkle = 0.6 + 0.4 * sin((coord.x + coord.y + v_time) * 12.0);\n        gl_FragColor = vec4(v_color * sparkle, 1.0);\n      }`,
+      `attribute vec2 a_position;\n      attribute vec3 a_color;\n      attribute float a_size;\n      attribute float a_angle;\n      attribute float a_ratio;\n\n      uniform vec2 u_resolution;\n      uniform float u_time;\n\n      varying vec3 v_color;\n      varying float v_time;\n      varying float v_angle;\n      varying float v_ratio;\n\n      void main() {\n        vec2 zeroToOne = a_position / u_resolution;\n        zeroToOne.y = 1.0 - zeroToOne.y;\n        vec2 clip = zeroToOne * 2.0 - 1.0;\n        gl_Position = vec4(clip, 0.0, 1.0);\n        gl_PointSize = a_size;\n        v_color = a_color;\n        v_time = u_time;\n        v_angle = a_angle;\n        v_ratio = a_ratio;\n      }`,
+      `precision mediump float;\n\n      varying vec3 v_color;\n      varying float v_time;\n      varying float v_angle;\n      varying float v_ratio;\n\n      void main() {\n        vec2 centered = gl_PointCoord - vec2(0.5);\n        float s = sin(v_angle);\n        float c = cos(v_angle);\n        vec2 rotated = vec2(c * centered.x - s * centered.y, s * centered.x + c * centered.y);\n        float halfWidth = max(0.12, 0.5 * v_ratio);
+        float halfHeight = 0.5;
+        float alphaX = 1.0 - smoothstep(halfWidth - 0.1, halfWidth, abs(rotated.x));
+        float alphaY = 1.0 - smoothstep(halfHeight - 0.1, halfHeight, abs(rotated.y));
+        float alpha = alphaX * alphaY;
+        if (alpha <= 0.0) {
+          discard;
+        }
+        float shimmer = 0.7 + 0.3 * sin(v_time * 10.0 + rotated.x * 9.0 + v_angle * 1.3);
+        gl_FragColor = vec4(v_color * shimmer, alpha);
+      }`,
     );
 
     this.textProgram = this.linkProgram(
@@ -244,6 +270,8 @@ export class CelebrationWebglRenderer {
       this.confettiHandles.position = this.gl!.getAttribLocation(this.confettiProgram, 'a_position');
       this.confettiHandles.color = this.gl!.getAttribLocation(this.confettiProgram, 'a_color');
       this.confettiHandles.size = this.gl!.getAttribLocation(this.confettiProgram, 'a_size');
+      this.confettiHandles.angle = this.gl!.getAttribLocation(this.confettiProgram, 'a_angle');
+      this.confettiHandles.ratio = this.gl!.getAttribLocation(this.confettiProgram, 'a_ratio');
       this.confettiHandles.resolution = this.gl!.getUniformLocation(this.confettiProgram, 'u_resolution');
       this.confettiHandles.time = this.gl!.getUniformLocation(this.confettiProgram, 'u_time');
 
@@ -317,6 +345,8 @@ export class CelebrationWebglRenderer {
     this.confettiPositionBuffer = gl.createBuffer();
     this.confettiColorBuffer = gl.createBuffer();
     this.confettiSizeBuffer = gl.createBuffer();
+    this.confettiAngleBuffer = gl.createBuffer();
+    this.confettiRatioBuffer = gl.createBuffer();
 
     this.populateConfettiDefaults();
 
@@ -367,6 +397,12 @@ export class CelebrationWebglRenderer {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.confettiSizeBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.confettiSizes, gl.STATIC_DRAW);
+
+    if (this.confettiRatioBuffer) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.confettiRatioBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, this.confettiAspectRatios, gl.DYNAMIC_DRAW);
+      this.confettiNeedsRatioUpload = false;
+    }
   }
 
   private initializeFireworks(): void {
@@ -413,6 +449,11 @@ export class CelebrationWebglRenderer {
       this.gl.viewport(0, 0, width, height);
       this.resetConfettiPositions(width, height);
       this.uploadConfettiPositions();
+      this.uploadConfettiAngles();
+      if (this.confettiNeedsRatioUpload) {
+        this.uploadConfettiRatios();
+        this.confettiNeedsRatioUpload = false;
+      }
     }
 
     if (sizeChanged || forceTexture) {
@@ -436,11 +477,15 @@ export class CelebrationWebglRenderer {
     this.confettiPositions[i2 + 1] = startY;
 
     this.confettiVelocities[i2] = (Math.random() - 0.5) * width * 0.05;
-    this.confettiVelocities[i2 + 1] = height * (0.06 + Math.random() * 0.07);
+    this.confettiVelocities[i2 + 1] = height * (0.055 + Math.random() * 0.06);
 
     this.confettiFlutterPhase[index] = Math.random() * Math.PI * 2;
     this.confettiFlutterSpeed[index] = 2 + Math.random() * 2.8;
     this.confettiFlutterMagnitude[index] = 16 + Math.random() * 28;
+    this.confettiAngles[index] = Math.random() * Math.PI * 2;
+    this.confettiAngularVelocity[index] = (Math.random() - 0.5) * 3.5;
+    this.confettiAspectRatios[index] = 0.32 + Math.random() * 0.55;
+    this.confettiNeedsRatioUpload = true;
   }
 
   private updateConfetti(delta: number, width: number, height: number, elapsed: number): void {
@@ -453,12 +498,22 @@ export class CelebrationWebglRenderer {
       const flutterVelocityX = Math.sin(phase + elapsed * 0.35) * flutterMagnitude;
       const flutterVelocityY = Math.cos((phase + elapsed) * 0.9) * flutterMagnitude * 0.35;
 
+      const spinDrift = Math.sin(elapsed * 2.1 + i * 0.3) * 0.8;
+      this.confettiAngles[i] += (this.confettiAngularVelocity[i] + spinDrift) * delta;
+      this.confettiAngularVelocity[i] += Math.sin(phase * 1.2 + elapsed * 0.7) * delta * 0.6;
+      this.confettiAngularVelocity[i] = Math.max(-6, Math.min(6, this.confettiAngularVelocity[i]));
+
       this.confettiPositions[idx] += (this.confettiVelocities[idx] + flutterVelocityX) * delta;
       this.confettiPositions[idx + 1] += (this.confettiVelocities[idx + 1] + flutterVelocityY) * delta;
 
       this.confettiVelocities[idx] *= 0.99;
-      this.confettiVelocities[idx + 1] += height * 0.08 * delta;
-      this.confettiVelocities[idx + 1] = Math.min(this.confettiVelocities[idx + 1], height * 0.22);
+      this.confettiVelocities[idx + 1] += height * (0.06 + Math.sin(phase * 0.8) * 0.015) * delta;
+      this.confettiVelocities[idx + 1] = Math.min(this.confettiVelocities[idx + 1], height * 0.2);
+
+      if (Math.random() < delta * 0.05) {
+        this.confettiFlutterMagnitude[i] = 14 + Math.random() * 32;
+        this.confettiFlutterSpeed[i] = 1.8 + Math.random() * 3.2;
+      }
 
       if (this.confettiPositions[idx] < -40) {
         this.confettiPositions[idx] = width + 40;
@@ -470,12 +525,29 @@ export class CelebrationWebglRenderer {
         this.resetConfettiParticle(i, width, height, false);
       }
     }
+
+    if (this.confettiNeedsRatioUpload) {
+      this.uploadConfettiRatios();
+      this.confettiNeedsRatioUpload = false;
+    }
   }
 
   private uploadConfettiPositions(): void {
     if (!this.gl || !this.confettiPositionBuffer) return;
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.confettiPositionBuffer);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, this.confettiPositions, this.gl.DYNAMIC_DRAW);
+  }
+
+  private uploadConfettiAngles(): void {
+    if (!this.gl || !this.confettiAngleBuffer) return;
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.confettiAngleBuffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, this.confettiAngles, this.gl.DYNAMIC_DRAW);
+  }
+
+  private uploadConfettiRatios(): void {
+    if (!this.gl || !this.confettiRatioBuffer) return;
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.confettiRatioBuffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, this.confettiAspectRatios, this.gl.DYNAMIC_DRAW);
   }
 
   private maybeSpawnFirework(elapsed: number, width: number, height: number): void {
@@ -651,6 +723,7 @@ export class CelebrationWebglRenderer {
     this.maybeSpawnFirework(elapsed, this.canvas.width, this.canvas.height);
     this.updateFireworks(delta, this.canvas.width, this.canvas.height);
     this.uploadConfettiPositions();
+    this.uploadConfettiAngles();
     this.uploadFireworkBuffers();
 
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
@@ -700,6 +773,18 @@ export class CelebrationWebglRenderer {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.confettiSizeBuffer);
     this.gl.enableVertexAttribArray(this.confettiHandles.size);
     this.gl.vertexAttribPointer(this.confettiHandles.size, 1, this.gl.FLOAT, false, 0, 0);
+
+    if (this.confettiHandles.angle !== undefined && this.confettiHandles.angle >= 0 && this.confettiAngleBuffer) {
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.confettiAngleBuffer);
+      this.gl.enableVertexAttribArray(this.confettiHandles.angle);
+      this.gl.vertexAttribPointer(this.confettiHandles.angle, 1, this.gl.FLOAT, false, 0, 0);
+    }
+
+    if (this.confettiHandles.ratio !== undefined && this.confettiHandles.ratio >= 0 && this.confettiRatioBuffer) {
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.confettiRatioBuffer);
+      this.gl.enableVertexAttribArray(this.confettiHandles.ratio);
+      this.gl.vertexAttribPointer(this.confettiHandles.ratio, 1, this.gl.FLOAT, false, 0, 0);
+    }
 
     this.gl.drawArrays(this.gl.POINTS, 0, this.confettiCount);
   }
