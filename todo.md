@@ -1,6 +1,5 @@
 # TODO
 
-- disable wake lock on completed board
 - text occasionally selected, esp when double clicking to reset scratch pad....
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
@@ -22,6 +21,7 @@
 
 # Done
 
+- disable wake lock on completed board
 - there's a bug where if multiple cell glow animations are happening at the end of the game, the congratulations flashes twice
 - add tip that you can skip a game and come back.
 - ML: actionable cells on more than just first iteration
