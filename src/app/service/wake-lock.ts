@@ -10,6 +10,7 @@ export class WakeLock {
   private wakeLock: WakeLockSentinel | null = null;
   private retryTimer: number | null = null;
   private isEnabled = false;
+  private isAcquiring = false;
 
 
   async enable(): Promise<void> {
@@ -29,18 +30,41 @@ export class WakeLock {
 
 
   private async acquireLock(): Promise<void> {
-    if (!this.isEnabled || this.wakeLock) {
-      this.log('WakeLockService: acquireLock() skipped - enabled:', this.isEnabled, 'hasLock:', !!this.wakeLock);
+    if (!this.isEnabled || this.wakeLock || this.isAcquiring) {
+      this.log('WakeLockService: acquireLock() skipped - enabled:', this.isEnabled, 'hasLock:', !!this.wakeLock, 'isAcquiring:', this.isAcquiring);
       return;
     }
 
+    this.isAcquiring = true;
     this.log('WakeLockService: attempting to acquire wake lock');
+
     try {
-      this.wakeLock = await navigator.wakeLock.request('screen');
+      const lock = await navigator.wakeLock.request('screen');
+
+      // Double-check we still want the lock after the async operation
+      if (!this.isEnabled) {
+        this.log('WakeLockService: disabled during acquisition, releasing immediately');
+        lock.release();
+        return;
+      }
+
+      // Check if another lock was somehow acquired while we were waiting
+      if (this.wakeLock) {
+        this.log('WakeLockService: another lock exists, releasing new one');
+        lock.release();
+        return;
+      }
+
+      this.wakeLock = lock;
       this.log('WakeLockService: wake lock acquired successfully');
+
       this.wakeLock.addEventListener('release', () => {
         this.log('WakeLockService: wake lock released');
-        this.wakeLock = null;
+        // Only clear if this is still our current lock
+        if (this.wakeLock === lock) {
+          this.wakeLock = null;
+        }
+
         if (this.isEnabled) {
           this.log('WakeLockService: wake lock lost while enabled, scheduling retry');
           this.scheduleRetry();
@@ -52,15 +76,22 @@ export class WakeLock {
         this.log('WakeLockService: scheduling retry after failure');
         this.scheduleRetry();
       }
+    } finally {
+      this.isAcquiring = false;
     }
   }
 
 
   private scheduleRetry(): void {
+    if (this.retryTimer) {
+      this.log('WakeLockService: retry already scheduled');
+      return;
+    }
+
     this.log('WakeLockService: scheduling retry in 5 seconds');
-    this.clearRetryTimer();
     this.retryTimer = setTimeout(() => {
       this.log('WakeLockService: retry timer triggered');
+      this.retryTimer = null; // Clear before acquiring to allow future retries
       this.acquireLock();
     }, 5000);
   }
