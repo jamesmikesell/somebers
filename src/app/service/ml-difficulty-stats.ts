@@ -41,10 +41,10 @@ export const FEATURE_SPEC: FeatureSpec = {
     'firstIterationActionableCellAllCountStd',
     'firstIterationActionableCellAllCountSum',
     //
-    // 'requiredSumAllMean',
+    'requiredSumAllMean',
     // 'requiredSumAllMin',
     // 'requiredSumAllMax',
-    // 'requiredSumAllStd',
+    'requiredSumAllStd',
     // 'requiredSumAllSum',
     // 
     // 'cellCountLargerThanTargetAllMean',
@@ -53,7 +53,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'cellCountLargerThanTargetAllStd',
     'cellCountLargerThanTargetAllSum',
     // 
-    // 'deductionIterations',
+    'deductionIterations',
     // 'unresolvedCellCountAfterDeduction',
     'percentUnresolvedCellsAfterDeduction',
     //
@@ -165,11 +165,11 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     firstIterationActionableCellCountGrpStd: firstIterationActionableCellAllCountGroupAgg.std / boardSize,
     firstIterationActionableCellCountGrpSum: firstIterationActionableCellAllCountGroupAgg.sum / boardSize / 3,
 
-    requiredSumAllMean: requiredSumAllAgg.mean,
-    requiredSumAllMin: requiredSumAllAgg.min,
-    requiredSumAllMax: requiredSumAllAgg.max,
-    requiredSumAllStd: requiredSumAllAgg.std,
-    requiredSumAllSum: requiredSumAllAgg.sum,
+    requiredSumAllMean: requiredSumAllAgg.mean / boardSize,
+    requiredSumAllMin: requiredSumAllAgg.min / boardSize,
+    requiredSumAllMax: requiredSumAllAgg.max / boardSize,
+    requiredSumAllStd: requiredSumAllAgg.std / boardSize,
+    requiredSumAllSum: requiredSumAllAgg.sum / boardSize / 3,
 
     cellCountLargerThanTargetAllMean: cellCountLargerThanTargetAllAgg.mean / boardSize,
     cellCountLargerThanTargetAllMin: cellCountLargerThanTargetAllAgg.min / boardSize,
