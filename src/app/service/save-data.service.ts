@@ -51,8 +51,10 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
 
 
   async save(gameState: T): Promise<void> {
-    if (!this.lockService.hasLock)
+    if (!this.lockService.hasLock) {
+      console.error("save ignored, no lock")
       return;
+    }
 
     let wrapper: DataSaveWrapper<DataSaveVersion> = {
       version: gameState.version,

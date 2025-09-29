@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { LockService } from '../../service/app-lock.service';
 import { SaveDataService } from '../../service/save-data.service';
 import { Title } from '../title/title';
 
@@ -17,7 +18,10 @@ export class BackupComponent {
   isDragging = false;
   restoreComplete = false;
 
-  constructor(private saveDataService: SaveDataService) { }
+  constructor(
+    private saveDataService: SaveDataService,
+    private lockService: LockService,
+  ) { }
 
   async backup(): Promise<void> {
     this.message = '';
@@ -78,6 +82,7 @@ export class BackupComponent {
   private async handleFile(file: File): Promise<void> {
     this.message = '';
     try {
+      await this.lockService.acquireLock();
       const text = await file.text();
       const data = JSON.parse(text);
       await this.saveDataService.service.save(data);
