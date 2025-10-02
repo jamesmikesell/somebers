@@ -19,6 +19,7 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
   const lastGameDate = Math.max(...completionTimes);
   const gameDatesDiff = lastGameDate - firstGameDate;
 
+  console.log("Generating Stats...")
   const out: RawGenericFeatureSet[] = [];
   for (const game of savedState.inProgressGames ?? []) {
     if (!game?.completed) continue;
