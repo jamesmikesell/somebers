@@ -32,28 +32,28 @@ describe('DifficultyEstimatorService', () => {
     expect(report.totals.groupsEvaluated).toBe(2);
 
     // Rows
-    expect(report.rows[0].requiredSum).toBe(4);
+    expect(report.rows[0].goalSum).toBe(4);
     expect(report.rows[0].cellValues).toEqual([1, 2, 3]);
     expect(report.rows[0].requiredIndices).toEqual([0, 2]);
     expect(report.rows[0].firstIterationFalsePositiveSolutionCount).toBe(0); // {1,3}
 
-    expect(report.rows[1].requiredSum).toBe(1);
+    expect(report.rows[1].goalSum).toBe(1);
     expect(report.rows[1].cellValues).toEqual([2, 1, 1]);
     expect(report.rows[1].requiredIndices).toEqual([1]);
     expect(report.rows[1].firstIterationFalsePositiveSolutionCount).toBe(1); // either 1 of the two ones
 
     // Columns
-    expect(report.columns[0].requiredSum).toBe(1);
+    expect(report.columns[0].goalSum).toBe(1);
     expect(report.columns[0].cellValues).toEqual([1, 2]);
     expect(report.columns[0].requiredIndices).toEqual([0]);
     expect(report.columns[0].firstIterationFalsePositiveSolutionCount).toBe(0);
 
-    expect(report.columns[1].requiredSum).toBe(1);
+    expect(report.columns[1].goalSum).toBe(1);
     expect(report.columns[1].cellValues).toEqual([2, 1]);
     expect(report.columns[1].requiredIndices).toEqual([1]);
     expect(report.columns[1].firstIterationFalsePositiveSolutionCount).toBe(0);
 
-    expect(report.columns[2].requiredSum).toBe(3);
+    expect(report.columns[2].goalSum).toBe(3);
     expect(report.columns[2].cellValues).toEqual([3, 1]);
     expect(report.columns[2].requiredIndices).toEqual([0]);
     expect(report.columns[2].firstIterationFalsePositiveSolutionCount).toBe(0);
@@ -63,14 +63,14 @@ describe('DifficultyEstimatorService', () => {
 
     const g1 = report.groups[0];
     expect(g1.index).toBe(1);
-    expect(g1.requiredSum).toBe(5);
+    expect(g1.goalSum).toBe(5);
     expect(g1.cellValues).toEqual([1, 3, 1]);
     expect(g1.requiredIndices).toEqual([0, 1, 2]);
     expect(g1.firstIterationFalsePositiveSolutionCount).toBe(0); // only {1,3,1}
 
     const g2 = report.groups[1];
     expect(g2.index).toBe(2);
-    expect(g2.requiredSum).toBe(0);
+    expect(g2.goalSum).toBe(0);
     expect(g2.cellValues).toEqual([2, 2, 1]);
     expect(g2.requiredIndices).toEqual([]);
     expect(g2.firstIterationFalsePositiveSolutionCount).toBe(0); // empty subset
@@ -82,7 +82,7 @@ describe('DifficultyEstimatorService', () => {
       [cell(1, false, 1), cell(2, false, 1)],
     ];
     const report = BoardStatAnalyzer.evaluate(grid);
-    expect(report.rows[0].requiredSum).toBe(0);
+    expect(report.rows[0].goalSum).toBe(0);
     expect(report.rows[0].cellValues).toEqual([1, 2]);
     expect(report.rows[0].requiredIndices).toEqual([]);
     expect(report.rows[0].firstIterationFalsePositiveSolutionCount).toBe(0);
@@ -97,7 +97,7 @@ describe('DifficultyEstimatorService', () => {
     const report = BoardStatAnalyzer.evaluate(grid);
     expect(report.columns.length).toBe(1);
     expect(report.columns[0].cellValues).toEqual([2, 3]);
-    expect(report.columns[0].requiredSum).toBe(5);
+    expect(report.columns[0].goalSum).toBe(5);
     expect(report.columns[0].requiredIndices).toEqual([0, 1]);
     expect(report.columns[0].firstIterationFalsePositiveSolutionCount).toBe(0); // {2,3}
   });

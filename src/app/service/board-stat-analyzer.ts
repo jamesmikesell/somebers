@@ -35,13 +35,13 @@ export class BoardStatAnalyzer {
         colBases[c].values[r] = cell.value;
         if (cell.required) {
           rowBases[r].requiredIndices.push(c);
-          rowBases[r].requiredSum += cell.value;
+          rowBases[r].goalSum += cell.value;
 
           colBases[c].requiredIndices.push(r);
-          colBases[c].requiredSum += cell.value;
+          colBases[c].goalSum += cell.value;
 
           groupInfo.requiredIndices.push(groupIndex);
-          groupInfo.requiredSum += cell.value;
+          groupInfo.goalSum += cell.value;
         }
       }
     }
@@ -50,13 +50,13 @@ export class BoardStatAnalyzer {
     let subsetsEvaluated = 0;
 
     const rowsReport: SectionStats[] = rowBases.map((stat, i) => {
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.requiredSum);
+      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
       subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
     });
 
     const colsReport: SectionStats[] = colBases.map((stat, i) => {
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.requiredSum);
+      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
       subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
     });
@@ -64,7 +64,7 @@ export class BoardStatAnalyzer {
     const groupsSorted = Array.from(groupsMap.keys()).sort((a, b) => a - b);
     const groupsReport: SectionStats[] = groupsSorted.map(groupNumber => {
       const stat = groupsMap.get(groupNumber)!;
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.requiredSum);
+      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
       subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, groupNumber, possibleCorrect)
     });
@@ -99,12 +99,14 @@ export class BoardStatAnalyzer {
   private static GenerateSectionStats(stat: LinearStat, i: number, possibleCorrect: PossiblyCorrectSolutions): SectionStats {
     return {
       index: i,
-      requiredSum: stat.requiredSum,
+      goalSum: stat.goalSum,
       cellValues: stat.values.slice(),
       requiredIndices: stat.requiredIndices.slice(),
       firstIterationFalsePositiveSolutionCount: possibleCorrect.exact - 1,
       firstIterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
       firstIterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
+      firstIterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / stat.goalSum,
+      firstIterationGuaranteedUnusableCellCountVsGoalSum: possibleCorrect.neverUsedCount / stat.goalSum,
     };
   }
 
@@ -126,13 +128,13 @@ export class BoardStatAnalyzer {
         orMask |= mask;
       }
     }
-    const alwaysRequiredCount = BoardStatAnalyzer.popcount(andMask & ((1 << n) - 1));
-    const neverUsedCount = n - BoardStatAnalyzer.popcount(orMask & ((1 << n) - 1));
+    const alwaysRequiredCount = BoardStatAnalyzer.popCount(andMask & ((1 << n) - 1));
+    const neverUsedCount = n - BoardStatAnalyzer.popCount(orMask & ((1 << n) - 1));
     if (exact === 0) return { exact, totalIterations: total, alwaysRequiredCount: 0, neverUsedCount: 0 };
     return { exact, totalIterations: total, alwaysRequiredCount, neverUsedCount };
   }
 
-  private static popcount(x: number): number {
+  private static popCount(x: number): number {
     x = x >>> 0;
     x = x - ((x >>> 1) & 0x55555555);
     x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
@@ -209,7 +211,7 @@ export class BoardStatAnalyzer {
       // Rows
       for (let r = 0; r < rows; r++) {
         const sectionStatuses = statusMap[r].slice();
-        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(rowBases[r].values, sectionStatuses, rowBases[r].requiredSum);
+        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(rowBases[r].values, sectionStatuses, rowBases[r].goalSum);
         for (const c of selectIdxs) if (statusMap[r][c] !== SelectionStatus.SELECTED) { statusMap[r][c] = SelectionStatus.SELECTED; changed = true; }
         for (const c of clearIdxs) if (statusMap[r][c] !== SelectionStatus.CLEARED) { statusMap[r][c] = SelectionStatus.CLEARED; changed = true; }
       }
@@ -218,7 +220,7 @@ export class BoardStatAnalyzer {
       for (let c = 0; c < cols; c++) {
         const colStatuses: SelectionStatus[] = new Array(rows);
         for (let r = 0; r < rows; r++) colStatuses[r] = statusMap[r][c];
-        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(colBases[c].values, colStatuses, colBases[c].requiredSum);
+        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(colBases[c].values, colStatuses, colBases[c].goalSum);
         for (const r of selectIdxs) if (statusMap[r][c] !== SelectionStatus.SELECTED) { statusMap[r][c] = SelectionStatus.SELECTED; changed = true; }
         for (const r of clearIdxs) if (statusMap[r][c] !== SelectionStatus.CLEARED) { statusMap[r][c] = SelectionStatus.CLEARED; changed = true; }
       }
@@ -228,7 +230,7 @@ export class BoardStatAnalyzer {
         const coords = groupIndexMap.get(g)!;
         const stat = groupsMap.get(g)!;
         const gStatuses = coords.map(({ r, c }) => statusMap[r][c]);
-        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(stat.values, gStatuses, stat.requiredSum);
+        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(stat.values, gStatuses, stat.goalSum);
         for (const localIdx of selectIdxs) {
           const { r, c } = coords[localIdx];
           if (statusMap[r][c] !== SelectionStatus.SELECTED) { statusMap[r][c] = SelectionStatus.SELECTED; changed = true; }
@@ -261,7 +263,7 @@ export class BoardStatAnalyzer {
 class LinearStat {
   values: number[] = [];
   requiredIndices: number[] = [];
-  requiredSum = 0;
+  goalSum = 0;
 }
 
 interface PossiblyCorrectSolutions {
@@ -289,12 +291,14 @@ export interface DifficultyReport {
 
 export interface SectionStats {
   index: number;
-  requiredSum: number;
+  goalSum: number;
   cellValues: number[];
   requiredIndices: number[];
   firstIterationFalsePositiveSolutionCount: number;
   firstIterationGuaranteedRequiredCellCount: number;
   firstIterationGuaranteedUnusableCellCount: number;
+  firstIterationGuaranteedRequiredCellCountVsGoalSum: number;
+  firstIterationGuaranteedUnusableCellCountVsGoalSum: number;
 }
 
 

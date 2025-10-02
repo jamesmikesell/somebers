@@ -11,11 +11,18 @@
       "firstIterationGuaranteedUnusableCellCountAllMax",
       "firstIterationGuaranteedUnusableCellCountAllStd",
       "firstIterationGuaranteedUnusableCellCountAllSum",
+      "firstIterationRequiredCellCountVsGoalAllMean",
+      "firstIterationRequiredCellCountVsGoalAllMax",
+      "firstIterationRequiredCellCountVsGoalAllStd",
+      "firstIterationUnusableCellCountVsGoalAllMean",
+      "firstIterationUnusableCellCountVsGoalAllMax",
+      "firstIterationUnusableCellCountVsGoalAllStd",
+      "firstIterationUnusableCellCountVsGoalAllSum",
       "firstIterationActionableCellAllCountMax",
       "firstIterationActionableCellAllCountStd",
       "firstIterationActionableCellAllCountSum",
-      "requiredSumAllMean",
-      "requiredSumAllStd",
+      "goalSumAllMean",
+      "goalSumAllStd",
       "cellCountLargerThanTargetAllSum",
       "deductionIterations",
       "percentUnresolvedCellsAfterDeduction",
@@ -35,6 +42,13 @@
       0.7105528015622664,
       0.21738693253676905,
       1.1462312019094347,
+      0.05640335682539784,
+      0.368316408959332,
+      0.0966477479117036,
+      0.29888313672766725,
+      2.4051250671566886,
+      0.595442916957759,
+      5.886733744150209,
       0.8762267788293024,
       0.27006229973804874,
       1.667815832957789,
@@ -57,6 +71,13 @@
       0.17963239265729353,
       0.072039155263418,
       0.6186971891096221,
+      0.05547999698386641,
+      0.32139527581582983,
+      0.08302793192158697,
+      0.2486856874294577,
+      1.910555743610993,
+      0.45828656707792315,
+      4.93822449803373,
       0.20399807171417625,
       0.08629296628495298,
       0.8820758721061974,
@@ -72,48 +93,55 @@
     ],
     "weights": [
       12.110418339594954,
-      0.6438975722868232,
-      0.024726175968257897,
-      0.013265089586928146,
-      -0.05289693223157228,
-      -0.02223112566441842,
-      -0.007712160629070167,
-      -0.11098646174943688,
-      -0.04710924998407299,
-      0.01827941385519132,
-      -0.0757270838386289,
-      -0.044482876285207314,
-      0.13944754240440968,
-      -0.027314315912322487,
-      0.01850014125119488,
-      0.08744243478095205,
-      0.07215210173887632,
-      0.029091725838831687,
-      0.0852055621524856,
-      -0.006910446837540232,
-      -0.10926372799399167
+      0.6122279673207954,
+      0.016121214060123405,
+      0.021044134416960417,
+      -0.05918229178197756,
+      -0.007268778440217123,
+      -0.012328818706195281,
+      -0.1105816635643939,
+      -0.044551032190942114,
+      -0.03977744765317966,
+      0.008509253760088277,
+      0.035285932078651744,
+      -0.07949166641722585,
+      0.014348117635031313,
+      0.0015062164993677775,
+      0.0723364673368056,
+      0.0003050023595781438,
+      -0.08779320597119716,
+      -0.0349890121762757,
+      0.1360706271238914,
+      -0.029822834004836984,
+      0.008567669914498553,
+      0.08535756875552228,
+      0.06999713680300446,
+      0.031207657476665946,
+      0.09142906413200884,
+      -0.005064917134887062,
+      -0.11038232692146324
     ],
     "perSizeMeans": {},
     "globalMean": 362148.12302839116
   },
   "metrics": {
-    "rmse": 232697.36607180836,
-    "mae": 104954.25823103408,
-    "r2": 0.8007980512970074
+    "rmse": 230706.57499515015,
+    "mae": 105212.38743956949,
+    "r2": 0.8041919279638752
   },
   "perSizeRmse": {
-    "0": 15075.28238330069,
-    "1": 495958.9163037323,
-    "0.5": 68502.49927597938,
-    "0.75": 190737.90926896094,
-    "0.25": 33096.4720648093
+    "0": 15169.772522392535,
+    "1": 491352.19839466596,
+    "0.5": 68516.26530616055,
+    "0.75": 189830.81476547185,
+    "0.25": 33340.105296139394
   },
   "perSizeMae": {
-    "0": 11765.409189720414,
-    "1": 359396.5960989259,
-    "0.5": 54145.848890441615,
-    "0.75": 107742.72307940449,
-    "0.25": 23162.36070230698
+    "0": 11817.295456316035,
+    "1": 358417.63870239654,
+    "0.5": 54215.72864314489,
+    "0.75": 109741.47969721619,
+    "0.25": 23645.082040927395
   },
   "baseline": {
     "model": {
@@ -128,11 +156,18 @@
         "firstIterationGuaranteedUnusableCellCountAllMax",
         "firstIterationGuaranteedUnusableCellCountAllStd",
         "firstIterationGuaranteedUnusableCellCountAllSum",
+        "firstIterationRequiredCellCountVsGoalAllMean",
+        "firstIterationRequiredCellCountVsGoalAllMax",
+        "firstIterationRequiredCellCountVsGoalAllStd",
+        "firstIterationUnusableCellCountVsGoalAllMean",
+        "firstIterationUnusableCellCountVsGoalAllMax",
+        "firstIterationUnusableCellCountVsGoalAllStd",
+        "firstIterationUnusableCellCountVsGoalAllSum",
         "firstIterationActionableCellAllCountMax",
         "firstIterationActionableCellAllCountStd",
         "firstIterationActionableCellAllCountSum",
-        "requiredSumAllMean",
-        "requiredSumAllStd",
+        "goalSumAllMean",
+        "goalSumAllStd",
         "cellCountLargerThanTargetAllSum",
         "deductionIterations",
         "percentUnresolvedCellsAfterDeduction",
@@ -178,9 +213,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 232697.36607180836,
-        "mae": 104954.25823103408,
-        "r2": 0.8007980512970074
+        "rmse": 230706.57499515015,
+        "mae": 105212.38743956949,
+        "r2": 0.8041919279638752
       }
     },
     {
@@ -190,9 +225,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 237493.3833331161,
-        "mae": 105882.55910878834,
-        "r2": 0.7925021139088669
+        "rmse": 236829.27804063717,
+        "mae": 106732.59632496108,
+        "r2": 0.79366094853382
       }
     },
     {
@@ -202,9 +237,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 238444.49888863156,
-        "mae": 106155.1753646372,
-        "r2": 0.7908368072981223
+        "rmse": 238512.20609353276,
+        "mae": 107380.5547859514,
+        "r2": 0.7907180050957828
       }
     },
     {
@@ -214,9 +249,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 238547.6346394095,
-        "mae": 106185.83607370079,
-        "r2": 0.7906558270835349
+        "rmse": 238737.80629391002,
+        "mae": 107474.43241087973,
+        "r2": 0.7903219130901934
       }
     },
     {
@@ -226,9 +261,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 238558.03328621222,
-        "mae": 106188.92336902852,
-        "r2": 0.7906375754369426
+        "rmse": 238761.3945757369,
+        "mae": 107484.32593736403,
+        "r2": 0.7902804769203327
       }
     },
     {
@@ -238,9 +273,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 238559.0740060951,
-        "mae": 106189.23231233915,
-        "r2": 0.7906357487274394
+        "rmse": 238763.76459717096,
+        "mae": 107485.32079088267,
+        "r2": 0.790276313414481
       }
     },
     {
@@ -250,9 +285,9 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 248627.06187962345,
-        "mae": 123980.83702770571,
-        "r2": 0.7725911074724758
+        "rmse": 247553.06882328985,
+        "mae": 123067.55183031471,
+        "r2": 0.774551538152079
       }
     },
     {
@@ -262,9 +297,9 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 251591.25991816688,
-        "mae": 126667.80458090043,
-        "r2": 0.767136324727217
+        "rmse": 251553.398504615,
+        "mae": 127516.80204732249,
+        "r2": 0.7672064057349767
       }
     },
     {
@@ -274,9 +309,9 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 252137.14073678004,
-        "mae": 127225.45202904176,
-        "r2": 0.7661247338147259
+        "rmse": 253103.34961408595,
+        "mae": 130108.36229536889,
+        "r2": 0.7643288434558495
       }
     },
     {
@@ -286,9 +321,9 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 252196.07222749564,
-        "mae": 127285.40140193161,
-        "r2": 0.7660153946770735
+        "rmse": 253365.2585736612,
+        "mae": 130602.14133720574,
+        "r2": 0.7638408505200501
       }
     },
     {
@@ -298,9 +333,9 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 252202.01346086105,
-        "mae": 127291.50437609946,
-        "r2": 0.7660043701317146
+        "rmse": 253393.57774677515,
+        "mae": 130655.96660121619,
+        "r2": 0.7637880555502046
       }
     },
     {
@@ -310,11 +345,11 @@
         "transform": "none"
       },
       "metrics": {
-        "rmse": 252202.6080698935,
-        "mae": 127292.1150271039,
-        "r2": 0.766003266761625
+        "rmse": 253396.43384709297,
+        "mae": 130661.41190549816,
+        "r2": 0.7637827306416752
       }
     }
   ],
-  "predictionForGame27": 24.177568200405705
+  "predictionForGame27": 24.302481675334686
 }

@@ -29,23 +29,29 @@ export const FEATURE_SPEC: FeatureSpec = {
     'firstIterationGuaranteedUnusableCellCountAllStd',
     'firstIterationGuaranteedUnusableCellCountAllSum',
     //
-    // 'firstIterationActionableCellCountGrpMean',
-    // 'firstIterationActionableCellCountGrpMin',
-    // 'firstIterationActionableCellCountGrpMax',
-    // 'firstIterationActionableCellCountGrpStd',
-    // 'firstIterationActionableCellCountGrpSum',
-    // 
+    'firstIterationRequiredCellCountVsGoalAllMean',
+    // 'firstIterationRequiredCellCountVsGoalAllMin',
+    // 'firstIterationRequiredCellCountVsGoalAllMax',
+    'firstIterationRequiredCellCountVsGoalAllStd',
+    // 'firstIterationRequiredCellCountVsGoalAllSum',
+    //
+    'firstIterationUnusableCellCountVsGoalAllMean',
+    // 'firstIterationUnusableCellCountVsGoalAllMin',
+    // 'firstIterationUnusableCellCountVsGoalAllMax',
+    'firstIterationUnusableCellCountVsGoalAllStd',
+    'firstIterationUnusableCellCountVsGoalAllSum',
+    //
     // 'firstIterationActionableCellAllCountMean',
     // 'firstIterationActionableCellAllCountMin', // for all row/col/grp what is the min number of cells where an guaranteed action can be performed.. on many boards there tends to be at one row/col/grp where nothing can be done
     'firstIterationActionableCellAllCountMax',
     'firstIterationActionableCellAllCountStd',
     'firstIterationActionableCellAllCountSum',
     //
-    'requiredSumAllMean',
-    // 'requiredSumAllMin',
-    // 'requiredSumAllMax',
-    'requiredSumAllStd',
-    // 'requiredSumAllSum',
+    'goalSumAllMean',
+    // 'goalSumAllMin',
+    // 'goalSumAllMax',
+    'goalSumAllStd',
+    // 'goalSumAllSum',
     // 
     // 'cellCountLargerThanTargetAllMean',
     // 'cellCountLargerThanTargetAllMin',
@@ -93,38 +99,16 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     return { mean, min, max, std, sum };
   };
 
-  const cellCountLargerThanTargetRow = stats.rows.map(s => s.cellValues.filter(c => c > s.requiredSum).length)
-  const cellCountLargerThanTargetCol = stats.columns.map(s => s.cellValues.filter(c => c > s.requiredSum).length)
-  const cellCountLargerThanTargetGrp = stats.groups.map(s => s.cellValues.filter(c => c > s.requiredSum).length)
-  const cellCountLargerThanTargetAllAgg = agg([...cellCountLargerThanTargetRow, ...cellCountLargerThanTargetCol, ...cellCountLargerThanTargetGrp]);
+  const allSectionStats = [...stats.rows, ...stats.columns, ...stats.groups];
 
-  const firstIterationFalsePositiveSolutionCountRow = stats.rows.map(s => s.firstIterationFalsePositiveSolutionCount);
-  const firstIterationFalsePositiveSolutionCountCol = stats.columns.map(s => s.firstIterationFalsePositiveSolutionCount);
-  const firstIterationFalsePositiveSolutionCountGrp = stats.groups.map(s => s.firstIterationFalsePositiveSolutionCount);
-  const firstIterationFalsePositiveSolutionCountAllAgg = agg([...firstIterationFalsePositiveSolutionCountRow, ...firstIterationFalsePositiveSolutionCountCol, ...firstIterationFalsePositiveSolutionCountGrp]);
-
-
-  // New metrics: alwaysRequiredCount and neverUsedCount
-  const firstIterationGuaranteedRequiredCellCountRow = stats.rows.map(s => s.firstIterationGuaranteedRequiredCellCount);
-  const firstIterationGuaranteedRequiredCellCountCol = stats.columns.map(s => s.firstIterationGuaranteedRequiredCellCount);
-  const firstIterationGuaranteedRequiredCellCountGrp = stats.groups.map(s => s.firstIterationGuaranteedRequiredCellCount);
-  const firstIterationGuaranteedRequiredCellCountAllAgg = agg([...firstIterationGuaranteedRequiredCellCountRow, ...firstIterationGuaranteedRequiredCellCountCol, ...firstIterationGuaranteedRequiredCellCountGrp]);
-
-  const firstIterationGuaranteedUnusableCellCountRow = stats.rows.map(s => s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationGuaranteedUnusableCellCountCol = stats.columns.map(s => s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationGuaranteedUnusableCellCountGrp = stats.groups.map(s => s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationGuaranteedUnusableCellCountAllAgg = agg([...firstIterationGuaranteedUnusableCellCountRow, ...firstIterationGuaranteedUnusableCellCountCol, ...firstIterationGuaranteedUnusableCellCountGrp]);
-
-  const firstIterationActionableCellAllCountRow = stats.rows.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationActionableCellAllCountCol = stats.columns.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationActionableCellCountGrp = stats.groups.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount);
-  const firstIterationActionableCellAllCountAllAgg = agg([...firstIterationActionableCellAllCountRow, ...firstIterationActionableCellAllCountCol, ...firstIterationActionableCellCountGrp])
-  const firstIterationActionableCellAllCountGroupAgg = agg([...firstIterationActionableCellCountGrp])
-
-  const requiredSumRow = stats.rows.map(s => s.requiredSum);
-  const requiredSumCol = stats.columns.map(s => s.requiredSum);
-  const requiredSumGrp = stats.groups.map(s => s.requiredSum);
-  const requiredSumAllAgg = agg([...requiredSumRow, ...requiredSumCol, ...requiredSumGrp])
+  const cellCountLargerThanTargetAllAgg = agg(allSectionStats.map(s => s.cellValues.filter(c => c > s.goalSum).length));
+  const firstIterationFalsePositiveSolutionCountAllAgg = agg(allSectionStats.map(s => s.firstIterationFalsePositiveSolutionCount));
+  const firstIterationGuaranteedRequiredCellCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCount));
+  const firstIterationGuaranteedUnusableCellCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedUnusableCellCount));
+  const firstIterationRequiredCellCountVsGoalAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCountVsGoalSum));
+  const firstIterationUnusableCellCountVsGoalAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedUnusableCellCountVsGoalSum));
+  const firstIterationActionableCellAllCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount));
+  const goalSumAllAgg = agg(allSectionStats.map(s => s.goalSum));
 
   const boardSize = stats.totals.rowsEvaluated
   const cellCount = boardSize * boardSize;
@@ -159,17 +143,24 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     firstIterationActionableCellAllCountStd: firstIterationActionableCellAllCountAllAgg.std / boardSize,
     firstIterationActionableCellAllCountSum: firstIterationActionableCellAllCountAllAgg.sum / boardSize / 3,
 
-    firstIterationActionableCellCountGrpMean: firstIterationActionableCellAllCountGroupAgg.mean / boardSize,
-    firstIterationActionableCellCountGrpMin: firstIterationActionableCellAllCountGroupAgg.min / boardSize,
-    firstIterationActionableCellCountGrpMax: firstIterationActionableCellAllCountGroupAgg.max / boardSize,
-    firstIterationActionableCellCountGrpStd: firstIterationActionableCellAllCountGroupAgg.std / boardSize,
-    firstIterationActionableCellCountGrpSum: firstIterationActionableCellAllCountGroupAgg.sum / boardSize / 3,
+    // TODO: compare to board size
+    firstIterationRequiredCellCountVsGoalAllMean: firstIterationRequiredCellCountVsGoalAllAgg.mean,
+    firstIterationRequiredCellCountVsGoalAllMin: firstIterationRequiredCellCountVsGoalAllAgg.min,
+    firstIterationRequiredCellCountVsGoalAllMax: firstIterationRequiredCellCountVsGoalAllAgg.max,
+    firstIterationRequiredCellCountVsGoalAllStd: firstIterationRequiredCellCountVsGoalAllAgg.std,
+    firstIterationRequiredCellCountVsGoalAllSum: firstIterationRequiredCellCountVsGoalAllAgg.sum,
 
-    requiredSumAllMean: requiredSumAllAgg.mean / boardSize,
-    requiredSumAllMin: requiredSumAllAgg.min / boardSize,
-    requiredSumAllMax: requiredSumAllAgg.max / boardSize,
-    requiredSumAllStd: requiredSumAllAgg.std / boardSize,
-    requiredSumAllSum: requiredSumAllAgg.sum / boardSize / 3,
+    firstIterationUnusableCellCountVsGoalAllMean: firstIterationUnusableCellCountVsGoalAllAgg.mean,
+    firstIterationUnusableCellCountVsGoalAllMin: firstIterationUnusableCellCountVsGoalAllAgg.min,
+    firstIterationUnusableCellCountVsGoalAllMax: firstIterationUnusableCellCountVsGoalAllAgg.max,
+    firstIterationUnusableCellCountVsGoalAllStd: firstIterationUnusableCellCountVsGoalAllAgg.std,
+    firstIterationUnusableCellCountVsGoalAllSum: firstIterationUnusableCellCountVsGoalAllAgg.sum,
+
+    goalSumAllMean: goalSumAllAgg.mean / boardSize,
+    goalSumAllMin: goalSumAllAgg.min / boardSize,
+    goalSumAllMax: goalSumAllAgg.max / boardSize,
+    goalSumAllStd: goalSumAllAgg.std / boardSize,
+    goalSumAllSum: goalSumAllAgg.sum / boardSize / 3,
 
     cellCountLargerThanTargetAllMean: cellCountLargerThanTargetAllAgg.mean / boardSize,
     cellCountLargerThanTargetAllMin: cellCountLargerThanTargetAllAgg.min / boardSize,
@@ -238,17 +229,23 @@ export interface GameStatFeatures {
   firstIterationActionableCellAllCountStd: number;
   firstIterationActionableCellAllCountSum: number;
   //
-  firstIterationActionableCellCountGrpMean: number;
-  firstIterationActionableCellCountGrpMin: number;
-  firstIterationActionableCellCountGrpMax: number;
-  firstIterationActionableCellCountGrpStd: number;
-  firstIterationActionableCellCountGrpSum: number;
+  firstIterationRequiredCellCountVsGoalAllMean: number;
+  firstIterationRequiredCellCountVsGoalAllMin: number;
+  firstIterationRequiredCellCountVsGoalAllMax: number;
+  firstIterationRequiredCellCountVsGoalAllStd: number;
+  firstIterationRequiredCellCountVsGoalAllSum: number;
   //
-  requiredSumAllMean: number;
-  requiredSumAllMin: number;
-  requiredSumAllMax: number;
-  requiredSumAllStd: number;
-  requiredSumAllSum: number;
+  firstIterationUnusableCellCountVsGoalAllMean: number;
+  firstIterationUnusableCellCountVsGoalAllMin: number;
+  firstIterationUnusableCellCountVsGoalAllMax: number;
+  firstIterationUnusableCellCountVsGoalAllStd: number;
+  firstIterationUnusableCellCountVsGoalAllSum: number;
+  //
+  goalSumAllMean: number;
+  goalSumAllMin: number;
+  goalSumAllMax: number;
+  goalSumAllStd: number;
+  goalSumAllSum: number;
   //
   cellCountLargerThanTargetAllMean: number;
   cellCountLargerThanTargetAllMin: number;
