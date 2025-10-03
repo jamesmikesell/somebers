@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   HostBinding,
+  HostListener,
   NgZone,
   OnDestroy,
   OnInit,
@@ -201,6 +202,12 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
       console.error('Failed to release app lock', error);
     });
+  }
+
+
+  @HostListener('window:beforeunload')
+  handleBeforeUnload() {
+    this.saveGameState();
   }
 
 

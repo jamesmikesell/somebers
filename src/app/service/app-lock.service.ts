@@ -31,7 +31,7 @@ export class LockService {
       return;
 
     window.addEventListener('storage', this.handleStorageEvent);
-    window.addEventListener('beforeunload', this.handleBeforeUnload);
+    window.addEventListener('unload', this.handleUnload);
 
     const currentOwner = this.safeStorageRead();
     this.setHasLock(currentOwner === this.instanceId);
@@ -86,7 +86,7 @@ export class LockService {
     this.lockLostSubject.next();
   };
 
-  private handleBeforeUnload = (): void => {
+  private handleUnload = (): void => {
     if (!this.hasLock)
       return;
 

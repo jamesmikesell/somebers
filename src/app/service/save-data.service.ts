@@ -43,8 +43,10 @@ class SaveDataPrivateService<T extends DataSaveVersion> {
 
 
   saveNoWait(gameState: T): void {
-    if (!this.lockService.hasLock)
+    if (!this.lockService.hasLock) {
+      console.log("No save lock, not saving")
       return;
+    }
 
     this.save(gameState).catch(e => console.error(e));
   }
