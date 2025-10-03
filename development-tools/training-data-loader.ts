@@ -29,10 +29,12 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
     const gameBoard = await generateGameBoard(game.gameNumber);
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
     const completionTime = game.moveHistory[game.moveHistory.length - 1].timestamp;
-    const autoCompletionAvailable = completionTime > 1758406785000;
+    const autoCompletionAvailable = completionTime > 1758406785000 ? 1 : 0;
     const gameDateAsPercent = (game.moveHistory[game.moveHistory.length - 1].timestamp - firstGameDate) / gameDatesDiff;
+    const moveTime = game.moveHistory[game.moveHistory.length - 1].timestamp - game.moveHistory[0].timestamp;
+    const breaksMinutes = (moveTime - game.timeSpent) / 1000 / 60;
 
-    const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber, gameDateAsPercent, autoCompletionAvailable)
+    const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber, gameDateAsPercent, autoCompletionAvailable, breaksMinutes)
 
     out.push(s);
   }
@@ -50,5 +52,5 @@ export async function buildRawGameStatForGameNumber(gameNumber: number, version:
   //     + `Deduction Iterations: ${stats.totals.deductionIterations}  `
   //     + `Post-Deduction Cell Count: ${stats.totals.unresolvedCellCountAfterDeduction.toString().padStart(2, " ")}`)
 
-  return difficultyReportToGameStat(stats, 0, gameNumber, 1);
+  return difficultyReportToGameStat(stats, 0, gameNumber, 1, 1, 0);
 }

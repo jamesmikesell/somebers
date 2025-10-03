@@ -72,11 +72,13 @@ export const FEATURE_SPEC: FeatureSpec = {
     'autoCompleteWasAvailable',
     //
     'gameDateAsPercent',
+    //
+    'breaksMinutes',
   ],
 };
 
 
-export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number, gameDateAsPercent: number, autoCompletionAvailable = true): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
+export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number, gameDateAsPercent: number, autoCompletionAvailable: 0 | 1, breaksMinutes: number): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
   const agg = (xs: number[]) => {
     const n = xs.length || 1;
     let sum = 0;
@@ -178,9 +180,11 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     percentUnresolvedCellsAfterDeductionI4: (stats.totals.unresolvedCountsPerIteration[3] ?? 0) / cellCount,
     percentUnresolvedCellsAfterDeductionI5: (stats.totals.unresolvedCountsPerIteration[4] ?? 0) / cellCount,
 
-    autoCompleteWasAvailable: autoCompletionAvailable ? 1 : 0,
+    autoCompleteWasAvailable: autoCompletionAvailable,
 
     gameDateAsPercent: gameDateAsPercent,
+
+    breaksMinutes: breaksMinutes / boardSize,
   };
 
   let x: GameStatWithBoard = { gameNumber }
@@ -266,4 +270,6 @@ export interface GameStatFeatures {
   autoCompleteWasAvailable: number;
   //
   gameDateAsPercent: number;
+  //
+  breaksMinutes: number;
 }
