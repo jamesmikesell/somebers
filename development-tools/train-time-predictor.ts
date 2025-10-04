@@ -70,7 +70,7 @@ async function main(): Promise<void> {
   const predictions: { gameNumber: number; predictedMs: number }[] = [];
   const genStart = Date.now();
 
-  let boardGeneratorVersion: BoardGroupVersion = 2;
+  let boardGeneratorVersion: BoardGroupVersion = 1;
   if (threadCount <= 1) {
     predictions.push(...await predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate, boardGeneratorVersion));
   } else {
