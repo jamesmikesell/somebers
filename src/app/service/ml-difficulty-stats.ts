@@ -69,7 +69,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'percentUnresolvedCellsAfterDeductionI4',
     // 'percentUnresolvedCellsAfterDeductionI5',
     //
-    'gameDateAsPercent',
+    // 'gameDateAsPercent',
     //
     'breaksMinutes',
   ],
