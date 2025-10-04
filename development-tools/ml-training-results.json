@@ -3,163 +3,163 @@
     "version": 1,
     "modelType": "ridge",
     "features": [
-      "boardSize",
-      "firstIterationFalsePositiveSolutionCountAllMin",
-      "firstIterationGuaranteedRequiredCellCountMax",
-      "firstIterationGuaranteedRequiredCellCountStd",
-      "firstIterationGuaranteedRequiredCellCountSum",
-      "firstIterationGuaranteedUnusableCellCountAllMax",
-      "firstIterationGuaranteedUnusableCellCountAllStd",
-      "firstIterationGuaranteedUnusableCellCountAllSum",
-      "firstIterationRequiredCellCountVsGoalAllMean",
-      "firstIterationRequiredCellCountVsGoalAllStd",
-      "firstIterationUnusableCellCountVsGoalAllMean",
-      "firstIterationUnusableCellCountVsGoalAllStd",
-      "firstIterationUnusableCellCountVsGoalAllSum",
-      "firstIterationActionableCellAllCountMax",
-      "firstIterationActionableCellAllCountStd",
-      "firstIterationActionableCellAllCountSum",
+      "percentUnresolvedCellsAfterDeductionI2",
       "goalSumAllMean",
+      "gameDateAsPercent",
+      "breaksMinutes",
+      "firstIterationUnusableCellCountVsGoalAllMean",
+      "cellCountLargerThanTargetAllStd",
+      "firstIterationUnusableCellCountVsGoalAllSum",
+      "cellCountLargerThanTargetAllMax",
       "goalSumAllStd",
-      "cellCountLargerThanTargetAllSum",
+      "goalSumAllMax",
+      "firstIterationGuaranteedRequiredCellCountMax",
+      "percentUnresolvedCellsAfterDeductionI4",
+      "firstIterationGuaranteedRequiredCellCountSum",
+      "firstIterationGuaranteedUnusableCellCountAllStd",
+      "firstIterationRequiredCellCountVsGoalAllMean",
+      "firstIterationUnusableCellCountVsGoalAllStd",
+      "firstIterationActionableCellAllCountMax",
+      "firstIterationActionableCellAllCountSum",
       "deductionIterations",
       "percentUnresolvedCellsAfterDeduction",
-      "percentUnresolvedCellsAfterDeductionI1",
-      "percentUnresolvedCellsAfterDeductionI2",
-      "breaksMinutes"
+      "firstIterationFalsePositiveSolutionCountAllSum",
+      "percentUnresolvedCellsAfterDeductionI5",
+      "firstIterationGuaranteedUnusableCellCountAllMax",
+      "firstIterationUnusableCellCountVsGoalAllMax"
     ],
-    "lambda": 10,
+    "lambda": 0.00001,
     "transform": "log1p",
     "featureMeans": [
-      0.48669467787114845,
-      0.0022704394257703083,
-      0.4319183228847094,
-      0.12248133185696555,
-      0.509450817363983,
-      0.7087857365168303,
-      0.21579578895960289,
-      1.1263420182887962,
-      0.05468851635724578,
-      0.0962978479858025,
-      0.2951240084067156,
-      0.6028737571455806,
-      5.88704347281976,
-      0.8711929216130897,
-      0.26810539656266663,
-      1.6357928356527793,
+      0.10174682747878692,
       2.0468327167727765,
+      0.5899997010723649,
+      2.35441984932862,
+      0.2951240084067156,
+      0.1691767049342068,
+      5.88704347281976,
+      0.5830465519541148,
       0.9905913352398182,
-      0.5846475627287956,
+      4.0748821750922595,
+      0.4319183228847094,
+      0.009094996023100599,
+      0.509450817363983,
+      0.21579578895960289,
+      0.05468851635724578,
+      0.6028737571455806,
+      0.8711929216130897,
+      1.6357928356527793,
       2.134453781512605,
       0.02964843344745305,
-      0.29465307286935943,
-      0.10174682747878692,
-      2.35441984932862
+      0.22998001283846878,
+      0.001729086696406958,
+      0.7087857365168303,
+      2.4501175647927016
     ],
     "featureStds": [
-      0.3460432597099999,
-      0.00425275292988336,
-      0.28424329774732987,
-      0.08336546859509796,
-      0.45155990920427347,
-      0.18107973723822746,
-      0.07132010214452902,
-      0.6049562678361091,
-      0.05407993052835572,
-      0.08272139625957489,
-      0.24380898142534313,
-      0.46905823177009,
-      4.922532674008554,
-      0.20802307470622816,
-      0.08569665743353175,
-      0.8644506475362019,
+      0.22358209496190826,
       0.44248836576908257,
+      0.2621303830038698,
+      11.87781007413919,
+      0.24380898142534313,
+      0.07879624318824234,
+      4.922532674008554,
+      0.23458863242596817,
       0.22801025603769123,
-      0.41875981157312947,
+      0.8126647637027046,
+      0.28424329774732987,
+      0.07521583572908132,
+      0.45155990920427347,
+      0.07132010214452902,
+      0.05407993052835572,
+      0.46905823177009,
+      0.20802307470622816,
+      0.8644506475362019,
       1.0283736834136723,
       0.15921712205590313,
-      0.2943693392826661,
-      0.22358209496190826,
-      11.87781007413919
+      0.05359449096769626,
+      0.030723802822011665,
+      0.18107973723822746,
+      1.988007724218977
     ],
     "weights": [
       12.140514675806076,
-      0.6352486326105177,
-      0.010672788339219596,
-      0.030314077343062264,
-      -0.08086095929116976,
-      0.013101429488518017,
-      -0.015108348518712005,
-      -0.10670874222477324,
-      -0.04205835072625652,
-      -0.02303659226807662,
-      0.01788542496435759,
-      -0.08967440148841091,
-      0.004916601100021126,
-      0.10293954812998729,
-      0.010773186301269638,
-      -0.07141985692862364,
-      -0.022589355022255144,
-      0.10535622746439219,
-      -0.013519133700988872,
-      -0.018888632118030414,
-      0.07587798452945405,
-      0.08316192523348198,
-      0.03981423444390678,
-      0.07809622918623241,
-      0.06885911031802693
+      0.2314792049113202,
+      0.1306467867434822,
+      -0.09774069092521924,
+      0.06349988589146047,
+      -1.2479990608750844,
+      -0.08632203876809762,
+      1.4663550578043667,
+      0.02263479967151058,
+      0.12415188894641492,
+      -0.05400782185559333,
+      0.059405725832674824,
+      -0.06694117384935233,
+      -0.33603140415124355,
+      -0.22387119431023977,
+      0.19913203749497002,
+      -0.42816455930922087,
+      -0.03837830837926837,
+      -0.2950295414188743,
+      0.16232826080514684,
+      0.12470244362231137,
+      -0.0637634716222714,
+      0.04418888565253354,
+      0.06789419792074816,
+      0.2224808527508741
     ],
     "perSizeMeans": {},
     "globalMean": 364241.8963585434
   },
   "metrics": {
-    "rmse": 222689.96021297853,
-    "mae": 101354.89155016886,
-    "r2": 0.8109242129618595
+    "rmse": 175095.630424176,
+    "mae": 96101.72625455141,
+    "r2": 0.8831078738810819
   },
   "perSizeRmse": {
-    "0": 17302.28288064032,
-    "1": 458316.25467689615,
-    "0.5": 68662.07567443783,
-    "0.75": 210013.44655375605,
-    "0.25": 32590.201795278877
+    "0": 25605.80111695484,
+    "1": 356597.4546551939,
+    "0.5": 82848.13892124659,
+    "0.75": 153768.08174239247,
+    "0.25": 35124.46502242872
   },
   "perSizeMae": {
-    "0": 13204.839379238967,
-    "1": 324010.66906504007,
-    "0.5": 55341.63243558507,
-    "0.75": 109659.19765517423,
-    "0.25": 23256.252245666143
+    "0": 18504.25066854445,
+    "1": 287445.08624698455,
+    "0.5": 61405.38796492163,
+    "0.75": 101246.54700051928,
+    "0.25": 27171.374705222162
   },
   "baseline": {
     "model": {
       "version": 1,
       "modelType": "baseline",
       "features": [
-        "boardSize",
-        "firstIterationFalsePositiveSolutionCountAllMin",
-        "firstIterationGuaranteedRequiredCellCountMax",
-        "firstIterationGuaranteedRequiredCellCountStd",
-        "firstIterationGuaranteedRequiredCellCountSum",
-        "firstIterationGuaranteedUnusableCellCountAllMax",
-        "firstIterationGuaranteedUnusableCellCountAllStd",
-        "firstIterationGuaranteedUnusableCellCountAllSum",
-        "firstIterationRequiredCellCountVsGoalAllMean",
-        "firstIterationRequiredCellCountVsGoalAllStd",
-        "firstIterationUnusableCellCountVsGoalAllMean",
-        "firstIterationUnusableCellCountVsGoalAllStd",
-        "firstIterationUnusableCellCountVsGoalAllSum",
-        "firstIterationActionableCellAllCountMax",
-        "firstIterationActionableCellAllCountStd",
-        "firstIterationActionableCellAllCountSum",
+        "percentUnresolvedCellsAfterDeductionI2",
         "goalSumAllMean",
+        "gameDateAsPercent",
+        "breaksMinutes",
+        "firstIterationUnusableCellCountVsGoalAllMean",
+        "cellCountLargerThanTargetAllStd",
+        "firstIterationUnusableCellCountVsGoalAllSum",
+        "cellCountLargerThanTargetAllMax",
         "goalSumAllStd",
-        "cellCountLargerThanTargetAllSum",
+        "goalSumAllMax",
+        "firstIterationGuaranteedRequiredCellCountMax",
+        "percentUnresolvedCellsAfterDeductionI4",
+        "firstIterationGuaranteedRequiredCellCountSum",
+        "firstIterationGuaranteedUnusableCellCountAllStd",
+        "firstIterationRequiredCellCountVsGoalAllMean",
+        "firstIterationUnusableCellCountVsGoalAllStd",
+        "firstIterationActionableCellAllCountMax",
+        "firstIterationActionableCellAllCountSum",
         "deductionIterations",
         "percentUnresolvedCellsAfterDeduction",
-        "percentUnresolvedCellsAfterDeductionI1",
-        "percentUnresolvedCellsAfterDeductionI2",
-        "breaksMinutes"
+        "firstIterationFalsePositiveSolutionCountAllSum",
+        "percentUnresolvedCellsAfterDeductionI5",
+        "firstIterationGuaranteedUnusableCellCountAllMax",
+        "firstIterationUnusableCellCountVsGoalAllMax"
       ],
       "perSizeMeans": {
         "0": 48616.42424242424,
@@ -194,61 +194,13 @@
     {
       "model": {
         "modelType": "ridge",
-        "lambda": 10,
+        "lambda": 0.00001,
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 222689.96021297853,
-        "mae": 101354.89155016886,
-        "r2": 0.8109242129618595
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 1,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 225417.54724251936,
-        "mae": 102122.93452969265,
-        "r2": 0.8062641103665579
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.1,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 225931.35954161492,
-        "mae": 102309.50276131753,
-        "r2": 0.805379908286747
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.01,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 225979.4471582643,
-        "mae": 102342.12362661678,
-        "r2": 0.8052970529243503
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.001,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 225984.16950577399,
-        "mae": 102345.46963930984,
-        "r2": 0.8052889153295747
+        "rmse": 175095.630424176,
+        "mae": 96101.72625455141,
+        "r2": 0.8831078738810819
       }
     },
     {
@@ -258,83 +210,83 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 225984.64079654028,
-        "mae": 102345.80443591332,
-        "r2": 0.8052881031874483
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 10,
-        "transform": "none"
-      },
-      "metrics": {
-        "rmse": 226942.15451720613,
-        "mae": 112706.87135522364,
-        "r2": 0.8036345900041668
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 1,
-        "transform": "none"
-      },
-      "metrics": {
-        "rmse": 228241.72660435617,
-        "mae": 116606.07353721665,
-        "r2": 0.801379198756413
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.1,
-        "transform": "none"
-      },
-      "metrics": {
-        "rmse": 228769.57206119655,
-        "mae": 117709.79954440623,
-        "r2": 0.800459451784514
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.01,
-        "transform": "none"
-      },
-      "metrics": {
-        "rmse": 228839.62925745777,
-        "mae": 117841.36859534585,
-        "r2": 0.8003372205656607
+        "rmse": 175095.66870848156,
+        "mae": 96101.24512476787,
+        "r2": 0.8831078227646223
       }
     },
     {
       "model": {
         "modelType": "ridge",
         "lambda": 0.001,
-        "transform": "none"
+        "transform": "log1p"
       },
       "metrics": {
-        "rmse": 228846.89236124608,
-        "mae": 117854.75627306773,
-        "r2": 0.8003245462355391
+        "rmse": 175096.08675925893,
+        "mae": 96096.43783462,
+        "r2": 0.8831072645906336
       }
     },
     {
       "model": {
         "modelType": "ridge",
-        "lambda": 0.0001,
-        "transform": "none"
+        "lambda": 0.01,
+        "transform": "log1p"
       },
       "metrics": {
-        "rmse": 228847.61910916315,
-        "mae": 117856.08540117495,
-        "r2": 0.8003232780168708
+        "rmse": 175103.7377495783,
+        "mae": 96049.21363658241,
+        "r2": 0.8830970488885788
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.1,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 175481.43629104423,
+        "mae": 96379.57534954179,
+        "r2": 0.8825921859446231
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 1,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 187905.302237503,
+        "mae": 100775.0080102488,
+        "r2": 0.8653790312303355
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 10,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 209033.186983238,
+        "mae": 108061.35660820549,
+        "r2": 0.8334037868061269
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 100,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 2350717.934204008,
+        "mae": 243916.92004363338,
+        "r2": -20.06860024078317
       }
     }
   ],
-  "predictionForGame27": 28.122043287365276
+  "predictionForGame27": 14.151514114803167
 }

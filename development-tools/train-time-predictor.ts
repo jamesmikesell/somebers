@@ -22,7 +22,7 @@ async function main(): Promise<void> {
   console.log('Training complete');
 
   // Also compute training-set metrics for the selected model
-  const samples = rawStats.map(toSample).filter((x): x is TrainingSample => !!x);
+  const samples = rawStats.map((s) => toSample(s)).filter((x): x is TrainingSample => !!x);
   const { train } = stratifiedSplit(samples, 1337);
   const trainEval: ModelEvaluationResult<ModelJson> = (best.model.modelType === 'baseline'
     ? evaluate((s) => predictBaseline(best.model as BaselineModelJson, s), train, best.model as BaselineModelJson)

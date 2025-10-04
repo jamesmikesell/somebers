@@ -28,9 +28,12 @@ export interface TrainingSample {
 
 
 
-export function toSample(s: RawGenericFeatureSet): TrainingSample | undefined {
+export function toSample(
+  s: RawGenericFeatureSet,
+  featureKeys: readonly string[] = FEATURE_SPEC.keys,
+): TrainingSample | undefined {
   if (s.timeSpent == null) return undefined;
-  const features = FEATURE_SPEC.keys.map((k) => s[k] as number);
+  const features = featureKeys.map((k) => s[k] as number);
   if (features.some((v) => typeof v !== 'number' || Number.isNaN(v))) return undefined;
   return {
     gameNumber: s.gameNumber,
@@ -225,12 +228,15 @@ export function solveLinearSystem(A: number[][], b: number[], warn?: (msg: strin
   return M.map((row) => row[n]);
 }
 
-export function trainBaseline(train: TrainingSample[]): BaselineModelJson {
+export function trainBaseline(
+  train: TrainingSample[],
+  featureKeys: readonly string[] = FEATURE_SPEC.keys,
+): BaselineModelJson {
   const bySize = groupBy(train, (s) => s.boardSize);
   const perSizeMeans: Record<string, number> = {};
   for (const size of Object.keys(bySize)) perSizeMeans[size] = mean(bySize[size].map((s) => s.target));
   const globalMean = mean(train.map((s) => s.target));
-  return { version: 1, modelType: 'baseline', features: FEATURE_SPEC.keys, perSizeMeans, globalMean };
+  return { version: 1, modelType: 'baseline', features: [...featureKeys], perSizeMeans, globalMean };
 }
 
 export function predictBaseline(model: BaselineModelJson, sample: TrainingSample): number {
@@ -238,7 +244,13 @@ export function predictBaseline(model: BaselineModelJson, sample: TrainingSample
   return m ?? model.globalMean;
 }
 
-export function trainRidge(train: TrainingSample[], lambda: number, transform: TargetTransform, logWarn?: (msg: string) => void): RidgeModelJson {
+export function trainRidge(
+  train: TrainingSample[],
+  lambda: number,
+  transform: TargetTransform,
+  logWarn?: (msg: string) => void,
+  featureKeys: readonly string[] = FEATURE_SPEC.keys,
+): RidgeModelJson {
   const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
   const xRaw = train.map((s) => s.features);
   const yRaw = train.map((s) => s.target);
@@ -262,7 +274,7 @@ export function trainRidge(train: TrainingSample[], lambda: number, transform: T
   const y = transform === 'log1p' ? yRaw.map((v) => Math.log1p(Math.max(0, v))) : yRaw.slice();
 
   const n = X.length;
-  const d = FEATURE_SPEC.keys.length;
+  const d = featureKeys.length;
   const Z: number[][] = new Array(n);
   for (let i = 0; i < n; i++) Z[i] = [1, ...X[i]];
   const ZtZ: number[][] = Array.from({ length: d + 1 }, () => new Array(d + 1).fill(0));
@@ -283,7 +295,7 @@ export function trainRidge(train: TrainingSample[], lambda: number, transform: T
   return {
     version: 1,
     modelType: 'ridge',
-    features: FEATURE_SPEC.keys,
+    features: [...featureKeys],
     lambda,
     transform,
     featureMeans: means,
@@ -341,12 +353,14 @@ export interface TrainBestOptions {
   useKFold?: boolean;
   k?: number;
   seed?: number;
+  featureKeys?: readonly string[];
 }
 
 export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, options?: TrainBestOptions): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
-  console.log(`Training Set Size: ${rawStats.length}`)
+  // console.log(`Training Set Size: ${rawStats.length}`)
   const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
-  const mapped = rawStats.map((r) => ({ raw: r, sample: toSample(r) }));
+  const featureKeys = options?.featureKeys ?? FEATURE_SPEC.keys;
+  const mapped = rawStats.map((r) => ({ raw: r, sample: toSample(r, featureKeys) }));
   const dropped = mapped.filter((m) => !m.sample);
   if (dropped.length) warn(`toSample: skipped ${dropped.length} record(s) due to missing/invalid features; examples gameNumbers: ${dropped.slice(0, 5).map((m) => m.raw.gameNumber).join(', ')}`);
   const samples = mapped.map((m) => m.sample).filter((x): x is TrainingSample => !!x);
@@ -364,7 +378,7 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
   } else {
     ({ train, valid } = stratifiedSplit(samples, seedToUse));
   }
-  const d = FEATURE_SPEC.keys.length;
+  const d = featureKeys.length;
   const trainCounts = useK ? folds.map((f) => f.train.length) : [train.length];
   const minTrain = trainCounts.length ? Math.min(...trainCounts) : 0;
   const ratioLabel = useK ? 'min fold training samples' : 'training samples';
@@ -373,32 +387,32 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
   else if (minTrain / d < 5)
     warn(`dataset: low samples-to-features ratio ${(minTrain / d).toFixed(2)} (based on ${ratioLabel}); consider reducing features or adding data`);
 
-  const baseline = trainBaseline(train);
+  const baseline = trainBaseline(train, featureKeys);
   const baselineEvalSingle = evaluate((s) => predictBaseline(baseline, s), valid, baseline);
 
   // Feature diagnostics: NZV and high collinearity warnings
   const diag = computeFeatureDiagnostics(train);
   if (diag.nzvIndices.length) {
-    const names = diag.nzvIndices.slice(0, 8).map((i) => FEATURE_SPEC.keys[i]).join(', ');
+    const names = diag.nzvIndices.slice(0, 8).map((i) => featureKeys[i] ?? `feature_${i}`).join(', ');
     warn(`features: ${diag.nzvIndices.length} near-zero-variance feature(s) detected (e.g., ${names})`);
   }
   if (diag.highCorrPairs.length) {
     const examples = diag.highCorrPairs
       .slice(0, 5)
-      .map((p) => `${FEATURE_SPEC.keys[p.i]}~${FEATURE_SPEC.keys[p.j]}=${p.corr.toFixed(3)}`)
+      .map((p) => `${featureKeys[p.i] ?? `feature_${p.i}`}~${featureKeys[p.j] ?? `feature_${p.j}`}=${p.corr.toFixed(3)}`)
       .join('; ');
     warn(`features: ${diag.highCorrPairs.length} highly correlated pair(s) (|corr|>=0.98); examples: ${examples}`);
   }
   if (diag.maxAbsCorr > 0.999) warn(`features: max absolute correlation extremely high (${diag.maxAbsCorr.toFixed(5)}); model may be ill-conditioned`);
 
   // Exclude 0 (unregularized) to avoid unstable weight blow-ups on singular/collinear data
-  const lambdas = [1e-4, 1e-3, 1e-2, 1e-1, 1, 10];
+  const lambdas = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10, 100];
   // Prefer log transform for strictly-positive targets; we will tie-break later
-  const transforms: TargetTransform[] = ['log1p', 'none'];
+  const transforms: TargetTransform[] = ['log1p'];
   const ridgeEvals: ModelEvaluationResult<RidgeModelJson>[] = [];
   if (!useK) {
     for (const t of transforms) for (const l of lambdas) {
-      const model = trainRidge(train, l, t, warn);
+      const model = trainRidge(train, l, t, warn, featureKeys);
       ridgeEvals.push(evaluate((s) => predictRidge(model, s), valid, model));
     }
   } else {
@@ -408,14 +422,14 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
       const yPredAll: number[] = [];
       const validAll: TrainingSample[] = [];
       for (const fold of folds) {
-        const model = trainRidge(fold.train, l, t, warn);
+        const model = trainRidge(fold.train, l, t, warn, featureKeys);
         const preds = fold.valid.map((s) => predictRidge(model, s));
         yTrueAll.push(...fold.valid.map((s) => s.target));
         yPredAll.push(...preds);
         validAll.push(...fold.valid);
       }
       // Train a final model on all samples for the returned artifact
-      const finalModel = trainRidge(samples, l, t, warn);
+      const finalModel = trainRidge(samples, l, t, warn, featureKeys);
       ridgeEvals.push(evaluateOnArrays(yTrueAll, yPredAll, finalModel, validAll));
     }
   }
@@ -427,13 +441,13 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
       const yPredAll: number[] = [];
       const validAll: TrainingSample[] = [];
       for (const fold of folds) {
-        const b = trainBaseline(fold.train);
+        const b = trainBaseline(fold.train, featureKeys);
         const preds = fold.valid.map((s) => predictBaseline(b, s));
         yTrueAll.push(...fold.valid.map((s) => s.target));
         yPredAll.push(...preds);
         validAll.push(...fold.valid);
       }
-      const finalB = trainBaseline(samples);
+      const finalB = trainBaseline(samples, featureKeys);
       return evaluateOnArrays(yTrueAll, yPredAll, finalB, validAll);
     })()
     : baselineEvalSingle;
@@ -463,7 +477,7 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
   for (const r of ridgeEvals) if (isBetter(r as ModelEvaluationResult<ModelJson>, best)) best = r as ModelEvaluationResult<ModelJson>;
   // If using a single split, retrain the chosen model on all samples for production use
   if (!useK) {
-    const baselineFinal = trainBaseline(samples);
+    const baselineFinal = trainBaseline(samples, featureKeys);
     const baselineEvalRet: ModelEvaluationResult<BaselineModelJson> = {
       model: baselineFinal,
       metrics: baselineEval.metrics,
@@ -472,7 +486,7 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
     };
     if (best.model.modelType === 'ridge') {
       const m = best.model as RidgeModelJson;
-      const finalRidge = trainRidge(samples, m.lambda, m.transform, warn);
+      const finalRidge = trainRidge(samples, m.lambda, m.transform, warn, featureKeys);
       best = {
         model: finalRidge,
         metrics: best.metrics,

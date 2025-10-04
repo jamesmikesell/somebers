@@ -1,5 +1,5 @@
-import { computeFeatureDiagnostics, predictRidge, trainBestModel } from './ml-core';
-import { RidgeModelJson, ModelJson } from '../model/ml-types';
+import { computeFeatureDiagnostics, predictRidge, RawGenericFeatureSet, toSample, trainBestModel } from './ml-core';
+import { RidgeModelJson } from '../model/ml-types';
 import { FEATURE_SPEC } from './ml-difficulty-stats';
 
 describe('ml-core predictRidge', () => {
@@ -81,5 +81,37 @@ describe('ml-core k-fold cross validation (optional)', () => {
     // Expect ridge to do at least as well as baseline on this synthetic linear data
     // Allow equality due to potential tie-breakers.
     expect(best.metrics.rmse).toBeLessThanOrEqual(baseline.metrics.rmse + 1e-6);
+  });
+});
+
+describe('ml-core configurable feature keys', () => {
+  it('supports training with custom feature subsets', () => {
+    const featureKeys = ['fooFeature', 'barFeature'];
+    const rawSamples: RawGenericFeatureSet[] = [];
+    for (let i = 0; i < 40; i++) {
+      const boardSize = i % 2 === 0 ? 5 : 7;
+      const foo = i;
+      const bar = (i % 3) - 1; // cycles -1, 0, 1
+      const base = boardSize === 5 ? 12000 : 15000;
+      const timeSpent = base + 600 * foo - 800 * bar;
+      rawSamples.push({
+        gameNumber: i + 1,
+        boardSize,
+        timeSpent,
+        fooFeature: foo,
+        barFeature: bar,
+      });
+    }
+
+    const { best, baseline } = trainBestModel(rawSamples, 2024, { useKFold: true, k: 4, featureKeys });
+    expect(best.model.features).toEqual(featureKeys);
+    expect(best.model.modelType).toBe('ridge');
+    expect(best.metrics.rmse).toBeLessThan(baseline.metrics.rmse);
+
+    const sample = toSample(rawSamples[0], featureKeys);
+    expect(sample?.features).toEqual([
+      rawSamples[0]['fooFeature'],
+      rawSamples[0]['barFeature'],
+    ]);
   });
 });
