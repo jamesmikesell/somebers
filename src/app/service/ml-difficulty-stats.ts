@@ -22,7 +22,6 @@ export const FEATURE_SPEC: FeatureSpec = {
     "firstIterationGuaranteedRequiredCellCountMax",
     "percentUnresolvedCellsAfterDeductionI4",
     "firstIterationGuaranteedRequiredCellCountSum",
-    "firstIterationGuaranteedUnusableCellCountAllStd",
     "firstIterationRequiredCellCountVsGoalAllMean",
     "firstIterationUnusableCellCountVsGoalAllStd",
     "firstIterationActionableCellAllCountMax",
@@ -33,6 +32,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     "percentUnresolvedCellsAfterDeductionI5",
     "firstIterationGuaranteedUnusableCellCountAllMax",
     "firstIterationUnusableCellCountVsGoalAllMax",
+    "goalVsTotalAllMean",
 
 
     // 'boardSize',
@@ -142,6 +142,7 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
   const firstIterationUnusableCellCountVsGoalAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedUnusableCellCountVsGoalSum));
   const firstIterationActionableCellAllCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount));
   const goalSumAllAgg = agg(allSectionStats.map(s => s.goalSum));
+  const gaolVsTotalAllAgg = agg(allSectionStats.map(s => s.goalVsTotal));
 
   const boardSize = stats.totals.rowsEvaluated
   const cellCount = boardSize * boardSize;
@@ -200,6 +201,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     cellCountLargerThanTargetAllMax: cellCountLargerThanTargetAllAgg.max / boardSize,
     cellCountLargerThanTargetAllStd: cellCountLargerThanTargetAllAgg.std / boardSize,
     cellCountLargerThanTargetAllSum: cellCountLargerThanTargetAllAgg.sum / boardSize / 3,
+
+    goalVsTotalAllMean: gaolVsTotalAllAgg.mean,
+    goalVsTotalAllMin: gaolVsTotalAllAgg.min,
+    goalVsTotalAllMax: gaolVsTotalAllAgg.max,
+    goalVsTotalAllStd: gaolVsTotalAllAgg.std,
+    goalVsTotalAllSum: gaolVsTotalAllAgg.sum,
 
     deductionIterations: stats.totals.deductionIterations,
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
@@ -285,6 +292,12 @@ export interface GameStatFeatures {
   cellCountLargerThanTargetAllMax: number;
   cellCountLargerThanTargetAllStd: number;
   cellCountLargerThanTargetAllSum: number;
+  //
+  goalVsTotalAllMean: number;
+  goalVsTotalAllMin: number;
+  goalVsTotalAllMax: number;
+  goalVsTotalAllStd: number;
+  goalVsTotalAllSum: number;
   //
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;

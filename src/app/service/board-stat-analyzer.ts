@@ -115,6 +115,7 @@ export class BoardStatAnalyzer {
       firstIterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
       firstIterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / stat.goalSum,
       firstIterationGuaranteedUnusableCellCountVsGoalSum: possibleCorrect.neverUsedCount / stat.goalSum,
+      goalVsTotal: stat.goalSum / stat.values.reduce((total, num) => total + num, 0),
     };
   }
 
@@ -307,6 +308,7 @@ export interface SectionStats {
   firstIterationGuaranteedUnusableCellCount: number;
   firstIterationGuaranteedRequiredCellCountVsGoalSum: number;
   firstIterationGuaranteedUnusableCellCountVsGoalSum: number;
+  goalVsTotal: number;
 }
 
 
