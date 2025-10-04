@@ -1,5 +1,6 @@
 import { rmSync, writeFileSync } from 'fs';
 import * as path from 'path';
+import { BoardGroupVersion } from '../src/app/model/grouping';
 import { BaselineModelJson, ModelEvaluationResult, ModelJson, RidgeModelJson } from '../src/app/model/ml-types';
 import { evaluate, predictBaseline, predictRidge, stratifiedSplit, toSample, trainBestModel, TrainingSample } from '../src/app/service/ml-core';
 import { logWeights, modelStats, parseThreadCount } from './predictor-utils';
@@ -69,15 +70,16 @@ async function main(): Promise<void> {
   const predictions: { gameNumber: number; predictedMs: number }[] = [];
   const genStart = Date.now();
 
+  let boardGeneratorVersion: BoardGroupVersion = 2;
   if (threadCount <= 1) {
-    predictions.push(...await predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate));
+    predictions.push(...await predictSequential(best.model, startBoardNumber, startBoardNumber + boardsToEvaluate, boardGeneratorVersion));
   } else {
     const workerPath = path.resolve(__dirname, 'workers', 'predict-pull.worker.ts');
     const numbers: number[] = [];
     for (let gameNumber = startBoardNumber; gameNumber < boardsToEvaluate + startBoardNumber; gameNumber++)
       numbers.push(gameNumber);
 
-    const pool = new WorkerPool({ workerPath, threads: threadCount, model: best.model, numbers });
+    const pool = new WorkerPool({ workerPath, threads: threadCount, model: best.model, numbers, boardGeneratorVersion });
     const parallelResults = await pool.run();
     predictions.push(...parallelResults);
   }
@@ -104,10 +106,10 @@ async function main(): Promise<void> {
   writeFileSync(predictedTimes, JSON.stringify(next1kTimes, null, 2), 'utf8');
 }
 
-async function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number): Promise<{ gameNumber: number; predictedMs: number }[]> {
+async function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number, boardGeneratorVersion: BoardGroupVersion): Promise<{ gameNumber: number; predictedMs: number }[]> {
   const out: { gameNumber: number; predictedMs: number }[] = [];
   for (let gameNumber = startInclusive; gameNumber < endExclusive; gameNumber++) {
-    const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, 2));
+    const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion));
     if (!sample) continue;
     const yhat = model.modelType === 'baseline'
       ? predictBaseline(model as BaselineModelJson, sample)

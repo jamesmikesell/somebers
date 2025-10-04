@@ -1,22 +1,23 @@
 import { isMainThread, parentPort, workerData } from 'worker_threads';
+import { BoardGroupVersion } from '../../src/app/model/grouping';
 import { BaselineModelJson, ModelJson, RidgeModelJson } from '../../src/app/model/ml-types';
-import { buildRawGameStatForGameNumber } from '../training-data-loader';
 import { predictBaseline, predictRidge, toSample } from '../../src/app/service/ml-core';
+import { buildRawGameStatForGameNumber } from '../training-data-loader';
 
 type InitData = {
   model: ModelJson;
 };
 
-type MsgFromMain =
-  | { t: 'task'; gameNumber: number }
+export type MsgFromMain =
+  | { t: 'task'; gameNumber: number; boardGeneratorVersion: BoardGroupVersion; }
   | { t: 'no-more' };
 
 type MsgToMain =
   | { t: 'ready' }
   | { t: 'result'; gameNumber: number; predictedMs: number };
 
-async function predictOne(model: ModelJson, gameNumber: number): Promise<number | null> {
-  const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, 2));
+async function predictOne(model: ModelJson, gameNumber: number, boardGeneratorVersion: BoardGroupVersion): Promise<number | null> {
+  const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion));
   if (!sample) return null;
   const yhat = model.modelType === 'baseline'
     ? predictBaseline(model as BaselineModelJson, sample)
@@ -31,7 +32,7 @@ if (!isMainThread && parentPort) {
   const onMessage = (msg: MsgFromMain): void => {
     if (msg.t === 'task') {
       void (async () => {
-        const yhat = await predictOne(model, msg.gameNumber);
+        const yhat = await predictOne(model, msg.gameNumber, msg.boardGeneratorVersion);
         if (yhat != null) {
           const out: MsgToMain = { t: 'result', gameNumber: msg.gameNumber, predictedMs: yhat };
           parentPort!.postMessage(out);

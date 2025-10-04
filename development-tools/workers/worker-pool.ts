@@ -1,7 +1,9 @@
-import { Worker } from 'worker_threads';
-import * as path from 'path';
 import { existsSync } from 'fs';
+import * as path from 'path';
+import { Worker } from 'worker_threads';
+import { BoardGroupVersion } from '../../src/app/model/grouping';
 import { ModelJson } from '../../src/app/model/ml-types';
+import { MsgFromMain } from './predict-pull.worker';
 
 export type Prediction = { gameNumber: number; predictedMs: number };
 
@@ -19,8 +21,10 @@ export class WorkerPool {
   private activeWorkers = 0;
   private resolveFn?: (res: Prediction[]) => void;
   private rejectFn?: (err: unknown) => void;
+  private boardGeneratorVersion: BoardGroupVersion;
 
-  constructor(opts: { workerPath: string; threads: number; model: ModelJson; numbers: number[] }) {
+  constructor(opts: { workerPath: string; threads: number; model: ModelJson; numbers: number[], boardGeneratorVersion: BoardGroupVersion}) {
+    this.boardGeneratorVersion = opts.boardGeneratorVersion;
     this.workerPathTs = path.resolve(opts.workerPath);
     const relFromRoot = path.relative(path.resolve('.'), this.workerPathTs).replace(/\\/g, '/');
     const compiled = path.resolve('out-tsc/node', relFromRoot.replace(/\.ts$/, '.js'));
@@ -62,11 +66,13 @@ export class WorkerPool {
   private onMessage(worker: Worker, msg: WorkerMsg): void {
     if (msg.t === 'ready') {
       const next = this.queue.shift();
-      if (next == null) {
-        worker.postMessage({ t: 'no-more' });
-      } else {
-        worker.postMessage({ t: 'task', gameNumber: next });
-      }
+      let message: MsgFromMain;
+      if (next == null)
+        message = { t: 'no-more' }
+      else
+        message = { t: 'task', gameNumber: next, boardGeneratorVersion: this.boardGeneratorVersion };
+
+      worker.postMessage(message);
     } else if (msg.t === 'result') {
       this.results.push({ gameNumber: msg.gameNumber, predictedMs: msg.predictedMs });
     }
