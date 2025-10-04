@@ -8,95 +8,74 @@ import { RawGenericFeatureSet } from "./ml-core";
 
 export const FEATURE_SPEC: FeatureSpec = {
   keys: [
-
-    "percentUnresolvedCellsAfterDeductionI2",
-    "goalSumAllMean",
-    "gameDateAsPercent",
-    "breaksMinutes",
-    "firstIterationUnusableCellCountVsGoalAllMean",
-    "cellCountLargerThanTargetAllStd",
-    "firstIterationUnusableCellCountVsGoalAllSum",
-    "cellCountLargerThanTargetAllMax",
-    "goalSumAllStd",
-    "goalSumAllMax",
-    "firstIterationGuaranteedRequiredCellCountMax",
-    "percentUnresolvedCellsAfterDeductionI4",
-    "firstIterationGuaranteedRequiredCellCountSum",
-    "firstIterationRequiredCellCountVsGoalAllMean",
-    "firstIterationUnusableCellCountVsGoalAllStd",
-    "firstIterationActionableCellAllCountMax",
-    "firstIterationActionableCellAllCountSum",
-    "deductionIterations",
-    "percentUnresolvedCellsAfterDeduction",
-    "firstIterationFalsePositiveSolutionCountAllSum",
-    "percentUnresolvedCellsAfterDeductionI5",
-    "firstIterationGuaranteedUnusableCellCountAllMax",
-    "firstIterationUnusableCellCountVsGoalAllMax",
-    "goalVsTotalAllMean",
-
-
-    // 'boardSize',
-    // // 'firstIterationFalsePositiveSolutionCountAllMean',
-    // 'firstIterationFalsePositiveSolutionCountAllMin',
-    // // 'firstIterationFalsePositiveSolutionCountAllMax',
-    // // 'firstIterationFalsePositiveSolutionCountAllStd',
-    // // 'firstIterationFalsePositiveSolutionCountAllSum',
-    // // 
-    // // 'firstIterationGuaranteedRequiredCellCountMean',
-    // // 'firstIterationGuaranteedRequiredCellCountMin',
-    // 'firstIterationGuaranteedRequiredCellCountMax',
-    // 'firstIterationGuaranteedRequiredCellCountStd',
-    // 'firstIterationGuaranteedRequiredCellCountSum',
-    // // 
-    // // 'firstIterationGuaranteedUnusableCellCountAllMean',
-    // // 'firstIterationGuaranteedUnusableCellCountAllMin',
-    // 'firstIterationGuaranteedUnusableCellCountAllMax',
-    // 'firstIterationGuaranteedUnusableCellCountAllStd',
-    // 'firstIterationGuaranteedUnusableCellCountAllSum',
-    // //
-    // 'firstIterationRequiredCellCountVsGoalAllMean',
-    // // 'firstIterationRequiredCellCountVsGoalAllMin',
-    // // 'firstIterationRequiredCellCountVsGoalAllMax',
-    // 'firstIterationRequiredCellCountVsGoalAllStd',
-    // // 'firstIterationRequiredCellCountVsGoalAllSum',
-    // //
-    // 'firstIterationUnusableCellCountVsGoalAllMean',
-    // // 'firstIterationUnusableCellCountVsGoalAllMin',
-    // // 'firstIterationUnusableCellCountVsGoalAllMax',
-    // 'firstIterationUnusableCellCountVsGoalAllStd',
-    // 'firstIterationUnusableCellCountVsGoalAllSum',
-    // //
-    // // 'firstIterationActionableCellAllCountMean',
-    // // 'firstIterationActionableCellAllCountMin', // for all row/col/grp what is the min number of cells where an guaranteed action can be performed.. on many boards there tends to be at one row/col/grp where nothing can be done
-    // 'firstIterationActionableCellAllCountMax',
-    // 'firstIterationActionableCellAllCountStd',
-    // 'firstIterationActionableCellAllCountSum',
-    // //
-    // 'goalSumAllMean',
-    // // 'goalSumAllMin',
-    // // 'goalSumAllMax',
-    // 'goalSumAllStd',
-    // // 'goalSumAllSum',
-    // // 
-    // // 'cellCountLargerThanTargetAllMean',
-    // // 'cellCountLargerThanTargetAllMin',
-    // // 'cellCountLargerThanTargetAllMax',
-    // // 'cellCountLargerThanTargetAllStd',
-    // 'cellCountLargerThanTargetAllSum',
-    // // 
-    // 'deductionIterations',
-    // // 'unresolvedCellCountAfterDeduction',
-    // 'percentUnresolvedCellsAfterDeduction',
-    // //
-    // 'percentUnresolvedCellsAfterDeductionI1',
-    // 'percentUnresolvedCellsAfterDeductionI2',
-    // // 'percentUnresolvedCellsAfterDeductionI3',
-    // // 'percentUnresolvedCellsAfterDeductionI4',
-    // // 'percentUnresolvedCellsAfterDeductionI5',
-    // //
-    // // 'gameDateAsPercent',
-    // //
-    // 'breaksMinutes',
+    'boardSize',
+    // 'firstIterationFalsePositiveSolutionCountAllMean',
+    'firstIterationFalsePositiveSolutionCountAllMin',
+    // 'firstIterationFalsePositiveSolutionCountAllMax',
+    // 'firstIterationFalsePositiveSolutionCountAllStd',
+    // 'firstIterationFalsePositiveSolutionCountAllSum',
+    // 
+    // 'firstIterationGuaranteedRequiredCellCountMean',
+    // 'firstIterationGuaranteedRequiredCellCountMin',
+    'firstIterationGuaranteedRequiredCellCountMax',
+    'firstIterationGuaranteedRequiredCellCountStd',
+    'firstIterationGuaranteedRequiredCellCountSum',
+    // 
+    // 'firstIterationGuaranteedUnusableCellCountAllMean',
+    // 'firstIterationGuaranteedUnusableCellCountAllMin',
+    'firstIterationGuaranteedUnusableCellCountAllMax',
+    'firstIterationGuaranteedUnusableCellCountAllStd',
+    'firstIterationGuaranteedUnusableCellCountAllSum',
+    //
+    'firstIterationRequiredCellCountVsGoalAllMean',
+    // 'firstIterationRequiredCellCountVsGoalAllMin',
+    // 'firstIterationRequiredCellCountVsGoalAllMax',
+    'firstIterationRequiredCellCountVsGoalAllStd',
+    // 'firstIterationRequiredCellCountVsGoalAllSum',
+    //
+    'firstIterationUnusableCellCountVsGoalAllMean',
+    // 'firstIterationUnusableCellCountVsGoalAllMin',
+    // 'firstIterationUnusableCellCountVsGoalAllMax',
+    'firstIterationUnusableCellCountVsGoalAllStd',
+    'firstIterationUnusableCellCountVsGoalAllSum',
+    //
+    // 'firstIterationActionableCellAllCountMean',
+    // 'firstIterationActionableCellAllCountMin', // for all row/col/grp what is the min number of cells where an guaranteed action can be performed.. on many boards there tends to be at one row/col/grp where nothing can be done
+    'firstIterationActionableCellAllCountMax',
+    'firstIterationActionableCellAllCountStd',
+    'firstIterationActionableCellAllCountSum',
+    //
+    'goalSumAllMean',
+    // 'goalSumAllMin',
+    // 'goalSumAllMax',
+    'goalSumAllStd',
+    // 'goalSumAllSum',
+    // 
+    // 'cellCountLargerThanTargetAllMean',
+    // 'cellCountLargerThanTargetAllMin',
+    // 'cellCountLargerThanTargetAllMax',
+    // 'cellCountLargerThanTargetAllStd',
+    'cellCountLargerThanTargetAllSum',
+    //
+    // 'goalVsTotalAllMean',
+    // 'goalVsTotalAllMin',
+    // 'goalVsTotalAllMax',
+    // 'goalVsTotalAllStd',
+    // 'goalVsTotalAllSum',
+    // 
+    'deductionIterations',
+    // 'unresolvedCellCountAfterDeduction',
+    'percentUnresolvedCellsAfterDeduction',
+    //
+    'percentUnresolvedCellsAfterDeductionI1',
+    'percentUnresolvedCellsAfterDeductionI2',
+    // 'percentUnresolvedCellsAfterDeductionI3',
+    // 'percentUnresolvedCellsAfterDeductionI4',
+    // 'percentUnresolvedCellsAfterDeductionI5',
+    //
+    // 'gameDateAsPercent',
+    //
+    'breaksMinutes',
   ],
 };
 
