@@ -1,6 +1,5 @@
 # TODO
 
-- time spent on board should be persisted once the game has started, and the user reloads / navigates away
 - text occasionally selected, esp when double clicking to reset scratch pad....
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
@@ -22,6 +21,7 @@
 
 # Done
 
+- fix: time spent on board should be persisted once the game has started, and the user reloads / navigates away
 - actionable cell count vs section total.. IE if there is only one actionable cell in a section that must equal 34, identifying that can be difficult
 - disable wake lock on completed board
 - there's a bug where if multiple cell glow animations are happening at the end of the game, the congratulations flashes twice
