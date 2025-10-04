@@ -27,7 +27,8 @@ export class BoardGroupGenerator {
     const start = performance.now();
     const board = this.generator.generateRandomContiguousGroups(n);
     if (this.LOG_GENERATION_TIME)
-      console.log(performance.now() - start)
+      console.log("Board grouping generation time", performance.now() - start)
+
     return board;
   }
 

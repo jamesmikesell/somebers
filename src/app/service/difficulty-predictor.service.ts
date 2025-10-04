@@ -4,8 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import { DisplayCell } from '../model/game-board';
 import { ModelJson } from '../model/ml-types';
 import { BoardStatAnalyzer } from './board-stat-analyzer';
-import { generateGameBoard } from './gameboard-generator';
-import { TrainingSample, predictRidge, toSample } from './ml-core';
+import { CachingBoardGeneratorService } from './caching-board-generator.service';
+import { predictRidge, toSample, TrainingSample } from './ml-core';
 import { difficultyReportToGameStat, GamePlayStats } from './ml-difficulty-stats';
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +13,10 @@ export class DifficultyPredictorService {
   private packagedModelPromise?: Promise<ModelJson | undefined>;
   private timesPromise?: Promise<number[] | undefined>;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private cachingBoardGenerator: CachingBoardGeneratorService,
+  ) { }
 
   // Predict strictly using the downloaded packaged model (for Difficulty percentile display)
   async predictGameModel(features: TrainingSample): Promise<number | undefined> {
@@ -33,7 +36,7 @@ export class DifficultyPredictorService {
   async getDifficultyEstimates(gameNumberOrArea: DisplayCell[][] | number): Promise<DifficultyDisplayDetails> {
     let effectivePlayArea: DisplayCell[][];
     if (typeof gameNumberOrArea === "number")
-      effectivePlayArea = (await generateGameBoard(gameNumberOrArea)).playArea;
+      effectivePlayArea = (await this.cachingBoardGenerator.generateOrGetGameBoard(gameNumberOrArea)).playArea;
     else
       effectivePlayArea = gameNumberOrArea;
 

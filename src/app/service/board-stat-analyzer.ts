@@ -1,11 +1,13 @@
 import { SelectionStatus, SimpleCell } from "../model/game-board";
 
 export class BoardStatAnalyzer {
+  private static LOG_ENABLED = false;
 
   /**
    * Pure evaluation of a grid for difficulty statistics.
    */
   static evaluate(grid: SimpleCell[][]): BoardStats {
+    const start = performance.now();
 
     // Pre-allocate row and column bases
     const rowBases: LinearStat[] = Array.from({ length: grid.length }, (): LinearStat => new LinearStat());
@@ -79,7 +81,8 @@ export class BoardStatAnalyzer {
       groupIndexMap,
     );
 
-    return {
+
+    const stats: BoardStats = {
       rows: rowsReport,
       columns: colsReport,
       groups: groupsReport,
@@ -93,6 +96,11 @@ export class BoardStatAnalyzer {
         unresolvedCountsPerIteration,
       },
     };
+
+    if (this.LOG_ENABLED)
+      console.log("Board stat analysis ", performance.now() - start)
+
+    return stats;
   }
 
 

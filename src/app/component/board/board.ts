@@ -22,8 +22,8 @@ import { GameInProgressDtoV3 } from '../../model/saved-game-data/game-in-progres
 import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v1';
 import { LockService } from '../../service/app-lock.service';
 import { BoardUiService } from '../../service/board-ui.service';
+import { CachingBoardGeneratorService } from '../../service/caching-board-generator.service';
 import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
-import { generateGameBoard } from '../../service/gameboard-generator';
 import { SaveDataService } from '../../service/save-data.service';
 import { SettingsService } from '../../service/settings.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
@@ -127,6 +127,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     private settingsService: SettingsService,
     private lockService: LockService,
     private router: Router,
+    private cachingBoardGenerator: CachingBoardGeneratorService,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -337,7 +338,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
 
   private async buildAndDisplayBoard(game: number): Promise<void> {
-    this.gameBoard = await generateGameBoard(game);
+    this.gameBoard = await this.cachingBoardGenerator.generateOrGetGameBoard(game);
 
     let groupGrid = this.gameBoard.playArea.map(row => row.map(cell => cell.groupNumber))
     let colorAssignmentsDark = this.colorOptimizer.assignColors(AppColors.COLORS_DARK, groupGrid);
