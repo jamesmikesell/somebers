@@ -1,5 +1,5 @@
 import { FeatureSpec } from "../model/ml-types";
-import { DifficultyReport } from "./board-stat-analyzer";
+import { BoardStats } from "./board-stat-analyzer";
 import { RawGenericFeatureSet } from "./ml-core";
 
 
@@ -69,8 +69,6 @@ export const FEATURE_SPEC: FeatureSpec = {
     // 'percentUnresolvedCellsAfterDeductionI4',
     // 'percentUnresolvedCellsAfterDeductionI5',
     //
-    'autoCompleteWasAvailable',
-    //
     'gameDateAsPercent',
     //
     'breaksMinutes',
@@ -78,7 +76,15 @@ export const FEATURE_SPEC: FeatureSpec = {
 };
 
 
-export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: number, gameNumber: number, gameDateAsPercent: number, autoCompletionAvailable: 0 | 1, breaksMinutes: number): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
+export interface GamePlayStats {
+  timeSpent: number;
+  gameNumber: number;
+  gameDateAsPercent: number;
+  breaksMinutes: number;
+}
+
+
+export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: GamePlayStats): GameStatWithBoard & GameStatFeatures & GameStatWithTimeSpent & RawGenericFeatureSet {
   const agg = (xs: number[]) => {
     const n = xs.length || 1;
     let sum = 0;
@@ -180,15 +186,13 @@ export function difficultyReportToGameStat(stats: DifficultyReport, timeSpent: n
     percentUnresolvedCellsAfterDeductionI4: (stats.totals.unresolvedCountsPerIteration[3] ?? 0) / cellCount,
     percentUnresolvedCellsAfterDeductionI5: (stats.totals.unresolvedCountsPerIteration[4] ?? 0) / cellCount,
 
-    autoCompleteWasAvailable: autoCompletionAvailable,
+    gameDateAsPercent: gamePlayStats.gameDateAsPercent,
 
-    gameDateAsPercent: gameDateAsPercent,
-
-    breaksMinutes: breaksMinutes / boardSize,
+    breaksMinutes: gamePlayStats.breaksMinutes / boardSize,
   };
 
-  let x: GameStatWithBoard = { gameNumber }
-  let z: GameStatWithTimeSpent = { timeSpent }
+  let x: GameStatWithBoard = { gameNumber: gamePlayStats.gameNumber }
+  let z: GameStatWithTimeSpent = { timeSpent: gamePlayStats.timeSpent }
 
   return { ...features, ...x, ...z };
 }
@@ -266,8 +270,6 @@ export interface GameStatFeatures {
   percentUnresolvedCellsAfterDeductionI3: number;
   percentUnresolvedCellsAfterDeductionI4: number;
   percentUnresolvedCellsAfterDeductionI5: number;
-  //
-  autoCompleteWasAvailable: number;
   //
   gameDateAsPercent: number;
   //

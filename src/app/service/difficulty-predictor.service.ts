@@ -6,7 +6,7 @@ import { ModelJson } from '../model/ml-types';
 import { BoardStatAnalyzer } from './board-stat-analyzer';
 import { generateGameBoard } from './gameboard-generator';
 import { TrainingSample, predictRidge, toSample } from './ml-core';
-import { difficultyReportToGameStat } from './ml-difficulty-stats';
+import { difficultyReportToGameStat, GamePlayStats } from './ml-difficulty-stats';
 
 @Injectable({ providedIn: 'root' })
 export class DifficultyPredictorService {
@@ -45,7 +45,14 @@ export class DifficultyPredictorService {
     const unresolvedCells = difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
     const resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - unresolvedCells;
 
-    const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, 0, 0, 1, 1, 0))!;
+    const gamePlayStats: GamePlayStats = {
+      timeSpent: 0,
+      gameNumber: 0,
+      gameDateAsPercent: 1,
+      breaksMinutes: 0,
+    }
+
+    const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, gamePlayStats))!;
     const estimatedSolveTime = await this.predictGameModel(stats);
     const percentile = await this.getPercentile(estimatedSolveTime);
 

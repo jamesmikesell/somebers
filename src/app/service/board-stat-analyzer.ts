@@ -5,7 +5,7 @@ export class BoardStatAnalyzer {
   /**
    * Pure evaluation of a grid for difficulty statistics.
    */
-  static evaluate(grid: SimpleCell[][]): DifficultyReport {
+  static evaluate(grid: SimpleCell[][]): BoardStats {
 
     // Pre-allocate row and column bases
     const rowBases: LinearStat[] = Array.from({ length: grid.length }, (): LinearStat => new LinearStat());
@@ -274,7 +274,7 @@ interface PossiblyCorrectSolutions {
 }
 
 
-export interface DifficultyReport {
+export interface BoardStats {
   rows: SectionStats[];
   columns: SectionStats[];
   groups: SectionStats[];

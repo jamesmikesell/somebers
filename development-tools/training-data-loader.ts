@@ -3,7 +3,7 @@ import { SavedGameStateV3 } from '../src/app/model/saved-game-data/saved-game-da
 import { BoardStatAnalyzer } from '../src/app/service/board-stat-analyzer';
 import { generateGameBoard } from '../src/app/service/gameboard-generator';
 import { RawGenericFeatureSet } from '../src/app/service/ml-core';
-import { difficultyReportToGameStat } from '../src/app/service/ml-difficulty-stats';
+import { difficultyReportToGameStat, GamePlayStats } from '../src/app/service/ml-difficulty-stats';
 import { BoardGroupVersion } from '../src/app/model/grouping';
 
 
@@ -29,12 +29,18 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
     const gameBoard = await generateGameBoard(game.gameNumber);
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
     const completionTime = game.moveHistory[game.moveHistory.length - 1].timestamp;
-    const autoCompletionAvailable = completionTime > 1758406785000 ? 1 : 0;
-    const gameDateAsPercent = (game.moveHistory[game.moveHistory.length - 1].timestamp - firstGameDate) / gameDatesDiff;
+    const gameDateAsPercent = (completionTime - firstGameDate) / gameDatesDiff;
     const moveTime = game.moveHistory[game.moveHistory.length - 1].timestamp - game.moveHistory[0].timestamp;
     const breaksMinutes = (moveTime - game.timeSpent) / 1000 / 60;
 
-    const s = difficultyReportToGameStat(stats, game.timeSpent, game.gameNumber, gameDateAsPercent, autoCompletionAvailable, breaksMinutes)
+    const gamePlayStats: GamePlayStats = {
+      timeSpent: game.timeSpent,
+      gameNumber: game.gameNumber,
+      gameDateAsPercent: gameDateAsPercent,
+      breaksMinutes: breaksMinutes,
+    }
+
+    const s = difficultyReportToGameStat(stats, gamePlayStats)
 
     out.push(s);
   }
@@ -52,5 +58,12 @@ export async function buildRawGameStatForGameNumber(gameNumber: number, version:
   //     + `Deduction Iterations: ${stats.totals.deductionIterations}  `
   //     + `Post-Deduction Cell Count: ${stats.totals.unresolvedCellCountAfterDeduction.toString().padStart(2, " ")}`)
 
-  return difficultyReportToGameStat(stats, 0, gameNumber, 1, 1, 0);
+  const gamePlayStats: GamePlayStats = {
+    timeSpent: 0,
+    gameNumber: gameNumber,
+    gameDateAsPercent: 1,
+    breaksMinutes: 0,
+  }
+
+  return difficultyReportToGameStat(stats, gamePlayStats);
 }
