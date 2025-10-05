@@ -679,24 +679,38 @@ export class CelebrationWebglRenderer {
     ctx.font = `900 ${titleSize}px "Montserrat", "Roboto", system-ui`;
     const titleY = height * 0.42;
     const shadowUnit = titleSize * 0.035;
+    const titleLineHeight = titleSize * 1.15;
+    const titleLines = this.wrapText(ctx, title, width * 0.82);
+    const titleStartY = titleLines.length > 0 ? titleY - ((titleLines.length - 1) * titleLineHeight) / 2 : titleY;
     const titleShadows: Array<{ offsetX: number; offsetY: number; alpha: number }> = [
       { offsetX: shadowUnit * 0.6, offsetY: shadowUnit * 0.7, alpha: 0.35 },
       { offsetX: shadowUnit * 1.4, offsetY: shadowUnit * 1.6, alpha: 0.22 },
       { offsetX: shadowUnit * 2.4, offsetY: shadowUnit * 2.6, alpha: 0.12 },
     ];
 
-    for (const layer of titleShadows) {
-      ctx.fillStyle = `rgba(0, 0, 0, ${layer.alpha})`;
-      ctx.fillText(title, centerX + layer.offsetX, titleY + layer.offsetY);
-    }
+    for (let i = 0; i < titleLines.length; i++) {
+      const lineY = titleStartY + i * titleLineHeight;
+      for (const layer of titleShadows) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${layer.alpha})`;
+        ctx.fillText(titleLines[i], centerX + layer.offsetX, lineY + layer.offsetY);
+      }
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.98)';
-    ctx.fillText(title, centerX, titleY);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.98)';
+      ctx.fillText(titleLines[i], centerX, lineY);
+    }
 
     const subtitleSize = Math.max(32, Math.min(width, height) * 0.05);
     ctx.font = `600 ${subtitleSize}px "Montserrat", "Roboto", system-ui`;
-    ctx.fillStyle = 'rgba(20, 20, 20, 0.94)';
-    ctx.fillText(subtitle, centerX, height * 0.56);
+    const subtitleLineHeight = subtitleSize * 1.2;
+    const subtitleLines = this.wrapText(ctx, subtitle, width * 0.86);
+    const titleBottom = titleLines.length > 0 ? titleStartY + (titleLines.length - 1) * titleLineHeight + titleLineHeight / 2 : titleY;
+    const subtitleCenterY = subtitleLines.length > 0 ? Math.max(height * 0.56, titleBottom + subtitleLineHeight * 0.9) : height * 0.56;
+    const subtitleStartY = subtitleLines.length > 0 ? subtitleCenterY - ((subtitleLines.length - 1) * subtitleLineHeight) / 2 : subtitleCenterY;
+
+    for (let i = 0; i < subtitleLines.length; i++) {
+      ctx.fillStyle = 'rgba(20, 20, 20, 0.94)';
+      ctx.fillText(subtitleLines[i], centerX, subtitleStartY + i * subtitleLineHeight);
+    }
 
     if (!this.textTexture) {
       this.textTexture = this.gl.createTexture();
@@ -710,6 +724,40 @@ export class CelebrationWebglRenderer {
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+  }
+
+  private wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+    if (!text.trim()) return [];
+
+    const effectiveMaxWidth = Math.max(maxWidth, 1);
+    const lines: string[] = [];
+    const paragraphs = text.split('\n');
+
+    for (const paragraph of paragraphs) {
+      const trimmed = paragraph.trim();
+      if (!trimmed) {
+        if (lines.length > 0) lines.push('');
+        continue;
+      }
+
+      const words = trimmed.split(/\s+/);
+      let currentLine = words[0];
+
+      for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const testLine = `${currentLine} ${word}`;
+        if (ctx.measureText(testLine).width <= effectiveMaxWidth) {
+          currentLine = testLine;
+        } else {
+          lines.push(currentLine);
+          currentLine = word;
+        }
+      }
+
+      lines.push(currentLine);
+    }
+
+    return lines;
   }
 
   private drawScene(timestamp: number): void {
