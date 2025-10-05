@@ -4,132 +4,116 @@
     "modelType": "ridge",
     "features": [
       "boardSize",
-      "firstIterationFalsePositiveSolutionCountAllMin",
       "firstIterationGuaranteedRequiredCellCountMax",
-      "firstIterationGuaranteedRequiredCellCountStd",
-      "firstIterationGuaranteedRequiredCellCountSum",
-      "firstIterationGuaranteedUnusableCellCountAllMax",
-      "firstIterationGuaranteedUnusableCellCountAllStd",
-      "firstIterationGuaranteedUnusableCellCountAllSum",
-      "firstIterationRequiredCellCountVsGoalAllMean",
-      "firstIterationRequiredCellCountVsGoalAllStd",
-      "firstIterationUnusableCellCountVsGoalAllMean",
-      "firstIterationUnusableCellCountVsGoalAllStd",
       "firstIterationUnusableCellCountVsGoalAllSum",
-      "firstIterationActionableCellAllCountMax",
       "firstIterationActionableCellAllCountStd",
-      "firstIterationActionableCellAllCountSum",
-      "goalSumAllMean",
-      "goalSumAllStd",
       "cellCountLargerThanTargetAllSum",
       "deductionIterations",
       "percentUnresolvedCellsAfterDeduction",
-      "percentUnresolvedCellsAfterDeductionI1",
       "percentUnresolvedCellsAfterDeductionI2",
-      "breaksMinutes"
+      "breaksMinutes",
+      "gameDateAsPercent",
+      "percentUnresolvedCellsAfterDeductionI4",
+      "percentUnresolvedCellsAfterDeductionI5",
+      "goalSumAllMean",
+      "goalVsTotalAllStd",
+      "goalSumAllMax",
+      "firstIterationActionableCellAllCountMin",
+      "firstIterationRequiredCellCountVsGoalAllMax",
+      "firstIterationUnusableCellCountVsGoalAllMean",
+      "firstIterationGuaranteedRequiredCellCountStd",
+      "firstIterationFalsePositiveSolutionCountAllMax"
     ],
     "lambda": 10,
     "transform": "log1p",
     "featureMeans": [
-      0.4791666666666667,
-      0.002315398185483871,
-      0.43403311145246626,
-      0.12337010860479809,
-      0.5174350714001257,
-      0.7105564089435072,
-      0.21627924391597922,
-      1.1393234055868457,
-      0.05793864133290698,
-      0.09950703754189937,
-      0.30775041799882946,
-      0.6178924739049635,
-      6.054506840440734,
-      0.8723864994026285,
-      0.26837978486193637,
-      1.6567584769869705,
-      2.037632667115034,
-      0.9903487973620254,
-      0.5980652984013205,
-      2.1155913978494625,
-      0.028452932098765427,
-      0.2902391403843498,
-      0.09823217045679283,
-      2.2603437885091306
+      0.4753787878787879,
+      0.43481441398108095,
+      6.002786943256543,
+      0.2680245401536229,
+      0.5956382609160393,
+      2.1085858585858586,
+      0.02672851197156752,
+      0.09521898803479492,
+      2.1302264649971936,
+      0.6090933633662287,
+      0.008199276717795237,
+      0.0015587978550941515,
+      2.039388141222632,
+      0.18634386930543193,
+      4.063361792528458,
+      0.007491582491582492,
+      0.3784014613984399,
+      0.30609350180898476,
+      0.12387692044565468,
+      0.07717309816919192
     ],
     "featureStds": [
-      0.34645300099673204,
-      0.004465079734313685,
-      0.2819639018762031,
-      0.08289885079957315,
-      0.4527229749634512,
-      0.18022943460583207,
-      0.0709546723643883,
-      0.6169784989458132,
-      0.06155832551484432,
-      0.08713938210234895,
-      0.2635858501916213,
-      0.47645810577278364,
-      5.061535185139461,
-      0.20728577101252785,
-      0.08497519367501877,
-      0.8832512367653241,
-      0.4443833956771761,
-      0.22584609281854592,
-      0.43328155034485244,
-      1.0213178945100458,
-      0.15608307514658337,
-      0.2918085613247852,
-      0.2198995730592119,
-      11.644946172089204
+      0.3466012583319899,
+      0.2815480672143069,
+      5.019803697801372,
+      0.0841748704210872,
+      0.42977879879591824,
+      1.017933646803644,
+      0.15143162531832083,
+      0.21522510015641377,
+      11.298569891722961,
+      0.2694356688004623,
+      0.07146744609861445,
+      0.02917623228135454,
+      0.44147835678795255,
+      0.03845655557841689,
+      0.8153315696470061,
+      0.04037553357434013,
+      0.3318178486882636,
+      0.26268443636547667,
+      0.08285273947948571,
+      0.024275160591133674
     ],
     "weights": [
-      12.107461777498242,
-      0.6360801061311695,
-      -0.008929007144862604,
-      0.03281699760833538,
-      -0.08176409190620051,
-      0.014042601722991507,
-      -0.020933666114697463,
-      -0.09679110393011603,
-      -0.042163543597349626,
-      -0.03651199068688255,
-      0.021538389502438388,
-      -0.10921037262930872,
-      0.00389824270125441,
-      0.10630240047166788,
-      -0.0027690525590408086,
-      -0.06503678723768605,
-      -0.022254813344661218,
-      0.10678239573251909,
-      -0.016030476264506138,
-      -0.013860415915360625,
-      0.07675300479363491,
-      0.08331958729311222,
-      0.040874947287913535,
-      0.07664910159423166,
-      0.06955147808544612
+      12.084371458290574,
+      0.7036787555030761,
+      0.06002100728927381,
+      0.08603694887046646,
+      -0.18513188496719518,
+      -0.07164371207883331,
+      0.12159102240920298,
+      0.12461669678099262,
+      0.06093708802376065,
+      0.05394276040146064,
+      -0.10633537144120853,
+      -0.05307194614705442,
+      0.047907745025060934,
+      0.12137823916904446,
+      -0.02314348900509071,
+      -0.02834278684545206,
+      0.0024452721894228117,
+      0.026812359432774685,
+      -0.09632303923776943,
+      -0.03666004569434794,
+      0.010377106862932806
     ],
     "perSizeMeans": {},
-    "globalMean": 354712.0268817204
+    "globalMean": 347003.6111111111
   },
   "metrics": {
-    "rmse": 218451.83240986482,
-    "mae": 97655.68099343246,
-    "r2": 0.8123765193846314
+    "rmse": 199932.94317092,
+    "mae": 90181.06986585588,
+    "r2": 0.8365571834257545
   },
   "perSizeRmse": {
-    "0": 16180.396848932793,
-    "1": 455605.5359497118,
-    "0.5": 67931.0570466343,
-    "0.75": 213039.73488264295,
-    "0.25": 32906.810277342
+    "0": 15660.25664288105,
+    "1": 428968.88563667587,
+    "0.5": 64502.45923146533,
+    "0.75": 171886.3071189257,
+    "0.25": 32062.008540044382
   },
   "perSizeMae": {
-    "0": 12147.968665154502,
-    "1": 320063.98328638717,
-    "0.5": 54203.889909016965,
-    "0.75": 108260.01777217505,
-    "0.25": 23387.11727371236
+    "0": 12017.37829389804,
+    "1": 303332.6308716426,
+    "0.5": 48140.058813920456,
+    "0.75": 98166.60605992531,
+    "0.25": 22282.980623096217
   },
   "baseline": {
     "model": {
@@ -137,57 +121,53 @@
       "modelType": "baseline",
       "features": [
         "boardSize",
-        "firstIterationFalsePositiveSolutionCountAllMin",
         "firstIterationGuaranteedRequiredCellCountMax",
-        "firstIterationGuaranteedRequiredCellCountStd",
-        "firstIterationGuaranteedRequiredCellCountSum",
-        "firstIterationGuaranteedUnusableCellCountAllMax",
-        "firstIterationGuaranteedUnusableCellCountAllStd",
-        "firstIterationGuaranteedUnusableCellCountAllSum",
-        "firstIterationRequiredCellCountVsGoalAllMean",
-        "firstIterationRequiredCellCountVsGoalAllStd",
-        "firstIterationUnusableCellCountVsGoalAllMean",
-        "firstIterationUnusableCellCountVsGoalAllStd",
         "firstIterationUnusableCellCountVsGoalAllSum",
-        "firstIterationActionableCellAllCountMax",
         "firstIterationActionableCellAllCountStd",
-        "firstIterationActionableCellAllCountSum",
-        "goalSumAllMean",
-        "goalSumAllStd",
         "cellCountLargerThanTargetAllSum",
         "deductionIterations",
         "percentUnresolvedCellsAfterDeduction",
-        "percentUnresolvedCellsAfterDeductionI1",
         "percentUnresolvedCellsAfterDeductionI2",
-        "breaksMinutes"
+        "breaksMinutes",
+        "gameDateAsPercent",
+        "percentUnresolvedCellsAfterDeductionI4",
+        "percentUnresolvedCellsAfterDeductionI5",
+        "goalSumAllMean",
+        "goalVsTotalAllStd",
+        "goalSumAllMax",
+        "firstIterationActionableCellAllCountMin",
+        "firstIterationRequiredCellCountVsGoalAllMax",
+        "firstIterationUnusableCellCountVsGoalAllMean",
+        "firstIterationGuaranteedRequiredCellCountStd",
+        "firstIterationFalsePositiveSolutionCountAllMax"
       ],
       "perSizeMeans": {
-        "0": 46873.16438356164,
-        "1": 1114132.7428571428,
-        "0.5": 212787.2380952381,
-        "0.75": 405050.1666666667,
-        "0.25": 98408.27058823529
+        "0": 45943.443037974685,
+        "1": 1102082.9589041097,
+        "0.5": 210720,
+        "0.75": 400533.06153846154,
+        "0.25": 97440.79347826086
       },
-      "globalMean": 354712.0268817204
+      "globalMean": 347003.6111111111
     },
     "metrics": {
-      "rmse": 330035.69115383085,
-      "mae": 151829.2189315436,
-      "r2": 0.5717497538485563
+      "rmse": 323893.19267451315,
+      "mae": 147273.05183677175,
+      "r2": 0.5710558390563132
     },
     "perSizeRmse": {
-      "0": 19246.662417887248,
-      "1": 691599.766440027,
-      "0.5": 88472.43412111528,
-      "0.75": 321822.4845219699,
-      "0.25": 40456.68564776609
+      "0": 18768.021131140067,
+      "1": 686837.5876196921,
+      "0.5": 86664.95042117925,
+      "0.75": 310700.69191382,
+      "0.25": 40325.68909401221
     },
     "perSizeMae": {
-      "0": 13812.723737620392,
-      "1": 517941.7989795921,
-      "0.5": 68192.04799531752,
-      "0.75": 185407.83680555556,
-      "0.25": 27807.205190311415
+      "0": 13369.506756077963,
+      "1": 510517.58610281575,
+      "0.5": 66166.59721091835,
+      "0.75": 180247.1751479289,
+      "0.25": 27430.362675659566
     }
   },
   "ridgeCandidates": [
@@ -198,21 +178,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 218451.83240986482,
-        "mae": 97655.68099343246,
-        "r2": 0.8123765193846314
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 100,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 222589.4527773325,
-        "mae": 105311.53567398194,
-        "r2": 0.8052017872691621
+        "rmse": 199932.94317092,
+        "mae": 90181.06986585588,
+        "r2": 0.8365571834257545
       }
     },
     {
@@ -222,9 +190,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 223186.2495700314,
-        "mae": 98572.00820779568,
-        "r2": 0.8041558185955451
+        "rmse": 203978.97953801477,
+        "mae": 90406.05944487079,
+        "r2": 0.8298750741384268
       }
     },
     {
@@ -234,9 +202,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 223605.0507305206,
-        "mae": 98602.04984984797,
-        "r2": 0.8034201395452897
+        "rmse": 204991.3715977766,
+        "mae": 90847.73286242082,
+        "r2": 0.8281821493112049
       }
     },
     {
@@ -246,9 +214,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 223612.26575694937,
-        "mae": 98587.23589368243,
-        "r2": 0.8034074533222693
+        "rmse": 205110.31377758094,
+        "mae": 90898.80329241024,
+        "r2": 0.8279827036619966
       }
     },
     {
@@ -258,9 +226,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 223612.34443171922,
-        "mae": 98585.57741868628,
-        "r2": 0.8034073149857068
+        "rmse": 205122.42922696267,
+        "mae": 90904.01578916037,
+        "r2": 0.8279623816376285
       }
     },
     {
@@ -270,9 +238,9 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 223612.3453632767,
-        "mae": 98585.40806260268,
-        "r2": 0.8034073133477169
+        "rmse": 205123.64304136275,
+        "mae": 90904.53792335874,
+        "r2": 0.827960345562323
       }
     },
     {
@@ -282,11 +250,23 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 223612.34537946293,
-        "mae": 98585.39109054001,
-        "r2": 0.8034073133192561
+        "rmse": 205123.76444555676,
+        "mae": 90904.59014564664,
+        "r2": 0.8279601419159617
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 100,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 219570.9436918767,
+        "mae": 103547.70771871897,
+        "r2": 0.8028726624477596
       }
     }
   ],
-  "predictionForGame27": 28.11720188475654
+  "predictionForGame27": 15.12212591994149
 }
