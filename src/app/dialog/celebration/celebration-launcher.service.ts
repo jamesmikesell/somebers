@@ -43,7 +43,7 @@ export class CelebrationLauncherService {
     const affirmationsCount = AFFIRMATIONS.length;
     const randomIndex = Math.max(0, Math.min(affirmationsCount - 1, Math.floor(randomValue * affirmationsCount)));
 
-    let affirmation = AFFIRMATIONS[randomIndex];
+    let affirmation = AFFIRMATIONS.sort((a, b) => a.rating - b.rating)[randomIndex];
 
     return this.open({
       title: affirmation.title,
