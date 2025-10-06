@@ -22,3 +22,5 @@ npx ts-node -P tsconfig.node.json --compiler-options '{"module":"CommonJS"}' dev
 ```
 
 By default it starts from the current `FEATURE_SPEC` and applies greedy forward selection with floating backward elimination (using 5-fold CV). Use the CLI flags to experiment with alternate starting sets, force/limit specific features, or adjust the required RMSE improvement threshold.
+
+It may be advisable to do `--exclude=breaksMinutes` as `breaksMinutes` may be caused by a board with a long solve time, rather than being the being the cause of a long solve time.
