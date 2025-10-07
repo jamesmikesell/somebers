@@ -13,7 +13,7 @@ import {
 import { Router } from '@angular/router';
 import { filter, first, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
-import { CelebrationLauncherService } from '../../dialog/celebration/celebration-launcher.service';
+import { CelebrationLauncherService, CelebrationStats } from '../../dialog/celebration/celebration-launcher.service';
 import { ConfirmStartOverDialogLauncher } from '../../dialog/confirm-start-over/confirm-start-over-dialog';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
@@ -173,7 +173,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
     this.boardUiService.undoRequested$
       .pipe(takeUntil(this.destroy))
-      .subscribe(() => this.undoManager.undoLast());
+      .subscribe(() => {
+        this.undoManager.undoLast()
+      });
     this.boardUiService.setCanUndo(this.undoManager.hasUndo());
 
     if (!(await this.tryLoadGameFromStorage()))
@@ -633,10 +635,14 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     if (this.gameBoard.isComplete() && this.celebratingGameNumber === undefined) {
       this.celebratingGameNumber = this.gameNumber;
       this.undoManager.clear();
-      const mistakes = this.stats.mistakesCurrentBoard;
-      const playArea = this.gameBoard.playArea;
 
-      (await this.celebrationLauncherService.openAutoPickMessage(mistakes, playArea))
+      let stats: CelebrationStats = {
+        mistakes: this.stats.mistakesCurrentBoard,
+        timeSpent: this.stats.timeSpent,
+        playArea: this.gameBoard.playArea
+      };
+
+      (await this.celebrationLauncherService.openAutoPickMessage(stats))
         .pipe(takeUntil(this.destroy))
         .subscribe(() => {
           this.wakeLock.disable();
