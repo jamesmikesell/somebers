@@ -11,8 +11,6 @@ export const FEATURE_SPEC: FeatureSpec = {
 
     "boardSize",
     "firstIterationUnusableCellCountVsGoalAllSum",
-    "firstIterationActionableCellAllCountStd",
-    "cellCountLargerThanTargetAllSum",
     "deductionIterations",
     "percentUnresolvedCellsAfterDeduction",
     "percentUnresolvedCellsAfterDeductionI2",
@@ -22,12 +20,13 @@ export const FEATURE_SPEC: FeatureSpec = {
     "goalSumAllMean",
     "goalSumAllMax",
     "firstIterationActionableCellAllCountMin",
-    "firstIterationRequiredCellCountVsGoalAllMax",
-    "firstIterationUnusableCellCountVsGoalAllMean",
     "firstIterationGuaranteedRequiredCellCountStd",
     "firstIterationFalsePositiveSolutionCountAllMax",
     "cellCountLargerThanTargetAllStd",
-    "firstIterationGuaranteedUnusableCellCountAllStd"
+    "firstIterationGuaranteedRequiredCellCountMean",
+    "firstIterationUnusableCellCountVsGoalAllStd",
+    "goalSumAllStd",
+    "firstIterationGuaranteedRequiredCellCountMax"
 
     // 'boardSize',
     // // 'firstIterationFalsePositiveSolutionCountAllMean',
@@ -94,7 +93,7 @@ export const FEATURE_SPEC: FeatureSpec = {
     // // 'percentUnresolvedCellsAfterDeductionI4',
     // // 'percentUnresolvedCellsAfterDeductionI5',
     // //
-    // // 'gameDateAsPercent',
+    // 'gameDateAsPercent',
     // //
     // 'breaksMinutes',
   ],
