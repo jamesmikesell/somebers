@@ -53,11 +53,16 @@ export class SettingsService {
   }
 
   getAutoClearUnneededCells(): boolean {
-    return this.getBoolean(this.storageKeys.autoClearUnneededCells, false);
+    return this.getBoolean(this.storageKeys.autoClearUnneededCells, true);
   }
 
   setAutoClearUnneededCells(enabled: boolean): void {
     this.setBoolean(this.storageKeys.autoClearUnneededCells, enabled);
+  }
+
+  // TODO: delete this in a few weeks
+  hasAutoClearUnneededCellsSetting(): boolean {
+    return this.safeGetItem(this.storageKeys.autoClearUnneededCells) !== null && this.safeGetItem(this.storageKeys.autoClearUnneededCells) !== undefined;
   }
 
   getRowAndColumnCurrentSelectionSumVisible(): boolean {
@@ -69,7 +74,7 @@ export class SettingsService {
   }
 
   getColorGroupCurrentSelectionSumVisible(): boolean {
-    return this.getBoolean(this.storageKeys.colorGroupCurrentSelectionSumVisible, false);
+    return this.getBoolean(this.storageKeys.colorGroupCurrentSelectionSumVisible, true);
   }
 
   setColorGroupCurrentSelectionSumVisible(visible: boolean): void {

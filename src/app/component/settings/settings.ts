@@ -36,9 +36,9 @@ export class SettingsComponent implements OnInit {
   shapesModeEnabled: boolean = false;
   scratchPadVisible: boolean = true;
   sectionCompletionAnimationEnabled: boolean = true;
-  autoClearCellsEnabled: boolean = false;
+  autoClearCellsEnabled: boolean = true;
   rowAndColumnCurrentSelectionSumVisible: boolean = true;
-  colorGroupCurrentSelectionSumVisible: boolean = false;
+  colorGroupCurrentSelectionSumVisible: boolean = true;
   AppVersion = AppVersion;
 
   constructor(private settingsService: SettingsService) { }
