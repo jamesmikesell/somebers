@@ -20,13 +20,15 @@ export const FEATURE_SPEC: FeatureSpec = {
     "goalSumAllMean",
     "goalSumAllMax",
     "firstIterationActionableCellAllCountMin",
-    "firstIterationGuaranteedRequiredCellCountStd",
-    "firstIterationFalsePositiveSolutionCountAllMax",
     "cellCountLargerThanTargetAllStd",
-    "firstIterationGuaranteedRequiredCellCountMean",
     "firstIterationUnusableCellCountVsGoalAllStd",
     "goalSumAllStd",
-    "firstIterationGuaranteedRequiredCellCountMax"
+    "firstIterationGuaranteedRequiredCellCountMax",
+    "firstIterationFalsePositiveSolutionCountAllMin",
+    "firstIterationGuaranteedRequiredCellCountStd",
+    "firstIterationUnusableCellCountVsGoalAllMax",
+    "cellCountLargerThanTargetAllSum",
+    "firstIterationRequiredCellCountVsGoalAllStd"
 
     // 'boardSize',
     // // 'firstIterationFalsePositiveSolutionCountAllMean',
@@ -148,7 +150,8 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
   // const maxCellCount = 9 * 9;
   // const minCellCount = 5 * 5;
   // const boardSizeCellCountRatio = (cellCount - minCellCount) / (maxCellCount - minCellCount)
-  const boardSizeRatio = (boardSize - 5) / (9 - 5);
+  // const boardSizeRatio = (boardSize - 5) / (9 - 5);
+  const boardSizeRatio = (Math.pow(boardSize, 2) - Math.pow(5, 2)) / (Math.pow(9, 2) - Math.pow(5, 2));
   let features: GameStatFeatures = {
     boardSize: boardSizeRatio,
 
