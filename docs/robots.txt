@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Prevent crawling of source maps or build artifacts (none expected, but safe)
+Disallow: /*.map$
+
+Sitemap: https://www.somebers.com/sitemap.xml
+
