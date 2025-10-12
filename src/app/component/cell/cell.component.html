@@ -9,15 +9,20 @@
     [attr.data-glow-variant]="cell?.glowVariant ?? null"
     [style.--columnCount]="columnCount"
   >
-    @if (!cell.hideBackground) {
-      <div class="corner-number top right">
-        @if (rowColCurrentSumVisible && cell.currentSelectionSum) {
-          <span class="super-label">𝛴</span>
-          {{ cell.currentSelectionSum }}
-        }
-      </div>
-      <div class="main-number">{{ cell.value }}</div>
-    }
+    <div class="corner-number top right">
+      @if (rowColCurrentSumVisible && cell.currentSelectionSum) {
+        <span class="super-label">𝛴</span>
+        {{ cell.currentSelectionSum }}
+      }
+    </div>
+    <div class="main-number" [class.highlighted]="cell.highlighted">
+      <span
+        class="main-number__value"
+        [class.cleared-text]="cell.hideBackground"
+      >
+        {{ cell.value }}
+      </span>
+    </div>
   </div>
 </ng-template>
 
@@ -46,9 +51,13 @@
       class="main-number"
       [class.highlighted]="cell.highlighted"
       [class.circle]="cell.status === SelectionStatus.SELECTED"
-      [class.cleared-text]="cell.status === SelectionStatus.CLEARED"
     >
-      {{ cell.value }}
+      <span
+        class="main-number__value"
+        [class.cleared-text]="cell.status === SelectionStatus.CLEARED"
+      >
+        {{ cell.value }}
+      </span>
     </div>
   </div>
 </ng-template>
@@ -60,6 +69,7 @@
     appGesture
     (doubleTap)="headerDoubleTapped.emit()"
     (longPress)="isMagnified = true"
+    (longPressDragHorizontal)="highlightCell()"
     (allGesturesComplete)="gestureComplete()"
   >
     <ng-container *ngTemplateOutlet="headerCellContent"></ng-container>

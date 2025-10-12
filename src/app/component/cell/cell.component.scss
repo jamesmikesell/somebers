@@ -201,7 +201,11 @@
   transition: filter 0.5s ease-out, opacity 0.5s ease-out;
 }
 
-.main-number.cleared-text {
+.main-number__value {
+  transition: filter 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.main-number__value.cleared-text {
   filter: blur(5px);
   opacity: 0;
 }
