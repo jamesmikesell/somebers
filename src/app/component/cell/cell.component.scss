@@ -122,16 +122,15 @@
   aspect-ratio: 1;
   border-radius: calc(6cqmin / var(--columnCount));
   width: calc((100cqmin - var(--_headerSpacing) - ((var(--columnCount) - 2) * var(--_cellGap)))/ var(--columnCount));
-  --glowColor: var(--mat-sys-primary);
+  --glowOutlineColor: light-dark(
+    color-mix(in srgb, var(--mat-sys-on-surface-variant) 40%, transparent),
+    color-mix(in srgb, var(--mat-sys-on-surface-variant) 60%, transparent)
+  );
 }
 
 .cell.hidden::before {
   filter: blur(10px);
   opacity: 0;
-}
-
-.color {
-  --glowColor: var(--cellColor);
 }
 
 .cell.glow-active::after {
@@ -140,10 +139,9 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  border: calc(2cqmin / var(--columnCount)) solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 0 0 var(--glowColor);
+  border: calc(2cqmin / var(--columnCount)) solid var(--glowOutlineColor);
   opacity: 0;
-  mix-blend-mode: screen;
+  mix-blend-mode: normal;
   transform: scale(0.9);
   transform-origin: center;
   animation: sectionGlow 0.6s ease-out forwards;
@@ -152,8 +150,7 @@
 .cell.glow-active[data-glow-variant='row-header']::after,
 .cell.glow-active[data-glow-variant='column-header']::after,
 .cell.glow-active[data-glow-variant='group-header']::after {
-  border-color: rgba(255, 255, 255, 0.6);
-  --glowColor: var(--mat-sys-primary);
+  --glowOutlineColor: var(--mat-sys-on-surface-variant);
 }
 
 .cell.glow-active[data-glow-variant='group-header']::after {
@@ -252,7 +249,6 @@
   0% {
     opacity: 0;
     transform: scale(0.9);
-    box-shadow: 0 0 0 0 var(--glowColor);
   }
 
   20% {
@@ -261,7 +257,6 @@
 
   80% {
     opacity: 0.6;
-    box-shadow: 0 0 calc(40cqmin / var(--columnCount)) 0 var(--glowColor);
   }
 
   100% {
