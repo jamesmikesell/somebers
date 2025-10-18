@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import { ColorContrastSortService } from './color-contrast-sort.service';
 
 /**
- * Assigns colors to each distinct number in a 2D grid to maximize total
- * Delta E (CIEDE2000) contrast across touching pairs (up, down, left, right).
+ * Assigns colors to each distinct number in a 2D grid so the minimum
+ * Delta E (CIEDE2000) contrast across touching pairs (up, down, left, right)
+ * is as large as possible.
  *
  * Notes:
- * - Uses only ColorContrastSortService.deltaE for color distance.
+ * - Uses only ColorContrastSortService.deltaE for color distance metrics.
  * - If two numbers touch in multiple places, that pair is counted once.
  * - If the palette has at least as many colors as distinct numbers, a
  *   no-reuse constraint is applied (unique colors per number). Otherwise,
  *   colors may be reused.
- * - Uses greedy initialization plus local hill-climbing refinements.
+ * - Uses depth-first search with pruning to satisfy uniqueness constraints
+ *   while maximizing the minimum contrast.
  */
 @Injectable({ providedIn: 'root' })
 export class ColorGridOptimizerService {
@@ -19,7 +21,7 @@ export class ColorGridOptimizerService {
 
   /**
    * Compute an assignment of colors (strings) to each distinct number in the grid.
-   * Returns a map from number -> color and the resulting total contrast score.
+   * Returns a map from number -> color and the resulting minimum contrast score.
    */
   assignColors(colors: string[], grid: number[][]): ColorAssignmentResult {
     if (!Array.isArray(colors) || colors.length === 0) {
@@ -70,7 +72,7 @@ export class ColorGridOptimizerService {
     if (edges.length === 0) {
       const map = new Map<number, string>();
       for (let i = 0; i < n; i++) map.set(numbers[i], colors[i % colors.length]);
-      return { colorByNumber: map, score: 0 };
+      return { colorByNumber: map, score: 0, minContrast: 0, totalContrast: 0 };
     }
 
     // Precompute color contrast matrix (Delta E)
@@ -97,121 +99,132 @@ export class ColorGridOptimizerService {
     // Decision: if enough colors, enforce uniqueness across all numbers.
     const enforceUnique = m >= n;
 
-    // Greedy initialization
-    const order = Array.from({ length: n }, (_, i) => i).sort((i, j) => degree[j] - degree[i]);
-    const assignment: number[] = Array(n).fill(-1); // color index per node
-    const used = new Set<number>();
+    const order = Array.from({ length: n }, (_, i) => i).sort((i, j) => {
+      const diff = degree[j] - degree[i];
+      return diff !== 0 ? diff : i - j;
+    });
 
-    // For a seed node, pick color with largest average distance from palette center
-    if (order.length > 0) {
-      const seed = order[0];
-      let bestC = 0; let bestScore = -Infinity;
-      for (let c = 0; c < m; c++) {
-        // Average contrast to all palette colors (heuristic)
-        let s = 0; for (let d = 0; d < m; d++) if (d !== c) s += contrastMatrix[c][d];
-        const avg = s / Math.max(1, m - 1);
-        if (avg > bestScore) { bestScore = avg; bestC = c; }
-      }
-      assignment[seed] = bestC; used.add(bestC);
-    }
-
-    for (let k = 1; k < order.length; k++) {
-      const node = order[k];
-      const candidateColors: number[] = [];
-      if (enforceUnique) {
-        for (let c = 0; c < m; c++) if (!used.has(c)) candidateColors.push(c);
-        // If palette nearly exhausted (should not happen when m>=n), fall back to any color
-        if (candidateColors.length === 0) for (let c = 0; c < m; c++) candidateColors.push(c);
-      } else {
-        for (let c = 0; c < m; c++) candidateColors.push(c);
-      }
-
-      let bestC = candidateColors[0];
-      let bestScore = -Infinity;
-      for (const c of candidateColors) {
-        let s = 0;
-        for (const nb of neighbors[node]) {
-          const nbColor = assignment[nb];
-          if (nbColor >= 0) s += contrastMatrix[c][nbColor];
-        }
-        if (s > bestScore) { bestScore = s; bestC = c; }
-      }
-      assignment[node] = bestC; if (enforceUnique) used.add(bestC);
-    }
-
-    // Local improvement: hill climbing on single-node reassignments
-    const maxPasses = 20;
-    let improved = true; let pass = 0;
-    while (improved && pass++ < maxPasses) {
-      improved = false;
-      for (const node of order) {
-        const current = assignment[node];
-        const candidateColors: number[] = [];
-        if (enforceUnique) {
-          for (let c = 0; c < m; c++) if (c === current || !used.has(c)) candidateColors.push(c);
-        } else {
-          for (let c = 0; c < m; c++) candidateColors.push(c);
-        }
-
-        const currentGain = this.localNodeContribution(node, assignment, neighbors, contrastMatrix);
-        let bestC = current; let bestGain = currentGain;
-        for (const c of candidateColors) {
-          if (c === current) continue;
-          const delta = this.localNodeContributionWithColor(node, c, assignment, neighbors, contrastMatrix);
-          if (delta > bestGain + 1e-9) { bestGain = delta; bestC = c; }
-        }
-        if (bestC !== current) {
-          if (enforceUnique) { used.delete(current); used.add(bestC); }
-          assignment[node] = bestC;
-          improved = true;
-        }
-      }
-
-      // Optional pairwise swap improvement when enforcing uniqueness
-      if (enforceUnique) {
-        outer: for (let i = 0; i < n; i++) {
-          for (let j = i + 1; j < n; j++) {
-            const ai = assignment[i], aj = assignment[j];
-            const before = this.localNodeContribution(i, assignment, neighbors, contrastMatrix)
-              + this.localNodeContribution(j, assignment, neighbors, contrastMatrix);
-            assignment[i] = aj; assignment[j] = ai;
-            const after = this.localNodeContribution(i, assignment, neighbors, contrastMatrix)
-              + this.localNodeContribution(j, assignment, neighbors, contrastMatrix);
-            if (after > before + 1e-9) {
-              improved = true; // keep swap
-            } else {
-              // revert
-              assignment[i] = ai; assignment[j] = aj;
-            }
-            if (improved) break outer;
-          }
-        }
-      }
-    }
-
-    const total = this.totalScore(assignment, edges, contrastMatrix);
+    const paletteAverages = this.computePaletteAverages(contrastMatrix);
+    const { assignment, stats } = this.optimizeAssignment(
+      order,
+      neighbors,
+      contrastMatrix,
+      edges,
+      enforceUnique,
+      paletteAverages,
+    );
     const result = new Map<number, string>();
     for (let i = 0; i < n; i++) result.set(numbers[i], colors[assignment[i]]);
-    return { colorByNumber: result, score: total };
+    return {
+      colorByNumber: result,
+      score: stats.minContrast,
+      minContrast: stats.minContrast,
+      totalContrast: stats.totalContrast,
+    };
   }
 
-  // --- Scoring helpers ---
-  private totalScore(assign: number[], edges: Array<[number, number]>, cm: number[][]): number {
-    let s = 0;
-    for (const [a, b] of edges) s += cm[assign[a]][assign[b]];
-    return s;
+  private computePaletteAverages(cm: number[][]): number[] {
+    const m = cm.length;
+    const averages: number[] = Array(m).fill(0);
+    for (let i = 0; i < m; i++) {
+      let sum = 0;
+      for (let j = 0; j < m; j++) if (i !== j) sum += cm[i][j];
+      averages[i] = sum / Math.max(1, m - 1);
+    }
+    return averages;
   }
 
-  private localNodeContribution(node: number, assign: number[], neighbors: number[][], cm: number[][]): number {
-    let s = 0; const c = assign[node];
-    for (const nb of neighbors[node]) s += cm[c][assign[nb]];
-    return s;
+  private evaluateAssignment(assign: number[], edges: Array<[number, number]>, cm: number[][]): AssignmentStats {
+    let minContrast = Number.POSITIVE_INFINITY;
+    let totalContrast = 0;
+    for (const [a, b] of edges) {
+      const value = cm[assign[a]][assign[b]];
+      if (value < minContrast) minContrast = value;
+      totalContrast += value;
+    }
+    if (!Number.isFinite(minContrast)) minContrast = 0;
+    return { minContrast, totalContrast };
   }
 
-  private localNodeContributionWithColor(node: number, colorIdx: number, assign: number[], neighbors: number[][], cm: number[][]): number {
-    let s = 0;
-    for (const nb of neighbors[node]) s += cm[colorIdx][assign[nb]];
-    return s;
+  private optimizeAssignment(
+    order: number[],
+    neighbors: number[][],
+    contrastMatrix: number[][],
+    edges: Array<[number, number]>,
+    enforceUnique: boolean,
+    paletteAverages: number[],
+  ): { assignment: number[]; stats: AssignmentStats } {
+    const n = order.length;
+    const m = contrastMatrix.length;
+    const assignment = Array(n).fill(-1);
+    const used = enforceUnique ? Array(m).fill(false) : undefined;
+    const eps = 1e-9;
+    let bestAssignment: number[] | null = null;
+    let bestStats: AssignmentStats | null = null;
+
+    const dfs = (pos: number, partialMin: number): void => {
+      if (pos === n) {
+        const stats = this.evaluateAssignment(assignment, edges, contrastMatrix);
+        if (
+          !bestStats
+          || stats.minContrast > bestStats.minContrast + eps
+          || (Math.abs(stats.minContrast - bestStats.minContrast) <= eps
+            && stats.totalContrast > bestStats.totalContrast + eps)
+        ) {
+          bestStats = stats;
+          bestAssignment = assignment.slice();
+        }
+        return;
+      }
+
+      const node = order[pos];
+      const candidates: Array<{ color: number; nextMin: number; deltaSum: number; priority: number }> = [];
+
+      for (let color = 0; color < m; color++) {
+        if (enforceUnique && used && used[color]) continue;
+        let nextMin = partialMin;
+        let deltaSum = 0;
+        let valid = true;
+        let neighborCount = 0;
+        for (const nb of neighbors[node]) {
+          const nbColor = assignment[nb];
+          if (nbColor === -1) continue;
+          neighborCount++;
+          const contrast = contrastMatrix[color][nbColor];
+          nextMin = Math.min(nextMin, contrast);
+          deltaSum += contrast;
+          if (bestStats && contrast + eps < bestStats.minContrast) { valid = false; break; }
+        }
+        if (!valid) continue;
+        if (bestStats && nextMin + eps < bestStats.minContrast) continue;
+        const priority = neighborCount > 0 ? nextMin : paletteAverages[color];
+        candidates.push({ color, nextMin, deltaSum, priority });
+      }
+
+      candidates.sort((a, b) => {
+        if (Math.abs(b.priority - a.priority) > eps) return b.priority - a.priority;
+        if (Math.abs(b.nextMin - a.nextMin) > eps) return b.nextMin - a.nextMin;
+        if (Math.abs(b.deltaSum - a.deltaSum) > eps) return b.deltaSum - a.deltaSum;
+        return a.color - b.color;
+      });
+
+      for (const candidate of candidates) {
+        const color = candidate.color;
+        assignment[node] = color;
+        if (enforceUnique && used) used[color] = true;
+        dfs(pos + 1, candidate.nextMin);
+        if (enforceUnique && used) used[color] = false;
+        assignment[node] = -1;
+      }
+    };
+
+    dfs(0, Number.POSITIVE_INFINITY);
+
+    if (!bestAssignment || !bestStats) {
+      throw new Error('Failed to assign colors with provided palette');
+    }
+
+    return { assignment: bestAssignment, stats: bestStats };
   }
 }
 
@@ -227,4 +240,11 @@ function parseKey(k: string): [number, number] {
 export interface ColorAssignmentResult {
   colorByNumber: Map<number, string>;
   score: number;
+  minContrast: number;
+  totalContrast: number;
+}
+
+interface AssignmentStats {
+  minContrast: number;
+  totalContrast: number;
 }

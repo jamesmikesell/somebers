@@ -63,6 +63,7 @@ To deploy the application, use the `deploy.sh` script. This script will build th
 -   **Inline Styles:** Avoid using inline styles (`style="..."`) in HTML templates. Prefer defining styles in the corresponding SCSS files for better maintainability and separation of concerns.
 -   **Components:** The application is structured into components, which can be found in the `src/app/component` directory.
 -   **Services:** Services are used for shared logic and can be found in the `src/app/service` directory.
+-   **Color Palette Optimization:** `ColorGridOptimizerService` assigns palette colors by maximizing the minimum CIEDE2000 contrast across touching groups; the service's `score` reports that minimum value.
 -   **Testing:** The project uses Karma and Jasmine for testing. Test files are located alongside the files they test and have a `.spec.ts` extension.
 -   **Documentation:** Each time the functionality of the game is changed, user interactions are modified, or how things are displayed is updated, be sure to update the user-facing documentation.
 -   **PWA/Offline Functionality:** Be cautious of changes that might break the offline Progressive Web App (PWA) functionality. The application is configured to work offline, and any changes to the service worker or caching strategy should be tested thoroughly.
