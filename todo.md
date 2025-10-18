@@ -21,6 +21,9 @@
 
 # Done
 
+- light mode auto complete animation not visible
+- check color optimizer, perhaps it should be arranging for the highest minimum contrast between touching blocks
+- light mode needs more contrast with text
 - fix: time spent on board should be persisted once the game has started, and the user reloads / navigates away
 - actionable cell count vs section total.. IE if there is only one actionable cell in a section that must equal 34, identifying that can be difficult
 - disable wake lock on completed board
