@@ -14,14 +14,14 @@ export class AppColors {
   ]
 
   static readonly COLORS_LIGHT: string[] = [
-    "#ff8f8f",
-    "#ffad63",
+    "#fcb7b7",
+    "#fdc89a",
     "#fff67d",
-    "#91d594",
-    "#4beff5",
-    "#62acf6",
-    "#a0a7c7",
-    "#e8acff",
-    "#ff55cd",
+    "#bbf1bf",
+    "#83fbff",
+    "#badcff",
+    "#d8dffa",
+    "#e8c9ff",
+    "#ffc1dc",
   ]
 }
