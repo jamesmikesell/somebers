@@ -72,6 +72,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   stats: GameStats;
   rowColCurrentSumVisible: boolean = true;
   colorGroupCurrentSumVisible: boolean = false;
+  tournamentMode = false;
 
 
   layoutMode: LayoutMode = 'vertical';
@@ -145,6 +146,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.sectionAnimator.setAutoComplete(autoClearUnneededCells);
     this.rowColCurrentSumVisible = this.settingsService.getRowAndColumnCurrentSelectionSumVisible();
     this.colorGroupCurrentSumVisible = this.settingsService.getColorGroupCurrentSelectionSumVisible();
+    this.tournamentMode = this.settingsService.getTournamentModeEnabled();
     this.sectionAnimator.setAutoClearHandler(cells => this.recordAutoClearedCells(cells));
     this.sectionAnimator.animationCompleted$
       .pipe(takeUntil(this.destroy))
@@ -363,10 +365,16 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   async use(cell: DisplayCell): Promise<void> {
     cell.processing = false;
 
-    if (cell.status !== SelectionStatus.NONE)
-      return;
+    if (cell.status !== SelectionStatus.NONE) {
+      if (this.tournamentMode) {
+        cell.status = SelectionStatus.NONE;
+        this.gameBoard.recalculateSelectedHeaders();
+      }
 
-    if (cell.required) {
+      return;
+    }
+
+    if (cell.required || this.tournamentMode) {
       cell.status = SelectionStatus.SELECTED;
       this.updateMoveHistory(true)
       this.undoManager.pushCells([
@@ -388,10 +396,16 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   async clear(cell: DisplayCell): Promise<void> {
     cell.processing = false;
 
-    if (cell.status !== SelectionStatus.NONE)
-      return;
+    if (cell.status !== SelectionStatus.NONE) {
+      if (this.tournamentMode) {
+        cell.status = SelectionStatus.NONE;
+        this.gameBoard.recalculateSelectedHeaders();
+      }
 
-    if (!cell.required) {
+      return;
+    }
+
+    if (!cell.required || this.tournamentMode) {
       cell.status = SelectionStatus.CLEARED;
       this.updateMoveHistory(true)
       this.undoManager.pushCells([

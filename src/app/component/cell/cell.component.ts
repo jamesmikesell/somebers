@@ -26,6 +26,7 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() disableAnimation = false;
   @Input() rowColCurrentSumVisible = true;
   @Input() colorGroupCurrentSelectionSumVisible = true;
+  @Input() tournamentMode = false;
 
   @Output() used = new EventEmitter<DisplayCell>();
   @Output() cleared = new EventEmitter<DisplayCell>();
@@ -90,7 +91,7 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
 
 
   touchStart(): void {
-    if (this.cell.status === SelectionStatus.NONE && !this.cell.processing)
+    if ((this.cell.status === SelectionStatus.NONE || this.tournamentMode) && !this.cell.processing)
       this.cell.processing = true;
   }
 

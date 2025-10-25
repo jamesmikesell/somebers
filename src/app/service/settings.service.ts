@@ -14,6 +14,7 @@ export class SettingsService {
     statsSecondaryDisplay: 'statsSecondaryDisplay',
     rowAndColumnCurrentSelectionSumVisible: 'rowAndColumnCurrentSelectionSumVisible',
     colorGroupCurrentSelectionSumVisible: 'colorGroupCurrentSelectionSumVisible',
+    tournamentModeEnabled: 'tournamentModeEnabled',
   } as const;
 
   getColorMode(): ColorModeSetting {
@@ -79,6 +80,14 @@ export class SettingsService {
 
   setColorGroupCurrentSelectionSumVisible(visible: boolean): void {
     this.setBoolean(this.storageKeys.colorGroupCurrentSelectionSumVisible, visible);
+  }
+
+  getTournamentModeEnabled(): boolean {
+    return this.getBoolean(this.storageKeys.tournamentModeEnabled, false);
+  }
+
+  setTournamentModeEnabled(enabled: boolean): void {
+    this.setBoolean(this.storageKeys.tournamentModeEnabled, enabled);
   }
 
   getBestStreakDisplay(): number {

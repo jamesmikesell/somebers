@@ -39,6 +39,7 @@ export class SettingsComponent implements OnInit {
   autoClearCellsEnabled: boolean = true;
   rowAndColumnCurrentSelectionSumVisible: boolean = true;
   colorGroupCurrentSelectionSumVisible: boolean = true;
+  tournamentModeEnabled: boolean = false;
   AppVersion = AppVersion;
 
   constructor(private settingsService: SettingsService) { }
@@ -51,6 +52,7 @@ export class SettingsComponent implements OnInit {
     this.rowAndColumnCurrentSelectionSumVisible =
       this.settingsService.getRowAndColumnCurrentSelectionSumVisible();
     this.colorGroupCurrentSelectionSumVisible = this.settingsService.getColorGroupCurrentSelectionSumVisible();
+    this.tournamentModeEnabled = this.settingsService.getTournamentModeEnabled();
   }
 
 
@@ -91,6 +93,12 @@ export class SettingsComponent implements OnInit {
     this.settingsService.setColorGroupCurrentSelectionSumVisible(
       this.colorGroupCurrentSelectionSumVisible,
     );
+  }
+
+
+  onTournamentModeEnabledChange(event: MatSlideToggleChange): void {
+    this.tournamentModeEnabled = event.checked;
+    this.settingsService.setTournamentModeEnabled(this.tournamentModeEnabled);
   }
 
 
