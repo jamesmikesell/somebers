@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
+import { SaveDataService } from '../../service/save-data.service';
 import { InstallComponent } from '../install/install.component';
 import { Title } from '../title/title';
 
@@ -11,7 +12,7 @@ import { Title } from '../title/title';
   templateUrl: './documentation.html',
   styleUrl: './documentation.scss',
 })
-export class Documentation {
+export class Documentation implements OnInit {
   AppVersion = AppVersion;
 
   readonly iosVideoOptions: readonly IosVideoOption[] = [
@@ -38,6 +39,8 @@ export class Documentation {
   ];
 
   selectedIosVideoId: string | null = null;
+  timeSpentDays: string;
+  timeSpentHours: string;
 
   get selectedIosVideo(): IosVideoOption | null {
     if (!this.selectedIosVideoId) {
@@ -50,6 +53,36 @@ export class Documentation {
       ) ?? null
     );
   }
+
+
+  constructor(
+    private saveDataService: SaveDataService,
+  ) { }
+
+
+  async ngOnInit(): Promise<void> {
+    let savedData = await this.saveDataService.service.load();
+    if (savedData) {
+      let timeSpent = savedData.inProgressGames
+        .reduce((total, current) => (current.timeSpent ?? 0) + total, 0);
+
+      const totalSeconds = Math.floor(timeSpent / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      const parts: string[] = [];
+      if (days > 0) parts.push(`${days} days`);
+      if (hours > 0) parts.push(`${hours} hours`);
+      if (minutes > 0) parts.push(`${minutes} minutes`);
+      if (seconds > 0 || parts.length === 0) parts.push(`and ${seconds} seconds`);
+
+      this.timeSpentDays = parts.join(" ");
+      this.timeSpentHours = (totalSeconds / 60 / 60).toFixed(1);
+    }
+  }
+
 
   setIosVideo(option: IosVideoOption): void {
     if (this.selectedIosVideoId === option.id) {

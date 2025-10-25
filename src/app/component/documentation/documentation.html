@@ -230,6 +230,17 @@
       Check out the <a routerLink="/settings">Settings</a> for additional game
       options.
     </li>
+    @if (timeSpentDays) {
+      <li>
+        Lastly, you've been improving your math and deduction skills for a
+        combined total of <code>{{ timeSpentDays }}</code> straight! In case all
+        that time spent playing a math game still has you uncertain about how
+        many hours are in a day, or minutes in an hour, that's
+        <code>{{ timeSpentHours }} hours</code>. Remember, that's time spent
+        "improving skills"... Definitely not wasting precious moments of your
+        life.
+      </li>
+    }
   </ul>
 
   <!--  -->
@@ -255,9 +266,7 @@
   <ul>
     <li>Launch faster from your home screen, Dock, or Start menu.</li>
     <li>Run in a standalone window without the browser address bar.</li>
-    <li>
-      Work in airplane mode and in internet dead zones.
-    </li>
+    <li>Work in airplane mode and in internet dead zones.</li>
   </ul>
   <app-install></app-install>
 
