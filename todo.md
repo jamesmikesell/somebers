@@ -1,5 +1,6 @@
 # TODO
 
+- tournament mode: incorrect moves allowed, game doesn't warn on mistake. will likely need to always show headers, and cleared cells should likely continue to show their value (though possibly in a different text color?). will also need to be able to mark a cell as untouched. if we hide color groups after they're "complete" we'll need to make sure the hiding logic is based on no cells having a selection status!=none rather than checking for the correct cells being selected.
 - text occasionally selected, esp when double clicking to reset scratch pad....
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
