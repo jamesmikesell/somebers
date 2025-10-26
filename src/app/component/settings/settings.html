@@ -98,6 +98,22 @@
           </p>
         </mat-card-content>
       </mat-card>
+
+      <mat-card class="settings-option-card">
+        <mat-card-content>
+          <mat-slide-toggle
+            [(ngModel)]="tournamentModeEnabled"
+            (change)="onTournamentModeEnabledChange($event)"
+          >
+            Tournament Mode
+          </mat-slide-toggle>
+          <p class="settings-option-description">
+            Removes warnings for incorrect moves—mistakes only become apparent
+            when row, column, or group totals no longer add up. If you make a
+            wrong selection, clicking the same cell again will undo the change.
+          </p>
+        </mat-card-content>
+      </mat-card>
     </div>
   </section>
 
@@ -151,23 +167,7 @@
   @if (devModeEnabled) {
     <section class="settings-section">
       <h2>Developer Settings</h2>
-      <div class="settings-option-group">
-        <mat-card class="settings-option-card">
-          <mat-card-content>
-            <mat-slide-toggle
-              [(ngModel)]="tournamentModeEnabled"
-              (change)="onTournamentModeEnabledChange($event)"
-            >
-              Tournament Mode
-            </mat-slide-toggle>
-            <p class="settings-option-description">
-              Removes warnings for incorrect moves—mistakes only become apparent
-              when row, column, or group totals no longer add up. If you make a
-              wrong selection, clicking the same cell again will undo the change.
-            </p>
-          </mat-card-content>
-        </mat-card>
-      </div>
+      <div class="settings-option-group"></div>
     </section>
   }
 </div>
