@@ -170,10 +170,7 @@ export class SectionCompletionAnimator {
   }
 
   private shouldAutoClearCell(cell: DisplayCell, variant: GlowVariant): boolean {
-    if (cell.required)
-      return false;
-
-    if (cell.status === SelectionStatus.CLEARED)
+    if (cell.status !== SelectionStatus.NONE)
       return false;
 
     if (variant === 'group-header')

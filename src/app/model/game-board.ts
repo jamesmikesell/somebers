@@ -275,11 +275,9 @@ export class GameBoard {
   isComplete(): boolean {
     this.clearCompleted();
 
-    for (const row of this.playArea) {
-      for (const cell of row) {
-        if ((cell.required && cell.status !== SelectionStatus.SELECTED) || (!cell.required && cell.status !== SelectionStatus.CLEARED))
-          return false;
-      }
+    for (let i = 0; i < this.playArea.length; i++) {
+      if (!this.isRowComplete(i) || !this.isColumnComplete(i) || !this.isColorGroupComplete(i + 1))
+        return false;
     }
 
     return true;
@@ -342,33 +340,57 @@ export class GameBoard {
 
 
   private isRowComplete(rowIndex: number): boolean {
-    return this.playArea[rowIndex].every(cell =>
-      (cell.required && cell.status === SelectionStatus.SELECTED) ||
-      (!cell.required && cell.status === SelectionStatus.CLEARED)
-    );
+    let requiredSum = 0;
+    let selectedSum = 0;
+    let allCellsTouched = true;
+    this.playArea[rowIndex].forEach(cell => {
+      if (cell.required)
+        requiredSum += cell.value;
+      if (cell.status === SelectionStatus.SELECTED)
+        selectedSum += cell.value;
+      if (cell.status === SelectionStatus.NONE)
+        allCellsTouched = false;
+    })
+
+    return requiredSum === selectedSum && allCellsTouched;
   }
 
 
   private isColumnComplete(colIndex: number): boolean {
+    let requiredSum = 0;
+    let selectedSum = 0;
+    let allCellsTouched = true;
     for (let i = 0; i < this.playArea.length; i++) {
       const cell = this.playArea[i][colIndex];
-      if (!((cell.required && cell.status === SelectionStatus.SELECTED) ||
-        (!cell.required && cell.status === SelectionStatus.CLEARED))) {
-        return false;
-      }
+      if (cell.required)
+        requiredSum += cell.value;
+      if (cell.status === SelectionStatus.SELECTED)
+        selectedSum += cell.value;
+      if (cell.status === SelectionStatus.NONE)
+        allCellsTouched = false;
     }
-    return true;
+
+    return requiredSum === selectedSum && allCellsTouched;
   }
 
 
   private isColorGroupComplete(groupNumber: number): boolean {
-    return this.playArea
+    let requiredSum = 0;
+    let selectedSum = 0;
+    let allCellsTouched = true;
+    this.playArea
       .flat()
       .filter(cell => cell.groupNumber === groupNumber)
-      .every(cell =>
-        (cell.required && cell.status === SelectionStatus.SELECTED) ||
-        (!cell.required && cell.status === SelectionStatus.CLEARED)
-      );
+      .forEach(cell => {
+        if (cell.required)
+          requiredSum += cell.value;
+        if (cell.status === SelectionStatus.SELECTED)
+          selectedSum += cell.value;
+        if (cell.status === SelectionStatus.NONE)
+          allCellsTouched = false;
+      })
+
+    return requiredSum === selectedSum && allCellsTouched;
   }
 
 }
