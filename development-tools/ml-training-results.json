@@ -4,116 +4,120 @@
     "modelType": "ridge",
     "features": [
       "boardSize",
+      "deductionIterations",
+      "firstIterationActionableCellAllCountMax",
       "firstIterationActionableCellAllCountMin",
       "firstIterationActionableCellAllCountStd",
       "firstIterationFalsePositiveSolutionCountAllMean",
-      "firstIterationFalsePositiveSolutionCountAllMin",
-      "firstIterationFalsePositiveSolutionCountAllStd",
       "firstIterationFalsePositiveSolutionCountAllSum",
-      "firstIterationGuaranteedRequiredCellCountStd",
-      "firstIterationRequiredCellCountVsGoalAllMax",
-      "firstIterationRequiredCellCountVsGoalAllMean",
-      "firstIterationRequiredCellCountVsGoalAllStd",
+      "firstIterationGuaranteedUnusableCellCountAllStd",
+      "firstIterationUnusableCellCountVsGoalAllMax",
       "firstIterationUnusableCellCountVsGoalAllMean",
       "gameDateAsPercent",
-      "goalSumAllMax",
       "goalSumAllMean",
       "goalSumAllMin",
       "goalVsTotalAllMax",
       "percentUnresolvedCellsAfterDeduction",
+      "percentUnresolvedCellsAfterDeductionI1",
       "percentUnresolvedCellsAfterDeductionI2",
-      "percentUnresolvedCellsAfterDeductionI5"
+      "percentUnresolvedCellsAfterDeductionI3",
+      "percentUnresolvedCellsAfterDeductionI4",
+      "percentUnresolvedCellsAfterDeductionI5",
+      "percentUnresolvedCellsAfterDeductionI6"
     ],
-    "lambda": 0.00001,
+    "lambda": 10,
     "transform": "log1p",
     "featureMeans": [
       0.44907506415740023,
+      2.179640718562874,
+      0.866225881570193,
       0.007684630738522956,
       0.2639075403787432,
       5.9886748328739285,
-      0.00252327376497006,
-      3.1616247568901428,
       0.23272108127495003,
-      0.12013814788306176,
-      0.3673625973630727,
-      0.052923633934914845,
-      0.0950853173796076,
+      0.21384009204141674,
+      2.5075157275217492,
       0.29366075456982993,
       0.5353920418501721,
-      4.079943090010453,
       2.0414402852929827,
       0.4483782435129741,
       0.7789690910134934,
       0.021444957307607003,
+      0.3010484192706801,
       0.09392799694450855,
-      0.0028831226436016855
+      0.03335928412449478,
+      0.012556938041905608,
+      0.0028831226436016855,
+      0.0005914097730464995
     ],
     "featureStds": [
       0.33632686782939647,
+      1.035625236944279,
+      0.2093594034547999,
       0.041240273475500216,
       0.08199011166929772,
       5.026446156300212,
-      0.004676764736119101,
-      2.3585124301312836,
       0.053204294341098864,
-      0.0819169349970941,
-      0.32514129494412375,
-      0.055835125262992814,
-      0.08294891207538053,
+      0.06807760424472302,
+      2.004263606888462,
       0.24170654608181258,
       0.25335369596789387,
-      0.8055938535664744,
       0.4230500373767571,
       0.3005569545126144,
       0.12090563028841542,
       0.1329938869434512,
+      0.2878923784903751,
       0.20737244551060008,
-      0.04011156673169632
+      0.13398280761271097,
+      0.08496103481392112,
+      0.04011156673169632,
+      0.01178271269338693
     ],
     "weights": [
       12.034571704949919,
-      1.1725264418436918,
-      -0.004594590160686274,
-      -0.14360783462481386,
-      -0.31715885661260557,
-      0.012588690784478808,
-      -0.11588029541416636,
-      0.19271069573116517,
-      0.10210501544813702,
-      0.09733421578783968,
-      0.08757900794465925,
-      -0.12253314488455401,
-      -0.012359418859981547,
-      -0.14343625181567796,
-      -0.03919344614765703,
-      0.12625761448977196,
-      0.051287666956571845,
-      -0.02705124553061051,
-      0.02483541847138931,
-      0.16021153637133284,
-      0.02550134551406694
+      0.7380233602142562,
+      0.03979653772798366,
+      -0.007100500555875883,
+      -0.015215267708233308,
+      -0.0699344807900817,
+      -0.1039511754547682,
+      0.0966976411081569,
+      -0.12018555362850541,
+      0.08126883110516304,
+      -0.062025556919610016,
+      -0.14203625203992823,
+      0.07702766605512032,
+      0.051991107071904546,
+      -0.004496483067480908,
+      0.07172955289681636,
+      0.0716377902713335,
+      0.04853915467875936,
+      0.0338810904436223,
+      -0.05512626312789429,
+      0.015403470632929451,
+      0.03711252961778627
     ],
     "perSizeMeans": {},
     "globalMean": 311707.08832335327
   },
   "metrics": {
-    "rmse": 177843.5862751035,
-    "mae": 82999.05277876434,
-    "r2": 0.830538512334241
+    "rmse": 171159.9617220132,
+    "mae": 81329.13004583804,
+    "r2": 0.843036396280812
   },
   "perSizeRmse": {
-    "0": 14430.80010619409,
-    "1": 385783.62007970887,
-    "0.42857142857142855": 76759.49795421121,
-    "0.6964285714285714": 156169.23594287992,
-    "0.19642857142857142": 29368.274796741425
+    "0": 14742.822721626726,
+    "1": 367440.0822511835,
+    "0.42857142857142855": 81710.05561018766,
+    "0.6964285714285714": 153211.75362856057,
+    "0.19642857142857142": 29637.95261958417
   },
   "perSizeMae": {
-    "0": 10355.450982353217,
-    "1": 280866.09249608044,
-    "0.42857142857142855": 44808.45735509791,
-    "0.6964285714285714": 94763.185149243,
-    "0.19642857142857142": 20631.84326491532
+    "0": 11081.771574203534,
+    "1": 267221.6184415066,
+    "0.42857142857142855": 47147.548120964304,
+    "0.6964285714285714": 93290.80929293415,
+    "0.19642857142857142": 21692.86362971702
   },
   "baseline": {
     "model": {
@@ -121,25 +125,26 @@
       "modelType": "baseline",
       "features": [
         "boardSize",
+        "deductionIterations",
+        "firstIterationActionableCellAllCountMax",
         "firstIterationActionableCellAllCountMin",
         "firstIterationActionableCellAllCountStd",
         "firstIterationFalsePositiveSolutionCountAllMean",
-        "firstIterationFalsePositiveSolutionCountAllMin",
-        "firstIterationFalsePositiveSolutionCountAllStd",
         "firstIterationFalsePositiveSolutionCountAllSum",
-        "firstIterationGuaranteedRequiredCellCountStd",
-        "firstIterationRequiredCellCountVsGoalAllMax",
-        "firstIterationRequiredCellCountVsGoalAllMean",
-        "firstIterationRequiredCellCountVsGoalAllStd",
+        "firstIterationGuaranteedUnusableCellCountAllStd",
+        "firstIterationUnusableCellCountVsGoalAllMax",
         "firstIterationUnusableCellCountVsGoalAllMean",
         "gameDateAsPercent",
-        "goalSumAllMax",
         "goalSumAllMean",
         "goalSumAllMin",
         "goalVsTotalAllMax",
         "percentUnresolvedCellsAfterDeduction",
+        "percentUnresolvedCellsAfterDeductionI1",
         "percentUnresolvedCellsAfterDeductionI2",
-        "percentUnresolvedCellsAfterDeductionI5"
+        "percentUnresolvedCellsAfterDeductionI3",
+        "percentUnresolvedCellsAfterDeductionI4",
+        "percentUnresolvedCellsAfterDeductionI5",
+        "percentUnresolvedCellsAfterDeductionI6"
       ],
       "perSizeMeans": {
         "0": 45756.85593220339,
@@ -174,61 +179,13 @@
     {
       "model": {
         "modelType": "ridge",
-        "lambda": 0.00001,
+        "lambda": 10,
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 177843.5862751035,
-        "mae": 82999.05277876434,
-        "r2": 0.830538512334241
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.0001,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 177843.61662377996,
-        "mae": 82999.03408223152,
-        "r2": 0.8305384544976622
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.001,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 177843.92024520092,
-        "mae": 82998.84712174584,
-        "r2": 0.8305378758747108
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.01,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 177846.96988535623,
-        "mae": 82996.97800087984,
-        "r2": 0.8305320640040682
-      }
-    },
-    {
-      "model": {
-        "modelType": "ridge",
-        "lambda": 0.1,
-        "transform": "log1p"
-      },
-      "metrics": {
-        "rmse": 177878.7699696378,
-        "mae": 82979.90157994395,
-        "r2": 0.8304714548584406
+        "rmse": 171159.9617220132,
+        "mae": 81329.13004583804,
+        "r2": 0.843036396280812
       }
     },
     {
@@ -238,21 +195,69 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 178295.48322190437,
-        "mae": 82921.8141572906,
-        "r2": 0.8296762217845581
+        "rmse": 173489.1495981206,
+        "mae": 82021.59006868377,
+        "r2": 0.8387353285308041
       }
     },
     {
       "model": {
         "modelType": "ridge",
-        "lambda": 10,
+        "lambda": 0.1,
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 183623.1321762837,
-        "mae": 84496.39168702356,
-        "r2": 0.8193452512622071
+        "rmse": 174562.5862974771,
+        "mae": 82448.71874976307,
+        "r2": 0.8367335554578423
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.01,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 174690.3697350565,
+        "mae": 82495.37311448128,
+        "r2": 0.8364944391162504
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.001,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 174703.3792248709,
+        "mae": 82500.07467100477,
+        "r2": 0.8364700851334016
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.0001,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 174704.68251516268,
+        "mae": 82500.54519098008,
+        "r2": 0.8364676452521999
+      }
+    },
+    {
+      "model": {
+        "modelType": "ridge",
+        "lambda": 0.00001,
+        "transform": "log1p"
+      },
+      "metrics": {
+        "rmse": 174704.81286763487,
+        "mae": 82500.59224662397,
+        "r2": 0.8364674012191908
       }
     },
     {
@@ -262,11 +267,11 @@
         "transform": "log1p"
       },
       "metrics": {
-        "rmse": 201935.49923381876,
-        "mae": 91348.17923712416,
-        "r2": 0.7815158459091458
+        "rmse": 187078.4055730197,
+        "mae": 88057.05609894663,
+        "r2": 0.8124824502966242
       }
     }
   ],
-  "predictionForGame27": 16.338523488141977
+  "predictionForGame27": 14.332904288281192
 }

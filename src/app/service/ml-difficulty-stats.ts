@@ -10,25 +10,27 @@ export const FEATURE_SPEC: FeatureSpec = {
   keys: [
 
     "boardSize",
+    'deductionIterations',
+    "firstIterationActionableCellAllCountMax",
     "firstIterationActionableCellAllCountMin",
     "firstIterationActionableCellAllCountStd",
     "firstIterationFalsePositiveSolutionCountAllMean",
-    "firstIterationFalsePositiveSolutionCountAllMin",
-    "firstIterationFalsePositiveSolutionCountAllStd",
     "firstIterationFalsePositiveSolutionCountAllSum",
-    "firstIterationGuaranteedRequiredCellCountStd",
-    "firstIterationRequiredCellCountVsGoalAllMax",
-    "firstIterationRequiredCellCountVsGoalAllMean",
-    "firstIterationRequiredCellCountVsGoalAllStd",
+    "firstIterationGuaranteedUnusableCellCountAllStd",
+    "firstIterationUnusableCellCountVsGoalAllMax",
     "firstIterationUnusableCellCountVsGoalAllMean",
     "gameDateAsPercent",
-    "goalSumAllMax",
     "goalSumAllMean",
     "goalSumAllMin",
     "goalVsTotalAllMax",
     "percentUnresolvedCellsAfterDeduction",
+    "percentUnresolvedCellsAfterDeductionI1",
     "percentUnresolvedCellsAfterDeductionI2",
-    "percentUnresolvedCellsAfterDeductionI5"
+    "percentUnresolvedCellsAfterDeductionI3",
+    "percentUnresolvedCellsAfterDeductionI4",
+    "percentUnresolvedCellsAfterDeductionI5",
+    "percentUnresolvedCellsAfterDeductionI6"
+
 
     // 'boardSize',
     // // 'firstIterationFalsePositiveSolutionCountAllMean',
@@ -89,15 +91,18 @@ export const FEATURE_SPEC: FeatureSpec = {
     // // 'unresolvedCellCountAfterDeduction',
     // 'percentUnresolvedCellsAfterDeduction',
     // //
-    // 'percentUnresolvedCellsAfterDeductionI1',
-    // 'percentUnresolvedCellsAfterDeductionI2',
-    // // 'percentUnresolvedCellsAfterDeductionI3',
-    // // 'percentUnresolvedCellsAfterDeductionI4',
-    // // 'percentUnresolvedCellsAfterDeductionI5',
+    // "percentUnresolvedCellsAfterDeductionI1",
+    // "percentUnresolvedCellsAfterDeductionI2",
+    // "percentUnresolvedCellsAfterDeductionI3",
+    // "percentUnresolvedCellsAfterDeductionI4",
+    // "percentUnresolvedCellsAfterDeductionI5",
+    // "percentUnresolvedCellsAfterDeductionI6",
+    // "percentUnresolvedCellsAfterDeductionI7",
+    // "percentUnresolvedCellsAfterDeductionI8",
     // //
     // 'gameDateAsPercent',
     // //
-    // 'breaksMinutes',
+    // // 'breaksMinutes',
   ],
 };
 
@@ -219,6 +224,9 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     percentUnresolvedCellsAfterDeductionI3: (stats.totals.unresolvedCountsPerIteration[2] ?? 0) / cellCount,
     percentUnresolvedCellsAfterDeductionI4: (stats.totals.unresolvedCountsPerIteration[3] ?? 0) / cellCount,
     percentUnresolvedCellsAfterDeductionI5: (stats.totals.unresolvedCountsPerIteration[4] ?? 0) / cellCount,
+    percentUnresolvedCellsAfterDeductionI6: (stats.totals.unresolvedCountsPerIteration[5] ?? 0) / cellCount,
+    percentUnresolvedCellsAfterDeductionI7: (stats.totals.unresolvedCountsPerIteration[6] ?? 0) / cellCount,
+    percentUnresolvedCellsAfterDeductionI8: (stats.totals.unresolvedCountsPerIteration[7] ?? 0) / cellCount,
 
     gameDateAsPercent: gamePlayStats.gameDateAsPercent,
 
@@ -310,6 +318,9 @@ export interface GameStatFeatures {
   percentUnresolvedCellsAfterDeductionI3: number;
   percentUnresolvedCellsAfterDeductionI4: number;
   percentUnresolvedCellsAfterDeductionI5: number;
+  percentUnresolvedCellsAfterDeductionI6: number;
+  percentUnresolvedCellsAfterDeductionI7: number;
+  percentUnresolvedCellsAfterDeductionI8: number;
   //
   gameDateAsPercent: number;
   //
