@@ -9,6 +9,8 @@ export class BoardStatAnalyzer {
   static evaluate(grid: SimpleCell[][]): BoardStats {
     const start = performance.now();
 
+    grid = structuredClone(grid);
+
     // Pre-allocate row and column bases
     const rowBases: LinearStat[] = Array.from({ length: grid.length }, (): LinearStat => new LinearStat());
     const colBases: Array<LinearStat> = Array.from({ length: grid[0].length }, (): LinearStat => new LinearStat());
@@ -48,18 +50,14 @@ export class BoardStatAnalyzer {
       }
     }
 
-    // Subset counting and assembling report
-    let subsetsEvaluated = 0;
 
     const rowsReport: SectionStats[] = rowBases.map((stat, i) => {
       const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
-      subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
     });
 
     const colsReport: SectionStats[] = colBases.map((stat, i) => {
       const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
-      subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
     });
 
@@ -67,7 +65,6 @@ export class BoardStatAnalyzer {
     const groupsReport: SectionStats[] = groupsSorted.map(groupNumber => {
       const stat = groupsMap.get(groupNumber)!;
       const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
-      subsetsEvaluated += possibleCorrect.totalIterations;
       return BoardStatAnalyzer.GenerateSectionStats(stat, groupNumber, possibleCorrect)
     });
 
@@ -90,7 +87,6 @@ export class BoardStatAnalyzer {
         rowsEvaluated: grid.length,
         columnsEvaluated: grid[0].length,
         groupsEvaluated: groupsSorted.length,
-        subsetsEvaluated,
         deductionIterations,
         unresolvedCellCountAfterDeduction: unresolvedCellCount,
         unresolvedCountsPerIteration,
@@ -110,7 +106,7 @@ export class BoardStatAnalyzer {
       goalSum: stat.goalSum,
       cellValues: stat.values.slice(),
       requiredIndices: stat.requiredIndices.slice(),
-      firstIterationFalsePositiveSolutionCount: possibleCorrect.exact - 1,
+      firstIterationFalsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
       firstIterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
       firstIterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
       firstIterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / stat.goalSum,
@@ -123,7 +119,7 @@ export class BoardStatAnalyzer {
   private static countSubsets(values: number[], target: number): PossiblyCorrectSolutions {
     const n = values.length;
     const total = 1 << n; // includes empty subset
-    let exact = 0;
+    let possiblyCorrectCombinations = 0;
     let andMask = (1 << n) - 1; // start with all bits set within n
     let orMask = 0;
     for (let mask = 0; mask < total; mask++) {
@@ -132,15 +128,15 @@ export class BoardStatAnalyzer {
         if (mask & (1 << i)) sum += values[i];
       }
       if (sum === target) {
-        exact++;
+        possiblyCorrectCombinations++;
         andMask &= mask;
         orMask |= mask;
       }
     }
     const alwaysRequiredCount = BoardStatAnalyzer.popCount(andMask & ((1 << n) - 1));
     const neverUsedCount = n - BoardStatAnalyzer.popCount(orMask & ((1 << n) - 1));
-    if (exact === 0) return { exact, totalIterations: total, alwaysRequiredCount: 0, neverUsedCount: 0 };
-    return { exact, totalIterations: total, alwaysRequiredCount, neverUsedCount };
+    if (possiblyCorrectCombinations === 0) return { possiblyCorrectCombinations: possiblyCorrectCombinations, alwaysRequiredCount: 0, neverUsedCount: 0 };
+    return { possiblyCorrectCombinations, alwaysRequiredCount, neverUsedCount };
   }
 
   private static popCount(x: number): number {
@@ -276,8 +272,7 @@ class LinearStat {
 }
 
 interface PossiblyCorrectSolutions {
-  exact: number;
-  totalIterations: number
+  possiblyCorrectCombinations: number;
   alwaysRequiredCount: number;
   neverUsedCount: number;
 }
@@ -291,7 +286,6 @@ export interface BoardStats {
     rowsEvaluated: number;
     columnsEvaluated: number;
     groupsEvaluated: number;
-    subsetsEvaluated: number;
     deductionIterations: number;
     unresolvedCellCountAfterDeduction: number;
     unresolvedCountsPerIteration: number[]
