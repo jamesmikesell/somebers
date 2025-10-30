@@ -27,6 +27,7 @@ export class CellComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() rowColCurrentSumVisible = true;
   @Input() colorGroupCurrentSelectionSumVisible = true;
   @Input() tournamentMode = false;
+  @Input() showCleared = false;
 
   @Output() used = new EventEmitter<DisplayCell>();
   @Output() cleared = new EventEmitter<DisplayCell>();

@@ -5,45 +5,63 @@
     <div class="centered">
       <div class="top-controls">
         <div class="game-controls">
-          <button
-            matMiniFab
-            class="game-button"
-            [disabled]="gameNumber <= 1"
-            (click)="changeGameNumberFromUi(gameNumber - 1)"
-          >
-            <mat-icon>do_not_disturb_on</mat-icon>
-          </button>
+          <div class="game-controls__side game-controls__side--left">
+            @if (devMode) {
+              <div class="dev-controls">
+                <button
+                  matMiniFab
+                  class="game-button"
+                  (click)="autoCompleteGame()"
+                >
+                  <mat-icon>auto_fix_high</mat-icon>
+                </button>
+              </div>
+            }
 
-          <mat-form-field class="game-number" subscriptSizing="dynamic">
-            <mat-label>Game #</mat-label>
-            <input
-              matInput
-              type="number"
-              [ngModel]="gameNumber"
-              (ngModelChange)="changeGameNumberFromUi($event)"
-              min="1"
-            />
-          </mat-form-field>
+            <button
+              matMiniFab
+              class="game-button"
+              [disabled]="gameNumber <= 1"
+              (click)="changeGameNumberFromUi(gameNumber - 1)"
+            >
+              <mat-icon>do_not_disturb_on</mat-icon>
+            </button>
+          </div>
 
-          <button
-            matMiniFab
-            class="game-button"
-            (click)="changeGameNumberFromUi(gameNumber + 1)"
-          >
-            <mat-icon>add_circle</mat-icon>
-          </button>
+          <div class="game-controls__center">
+            <mat-form-field class="game-number" subscriptSizing="dynamic">
+              <mat-label>Game #</mat-label>
+              <input
+                matInput
+                type="number"
+                [ngModel]="gameNumber"
+                (ngModelChange)="changeGameNumberFromUi($event)"
+                min="1"
+              />
+            </mat-form-field>
+          </div>
 
-          @if (devMode) {
-            <div class="dev-controls">
+          <div class="game-controls__side game-controls__side--right">
+            <button
+              matMiniFab
+              class="game-button"
+              (click)="changeGameNumberFromUi(gameNumber + 1)"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+
+            @if (tournamentMode) {
               <button
                 matMiniFab
                 class="game-button"
-                (click)="autoCompleteGame()"
+                (click)="showCleared = !showCleared"
               >
-                <mat-icon>auto_fix_high</mat-icon>
+                <mat-icon>{{
+                  showCleared ? "visibility" : "visibility_off"
+                }}</mat-icon>
               </button>
-            </div>
-          }
+            }
+          </div>
         </div>
 
         <div class="stats">
@@ -137,6 +155,7 @@
                       [shapesMode]="shapesMode"
                       [disableAnimation]="disableAnimations"
                       [rowColCurrentSumVisible]="rowColCurrentSumVisible"
+                      [showCleared]="showCleared"
                       (headerDoubleTapped)="
                         onHeaderDoubleTap(rowIndex, colIndex)
                       "
@@ -149,6 +168,7 @@
                       [shapesMode]="shapesMode"
                       [disableAnimation]="disableAnimations"
                       [tournamentMode]="tournamentMode"
+                      [showCleared]="showCleared"
                       [colorGroupCurrentSelectionSumVisible]="
                         colorGroupCurrentSumVisible
                       "

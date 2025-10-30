@@ -73,6 +73,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   rowColCurrentSumVisible: boolean = true;
   colorGroupCurrentSumVisible: boolean = false;
   tournamentMode = false;
+  showCleared = false;
 
 
   layoutMode: LayoutMode = 'vertical';

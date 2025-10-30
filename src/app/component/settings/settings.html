@@ -108,9 +108,30 @@
             Tournament Mode
           </mat-slide-toggle>
           <p class="settings-option-description">
-            Removes warnings for incorrect moves—mistakes only become apparent
-            when row, column, or group totals no longer add up. If you make a
-            wrong selection, clicking the same cell again will undo the change.
+            Allows incorrect moves, and doesn't warn when an incorrect move is
+            made. Think of it like solving a crossword puzzle with pencil and
+            paper — you may not notice a mistake until something else doesn't
+            fit. When enabled, errors only become apparent when a row, column,
+            or group's selections do not (or cannot) add up to their target
+            value.
+          </p>
+          <p class="settings-option-description">
+            If a wrong selection is made, selecting the same cell again will
+            undo the change.
+          </p>
+          <p class="settings-option-description">
+            The <mat-icon class="icon">visibility</mat-icon> icon beside the
+            game number toggles the display of cleared (hidden) cells. While
+            this could help spot which cells were selected or cleared
+            incorrectly, the reality is that in tournament mode it's usually
+            easier to just restart the board from the beginning - and this time,
+            don't mess up!
+          </p>
+          <p class="settings-option-description">
+            Before disabling tournament mode while in the middle of a partially
+            completed game, any errors on the board will need to be identified
+            and fixed first, or the board started over. Disabling tournament
+            mode will not fix any mistakes on a partially completed board.
           </p>
         </mat-card-content>
       </mat-card>

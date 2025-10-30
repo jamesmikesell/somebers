@@ -122,10 +122,8 @@
   aspect-ratio: 1;
   border-radius: calc(6cqmin / var(--columnCount));
   width: calc((100cqmin - var(--_headerSpacing) - ((var(--columnCount) - 2) * var(--_cellGap)))/ var(--columnCount));
-  --glowOutlineColor: light-dark(
-    color-mix(in srgb, var(--mat-sys-on-surface-variant) 40%, transparent),
-    color-mix(in srgb, var(--mat-sys-on-surface-variant) 60%, transparent)
-  );
+  --glowOutlineColor: light-dark(color-mix(in srgb, var(--mat-sys-on-surface-variant) 40%, transparent),
+      color-mix(in srgb, var(--mat-sys-on-surface-variant) 60%, transparent));
 }
 
 .cell.hidden::before {
@@ -164,6 +162,18 @@
   padding-right: calc(3.9cqmin / var(--columnCount));
   border-radius: calc(6cqmin / var(--columnCount));
   text-align: center;
+}
+
+.show-cleared-main {
+  .main-number :not(.circle):not(.circle *) {
+    color: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.3));
+  }
+}
+
+.show-cleared-corner {
+  .corner-number {
+    color: light-dark(rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.3));
+  }
 }
 
 .super-label {

@@ -3,9 +3,11 @@
 <ng-template #headerCellContent>
   <div
     class="cell cell-bg cell-fade bg-muted"
-    [class.hidden]="cell.hideBackground"
+    [class.hidden]="cell.hideBackground && !showCleared"
     [class.disable-animation]="disableAnimation"
     [class.glow-active]="cell?.glowActive"
+    [class.show-cleared-main]="cell.hideBackground && showCleared"
+    [class.show-cleared-corner]="cell.hideBackground && showCleared"
     [attr.data-glow-variant]="cell?.glowVariant ?? null"
     [style.--columnCount]="columnCount"
   >
@@ -18,7 +20,7 @@
     <div class="main-number" [class.highlighted]="cell.highlighted">
       <span
         class="main-number__value"
-        [class.cleared-text]="cell.hideBackground"
+        [class.cleared-text]="cell.hideBackground && !showCleared"
       >
         {{ cell.value }}
       </span>
@@ -30,10 +32,14 @@
   <div
     class="cell cell-bg cell-fade color shape-{{ cell.groupNumber }}"
     [class.wiggle]="cell.invalidMove"
-    [class.hidden]="cell.hideBackground"
+    [class.hidden]="cell.hideBackground && !showCleared"
     [class.processing]="cell.processing && !isMagnifiedView"
     [class.disable-animation]="disableAnimation"
     [class.shape]="shapesMode"
+    [class.show-cleared-main]="
+      showCleared && cell.status === SelectionStatus.CLEARED
+    "
+    [class.show-cleared-corner]="showCleared && cell.hideBackground"
     [class.glow-active]="!isMagnifiedView && cell?.glowActive"
     [attr.data-glow-variant]="cell?.glowVariant ?? null"
     [style.--columnCount]="columnCount"
@@ -54,7 +60,9 @@
     >
       <span
         class="main-number__value"
-        [class.cleared-text]="cell.status === SelectionStatus.CLEARED"
+        [class.cleared-text]="
+          cell.status === SelectionStatus.CLEARED && !showCleared
+        "
       >
         {{ cell.value }}
       </span>
