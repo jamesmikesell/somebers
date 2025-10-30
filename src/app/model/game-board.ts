@@ -140,12 +140,12 @@ export class GameBoard {
 
   clearColumn(colIndex: number): DisplayCell[] {
     const columnCells = this.playArea.map(row => row[colIndex]);
-    if (!this.areRequiredCellsSelected(columnCells))
+    if (!this.isGoalReached(columnCells))
       return [];
 
     const newlyCleared: DisplayCell[] = [];
     columnCells.forEach(cell => {
-      if (!cell.required && cell.status !== SelectionStatus.CLEARED) {
+      if (cell.status === SelectionStatus.NONE) {
         cell.status = SelectionStatus.CLEARED;
         newlyCleared.push(cell);
       }
@@ -157,12 +157,12 @@ export class GameBoard {
 
   clearRow(rowIndex: number): DisplayCell[] {
     const row = this.playArea[rowIndex];
-    if (!this.areRequiredCellsSelected(row))
+    if (!this.isGoalReached(row))
       return [];
 
     const newlyCleared: DisplayCell[] = [];
     row.forEach(cell => {
-      if (!cell.required && cell.status !== SelectionStatus.CLEARED) {
+      if (cell.status === SelectionStatus.NONE) {
         cell.status = SelectionStatus.CLEARED;
         newlyCleared.push(cell);
       }
@@ -172,10 +172,17 @@ export class GameBoard {
   }
 
 
-  private areRequiredCellsSelected(cells: DisplayCell[]): boolean {
-    return cells
-      .filter(cell => cell.required)
-      .every(cell => cell.status === SelectionStatus.SELECTED);
+  private isGoalReached(cells: DisplayCell[]): boolean {
+    let requiredSum = 0;
+    let selectedSum = 0;
+    cells.forEach(cell => {
+      if (cell.required)
+        requiredSum += cell.value;
+      if (cell.status === SelectionStatus.SELECTED)
+        selectedSum += cell.value;
+    })
+
+    return requiredSum === selectedSum;
   }
 
 
