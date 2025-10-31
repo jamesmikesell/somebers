@@ -140,7 +140,7 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
 
   const allSectionStats = [...stats.rows, ...stats.columns, ...stats.groups];
 
-  const cellCountLargerThanTargetAllAgg = agg(allSectionStats.map(s => s.cellValues.filter(c => c > s.goalSum).length));
+  const cellCountLargerThanTargetAllAgg = agg(allSectionStats.map(s => s.cellCountGreaterThanCurrentGoal));
   const firstIterationFalsePositiveSolutionCountAllAgg = agg(allSectionStats.map(s => s.firstIterationFalsePositiveSolutionCount));
   const firstIterationGuaranteedRequiredCellCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCount));
   const firstIterationGuaranteedUnusableCellCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedUnusableCellCount));

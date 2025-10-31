@@ -1,20 +1,20 @@
-import { SelectionStatus, SimpleCell } from "../model/game-board";
+import { GameCell, SelectionStatus, SimpleCell } from "../model/game-board";
 
 export class BoardStatAnalyzer {
   private static LOG_ENABLED = false;
 
   /**
-   * Pure evaluation of a grid for difficulty statistics.
+   * generate statistics about board 
    */
-  static evaluate(grid: SimpleCell[][]): BoardStats {
+  static evaluate(cells: SimpleCell[][]): BoardStats {
     const start = performance.now();
 
-    grid = structuredClone(grid);
+    let grid = this.convertBoardToSelectable(cells);
 
     // Pre-allocate row and column bases
-    const rowBases: LinearStat[] = Array.from({ length: grid.length }, (): LinearStat => new LinearStat());
-    const colBases: Array<LinearStat> = Array.from({ length: grid[0].length }, (): LinearStat => new LinearStat());
-    const groupsMap = new Map<number, LinearStat>();
+    const rowBases: SectionCells[] = Array.from({ length: grid.length }, (): SectionCells => new SectionCells());
+    const colBases: Array<SectionCells> = Array.from({ length: grid[0].length }, (): SectionCells => new SectionCells());
+    const groupsMap = new Map<number, SectionCells>();
 
     // Keep track of coordinates for each group
     const groupIndexMap = new Map<number, Array<{ r: number; c: number }>>();
@@ -25,55 +25,40 @@ export class BoardStatAnalyzer {
 
         let groupInfo = groupsMap.get(cell.groupNumber);
         if (!groupInfo) {
-          groupInfo = new LinearStat();
+          groupInfo = new SectionCells();
           groupsMap.set(cell.groupNumber, groupInfo);
         }
-        const groupIndex = groupInfo.values.length;
-        groupInfo.values.push(cell.value);
+        groupInfo.cells.push(cell);
 
         // Track coordinates for the group
         (groupIndexMap.get(cell.groupNumber) ?? (groupIndexMap.set(cell.groupNumber, []), groupIndexMap.get(cell.groupNumber)!))
           .push({ r, c });
 
-        rowBases[r].values[c] = cell.value;
-        colBases[c].values[r] = cell.value;
-        if (cell.required) {
-          rowBases[r].requiredIndices.push(c);
-          rowBases[r].goalSum += cell.value;
-
-          colBases[c].requiredIndices.push(r);
-          colBases[c].goalSum += cell.value;
-
-          groupInfo.requiredIndices.push(groupIndex);
-          groupInfo.goalSum += cell.value;
-        }
+        rowBases[r].cells[c] = cell;
+        colBases[c].cells[r] = cell;
       }
     }
 
 
-    const rowsReport: SectionStats[] = rowBases.map((stat, i) => {
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
-      return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
+    const rowsReport: SectionStats[] = rowBases.map((stat) => {
+      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat);
+      return BoardStatAnalyzer.GenerateSectionStats(stat, possibleCorrect)
     });
 
-    const colsReport: SectionStats[] = colBases.map((stat, i) => {
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
-      return BoardStatAnalyzer.GenerateSectionStats(stat, i, possibleCorrect)
+    const colsReport: SectionStats[] = colBases.map((stat) => {
+      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat);
+      return BoardStatAnalyzer.GenerateSectionStats(stat, possibleCorrect)
     });
 
-    const groupsSorted = Array.from(groupsMap.keys()).sort((a, b) => a - b);
-    const groupsReport: SectionStats[] = groupsSorted.map(groupNumber => {
-      const stat = groupsMap.get(groupNumber)!;
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat.values, stat.goalSum);
-      return BoardStatAnalyzer.GenerateSectionStats(stat, groupNumber, possibleCorrect)
-    });
+    const groupsReport: SectionStats[] = Array.from(groupsMap.values()).map(stat => {
+      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat);
+      return BoardStatAnalyzer.GenerateSectionStats(stat, possibleCorrect)
+    })
 
     // Run iterative deduction based on sums to select/clear guaranteed cells
     const { iterations: deductionIterations, unresolved: unresolvedCellCount, unresolvedCountsPerIteration } = BoardStatAnalyzer.iterativeDeduction(
-      grid,
       rowBases,
       colBases,
-      groupsSorted,
       groupsMap,
       groupIndexMap,
     );
@@ -84,9 +69,9 @@ export class BoardStatAnalyzer {
       columns: colsReport,
       groups: groupsReport,
       totals: {
-        rowsEvaluated: grid.length,
-        columnsEvaluated: grid[0].length,
-        groupsEvaluated: groupsSorted.length,
+        rowsEvaluated: rowsReport.length,
+        columnsEvaluated: colsReport.length,
+        groupsEvaluated: groupsReport.length,
         deductionIterations,
         unresolvedCellCountAfterDeduction: unresolvedCellCount,
         unresolvedCountsPerIteration,
@@ -100,24 +85,41 @@ export class BoardStatAnalyzer {
   }
 
 
-  private static GenerateSectionStats(stat: LinearStat, i: number, possibleCorrect: PossiblyCorrectSolutions): SectionStats {
+  private static convertBoardToSelectable(cells: SimpleCell[][]): GameCell[][] {
+    return cells.map(r => r.map(c => {
+      let casted: GameCell = {
+        ...c,
+        status: SelectionStatus.NONE,
+      }
+
+      return casted;
+    }))
+  }
+
+
+  private static GenerateSectionStats(stat: SectionCells, possibleCorrect: PossiblyCorrectSolutions): SectionStats {
+    const currentGoal = stat.currentGoal();
+    const unselectedCells = stat.cells.filter(x => x.status === SelectionStatus.NONE);
+    const unselectedCellSum = unselectedCells.reduce((sum, x) => sum + x.value, 0);
+
     return {
-      index: i,
-      goalSum: stat.goalSum,
-      cellValues: stat.values.slice(),
-      requiredIndices: stat.requiredIndices.slice(),
+      // index: i,
+      goalSum: currentGoal,
+      cellCountGreaterThanCurrentGoal: unselectedCells.filter(x => x.value > currentGoal).length,
       firstIterationFalsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
       firstIterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
       firstIterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
-      firstIterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / stat.goalSum,
-      firstIterationGuaranteedUnusableCellCountVsGoalSum: possibleCorrect.neverUsedCount / stat.goalSum,
-      goalVsTotal: stat.goalSum / stat.values.reduce((total, num) => total + num, 0),
+      firstIterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / currentGoal,
+      firstIterationGuaranteedUnusableCellCountVsGoalSum: possibleCorrect.neverUsedCount / currentGoal,
+      goalVsTotal: currentGoal / unselectedCellSum,
     };
   }
 
 
-  private static countSubsets(values: number[], target: number): PossiblyCorrectSolutions {
-    const n = values.length;
+  private static countSubsets(section: SectionCells): PossiblyCorrectSolutions {
+    const unselectedCells = section.cells.filter(x => x.status === SelectionStatus.NONE)
+    const target = section.currentGoal();
+    const n = unselectedCells.length;
     const total = 1 << n; // includes empty subset
     let possiblyCorrectCombinations = 0;
     let andMask = (1 << n) - 1; // start with all bits set within n
@@ -125,7 +127,7 @@ export class BoardStatAnalyzer {
     for (let mask = 0; mask < total; mask++) {
       let sum = 0;
       for (let i = 0; i < n; i++) {
-        if (mask & (1 << i)) sum += values[i];
+        if (mask & (1 << i)) sum += unselectedCells[i].value;
       }
       if (sum === target) {
         possiblyCorrectCombinations++;
@@ -139,12 +141,14 @@ export class BoardStatAnalyzer {
     return { possiblyCorrectCombinations, alwaysRequiredCount, neverUsedCount };
   }
 
+  
   private static popCount(x: number): number {
     x = x >>> 0;
     x = x - ((x >>> 1) & 0x55555555);
     x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
     return (((x + (x >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
   }
+
 
   // Enumerate subsets under existing fixed selections and cleared cells to deduce guarantees
   private static deduceForSection(values: number[], statuses: SelectionStatus[], requiredSum: number): { selectIdxs: number[]; clearIdxs: number[] } {
@@ -195,17 +199,16 @@ export class BoardStatAnalyzer {
     return { selectIdxs, clearIdxs };
   }
 
+  
   private static iterativeDeduction(
-    grid: SimpleCell[][],
-    rowBases: LinearStat[],
-    colBases: LinearStat[],
-    groupsSorted: number[],
-    groupsMap: Map<number, LinearStat>,
+    rowBases: SectionCells[],
+    colBases: SectionCells[],
+    groupsMap: Map<number, SectionCells>,
     groupIndexMap: Map<number, Array<{ r: number; c: number }>>,
   ): DeductionStats {
     // Maintain a local status map; also reflect to grid cells if they expose a status field
-    const rows = grid.length;
-    const cols = grid[0].length;
+    const rows = rowBases.length;
+    const cols = colBases.length;
     const statusMap: SelectionStatus[][] = Array.from({ length: rows }, () => new Array<SelectionStatus>(cols).fill(SelectionStatus.NONE));
 
     const unresolvedCountsPerIteration: number[] = [];
@@ -216,7 +219,7 @@ export class BoardStatAnalyzer {
       // Rows
       for (let r = 0; r < rows; r++) {
         const sectionStatuses = statusMap[r].slice();
-        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(rowBases[r].values, sectionStatuses, rowBases[r].goalSum);
+        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(rowBases[r].cells.map(x => x.value), sectionStatuses, rowBases[r].currentGoal());
         for (const c of selectIdxs) if (statusMap[r][c] !== SelectionStatus.SELECTED) { statusMap[r][c] = SelectionStatus.SELECTED; changed = true; }
         for (const c of clearIdxs) if (statusMap[r][c] !== SelectionStatus.CLEARED) { statusMap[r][c] = SelectionStatus.CLEARED; changed = true; }
       }
@@ -225,17 +228,16 @@ export class BoardStatAnalyzer {
       for (let c = 0; c < cols; c++) {
         const colStatuses: SelectionStatus[] = new Array(rows);
         for (let r = 0; r < rows; r++) colStatuses[r] = statusMap[r][c];
-        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(colBases[c].values, colStatuses, colBases[c].goalSum);
+        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(colBases[c].cells.map(x => x.value), colStatuses, colBases[c].currentGoal());
         for (const r of selectIdxs) if (statusMap[r][c] !== SelectionStatus.SELECTED) { statusMap[r][c] = SelectionStatus.SELECTED; changed = true; }
         for (const r of clearIdxs) if (statusMap[r][c] !== SelectionStatus.CLEARED) { statusMap[r][c] = SelectionStatus.CLEARED; changed = true; }
       }
 
       // Groups
-      for (const g of groupsSorted) {
+      groupsMap.forEach((stat, g) => {
         const coords = groupIndexMap.get(g)!;
-        const stat = groupsMap.get(g)!;
         const gStatuses = coords.map(({ r, c }) => statusMap[r][c]);
-        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(stat.values, gStatuses, stat.goalSum);
+        const { selectIdxs, clearIdxs } = BoardStatAnalyzer.deduceForSection(stat.cells.map(x => x.value), gStatuses, stat.currentGoal());
         for (const localIdx of selectIdxs) {
           const { r, c } = coords[localIdx];
           if (statusMap[r][c] !== SelectionStatus.SELECTED) { statusMap[r][c] = SelectionStatus.SELECTED; changed = true; }
@@ -244,7 +246,7 @@ export class BoardStatAnalyzer {
           const { r, c } = coords[localIdx];
           if (statusMap[r][c] !== SelectionStatus.CLEARED) { statusMap[r][c] = SelectionStatus.CLEARED; changed = true; }
         }
-      }
+      })
 
       let unresolved = 0;
       for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) if (statusMap[r][c] === SelectionStatus.NONE) unresolved++;
@@ -265,10 +267,23 @@ export class BoardStatAnalyzer {
 }
 
 
-class LinearStat {
-  values: number[] = [];
-  requiredIndices: number[] = [];
-  goalSum = 0;
+class SectionCells {
+  cells: GameCell[] = [];
+
+  /** section target minus any selected cell values */
+  currentGoal(): number {
+    let target = 0;
+    let selected = 0;
+    this.cells.forEach(c => {
+      if (c.required)
+        target += c.value;
+
+      if (c.status === SelectionStatus.SELECTED)
+        selected += c.value;
+    })
+
+    return target - selected;
+  }
 }
 
 interface PossiblyCorrectSolutions {
@@ -293,10 +308,9 @@ export interface BoardStats {
 }
 
 export interface SectionStats {
-  index: number;
   goalSum: number;
-  cellValues: number[];
-  requiredIndices: number[];
+  cellCountGreaterThanCurrentGoal: number;
+  // TODO: rename these
   firstIterationFalsePositiveSolutionCount: number;
   firstIterationGuaranteedRequiredCellCount: number;
   firstIterationGuaranteedUnusableCellCount: number;
