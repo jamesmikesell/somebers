@@ -46,7 +46,7 @@ export class DifficultyPredictorService {
     const difficultyAnalysis = BoardStatAnalyzer.evaluate(effectivePlayArea);
 
     const unresolvedCells = difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
-    const resolvableCells = Math.pow(difficultyAnalysis.totals.rowsEvaluated, 2) - unresolvedCells;
+    const resolvableCells = Math.pow(difficultyAnalysis.totals.boardSize, 2) - unresolvedCells;
 
     const gamePlayStats: GamePlayStats = {
       timeSpent: 0,

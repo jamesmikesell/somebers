@@ -138,19 +138,17 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     return { mean, min, max, std, sum };
   };
 
-  const allSectionStats = [...stats.rows, ...stats.columns, ...stats.groups];
+  const cellCountLargerThanTargetAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.cellCountGreaterThanCurrentGoal));
+  const firstIterationFalsePositiveSolutionCountAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.iterationFalsePositiveSolutionCount));
+  const firstIterationGuaranteedRequiredCellCountAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.iterationGuaranteedRequiredCellCount));
+  const firstIterationGuaranteedUnusableCellCountAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.iterationGuaranteedUnusableCellCount));
+  const firstIterationRequiredCellCountVsGoalAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.iterationGuaranteedRequiredCellCountVsGoalSum));
+  const firstIterationUnusableCellCountVsGoalAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.iterationGuaranteedUnusableCellCountVsGoalSum));
+  const firstIterationActionableCellAllCountAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.iterationGuaranteedRequiredCellCount + s.iterationGuaranteedUnusableCellCount));
+  const goalSumAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.goalSum));
+  const gaolVsTotalAllAgg = agg(stats.totals.iterationSectionStats[0].map(s => s.goalVsTotal));
 
-  const cellCountLargerThanTargetAllAgg = agg(allSectionStats.map(s => s.cellCountGreaterThanCurrentGoal));
-  const firstIterationFalsePositiveSolutionCountAllAgg = agg(allSectionStats.map(s => s.firstIterationFalsePositiveSolutionCount));
-  const firstIterationGuaranteedRequiredCellCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCount));
-  const firstIterationGuaranteedUnusableCellCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedUnusableCellCount));
-  const firstIterationRequiredCellCountVsGoalAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCountVsGoalSum));
-  const firstIterationUnusableCellCountVsGoalAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedUnusableCellCountVsGoalSum));
-  const firstIterationActionableCellAllCountAllAgg = agg(allSectionStats.map(s => s.firstIterationGuaranteedRequiredCellCount + s.firstIterationGuaranteedUnusableCellCount));
-  const goalSumAllAgg = agg(allSectionStats.map(s => s.goalSum));
-  const gaolVsTotalAllAgg = agg(allSectionStats.map(s => s.goalVsTotal));
-
-  const boardSize = stats.totals.rowsEvaluated
+  const boardSize = stats.totals.boardSize
   const cellCount = boardSize * boardSize;
   // const maxCellCount = 9 * 9;
   // const minCellCount = 5 * 5;

@@ -31,25 +31,10 @@ export class BoardStatAnalyzer {
       }
     }
 
-
-    const rowsReport: SectionStats[] = rowBases.map((stat) => {
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat);
-      return BoardStatAnalyzer.GenerateSectionStats(stat, possibleCorrect)
-    });
-
-    const colsReport: SectionStats[] = colBases.map((stat) => {
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat);
-      return BoardStatAnalyzer.GenerateSectionStats(stat, possibleCorrect)
-    });
-
     const groupsBases = Array.from(groupsMap.values());
-    const groupsReport: SectionStats[] = groupsBases.map(stat => {
-      const possibleCorrect = BoardStatAnalyzer.countSubsets(stat);
-      return BoardStatAnalyzer.GenerateSectionStats(stat, possibleCorrect)
-    })
 
     // Run iterative deduction based on sums to select/clear guaranteed cells
-    const { iterations: deductionIterations, unresolved: unresolvedCellCount, unresolvedCountsPerIteration } = BoardStatAnalyzer.iterativeDeduction(
+    const deductionResults = BoardStatAnalyzer.iterativeDeduction(
       rowBases,
       colBases,
       groupsBases,
@@ -57,16 +42,12 @@ export class BoardStatAnalyzer {
 
 
     const stats: BoardStats = {
-      rows: rowsReport,
-      columns: colsReport,
-      groups: groupsReport,
       totals: {
-        rowsEvaluated: rowsReport.length,
-        columnsEvaluated: colsReport.length,
-        groupsEvaluated: groupsReport.length,
-        deductionIterations,
-        unresolvedCellCountAfterDeduction: unresolvedCellCount,
-        unresolvedCountsPerIteration,
+        boardSize: grid.length,
+        deductionIterations: deductionResults.iterations,
+        unresolvedCellCountAfterDeduction: deductionResults.unresolved,
+        unresolvedCountsPerIteration: deductionResults.unresolvedCountsPerIteration,
+        iterationSectionStats: deductionResults.iterationSectionStats,
       },
     };
 
@@ -95,20 +76,19 @@ export class BoardStatAnalyzer {
     const unselectedCellSum = unselectedCells.reduce((sum, x) => sum + x.value, 0);
 
     return {
-      // index: i,
       goalSum: currentGoal,
       cellCountGreaterThanCurrentGoal: unselectedCells.filter(x => x.value > currentGoal).length,
-      firstIterationFalsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
-      firstIterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
-      firstIterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
-      firstIterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / currentGoal,
-      firstIterationGuaranteedUnusableCellCountVsGoalSum: possibleCorrect.neverUsedCount / currentGoal,
+      iterationFalsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
+      iterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
+      iterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
+      iterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / currentGoal,
+      iterationGuaranteedUnusableCellCountVsGoalSum: possibleCorrect.neverUsedCount / currentGoal,
       goalVsTotal: currentGoal / unselectedCellSum,
     };
   }
 
 
-  private static countSubsets(section: SectionCells): PossiblyCorrectSolutions {
+  private static countSubsets(section: SectionCells): SectionStats {
     const unselectedCells = section.cells.filter(x => x.status === SelectionStatus.NONE)
     const target = section.currentGoal();
     const n = unselectedCells.length;
@@ -129,8 +109,9 @@ export class BoardStatAnalyzer {
     }
     const alwaysRequiredCount = BoardStatAnalyzer.popCount(andMask & ((1 << n) - 1));
     const neverUsedCount = n - BoardStatAnalyzer.popCount(orMask & ((1 << n) - 1));
-    if (possiblyCorrectCombinations === 0) return { possiblyCorrectCombinations: possiblyCorrectCombinations, alwaysRequiredCount: 0, neverUsedCount: 0 };
-    return { possiblyCorrectCombinations, alwaysRequiredCount, neverUsedCount };
+    const solutions: PossiblyCorrectSolutions = { possiblyCorrectCombinations, alwaysRequiredCount, neverUsedCount };
+
+    return BoardStatAnalyzer.GenerateSectionStats(section, solutions)
   }
 
 
@@ -201,9 +182,15 @@ export class BoardStatAnalyzer {
     groupsMap: SectionCells[],
   ): DeductionStats {
     const unresolvedCountsPerIteration: number[] = [];
+    const iterationSectionStats: SectionStats[][] = [];
     let iterations = 0;
     while (true) {
       let changed = false;
+
+      const rowReport: SectionStats[] = rowBases.map((stat) => BoardStatAnalyzer.countSubsets(stat));
+      const colReport: SectionStats[] = colBases.map((stat) => BoardStatAnalyzer.countSubsets(stat));
+      const groupReport: SectionStats[] = groupsMap.map((stat) => BoardStatAnalyzer.countSubsets(stat));
+      iterationSectionStats.push([...rowReport, ...colReport, ...groupReport]);
 
       for (const row of rowBases) {
         if (BoardStatAnalyzer.deduceForSection(row))
@@ -228,6 +215,7 @@ export class BoardStatAnalyzer {
           iterations,
           unresolved,
           unresolvedCountsPerIteration,
+          iterationSectionStats,
         };
       }
       iterations++;
@@ -274,34 +262,30 @@ interface PossiblyCorrectSolutions {
 
 
 export interface BoardStats {
-  rows: SectionStats[];
-  columns: SectionStats[];
-  groups: SectionStats[];
   totals: {
-    rowsEvaluated: number;
-    columnsEvaluated: number;
-    groupsEvaluated: number;
+    boardSize: number;
     deductionIterations: number;
     unresolvedCellCountAfterDeduction: number;
-    unresolvedCountsPerIteration: number[]
+    unresolvedCountsPerIteration: number[];
+    iterationSectionStats: SectionStats[][];
   };
 }
 
 export interface SectionStats {
   goalSum: number;
   cellCountGreaterThanCurrentGoal: number;
-  // TODO: rename these
-  firstIterationFalsePositiveSolutionCount: number;
-  firstIterationGuaranteedRequiredCellCount: number;
-  firstIterationGuaranteedUnusableCellCount: number;
-  firstIterationGuaranteedRequiredCellCountVsGoalSum: number;
-  firstIterationGuaranteedUnusableCellCountVsGoalSum: number;
+  iterationFalsePositiveSolutionCount: number;
+  iterationGuaranteedRequiredCellCount: number;
+  iterationGuaranteedUnusableCellCount: number;
+  iterationGuaranteedRequiredCellCountVsGoalSum: number;
+  iterationGuaranteedUnusableCellCountVsGoalSum: number;
   goalVsTotal: number;
 }
 
 
 interface DeductionStats {
   iterations: number;
-  unresolved: number
-  unresolvedCountsPerIteration: number[]
+  unresolved: number;
+  unresolvedCountsPerIteration: number[];
+  iterationSectionStats: SectionStats[][];
 }
