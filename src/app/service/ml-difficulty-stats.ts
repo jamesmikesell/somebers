@@ -9,38 +9,34 @@ import { RawGenericFeatureSet } from "./ml-core";
 export const FEATURE_SPEC: FeatureSpec = {
   keys: [
 
-    "percentUnresolvedCellsAfterDeductionI1",
-      "percentUnresolvedCellsAfterDeductionI2",
-      "percentUnresolvedCellsAfterDeductionI3",
-      "percentUnresolvedCellsAfterDeductionI4",
-      "percentUnresolvedCellsAfterDeductionI5",
-      "percentUnresolvedCellsAfterDeductionI6",
-      "iteration_4_GuaranteedUnusableCellCountAllStd",
-      "iteration_0_GuaranteedUnusableCellCountAllMean",
-      "gameDateAsPercent",
-      "boardSize",
-      "iteration_2_FalsePositiveSolutionCountAllStd",
-      "iteration_1_GuaranteedRequiredCellCountMax",
-      "iteration_0_goalVsTotalMin",
-      "iteration_0_UnusableCellCountVsGoalAllMax",
-      "iteration_1_GuaranteedRequiredCellCountStd",
-      "iteration_2_GuaranteedUnusableCellCountAllSum",
-      "iteration_2_FalsePositiveSolutionCountAllMax",
-      "iteration_0_ActionableCellAllCountStd",
-      "iteration_0_goalVsTotalSum",
-      "iteration_4_FalsePositiveSolutionCountAllStd",
-      "iteration_1_cellCountLargerThanTargetAllSum",
-      "iteration_0_ActionableCellAllCountMax",
-      "iteration_0_goalVsTotalAllMax",
-      "iteration_0_cellCountLargerThanTargetAllStd",
-      "iteration_0_goalVsTotalAllMean",
-      "iteration_0_FalsePositiveSolutionCountAllMean",
-      "iteration_0_cellCountLargerThanTargetAllMean",
-      "iteration_0_UnusableCellCountVsGoalAllMin",
-      "iteration_0_GuaranteedRequiredCellCountSum",
-      "iteration_0_ActionableCellAllCountMean",
-      "iteration_2_cellCountLargerThanTargetAllMean",
-      "iteration_1_goalVsTotalStd"
+    "percentUnresolvedCellsAfterDeductionI2",
+    "percentUnresolvedCellsAfterDeductionI3",
+    "percentUnresolvedCellsAfterDeductionI5",
+    "percentUnresolvedCellsAfterDeductionI6",
+    "iteration_4_GuaranteedUnusableCellCountAllStd",
+    "iteration_0_GuaranteedUnusableCellCountAllMean",
+    "gameDateAsPercent",
+    "boardSize",
+    "iteration_2_FalsePositiveSolutionCountAllStd",
+    "iteration_1_GuaranteedRequiredCellCountMax",
+    "iteration_0_goalVsTotalMin",
+    "iteration_0_UnusableCellCountVsGoalAllMax",
+    "iteration_1_GuaranteedRequiredCellCountStd",
+    "iteration_2_GuaranteedUnusableCellCountAllSum",
+    "iteration_2_FalsePositiveSolutionCountAllMax",
+    "iteration_0_ActionableCellAllCountStd",
+    "iteration_0_goalVsTotalSum",
+    "iteration_4_FalsePositiveSolutionCountAllStd",
+    "iteration_1_cellCountLargerThanTargetAllSum",
+    "iteration_0_ActionableCellAllCountMax",
+    "iteration_0_goalVsTotalAllMax",
+    "iteration_0_UnusableCellCountVsGoalAllMin",
+    "iteration_0_GuaranteedRequiredCellCountSum",
+    "iteration_0_goalVsTotalMean",
+    "iteration_1_FalsePositiveSolutionCountAllMax",
+    "iteration_4_FalsePositiveSolutionCountAllMax",
+    "iteration_1_FalsePositiveSolutionCountAllStd",
+    "iteration_0_GuaranteedRequiredCellCountStd"
 
 
     // 'boardSize',
@@ -207,6 +203,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_FalsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[4]).std,
     iteration_4_FalsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[4]).sum / (Math.pow(2, boardSize) * 3),
 
+    iteration_5_FalsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).mean,
+    iteration_5_FalsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).min / Math.pow(2, boardSize),
+    iteration_5_FalsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).max / Math.pow(2, boardSize),
+    iteration_5_FalsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).std,
+    iteration_5_FalsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).sum / (Math.pow(2, boardSize) * 3),
+
     iteration_0_GuaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).mean / boardSize,
     iteration_0_GuaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).min / boardSize,
     iteration_0_GuaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).max / boardSize,
@@ -236,6 +238,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_GuaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).max / boardSize,
     iteration_4_GuaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).std / boardSize,
     iteration_4_GuaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).sum / boardSize / 3,
+
+    iteration_5_GuaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).mean / boardSize,
+    iteration_5_GuaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).min / boardSize,
+    iteration_5_GuaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).max / boardSize,
+    iteration_5_GuaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).std / boardSize,
+    iteration_5_GuaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).sum / boardSize / 3,
 
     iteration_0_GuaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[0]).mean / boardSize,
     iteration_0_GuaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[0]).min / boardSize,
@@ -267,6 +275,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_GuaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[4]).std / boardSize,
     iteration_4_GuaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[4]).sum / boardSize / 3,
 
+    iteration_5_GuaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).mean / boardSize,
+    iteration_5_GuaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).min / boardSize,
+    iteration_5_GuaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).max / boardSize,
+    iteration_5_GuaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).std / boardSize,
+    iteration_5_GuaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).sum / boardSize / 3,
+
     iteration_0_ActionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).mean / boardSize,
     iteration_0_ActionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).min / boardSize,
     iteration_0_ActionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).max / boardSize,
@@ -296,6 +310,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_ActionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).max / boardSize,
     iteration_4_ActionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).std / boardSize,
     iteration_4_ActionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).sum / boardSize / 3,
+
+    iteration_5_ActionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).mean / boardSize,
+    iteration_5_ActionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).min / boardSize,
+    iteration_5_ActionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).max / boardSize,
+    iteration_5_ActionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).std / boardSize,
+    iteration_5_ActionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).sum / boardSize / 3,
 
     // TODO: compare to board size
     iteration_0_RequiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[0]).mean,
@@ -328,6 +348,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_RequiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[4]).std,
     iteration_4_RequiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[4]).sum,
 
+    iteration_5_RequiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).mean,
+    iteration_5_RequiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).min,
+    iteration_5_RequiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).max,
+    iteration_5_RequiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).std,
+    iteration_5_RequiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).sum,
+
     iteration_0_UnusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).mean,
     iteration_0_UnusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).min,
     iteration_0_UnusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).max,
@@ -357,6 +383,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_UnusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).max,
     iteration_4_UnusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).std,
     iteration_4_UnusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).sum,
+
+    iteration_5_UnusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).mean,
+    iteration_5_UnusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).min,
+    iteration_5_UnusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).max,
+    iteration_5_UnusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).std,
+    iteration_5_UnusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).sum,
 
     iteration_0_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[0]).mean / boardSize,
     iteration_0_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[0]).min / boardSize,
@@ -388,6 +420,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[4]).std / boardSize,
     iteration_4_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[4]).sum / boardSize / 3,
 
+    iteration_5_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[5]).mean / boardSize,
+    iteration_5_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[5]).min / boardSize,
+    iteration_5_goalVsTotalMax: nullSafeBasicStat(goalVsTotalAgg[5]).max / boardSize,
+    iteration_5_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[5]).std / boardSize,
+    iteration_5_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[5]).sum / boardSize / 3,
+
     iteration_0_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).mean / boardSize,
     iteration_0_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).min / boardSize,
     iteration_0_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).max / boardSize,
@@ -418,6 +456,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[4]).std / boardSize,
     iteration_4_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[4]).sum / boardSize / 3,
 
+    iteration_5_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).mean / boardSize,
+    iteration_5_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).min / boardSize,
+    iteration_5_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).max / boardSize,
+    iteration_5_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).std / boardSize,
+    iteration_5_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).sum / boardSize / 3,
+
     iteration_0_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[0]).mean,
     iteration_0_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[0]).min,
     iteration_0_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[0]).max,
@@ -447,6 +491,12 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     iteration_4_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[4]).max,
     iteration_4_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[4]).std,
     iteration_4_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[4]).sum,
+
+    iteration_5_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[5]).mean,
+    iteration_5_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[5]).min,
+    iteration_5_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[5]).max,
+    iteration_5_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[5]).std,
+    iteration_5_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[5]).sum,
 
     deductionIterations: stats.totals.deductionIterations,
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
@@ -533,6 +583,12 @@ export interface GameStatFeatures {
   iteration_4_FalsePositiveSolutionCountAllStd: number;
   iteration_4_FalsePositiveSolutionCountAllSum: number;
   // 
+  iteration_5_FalsePositiveSolutionCountAllMean: number;
+  iteration_5_FalsePositiveSolutionCountAllMin: number;
+  iteration_5_FalsePositiveSolutionCountAllMax: number;
+  iteration_5_FalsePositiveSolutionCountAllStd: number;
+  iteration_5_FalsePositiveSolutionCountAllSum: number;
+  // 
   iteration_0_GuaranteedRequiredCellCountMean: number;
   iteration_0_GuaranteedRequiredCellCountMin: number;
   iteration_0_GuaranteedRequiredCellCountMax: number;
@@ -562,6 +618,12 @@ export interface GameStatFeatures {
   iteration_4_GuaranteedRequiredCellCountMax: number;
   iteration_4_GuaranteedRequiredCellCountStd: number;
   iteration_4_GuaranteedRequiredCellCountSum: number;
+  //
+  iteration_5_GuaranteedRequiredCellCountMean: number;
+  iteration_5_GuaranteedRequiredCellCountMin: number;
+  iteration_5_GuaranteedRequiredCellCountMax: number;
+  iteration_5_GuaranteedRequiredCellCountStd: number;
+  iteration_5_GuaranteedRequiredCellCountSum: number;
   //
   iteration_0_GuaranteedUnusableCellCountAllMean: number;
   iteration_0_GuaranteedUnusableCellCountAllMin: number;
@@ -593,6 +655,12 @@ export interface GameStatFeatures {
   iteration_4_GuaranteedUnusableCellCountAllStd: number;
   iteration_4_GuaranteedUnusableCellCountAllSum: number;
   //
+  iteration_5_GuaranteedUnusableCellCountAllMean: number;
+  iteration_5_GuaranteedUnusableCellCountAllMin: number;
+  iteration_5_GuaranteedUnusableCellCountAllMax: number;
+  iteration_5_GuaranteedUnusableCellCountAllStd: number;
+  iteration_5_GuaranteedUnusableCellCountAllSum: number;
+  //
   iteration_0_ActionableCellAllCountMean: number;
   iteration_0_ActionableCellAllCountMin: number;
   iteration_0_ActionableCellAllCountMax: number;
@@ -622,6 +690,12 @@ export interface GameStatFeatures {
   iteration_4_ActionableCellAllCountMax: number;
   iteration_4_ActionableCellAllCountStd: number;
   iteration_4_ActionableCellAllCountSum: number;
+  //
+  iteration_5_ActionableCellAllCountMean: number;
+  iteration_5_ActionableCellAllCountMin: number;
+  iteration_5_ActionableCellAllCountMax: number;
+  iteration_5_ActionableCellAllCountStd: number;
+  iteration_5_ActionableCellAllCountSum: number;
   //
   iteration_0_RequiredCellCountVsGoalAllMean: number;
   iteration_0_RequiredCellCountVsGoalAllMin: number;
@@ -653,6 +727,12 @@ export interface GameStatFeatures {
   iteration_4_RequiredCellCountVsGoalAllStd: number;
   iteration_4_RequiredCellCountVsGoalAllSum: number;
   //
+  iteration_5_RequiredCellCountVsGoalAllMean: number;
+  iteration_5_RequiredCellCountVsGoalAllMin: number;
+  iteration_5_RequiredCellCountVsGoalAllMax: number;
+  iteration_5_RequiredCellCountVsGoalAllStd: number;
+  iteration_5_RequiredCellCountVsGoalAllSum: number;
+  //
   iteration_0_UnusableCellCountVsGoalAllMean: number;
   iteration_0_UnusableCellCountVsGoalAllMin: number;
   iteration_0_UnusableCellCountVsGoalAllMax: number;
@@ -682,6 +762,12 @@ export interface GameStatFeatures {
   iteration_4_UnusableCellCountVsGoalAllMax: number;
   iteration_4_UnusableCellCountVsGoalAllStd: number;
   iteration_4_UnusableCellCountVsGoalAllSum: number;
+  //
+  iteration_5_UnusableCellCountVsGoalAllMean: number;
+  iteration_5_UnusableCellCountVsGoalAllMin: number;
+  iteration_5_UnusableCellCountVsGoalAllMax: number;
+  iteration_5_UnusableCellCountVsGoalAllStd: number;
+  iteration_5_UnusableCellCountVsGoalAllSum: number;
   //
   iteration_0_goalVsTotalMean: number;
   iteration_0_goalVsTotalMin: number;
@@ -713,6 +799,12 @@ export interface GameStatFeatures {
   iteration_4_goalVsTotalStd: number;
   iteration_4_goalVsTotalSum: number;
   //
+  iteration_5_goalVsTotalMean: number;
+  iteration_5_goalVsTotalMin: number;
+  iteration_5_goalVsTotalMax: number;
+  iteration_5_goalVsTotalStd: number;
+  iteration_5_goalVsTotalSum: number;
+  //
   iteration_0_cellCountLargerThanTargetAllMean: number;
   iteration_0_cellCountLargerThanTargetAllMin: number;
   iteration_0_cellCountLargerThanTargetAllMax: number;
@@ -743,6 +835,12 @@ export interface GameStatFeatures {
   iteration_4_cellCountLargerThanTargetAllStd: number;
   iteration_4_cellCountLargerThanTargetAllSum: number;
   //
+  iteration_5_cellCountLargerThanTargetAllMean: number;
+  iteration_5_cellCountLargerThanTargetAllMin: number;
+  iteration_5_cellCountLargerThanTargetAllMax: number;
+  iteration_5_cellCountLargerThanTargetAllStd: number;
+  iteration_5_cellCountLargerThanTargetAllSum: number;
+  //
   iteration_0_goalVsTotalAllMean: number;
   iteration_0_goalVsTotalAllMin: number;
   iteration_0_goalVsTotalAllMax: number;
@@ -772,6 +870,12 @@ export interface GameStatFeatures {
   iteration_4_goalVsTotalAllMax: number;
   iteration_4_goalVsTotalAllStd: number;
   iteration_4_goalVsTotalAllSum: number;
+  //
+  iteration_5_goalVsTotalAllMean: number;
+  iteration_5_goalVsTotalAllMin: number;
+  iteration_5_goalVsTotalAllMax: number;
+  iteration_5_goalVsTotalAllStd: number;
+  iteration_5_goalVsTotalAllSum: number;
   //
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;
