@@ -74,16 +74,19 @@ export class BoardStatAnalyzer {
     const currentGoal = stat.currentGoal();
     const unselectedCells = stat.cells.filter(x => x.status === SelectionStatus.NONE);
     const unselectedCellSum = unselectedCells.reduce((sum, x) => sum + x.value, 0);
+    const actionableCellsCount = possibleCorrect.alwaysRequiredCount + possibleCorrect.neverUsedCount;
 
     return {
       goalSum: currentGoal,
-      cellCountGreaterThanCurrentGoal: unselectedCells.filter(x => x.value > currentGoal).length,
-      iterationFalsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
-      iterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
-      iterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
-      iterationGuaranteedRequiredCellCountVsGoalSum: currentGoal ? (possibleCorrect.alwaysRequiredCount / currentGoal) : 0,
-      iterationGuaranteedUnusableCellCountVsGoalSum: currentGoal ? (possibleCorrect.neverUsedCount / currentGoal) : 0,
-      goalVsTotal: unselectedCellSum ? (currentGoal / unselectedCellSum) : 0,
+      cellCountGreaterThanGoal: unselectedCells.filter(x => x.value > currentGoal).length,
+      actionableCellsCount: actionableCellsCount,
+      unactionableCellsCount: unselectedCells.length - actionableCellsCount,
+      falsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
+      guaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
+      guaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
+      guaranteedRequiredCellCountVsGoal: currentGoal ? (possibleCorrect.alwaysRequiredCount / currentGoal) : 0,
+      guaranteedUnusableCellCountVsGoal: currentGoal ? (possibleCorrect.neverUsedCount / currentGoal) : 0,
+      goalVsUnselectedSum: unselectedCellSum ? (currentGoal / unselectedCellSum) : 0,
     };
   }
 
@@ -272,14 +275,18 @@ export interface BoardStats {
 }
 
 export interface SectionStats {
+  /** This is the difference between the section target and currently selected total */
   goalSum: number;
-  cellCountGreaterThanCurrentGoal: number;
-  iterationFalsePositiveSolutionCount: number;
-  iterationGuaranteedRequiredCellCount: number;
-  iterationGuaranteedUnusableCellCount: number;
-  iterationGuaranteedRequiredCellCountVsGoalSum: number;
-  iterationGuaranteedUnusableCellCountVsGoalSum: number;
-  goalVsTotal: number;
+  cellCountGreaterThanGoal: number;
+  falsePositiveSolutionCount: number;
+  actionableCellsCount: number;
+  unactionableCellsCount: number;
+  guaranteedRequiredCellCount: number;
+  guaranteedUnusableCellCount: number;
+  guaranteedRequiredCellCountVsGoal: number;
+  guaranteedUnusableCellCountVsGoal: number;
+  /** This is the goalSum (difference between the section target and currently selected total) divide by sum of unselected cells */
+  goalVsUnselectedSum: number;
 }
 
 

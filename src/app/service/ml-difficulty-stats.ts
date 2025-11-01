@@ -9,34 +9,47 @@ import { RawGenericFeatureSet } from "./ml-core";
 export const FEATURE_SPEC: FeatureSpec = {
   keys: [
 
-    "percentUnresolvedCellsAfterDeductionI2",
+    "boardSize",
+    "gameDateAsPercent",
+    "percentUnresolvedCellsAfterDeduction",
+    "percentUnresolvedCellsAfterDeductionI1",
     "percentUnresolvedCellsAfterDeductionI3",
+    "percentUnresolvedCellsAfterDeductionI4",
     "percentUnresolvedCellsAfterDeductionI5",
     "percentUnresolvedCellsAfterDeductionI6",
-    "iteration_4_guaranteedUnusableCellCountAllStd",
     "iteration_0_guaranteedUnusableCellCountAllMean",
-    "gameDateAsPercent",
-    "boardSize",
-    "iteration_2_falsePositiveSolutionCountAllStd",
-    "iteration_1_guaranteedRequiredCellCountMax",
     "iteration_0_goalVsTotalMin",
     "iteration_0_unusableCellCountVsGoalAllMax",
-    "iteration_1_guaranteedRequiredCellCountStd",
-    "iteration_2_guaranteedUnusableCellCountAllSum",
-    "iteration_2_falsePositiveSolutionCountAllMax",
     "iteration_0_actionableCellAllCountStd",
     "iteration_0_goalVsTotalSum",
     "iteration_4_falsePositiveSolutionCountAllStd",
     "iteration_1_cellCountLargerThanTargetAllSum",
-    "iteration_0_actionableCellAllCountMax",
-    "iteration_0_goalVsTotalAllMax",
-    "iteration_0_unusableCellCountVsGoalAllMin",
-    "iteration_0_guaranteedRequiredCellCountSum",
-    "iteration_0_goalVsTotalMean",
-    "iteration_1_falsePositiveSolutionCountAllMax",
+    "iteration_0_goalVsTotalStd",
+    "iteration_1_falsePositiveSolutionCountAllMin",
+    "iteration_1_goalVsTotalStd",
     "iteration_4_falsePositiveSolutionCountAllMax",
-    "iteration_1_falsePositiveSolutionCountAllStd",
-    "iteration_0_guaranteedRequiredCellCountStd"
+    "iteration_4_unusableCellCountVsGoalAllSum",
+    "iteration_1_guaranteedRequiredCellCountStd",
+    "iteration_2_goalVsTotalAllMax",
+    "iteration_1_cellCountLargerThanTargetAllMean",
+    "iteration_0_guaranteedRequiredCellCountMax",
+    "iteration_0_actionableCellAllCountMin",
+    "iteration_3_falsePositiveSolutionCountAllMean",
+    "iteration_1_goalVsTotalMax",
+    "iteration_1_unusableCellCountVsGoalAllMean",
+    "iteration_1_guaranteedRequiredCellCountMax",
+    "iteration_2_guaranteedUnusableCellCountAllMean",
+    "iteration_2_unusableCellCountVsGoalAllMean",
+    "iteration_0_guaranteedUnusableCellCountAllMax",
+    "iteration_1_goalVsTotalAllStd",
+    "iteration_1_guaranteedRequiredCellCountSum",
+    "iteration_0_guaranteedRequiredCellCountSum",
+    "iteration_0_goalVsTotalAllSum",
+    "iteration_1_guaranteedUnusableCellCountAllSum",
+    "iteration_2_falsePositiveSolutionCountAllMax",
+    "iteration_5_actionableCellAllCountMax",
+    "iteration_0_goalVsTotalMean",
+    "iteration_0_goalVsTotalAllMean",
 
 
     // 'boardSize',
@@ -106,8 +119,6 @@ export const FEATURE_SPEC: FeatureSpec = {
     // "percentUnresolvedCellsAfterDeductionI6",
     // //
     // 'gameDateAsPercent',
-    // //
-    // // 'breaksMinutes',
   ],
 };
 
@@ -152,16 +163,17 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     return { mean, min, max, std, sum };
   };
 
-  const cellCountLargerThanTargetAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.cellCountGreaterThanCurrentGoal)));
-  const falsePositiveSolutionCountAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.iterationFalsePositiveSolutionCount)));
-  const guaranteedRequiredCellCountAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.iterationGuaranteedRequiredCellCount)));
-  const guaranteedUnusableCellCountAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.iterationGuaranteedUnusableCellCount)));
-  const requiredCellCountVsGoalAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.iterationGuaranteedRequiredCellCountVsGoalSum)));
-  const unusableCellCountVsGoalAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.iterationGuaranteedUnusableCellCountVsGoalSum)));
-  const actionableCellAllCountAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.iterationGuaranteedRequiredCellCount + s.iterationGuaranteedUnusableCellCount)));
+  const cellCountLargerThanTarget = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.cellCountGreaterThanGoal)));
+  const falsePositiveSolutionCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.falsePositiveSolutionCount)));
+  const guaranteedRequiredCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedRequiredCellCount)));
+  const guaranteedUnusableCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedUnusableCellCount)));
+  const requiredCellCountVsGoal = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedRequiredCellCountVsGoal)));
+  const unusableCellCountVsGoal = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedUnusableCellCountVsGoal)));
+  const actionableCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.actionableCellsCount)));
+  const unactionableCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.unactionableCellsCount)));
 
-  const goalVsTotalAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.goalSum)));
-  const gaolVsTotalAllAgg = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.goalVsTotal)));
+  const goal = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.goalSum)));
+  const gaolVsUnselectedSum = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.goalVsUnselectedSum)));
 
   const boardSize = stats.totals.boardSize
   const cellCount = boardSize * boardSize;
@@ -173,330 +185,408 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
   let features: GameStatFeatures = {
     boardSize: boardSizeRatio,
 
-    iteration_0_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[0]).mean,
-    iteration_0_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[0]).min / Math.pow(2, boardSize),
-    iteration_0_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[0]).max / Math.pow(2, boardSize),
-    iteration_0_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[0]).std,
-    iteration_0_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[0]).sum / (Math.pow(2, boardSize) * 3),
+    iteration_0_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCount[0]).mean,
+    iteration_0_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCount[0]).min / Math.pow(2, boardSize),
+    iteration_0_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCount[0]).max / Math.pow(2, boardSize),
+    iteration_0_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCount[0]).std,
+    iteration_0_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCount[0]).sum / (Math.pow(2, boardSize) * 3),
 
-    iteration_1_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[1]).mean,
-    iteration_1_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[1]).min / Math.pow(2, boardSize),
-    iteration_1_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[1]).max / Math.pow(2, boardSize),
-    iteration_1_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[1]).std,
-    iteration_1_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[1]).sum / (Math.pow(2, boardSize) * 3),
+    iteration_1_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCount[1]).mean,
+    iteration_1_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCount[1]).min / Math.pow(2, boardSize),
+    iteration_1_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCount[1]).max / Math.pow(2, boardSize),
+    iteration_1_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCount[1]).std,
+    iteration_1_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCount[1]).sum / (Math.pow(2, boardSize) * 3),
 
-    iteration_2_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[2]).mean,
-    iteration_2_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[2]).min / Math.pow(2, boardSize),
-    iteration_2_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[2]).max / Math.pow(2, boardSize),
-    iteration_2_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[2]).std,
-    iteration_2_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[2]).sum / (Math.pow(2, boardSize) * 3),
+    iteration_2_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCount[2]).mean,
+    iteration_2_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCount[2]).min / Math.pow(2, boardSize),
+    iteration_2_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCount[2]).max / Math.pow(2, boardSize),
+    iteration_2_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCount[2]).std,
+    iteration_2_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCount[2]).sum / (Math.pow(2, boardSize) * 3),
 
-    iteration_3_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[3]).mean,
-    iteration_3_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[3]).min / Math.pow(2, boardSize),
-    iteration_3_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[3]).max / Math.pow(2, boardSize),
-    iteration_3_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[3]).std,
-    iteration_3_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[3]).sum / (Math.pow(2, boardSize) * 3),
+    iteration_3_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCount[3]).mean,
+    iteration_3_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCount[3]).min / Math.pow(2, boardSize),
+    iteration_3_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCount[3]).max / Math.pow(2, boardSize),
+    iteration_3_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCount[3]).std,
+    iteration_3_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCount[3]).sum / (Math.pow(2, boardSize) * 3),
 
-    iteration_4_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[4]).mean,
-    iteration_4_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[4]).min / Math.pow(2, boardSize),
-    iteration_4_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[4]).max / Math.pow(2, boardSize),
-    iteration_4_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[4]).std,
-    iteration_4_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[4]).sum / (Math.pow(2, boardSize) * 3),
+    iteration_4_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCount[4]).mean,
+    iteration_4_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCount[4]).min / Math.pow(2, boardSize),
+    iteration_4_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCount[4]).max / Math.pow(2, boardSize),
+    iteration_4_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCount[4]).std,
+    iteration_4_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCount[4]).sum / (Math.pow(2, boardSize) * 3),
 
-    iteration_5_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).mean,
-    iteration_5_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).min / Math.pow(2, boardSize),
-    iteration_5_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).max / Math.pow(2, boardSize),
-    iteration_5_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).std,
-    iteration_5_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCountAllAgg[5]).sum / (Math.pow(2, boardSize) * 3),
+    iteration_5_falsePositiveSolutionCountAllMean: nullSafeBasicStat(falsePositiveSolutionCount[5]).mean,
+    iteration_5_falsePositiveSolutionCountAllMin: nullSafeBasicStat(falsePositiveSolutionCount[5]).min / Math.pow(2, boardSize),
+    iteration_5_falsePositiveSolutionCountAllMax: nullSafeBasicStat(falsePositiveSolutionCount[5]).max / Math.pow(2, boardSize),
+    iteration_5_falsePositiveSolutionCountAllStd: nullSafeBasicStat(falsePositiveSolutionCount[5]).std,
+    iteration_5_falsePositiveSolutionCountAllSum: nullSafeBasicStat(falsePositiveSolutionCount[5]).sum / (Math.pow(2, boardSize) * 3),
 
-    iteration_0_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).mean / boardSize,
-    iteration_0_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).min / boardSize,
-    iteration_0_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).max / boardSize,
-    iteration_0_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).std / boardSize,
-    iteration_0_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[0]).sum / boardSize / 3,
 
-    iteration_1_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[1]).mean / boardSize,
-    iteration_1_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[1]).min / boardSize,
-    iteration_1_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[1]).max / boardSize,
-    iteration_1_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[1]).std / boardSize,
-    iteration_1_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[1]).sum / boardSize / 3,
 
-    iteration_2_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[2]).mean / boardSize,
-    iteration_2_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[2]).min / boardSize,
-    iteration_2_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[2]).max / boardSize,
-    iteration_2_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[2]).std / boardSize,
-    iteration_2_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[2]).sum / boardSize / 3,
 
-    iteration_3_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[3]).mean / boardSize,
-    iteration_3_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[3]).min / boardSize,
-    iteration_3_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[3]).max / boardSize,
-    iteration_3_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[3]).std / boardSize,
-    iteration_3_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[3]).sum / boardSize / 3,
+    iteration_0_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCount[0]).mean / boardSize,
+    iteration_0_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCount[0]).min / boardSize,
+    iteration_0_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCount[0]).max / boardSize,
+    iteration_0_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCount[0]).std / boardSize,
+    iteration_0_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCount[0]).sum / boardSize / 3,
 
-    iteration_4_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).mean / boardSize,
-    iteration_4_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).min / boardSize,
-    iteration_4_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).max / boardSize,
-    iteration_4_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).std / boardSize,
-    iteration_4_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[4]).sum / boardSize / 3,
+    iteration_1_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCount[1]).mean / boardSize,
+    iteration_1_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCount[1]).min / boardSize,
+    iteration_1_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCount[1]).max / boardSize,
+    iteration_1_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCount[1]).std / boardSize,
+    iteration_1_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCount[1]).sum / boardSize / 3,
 
-    iteration_5_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).mean / boardSize,
-    iteration_5_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).min / boardSize,
-    iteration_5_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).max / boardSize,
-    iteration_5_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).std / boardSize,
-    iteration_5_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCountAllAgg[5]).sum / boardSize / 3,
+    iteration_2_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCount[2]).mean / boardSize,
+    iteration_2_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCount[2]).min / boardSize,
+    iteration_2_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCount[2]).max / boardSize,
+    iteration_2_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCount[2]).std / boardSize,
+    iteration_2_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCount[2]).sum / boardSize / 3,
 
-    iteration_0_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[0]).mean / boardSize,
-    iteration_0_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[0]).min / boardSize,
-    iteration_0_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[0]).max / boardSize,
-    iteration_0_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[0]).std / boardSize,
-    iteration_0_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[0]).sum / boardSize / 3,
+    iteration_3_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCount[3]).mean / boardSize,
+    iteration_3_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCount[3]).min / boardSize,
+    iteration_3_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCount[3]).max / boardSize,
+    iteration_3_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCount[3]).std / boardSize,
+    iteration_3_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCount[3]).sum / boardSize / 3,
 
-    iteration_1_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[1]).mean / boardSize,
-    iteration_1_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[1]).min / boardSize,
-    iteration_1_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[1]).max / boardSize,
-    iteration_1_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[1]).std / boardSize,
-    iteration_1_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[1]).sum / boardSize / 3,
+    iteration_4_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCount[4]).mean / boardSize,
+    iteration_4_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCount[4]).min / boardSize,
+    iteration_4_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCount[4]).max / boardSize,
+    iteration_4_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCount[4]).std / boardSize,
+    iteration_4_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCount[4]).sum / boardSize / 3,
 
-    iteration_2_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[2]).mean / boardSize,
-    iteration_2_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[2]).min / boardSize,
-    iteration_2_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[2]).max / boardSize,
-    iteration_2_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[2]).std / boardSize,
-    iteration_2_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[2]).sum / boardSize / 3,
+    iteration_5_guaranteedRequiredCellCountMean: nullSafeBasicStat(guaranteedRequiredCellCount[5]).mean / boardSize,
+    iteration_5_guaranteedRequiredCellCountMin: nullSafeBasicStat(guaranteedRequiredCellCount[5]).min / boardSize,
+    iteration_5_guaranteedRequiredCellCountMax: nullSafeBasicStat(guaranteedRequiredCellCount[5]).max / boardSize,
+    iteration_5_guaranteedRequiredCellCountStd: nullSafeBasicStat(guaranteedRequiredCellCount[5]).std / boardSize,
+    iteration_5_guaranteedRequiredCellCountSum: nullSafeBasicStat(guaranteedRequiredCellCount[5]).sum / boardSize / 3,
 
-    iteration_3_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[3]).mean / boardSize,
-    iteration_3_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[3]).min / boardSize,
-    iteration_3_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[3]).max / boardSize,
-    iteration_3_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[3]).std / boardSize,
-    iteration_3_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[3]).sum / boardSize / 3,
 
-    iteration_4_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[4]).mean / boardSize,
-    iteration_4_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[4]).min / boardSize,
-    iteration_4_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[4]).max / boardSize,
-    iteration_4_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[4]).std / boardSize,
-    iteration_4_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[4]).sum / boardSize / 3,
 
-    iteration_5_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).mean / boardSize,
-    iteration_5_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).min / boardSize,
-    iteration_5_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).max / boardSize,
-    iteration_5_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).std / boardSize,
-    iteration_5_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCountAllAgg[5]).sum / boardSize / 3,
 
-    iteration_0_actionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).mean / boardSize,
-    iteration_0_actionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).min / boardSize,
-    iteration_0_actionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).max / boardSize,
-    iteration_0_actionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).std / boardSize,
-    iteration_0_actionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[0]).sum / boardSize / 3,
 
-    iteration_1_actionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[1]).mean / boardSize,
-    iteration_1_actionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[1]).min / boardSize,
-    iteration_1_actionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[1]).max / boardSize,
-    iteration_1_actionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[1]).std / boardSize,
-    iteration_1_actionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[1]).sum / boardSize / 3,
+    iteration_0_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCount[0]).mean / boardSize,
+    iteration_0_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCount[0]).min / boardSize,
+    iteration_0_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCount[0]).max / boardSize,
+    iteration_0_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCount[0]).std / boardSize,
+    iteration_0_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCount[0]).sum / boardSize / 3,
 
-    iteration_2_actionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[2]).mean / boardSize,
-    iteration_2_actionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[2]).min / boardSize,
-    iteration_2_actionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[2]).max / boardSize,
-    iteration_2_actionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[2]).std / boardSize,
-    iteration_2_actionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[2]).sum / boardSize / 3,
+    iteration_1_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCount[1]).mean / boardSize,
+    iteration_1_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCount[1]).min / boardSize,
+    iteration_1_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCount[1]).max / boardSize,
+    iteration_1_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCount[1]).std / boardSize,
+    iteration_1_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCount[1]).sum / boardSize / 3,
 
-    iteration_3_actionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[3]).mean / boardSize,
-    iteration_3_actionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[3]).min / boardSize,
-    iteration_3_actionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[3]).max / boardSize,
-    iteration_3_actionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[3]).std / boardSize,
-    iteration_3_actionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[3]).sum / boardSize / 3,
+    iteration_2_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCount[2]).mean / boardSize,
+    iteration_2_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCount[2]).min / boardSize,
+    iteration_2_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCount[2]).max / boardSize,
+    iteration_2_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCount[2]).std / boardSize,
+    iteration_2_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCount[2]).sum / boardSize / 3,
 
-    iteration_4_actionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).mean / boardSize,
-    iteration_4_actionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).min / boardSize,
-    iteration_4_actionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).max / boardSize,
-    iteration_4_actionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).std / boardSize,
-    iteration_4_actionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[4]).sum / boardSize / 3,
+    iteration_3_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCount[3]).mean / boardSize,
+    iteration_3_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCount[3]).min / boardSize,
+    iteration_3_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCount[3]).max / boardSize,
+    iteration_3_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCount[3]).std / boardSize,
+    iteration_3_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCount[3]).sum / boardSize / 3,
 
-    iteration_5_actionableCellAllCountMean: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).mean / boardSize,
-    iteration_5_actionableCellAllCountMin: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).min / boardSize,
-    iteration_5_actionableCellAllCountMax: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).max / boardSize,
-    iteration_5_actionableCellAllCountStd: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).std / boardSize,
-    iteration_5_actionableCellAllCountSum: nullSafeBasicStat(actionableCellAllCountAllAgg[5]).sum / boardSize / 3,
+    iteration_4_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCount[4]).mean / boardSize,
+    iteration_4_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCount[4]).min / boardSize,
+    iteration_4_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCount[4]).max / boardSize,
+    iteration_4_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCount[4]).std / boardSize,
+    iteration_4_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCount[4]).sum / boardSize / 3,
+
+    iteration_5_guaranteedUnusableCellCountAllMean: nullSafeBasicStat(guaranteedUnusableCellCount[5]).mean / boardSize,
+    iteration_5_guaranteedUnusableCellCountAllMin: nullSafeBasicStat(guaranteedUnusableCellCount[5]).min / boardSize,
+    iteration_5_guaranteedUnusableCellCountAllMax: nullSafeBasicStat(guaranteedUnusableCellCount[5]).max / boardSize,
+    iteration_5_guaranteedUnusableCellCountAllStd: nullSafeBasicStat(guaranteedUnusableCellCount[5]).std / boardSize,
+    iteration_5_guaranteedUnusableCellCountAllSum: nullSafeBasicStat(guaranteedUnusableCellCount[5]).sum / boardSize / 3,
+
+
+
+
+
+
+    iteration_0_actionableCellAllCountMean: nullSafeBasicStat(actionableCellCount[0]).mean / boardSize,
+    iteration_0_actionableCellAllCountMin: nullSafeBasicStat(actionableCellCount[0]).min / boardSize,
+    iteration_0_actionableCellAllCountMax: nullSafeBasicStat(actionableCellCount[0]).max / boardSize,
+    iteration_0_actionableCellAllCountStd: nullSafeBasicStat(actionableCellCount[0]).std / boardSize,
+    iteration_0_actionableCellAllCountSum: nullSafeBasicStat(actionableCellCount[0]).sum / boardSize / 3,
+
+    iteration_1_actionableCellAllCountMean: nullSafeBasicStat(actionableCellCount[1]).mean / boardSize,
+    iteration_1_actionableCellAllCountMin: nullSafeBasicStat(actionableCellCount[1]).min / boardSize,
+    iteration_1_actionableCellAllCountMax: nullSafeBasicStat(actionableCellCount[1]).max / boardSize,
+    iteration_1_actionableCellAllCountStd: nullSafeBasicStat(actionableCellCount[1]).std / boardSize,
+    iteration_1_actionableCellAllCountSum: nullSafeBasicStat(actionableCellCount[1]).sum / boardSize / 3,
+
+    iteration_2_actionableCellAllCountMean: nullSafeBasicStat(actionableCellCount[2]).mean / boardSize,
+    iteration_2_actionableCellAllCountMin: nullSafeBasicStat(actionableCellCount[2]).min / boardSize,
+    iteration_2_actionableCellAllCountMax: nullSafeBasicStat(actionableCellCount[2]).max / boardSize,
+    iteration_2_actionableCellAllCountStd: nullSafeBasicStat(actionableCellCount[2]).std / boardSize,
+    iteration_2_actionableCellAllCountSum: nullSafeBasicStat(actionableCellCount[2]).sum / boardSize / 3,
+
+    iteration_3_actionableCellAllCountMean: nullSafeBasicStat(actionableCellCount[3]).mean / boardSize,
+    iteration_3_actionableCellAllCountMin: nullSafeBasicStat(actionableCellCount[3]).min / boardSize,
+    iteration_3_actionableCellAllCountMax: nullSafeBasicStat(actionableCellCount[3]).max / boardSize,
+    iteration_3_actionableCellAllCountStd: nullSafeBasicStat(actionableCellCount[3]).std / boardSize,
+    iteration_3_actionableCellAllCountSum: nullSafeBasicStat(actionableCellCount[3]).sum / boardSize / 3,
+
+    iteration_4_actionableCellAllCountMean: nullSafeBasicStat(actionableCellCount[4]).mean / boardSize,
+    iteration_4_actionableCellAllCountMin: nullSafeBasicStat(actionableCellCount[4]).min / boardSize,
+    iteration_4_actionableCellAllCountMax: nullSafeBasicStat(actionableCellCount[4]).max / boardSize,
+    iteration_4_actionableCellAllCountStd: nullSafeBasicStat(actionableCellCount[4]).std / boardSize,
+    iteration_4_actionableCellAllCountSum: nullSafeBasicStat(actionableCellCount[4]).sum / boardSize / 3,
+
+    iteration_5_actionableCellAllCountMean: nullSafeBasicStat(actionableCellCount[5]).mean / boardSize,
+    iteration_5_actionableCellAllCountMin: nullSafeBasicStat(actionableCellCount[5]).min / boardSize,
+    iteration_5_actionableCellAllCountMax: nullSafeBasicStat(actionableCellCount[5]).max / boardSize,
+    iteration_5_actionableCellAllCountStd: nullSafeBasicStat(actionableCellCount[5]).std / boardSize,
+    iteration_5_actionableCellAllCountSum: nullSafeBasicStat(actionableCellCount[5]).sum / boardSize / 3,
+
+
+
+
+
+    iteration_0_unactionableCellAllCountMean: nullSafeBasicStat(unactionableCellCount[0]).mean / boardSize,
+    iteration_0_unactionableCellAllCountMin: nullSafeBasicStat(unactionableCellCount[0]).min / boardSize,
+    iteration_0_unactionableCellAllCountMax: nullSafeBasicStat(unactionableCellCount[0]).max / boardSize,
+    iteration_0_unactionableCellAllCountStd: nullSafeBasicStat(unactionableCellCount[0]).std / boardSize,
+    iteration_0_unactionableCellAllCountSum: nullSafeBasicStat(unactionableCellCount[0]).sum / boardSize / 3,
+
+    iteration_1_unactionableCellAllCountMean: nullSafeBasicStat(unactionableCellCount[1]).mean / boardSize,
+    iteration_1_unactionableCellAllCountMin: nullSafeBasicStat(unactionableCellCount[1]).min / boardSize,
+    iteration_1_unactionableCellAllCountMax: nullSafeBasicStat(unactionableCellCount[1]).max / boardSize,
+    iteration_1_unactionableCellAllCountStd: nullSafeBasicStat(unactionableCellCount[1]).std / boardSize,
+    iteration_1_unactionableCellAllCountSum: nullSafeBasicStat(unactionableCellCount[1]).sum / boardSize / 3,
+
+    iteration_2_unactionableCellAllCountMean: nullSafeBasicStat(unactionableCellCount[2]).mean / boardSize,
+    iteration_2_unactionableCellAllCountMin: nullSafeBasicStat(unactionableCellCount[2]).min / boardSize,
+    iteration_2_unactionableCellAllCountMax: nullSafeBasicStat(unactionableCellCount[2]).max / boardSize,
+    iteration_2_unactionableCellAllCountStd: nullSafeBasicStat(unactionableCellCount[2]).std / boardSize,
+    iteration_2_unactionableCellAllCountSum: nullSafeBasicStat(unactionableCellCount[2]).sum / boardSize / 3,
+
+    iteration_3_unactionableCellAllCountMean: nullSafeBasicStat(unactionableCellCount[3]).mean / boardSize,
+    iteration_3_unactionableCellAllCountMin: nullSafeBasicStat(unactionableCellCount[3]).min / boardSize,
+    iteration_3_unactionableCellAllCountMax: nullSafeBasicStat(unactionableCellCount[3]).max / boardSize,
+    iteration_3_unactionableCellAllCountStd: nullSafeBasicStat(unactionableCellCount[3]).std / boardSize,
+    iteration_3_unactionableCellAllCountSum: nullSafeBasicStat(unactionableCellCount[3]).sum / boardSize / 3,
+
+    iteration_4_unactionableCellAllCountMean: nullSafeBasicStat(unactionableCellCount[4]).mean / boardSize,
+    iteration_4_unactionableCellAllCountMin: nullSafeBasicStat(unactionableCellCount[4]).min / boardSize,
+    iteration_4_unactionableCellAllCountMax: nullSafeBasicStat(unactionableCellCount[4]).max / boardSize,
+    iteration_4_unactionableCellAllCountStd: nullSafeBasicStat(unactionableCellCount[4]).std / boardSize,
+    iteration_4_unactionableCellAllCountSum: nullSafeBasicStat(unactionableCellCount[4]).sum / boardSize / 3,
+
+    iteration_5_unactionableCellAllCountMean: nullSafeBasicStat(unactionableCellCount[5]).mean / boardSize,
+    iteration_5_unactionableCellAllCountMin: nullSafeBasicStat(unactionableCellCount[5]).min / boardSize,
+    iteration_5_unactionableCellAllCountMax: nullSafeBasicStat(unactionableCellCount[5]).max / boardSize,
+    iteration_5_unactionableCellAllCountStd: nullSafeBasicStat(unactionableCellCount[5]).std / boardSize,
+    iteration_5_unactionableCellAllCountSum: nullSafeBasicStat(unactionableCellCount[5]).sum / boardSize / 3,
+
+
+
+
 
     // TODO: compare to board size
-    iteration_0_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[0]).mean,
-    iteration_0_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[0]).min,
-    iteration_0_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[0]).max,
-    iteration_0_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[0]).std,
-    iteration_0_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[0]).sum,
+    iteration_0_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoal[0]).mean,
+    iteration_0_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoal[0]).min,
+    iteration_0_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoal[0]).max,
+    iteration_0_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoal[0]).std,
+    iteration_0_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoal[0]).sum,
 
-    iteration_1_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[1]).mean,
-    iteration_1_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[1]).min,
-    iteration_1_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[1]).max,
-    iteration_1_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[1]).std,
-    iteration_1_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[1]).sum,
+    iteration_1_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoal[1]).mean,
+    iteration_1_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoal[1]).min,
+    iteration_1_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoal[1]).max,
+    iteration_1_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoal[1]).std,
+    iteration_1_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoal[1]).sum,
 
-    iteration_2_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[2]).mean,
-    iteration_2_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[2]).min,
-    iteration_2_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[2]).max,
-    iteration_2_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[2]).std,
-    iteration_2_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[2]).sum,
+    iteration_2_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoal[2]).mean,
+    iteration_2_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoal[2]).min,
+    iteration_2_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoal[2]).max,
+    iteration_2_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoal[2]).std,
+    iteration_2_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoal[2]).sum,
 
-    iteration_3_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[3]).mean,
-    iteration_3_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[3]).min,
-    iteration_3_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[3]).max,
-    iteration_3_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[3]).std,
-    iteration_3_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[3]).sum,
+    iteration_3_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoal[3]).mean,
+    iteration_3_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoal[3]).min,
+    iteration_3_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoal[3]).max,
+    iteration_3_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoal[3]).std,
+    iteration_3_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoal[3]).sum,
 
-    iteration_4_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[4]).mean,
-    iteration_4_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[4]).min,
-    iteration_4_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[4]).max,
-    iteration_4_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[4]).std,
-    iteration_4_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[4]).sum,
+    iteration_4_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoal[4]).mean,
+    iteration_4_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoal[4]).min,
+    iteration_4_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoal[4]).max,
+    iteration_4_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoal[4]).std,
+    iteration_4_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoal[4]).sum,
 
-    iteration_5_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).mean,
-    iteration_5_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).min,
-    iteration_5_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).max,
-    iteration_5_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).std,
-    iteration_5_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoalAllAgg[5]).sum,
+    iteration_5_requiredCellCountVsGoalAllMean: nullSafeBasicStat(requiredCellCountVsGoal[5]).mean,
+    iteration_5_requiredCellCountVsGoalAllMin: nullSafeBasicStat(requiredCellCountVsGoal[5]).min,
+    iteration_5_requiredCellCountVsGoalAllMax: nullSafeBasicStat(requiredCellCountVsGoal[5]).max,
+    iteration_5_requiredCellCountVsGoalAllStd: nullSafeBasicStat(requiredCellCountVsGoal[5]).std,
+    iteration_5_requiredCellCountVsGoalAllSum: nullSafeBasicStat(requiredCellCountVsGoal[5]).sum,
 
-    iteration_0_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).mean,
-    iteration_0_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).min,
-    iteration_0_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).max,
-    iteration_0_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).std,
-    iteration_0_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[0]).sum,
 
-    iteration_1_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[1]).mean,
-    iteration_1_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[1]).min,
-    iteration_1_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[1]).max,
-    iteration_1_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[1]).std,
-    iteration_1_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[1]).sum,
 
-    iteration_2_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[2]).mean,
-    iteration_2_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[2]).min,
-    iteration_2_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[2]).max,
-    iteration_2_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[2]).std,
-    iteration_2_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[2]).sum,
 
-    iteration_3_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[3]).mean,
-    iteration_3_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[3]).min,
-    iteration_3_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[3]).max,
-    iteration_3_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[3]).std,
-    iteration_3_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[3]).sum,
 
-    iteration_4_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).mean,
-    iteration_4_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).min,
-    iteration_4_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).max,
-    iteration_4_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).std,
-    iteration_4_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[4]).sum,
+    iteration_0_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoal[0]).mean,
+    iteration_0_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoal[0]).min,
+    iteration_0_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoal[0]).max,
+    iteration_0_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoal[0]).std,
+    iteration_0_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoal[0]).sum,
 
-    iteration_5_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).mean,
-    iteration_5_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).min,
-    iteration_5_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).max,
-    iteration_5_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).std,
-    iteration_5_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoalAllAgg[5]).sum,
+    iteration_1_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoal[1]).mean,
+    iteration_1_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoal[1]).min,
+    iteration_1_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoal[1]).max,
+    iteration_1_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoal[1]).std,
+    iteration_1_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoal[1]).sum,
 
-    iteration_0_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[0]).mean / boardSize,
-    iteration_0_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[0]).min / boardSize,
-    iteration_0_goalVsTotalMax: nullSafeBasicStat(goalVsTotalAgg[0]).max / boardSize,
-    iteration_0_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[0]).std / boardSize,
-    iteration_0_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[0]).sum / boardSize / 3,
+    iteration_2_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoal[2]).mean,
+    iteration_2_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoal[2]).min,
+    iteration_2_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoal[2]).max,
+    iteration_2_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoal[2]).std,
+    iteration_2_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoal[2]).sum,
 
-    iteration_1_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[1]).mean / boardSize,
-    iteration_1_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[1]).min / boardSize,
-    iteration_1_goalVsTotalMax: nullSafeBasicStat(goalVsTotalAgg[1]).max / boardSize,
-    iteration_1_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[1]).std / boardSize,
-    iteration_1_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[1]).sum / boardSize / 3,
+    iteration_3_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoal[3]).mean,
+    iteration_3_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoal[3]).min,
+    iteration_3_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoal[3]).max,
+    iteration_3_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoal[3]).std,
+    iteration_3_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoal[3]).sum,
 
-    iteration_2_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[2]).mean / boardSize,
-    iteration_2_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[2]).min / boardSize,
-    iteration_2_goalVsTotalMax: nullSafeBasicStat(goalVsTotalAgg[2]).max / boardSize,
-    iteration_2_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[2]).std / boardSize,
-    iteration_2_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[2]).sum / boardSize / 3,
+    iteration_4_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoal[4]).mean,
+    iteration_4_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoal[4]).min,
+    iteration_4_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoal[4]).max,
+    iteration_4_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoal[4]).std,
+    iteration_4_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoal[4]).sum,
 
-    iteration_3_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[3]).mean / boardSize,
-    iteration_3_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[3]).min / boardSize,
-    iteration_3_goalVsTotalMax: nullSafeBasicStat(goalVsTotalAgg[3]).max / boardSize,
-    iteration_3_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[3]).std / boardSize,
-    iteration_3_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[3]).sum / boardSize / 3,
+    iteration_5_unusableCellCountVsGoalAllMean: nullSafeBasicStat(unusableCellCountVsGoal[5]).mean,
+    iteration_5_unusableCellCountVsGoalAllMin: nullSafeBasicStat(unusableCellCountVsGoal[5]).min,
+    iteration_5_unusableCellCountVsGoalAllMax: nullSafeBasicStat(unusableCellCountVsGoal[5]).max,
+    iteration_5_unusableCellCountVsGoalAllStd: nullSafeBasicStat(unusableCellCountVsGoal[5]).std,
+    iteration_5_unusableCellCountVsGoalAllSum: nullSafeBasicStat(unusableCellCountVsGoal[5]).sum,
 
-    iteration_4_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[4]).mean / boardSize,
-    iteration_4_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[4]).min / boardSize,
-    iteration_4_goalVsTotalMax: nullSafeBasicStat(goalVsTotalAgg[4]).max / boardSize,
-    iteration_4_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[4]).std / boardSize,
-    iteration_4_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[4]).sum / boardSize / 3,
 
-    iteration_5_goalVsTotalMean: nullSafeBasicStat(goalVsTotalAgg[5]).mean / boardSize,
-    iteration_5_goalVsTotalMin: nullSafeBasicStat(goalVsTotalAgg[5]).min / boardSize,
-    iteration_5_goalVsTotalMax: nullSafeBasicStat(goalVsTotalAgg[5]).max / boardSize,
-    iteration_5_goalVsTotalStd: nullSafeBasicStat(goalVsTotalAgg[5]).std / boardSize,
-    iteration_5_goalVsTotalSum: nullSafeBasicStat(goalVsTotalAgg[5]).sum / boardSize / 3,
 
-    iteration_0_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).mean / boardSize,
-    iteration_0_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).min / boardSize,
-    iteration_0_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).max / boardSize,
-    iteration_0_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).std / boardSize,
-    iteration_0_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[0]).sum / boardSize / 3,
 
-    iteration_1_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[1]).mean / boardSize,
-    iteration_1_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[1]).min / boardSize,
-    iteration_1_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[1]).max / boardSize,
-    iteration_1_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[1]).std / boardSize,
-    iteration_1_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[1]).sum / boardSize / 3,
 
-    iteration_2_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[2]).mean / boardSize,
-    iteration_2_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[2]).min / boardSize,
-    iteration_2_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[2]).max / boardSize,
-    iteration_2_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[2]).std / boardSize,
-    iteration_2_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[2]).sum / boardSize / 3,
 
-    iteration_3_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[3]).mean / boardSize,
-    iteration_3_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[3]).min / boardSize,
-    iteration_3_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[3]).max / boardSize,
-    iteration_3_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[3]).std / boardSize,
-    iteration_3_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[3]).sum / boardSize / 3,
+    iteration_0_goalVsTotalMean: nullSafeBasicStat(goal[0]).mean / boardSize,
+    iteration_0_goalVsTotalMin: nullSafeBasicStat(goal[0]).min / boardSize,
+    iteration_0_goalVsTotalMax: nullSafeBasicStat(goal[0]).max / boardSize,
+    iteration_0_goalVsTotalStd: nullSafeBasicStat(goal[0]).std / boardSize,
+    iteration_0_goalVsTotalSum: nullSafeBasicStat(goal[0]).sum / boardSize / 3,
 
-    iteration_4_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[4]).mean / boardSize,
-    iteration_4_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[4]).min / boardSize,
-    iteration_4_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[4]).max / boardSize,
-    iteration_4_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[4]).std / boardSize,
-    iteration_4_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[4]).sum / boardSize / 3,
+    iteration_1_goalVsTotalMean: nullSafeBasicStat(goal[1]).mean / boardSize,
+    iteration_1_goalVsTotalMin: nullSafeBasicStat(goal[1]).min / boardSize,
+    iteration_1_goalVsTotalMax: nullSafeBasicStat(goal[1]).max / boardSize,
+    iteration_1_goalVsTotalStd: nullSafeBasicStat(goal[1]).std / boardSize,
+    iteration_1_goalVsTotalSum: nullSafeBasicStat(goal[1]).sum / boardSize / 3,
 
-    iteration_5_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).mean / boardSize,
-    iteration_5_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).min / boardSize,
-    iteration_5_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).max / boardSize,
-    iteration_5_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).std / boardSize,
-    iteration_5_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTargetAllAgg[5]).sum / boardSize / 3,
+    iteration_2_goalVsTotalMean: nullSafeBasicStat(goal[2]).mean / boardSize,
+    iteration_2_goalVsTotalMin: nullSafeBasicStat(goal[2]).min / boardSize,
+    iteration_2_goalVsTotalMax: nullSafeBasicStat(goal[2]).max / boardSize,
+    iteration_2_goalVsTotalStd: nullSafeBasicStat(goal[2]).std / boardSize,
+    iteration_2_goalVsTotalSum: nullSafeBasicStat(goal[2]).sum / boardSize / 3,
 
-    iteration_0_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[0]).mean,
-    iteration_0_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[0]).min,
-    iteration_0_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[0]).max,
-    iteration_0_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[0]).std,
-    iteration_0_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[0]).sum,
+    iteration_3_goalVsTotalMean: nullSafeBasicStat(goal[3]).mean / boardSize,
+    iteration_3_goalVsTotalMin: nullSafeBasicStat(goal[3]).min / boardSize,
+    iteration_3_goalVsTotalMax: nullSafeBasicStat(goal[3]).max / boardSize,
+    iteration_3_goalVsTotalStd: nullSafeBasicStat(goal[3]).std / boardSize,
+    iteration_3_goalVsTotalSum: nullSafeBasicStat(goal[3]).sum / boardSize / 3,
 
-    iteration_1_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[1]).mean,
-    iteration_1_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[1]).min,
-    iteration_1_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[1]).max,
-    iteration_1_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[1]).std,
-    iteration_1_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[1]).sum,
+    iteration_4_goalVsTotalMean: nullSafeBasicStat(goal[4]).mean / boardSize,
+    iteration_4_goalVsTotalMin: nullSafeBasicStat(goal[4]).min / boardSize,
+    iteration_4_goalVsTotalMax: nullSafeBasicStat(goal[4]).max / boardSize,
+    iteration_4_goalVsTotalStd: nullSafeBasicStat(goal[4]).std / boardSize,
+    iteration_4_goalVsTotalSum: nullSafeBasicStat(goal[4]).sum / boardSize / 3,
 
-    iteration_2_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[2]).mean,
-    iteration_2_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[2]).min,
-    iteration_2_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[2]).max,
-    iteration_2_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[2]).std,
-    iteration_2_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[2]).sum,
+    iteration_5_goalVsTotalMean: nullSafeBasicStat(goal[5]).mean / boardSize,
+    iteration_5_goalVsTotalMin: nullSafeBasicStat(goal[5]).min / boardSize,
+    iteration_5_goalVsTotalMax: nullSafeBasicStat(goal[5]).max / boardSize,
+    iteration_5_goalVsTotalStd: nullSafeBasicStat(goal[5]).std / boardSize,
+    iteration_5_goalVsTotalSum: nullSafeBasicStat(goal[5]).sum / boardSize / 3,
 
-    iteration_3_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[3]).mean,
-    iteration_3_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[3]).min,
-    iteration_3_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[3]).max,
-    iteration_3_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[3]).std,
-    iteration_3_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[3]).sum,
 
-    iteration_4_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[4]).mean,
-    iteration_4_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[4]).min,
-    iteration_4_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[4]).max,
-    iteration_4_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[4]).std,
-    iteration_4_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[4]).sum,
 
-    iteration_5_goalVsTotalAllMean: nullSafeBasicStat(gaolVsTotalAllAgg[5]).mean,
-    iteration_5_goalVsTotalAllMin: nullSafeBasicStat(gaolVsTotalAllAgg[5]).min,
-    iteration_5_goalVsTotalAllMax: nullSafeBasicStat(gaolVsTotalAllAgg[5]).max,
-    iteration_5_goalVsTotalAllStd: nullSafeBasicStat(gaolVsTotalAllAgg[5]).std,
-    iteration_5_goalVsTotalAllSum: nullSafeBasicStat(gaolVsTotalAllAgg[5]).sum,
+
+
+
+    iteration_0_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTarget[0]).mean / boardSize,
+    iteration_0_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTarget[0]).min / boardSize,
+    iteration_0_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTarget[0]).max / boardSize,
+    iteration_0_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTarget[0]).std / boardSize,
+    iteration_0_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTarget[0]).sum / boardSize / 3,
+
+    iteration_1_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTarget[1]).mean / boardSize,
+    iteration_1_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTarget[1]).min / boardSize,
+    iteration_1_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTarget[1]).max / boardSize,
+    iteration_1_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTarget[1]).std / boardSize,
+    iteration_1_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTarget[1]).sum / boardSize / 3,
+
+    iteration_2_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTarget[2]).mean / boardSize,
+    iteration_2_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTarget[2]).min / boardSize,
+    iteration_2_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTarget[2]).max / boardSize,
+    iteration_2_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTarget[2]).std / boardSize,
+    iteration_2_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTarget[2]).sum / boardSize / 3,
+
+    iteration_3_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTarget[3]).mean / boardSize,
+    iteration_3_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTarget[3]).min / boardSize,
+    iteration_3_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTarget[3]).max / boardSize,
+    iteration_3_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTarget[3]).std / boardSize,
+    iteration_3_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTarget[3]).sum / boardSize / 3,
+
+    iteration_4_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTarget[4]).mean / boardSize,
+    iteration_4_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTarget[4]).min / boardSize,
+    iteration_4_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTarget[4]).max / boardSize,
+    iteration_4_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTarget[4]).std / boardSize,
+    iteration_4_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTarget[4]).sum / boardSize / 3,
+
+    iteration_5_cellCountLargerThanTargetAllMean: nullSafeBasicStat(cellCountLargerThanTarget[5]).mean / boardSize,
+    iteration_5_cellCountLargerThanTargetAllMin: nullSafeBasicStat(cellCountLargerThanTarget[5]).min / boardSize,
+    iteration_5_cellCountLargerThanTargetAllMax: nullSafeBasicStat(cellCountLargerThanTarget[5]).max / boardSize,
+    iteration_5_cellCountLargerThanTargetAllStd: nullSafeBasicStat(cellCountLargerThanTarget[5]).std / boardSize,
+    iteration_5_cellCountLargerThanTargetAllSum: nullSafeBasicStat(cellCountLargerThanTarget[5]).sum / boardSize / 3,
+
+
+
+
+
+
+    iteration_0_goalVsTotalAllMean: nullSafeBasicStat(gaolVsUnselectedSum[0]).mean,
+    iteration_0_goalVsTotalAllMin: nullSafeBasicStat(gaolVsUnselectedSum[0]).min,
+    iteration_0_goalVsTotalAllMax: nullSafeBasicStat(gaolVsUnselectedSum[0]).max,
+    iteration_0_goalVsTotalAllStd: nullSafeBasicStat(gaolVsUnselectedSum[0]).std,
+    iteration_0_goalVsTotalAllSum: nullSafeBasicStat(gaolVsUnselectedSum[0]).sum,
+
+    iteration_1_goalVsTotalAllMean: nullSafeBasicStat(gaolVsUnselectedSum[1]).mean,
+    iteration_1_goalVsTotalAllMin: nullSafeBasicStat(gaolVsUnselectedSum[1]).min,
+    iteration_1_goalVsTotalAllMax: nullSafeBasicStat(gaolVsUnselectedSum[1]).max,
+    iteration_1_goalVsTotalAllStd: nullSafeBasicStat(gaolVsUnselectedSum[1]).std,
+    iteration_1_goalVsTotalAllSum: nullSafeBasicStat(gaolVsUnselectedSum[1]).sum,
+
+    iteration_2_goalVsTotalAllMean: nullSafeBasicStat(gaolVsUnselectedSum[2]).mean,
+    iteration_2_goalVsTotalAllMin: nullSafeBasicStat(gaolVsUnselectedSum[2]).min,
+    iteration_2_goalVsTotalAllMax: nullSafeBasicStat(gaolVsUnselectedSum[2]).max,
+    iteration_2_goalVsTotalAllStd: nullSafeBasicStat(gaolVsUnselectedSum[2]).std,
+    iteration_2_goalVsTotalAllSum: nullSafeBasicStat(gaolVsUnselectedSum[2]).sum,
+
+    iteration_3_goalVsTotalAllMean: nullSafeBasicStat(gaolVsUnselectedSum[3]).mean,
+    iteration_3_goalVsTotalAllMin: nullSafeBasicStat(gaolVsUnselectedSum[3]).min,
+    iteration_3_goalVsTotalAllMax: nullSafeBasicStat(gaolVsUnselectedSum[3]).max,
+    iteration_3_goalVsTotalAllStd: nullSafeBasicStat(gaolVsUnselectedSum[3]).std,
+    iteration_3_goalVsTotalAllSum: nullSafeBasicStat(gaolVsUnselectedSum[3]).sum,
+
+    iteration_4_goalVsTotalAllMean: nullSafeBasicStat(gaolVsUnselectedSum[4]).mean,
+    iteration_4_goalVsTotalAllMin: nullSafeBasicStat(gaolVsUnselectedSum[4]).min,
+    iteration_4_goalVsTotalAllMax: nullSafeBasicStat(gaolVsUnselectedSum[4]).max,
+    iteration_4_goalVsTotalAllStd: nullSafeBasicStat(gaolVsUnselectedSum[4]).std,
+    iteration_4_goalVsTotalAllSum: nullSafeBasicStat(gaolVsUnselectedSum[4]).sum,
+
+    iteration_5_goalVsTotalAllMean: nullSafeBasicStat(gaolVsUnselectedSum[5]).mean,
+    iteration_5_goalVsTotalAllMin: nullSafeBasicStat(gaolVsUnselectedSum[5]).min,
+    iteration_5_goalVsTotalAllMax: nullSafeBasicStat(gaolVsUnselectedSum[5]).max,
+    iteration_5_goalVsTotalAllStd: nullSafeBasicStat(gaolVsUnselectedSum[5]).std,
+    iteration_5_goalVsTotalAllSum: nullSafeBasicStat(gaolVsUnselectedSum[5]).sum,
+
+
+
 
     deductionIterations: stats.totals.deductionIterations,
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
@@ -511,7 +601,6 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
 
     gameDateAsPercent: gamePlayStats.gameDateAsPercent,
 
-    breaksMinutes: gamePlayStats.breaksMinutes / boardSize,
   };
 
   let x: GameStatWithBoard = { gameNumber: gamePlayStats.gameNumber }
@@ -552,6 +641,10 @@ export interface GameStatWithTimeSpent {
 // Subset of GameStat features required for prediction. Excludes gameNumber and timeSpent.
 export interface GameStatFeatures {
   boardSize: number;
+
+
+
+
   // 
   iteration_0_falsePositiveSolutionCountAllMean: number;
   iteration_0_falsePositiveSolutionCountAllMin: number;
@@ -588,6 +681,11 @@ export interface GameStatFeatures {
   iteration_5_falsePositiveSolutionCountAllMax: number;
   iteration_5_falsePositiveSolutionCountAllStd: number;
   iteration_5_falsePositiveSolutionCountAllSum: number;
+
+
+
+
+
   // 
   iteration_0_guaranteedRequiredCellCountMean: number;
   iteration_0_guaranteedRequiredCellCountMin: number;
@@ -624,6 +722,10 @@ export interface GameStatFeatures {
   iteration_5_guaranteedRequiredCellCountMax: number;
   iteration_5_guaranteedRequiredCellCountStd: number;
   iteration_5_guaranteedRequiredCellCountSum: number;
+
+
+
+
   //
   iteration_0_guaranteedUnusableCellCountAllMean: number;
   iteration_0_guaranteedUnusableCellCountAllMin: number;
@@ -660,6 +762,11 @@ export interface GameStatFeatures {
   iteration_5_guaranteedUnusableCellCountAllMax: number;
   iteration_5_guaranteedUnusableCellCountAllStd: number;
   iteration_5_guaranteedUnusableCellCountAllSum: number;
+
+
+
+
+
   //
   iteration_0_actionableCellAllCountMean: number;
   iteration_0_actionableCellAllCountMin: number;
@@ -696,6 +803,50 @@ export interface GameStatFeatures {
   iteration_5_actionableCellAllCountMax: number;
   iteration_5_actionableCellAllCountStd: number;
   iteration_5_actionableCellAllCountSum: number;
+
+
+
+
+  //: number;
+  iteration_0_unactionableCellAllCountMean: number;
+  iteration_0_unactionableCellAllCountMin: number;
+  iteration_0_unactionableCellAllCountMax: number;
+  iteration_0_unactionableCellAllCountStd: number;
+  iteration_0_unactionableCellAllCountSum: number;
+
+  iteration_1_unactionableCellAllCountMean: number;
+  iteration_1_unactionableCellAllCountMin: number;
+  iteration_1_unactionableCellAllCountMax: number;
+  iteration_1_unactionableCellAllCountStd: number;
+  iteration_1_unactionableCellAllCountSum: number;
+
+  iteration_2_unactionableCellAllCountMean: number;
+  iteration_2_unactionableCellAllCountMin: number;
+  iteration_2_unactionableCellAllCountMax: number;
+  iteration_2_unactionableCellAllCountStd: number;
+  iteration_2_unactionableCellAllCountSum: number;
+
+  iteration_3_unactionableCellAllCountMean: number;
+  iteration_3_unactionableCellAllCountMin: number;
+  iteration_3_unactionableCellAllCountMax: number;
+  iteration_3_unactionableCellAllCountStd: number;
+  iteration_3_unactionableCellAllCountSum: number;
+
+  iteration_4_unactionableCellAllCountMean: number;
+  iteration_4_unactionableCellAllCountMin: number;
+  iteration_4_unactionableCellAllCountMax: number;
+  iteration_4_unactionableCellAllCountStd: number;
+  iteration_4_unactionableCellAllCountSum: number;
+
+  iteration_5_unactionableCellAllCountMean: number;
+  iteration_5_unactionableCellAllCountMin: number;
+  iteration_5_unactionableCellAllCountMax: number;
+  iteration_5_unactionableCellAllCountStd: number;
+  iteration_5_unactionableCellAllCountSum: number;
+
+
+
+
   //
   iteration_0_requiredCellCountVsGoalAllMean: number;
   iteration_0_requiredCellCountVsGoalAllMin: number;
@@ -732,6 +883,10 @@ export interface GameStatFeatures {
   iteration_5_requiredCellCountVsGoalAllMax: number;
   iteration_5_requiredCellCountVsGoalAllStd: number;
   iteration_5_requiredCellCountVsGoalAllSum: number;
+
+
+
+
   //
   iteration_0_unusableCellCountVsGoalAllMean: number;
   iteration_0_unusableCellCountVsGoalAllMin: number;
@@ -768,6 +923,10 @@ export interface GameStatFeatures {
   iteration_5_unusableCellCountVsGoalAllMax: number;
   iteration_5_unusableCellCountVsGoalAllStd: number;
   iteration_5_unusableCellCountVsGoalAllSum: number;
+
+
+
+
   //
   iteration_0_goalVsTotalMean: number;
   iteration_0_goalVsTotalMin: number;
@@ -804,6 +963,10 @@ export interface GameStatFeatures {
   iteration_5_goalVsTotalMax: number;
   iteration_5_goalVsTotalStd: number;
   iteration_5_goalVsTotalSum: number;
+
+
+
+
   //
   iteration_0_cellCountLargerThanTargetAllMean: number;
   iteration_0_cellCountLargerThanTargetAllMin: number;
@@ -840,6 +1003,10 @@ export interface GameStatFeatures {
   iteration_5_cellCountLargerThanTargetAllMax: number;
   iteration_5_cellCountLargerThanTargetAllStd: number;
   iteration_5_cellCountLargerThanTargetAllSum: number;
+
+
+
+
   //
   iteration_0_goalVsTotalAllMean: number;
   iteration_0_goalVsTotalAllMin: number;
@@ -876,6 +1043,10 @@ export interface GameStatFeatures {
   iteration_5_goalVsTotalAllMax: number;
   iteration_5_goalVsTotalAllStd: number;
   iteration_5_goalVsTotalAllSum: number;
+
+
+
+
   //
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;
@@ -889,6 +1060,4 @@ export interface GameStatFeatures {
   percentUnresolvedCellsAfterDeductionI6: number;
   //
   gameDateAsPercent: number;
-  //
-  breaksMinutes: number;
 }
