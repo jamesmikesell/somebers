@@ -81,9 +81,9 @@ export class BoardStatAnalyzer {
       iterationFalsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
       iterationGuaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
       iterationGuaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
-      iterationGuaranteedRequiredCellCountVsGoalSum: possibleCorrect.alwaysRequiredCount / currentGoal,
-      iterationGuaranteedUnusableCellCountVsGoalSum: possibleCorrect.neverUsedCount / currentGoal,
-      goalVsTotal: currentGoal / unselectedCellSum,
+      iterationGuaranteedRequiredCellCountVsGoalSum: currentGoal ? (possibleCorrect.alwaysRequiredCount / currentGoal) : 0,
+      iterationGuaranteedUnusableCellCountVsGoalSum: currentGoal ? (possibleCorrect.neverUsedCount / currentGoal) : 0,
+      goalVsTotal: unselectedCellSum ? (currentGoal / unselectedCellSum) : 0,
     };
   }
 
