@@ -5,7 +5,7 @@ import { DisplayCell } from '../model/game-board';
 import { ModelJson } from '../model/ml-types';
 import { BoardStatAnalyzer } from './board-stat-analyzer';
 import { CachingBoardGeneratorService } from './caching-board-generator.service';
-import { predictRidge, toSample, TrainingSample } from './ml-core';
+import { predictRidge, toSample, RawGenericFeatureSet } from './ml-core';
 import { difficultyReportToGameStat, GamePlayStats } from './ml-difficulty-stats';
 
 @Injectable({ providedIn: 'root' })
@@ -19,13 +19,14 @@ export class DifficultyPredictorService {
   ) { }
 
   // Predict strictly using the downloaded packaged model (for Difficulty percentile display)
-  async predictGameModel(features: TrainingSample): Promise<number | undefined> {
+  async predictGameModel(rawStats: RawGenericFeatureSet): Promise<number | undefined> {
     try {
       const model = await this.loadPackagedModel();
-      if (!model || model.modelType === 'baseline')
-        return undefined;
-      else
-        return predictRidge(model, features);
+      if (!model) return undefined;
+      const sample = toSample(rawStats, model.features);
+      if (!sample) return undefined;
+      if (model.modelType === 'baseline') return undefined;
+      return predictRidge(model, sample);
     } catch (err) {
       console.warn('TimePredictorService.predictFromPackaged failed', err);
       return undefined;
@@ -55,8 +56,8 @@ export class DifficultyPredictorService {
       breaksMinutes: 0,
     }
 
-    const stats = toSample(difficultyReportToGameStat(difficultyAnalysis, gamePlayStats))!;
-    const estimatedSolveTime = await this.predictGameModel(stats);
+    const rawStats = difficultyReportToGameStat(difficultyAnalysis, gamePlayStats);
+    const estimatedSolveTime = await this.predictGameModel(rawStats);
     const percentile = await this.getPercentile(estimatedSolveTime);
 
 

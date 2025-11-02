@@ -17,7 +17,7 @@ type MsgToMain =
   | { t: 'result'; gameNumber: number; predictedMs: number };
 
 async function predictOne(model: ModelJson, gameNumber: number, boardGeneratorVersion: BoardGroupVersion): Promise<number | null> {
-  const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion));
+  const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion), model.features);
   if (!sample) return null;
   const yhat = model.modelType === 'baseline'
     ? predictBaseline(model as BaselineModelJson, sample)
@@ -52,4 +52,3 @@ if (!isMainThread && parentPort) {
   // Signal readiness to receive the first task
   parentPort.postMessage({ t: 'ready' } satisfies MsgToMain);
 }
-

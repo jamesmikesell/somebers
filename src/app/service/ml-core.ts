@@ -359,11 +359,11 @@ export interface TrainBestOptions {
 export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, options?: TrainBestOptions): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
   // console.log(`Training Set Size: ${rawStats.length}`)
   const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
-  const featureKeys = options?.featureKeys ?? FEATURE_SPEC.keys;
+  let featureKeys = options?.featureKeys ?? FEATURE_SPEC.keys;
   const mapped = rawStats.map((r) => ({ raw: r, sample: toSample(r, featureKeys) }));
   const dropped = mapped.filter((m) => !m.sample);
   if (dropped.length) warn(`toSample: skipped ${dropped.length} record(s) due to missing/invalid features; examples gameNumbers: ${dropped.slice(0, 5).map((m) => m.raw.gameNumber).join(', ')}`);
-  const samples = mapped.map((m) => m.sample).filter((x): x is TrainingSample => !!x);
+  let samples = mapped.map((m) => m.sample).filter((x): x is TrainingSample => !!x);
   if (!samples.length) throw new Error('No training samples available.');
   const useK = !!options?.useKFold;
   const k = options?.k && options.k >= 2 ? options.k : 5;
@@ -404,6 +404,47 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
     warn(`features: ${diag.highCorrPairs.length} highly correlated pair(s) (|corr|>=0.98); examples: ${examples}`);
   }
   if (diag.maxAbsCorr > 0.999) warn(`features: max absolute correlation extremely high (${diag.maxAbsCorr.toFixed(5)}); model may be ill-conditioned`);
+
+  const dropIndices = new Set<number>(diag.nzvIndices);
+  const droppedNzvNames = diag.nzvIndices.map((i) => featureKeys[i]).filter((name): name is string => !!name);
+  const droppedCorrNames: string[] = [];
+  for (const pair of diag.highCorrPairs) {
+    const { i, j } = pair;
+    if (dropIndices.has(i) || dropIndices.has(j)) continue;
+    dropIndices.add(j);
+    if (featureKeys[j]) droppedCorrNames.push(featureKeys[j]!);
+  }
+  if (dropIndices.size && dropIndices.size < featureKeys.length) {
+    const keepIndices = featureKeys.map((_, idx) => idx).filter((idx) => !dropIndices.has(idx));
+    const projectSamples = (list: TrainingSample[]): TrainingSample[] =>
+      list.map((sample) => ({
+        ...sample,
+        features: keepIndices.map((idx) => sample.features[idx]),
+      }));
+    if (useK) {
+      folds = folds.map(({ train: foldTrain, valid: foldValid }) => ({
+        train: projectSamples(foldTrain),
+        valid: projectSamples(foldValid),
+      }));
+      // samples referenced by folds were cloned above, rebuild master list for completeness
+      samples = projectSamples(samples);
+      train = samples;
+      valid = [];
+    } else {
+      train = projectSamples(train);
+      valid = projectSamples(valid);
+      samples = projectSamples(samples);
+    }
+    const droppedFeatureNames = featureKeys.filter((_, idx) => dropIndices.has(idx));
+    warn(
+      `features: dropping ${dropIndices.size} feature(s) with low information or collinearity (${droppedFeatureNames.join(
+        ', ',
+      )})`,
+    );
+    if (droppedNzvNames.length) warn(`features: removed near-zero-variance features ${droppedNzvNames.join(', ')}`);
+    if (droppedCorrNames.length) warn(`features: removed correlated features ${droppedCorrNames.join(', ')}`);
+    featureKeys = keepIndices.map((idx) => featureKeys[idx]);
+  }
 
   // Exclude 0 (unregularized) to avoid unstable weight blow-ups on singular/collinear data
   const lambdas = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10, 100];

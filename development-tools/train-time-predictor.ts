@@ -21,15 +21,17 @@ async function main(): Promise<void> {
   const { best, baseline, ridgeCandidates } = trainBestModel(rawStats, 1337, { useKFold: true, k: 5 });
   console.log('Training complete');
 
+  const featureKeys = best.model.features;
+
   // Also compute training-set metrics for the selected model
-  const samples = rawStats.map((s) => toSample(s)).filter((x): x is TrainingSample => !!x);
+  const samples = rawStats.map((s) => toSample(s, featureKeys)).filter((x): x is TrainingSample => !!x);
   const { train } = stratifiedSplit(samples, 1337);
   const trainEval: ModelEvaluationResult<ModelJson> = (best.model.modelType === 'baseline'
     ? evaluate((s) => predictBaseline(best.model as BaselineModelJson, s), train, best.model as BaselineModelJson)
     : evaluate((s) => predictRidge(best.model as RidgeModelJson, s), train, best.model as RidgeModelJson)) as unknown as ModelEvaluationResult<ModelJson>;
 
   // Predict for game #27
-  const sample27 = toSample(await buildRawGameStatForGameNumber(27))!;
+  const sample27 = toSample(await buildRawGameStatForGameNumber(27), featureKeys)!;
   let pred27 = best.model.modelType === 'baseline'
     ? predictBaseline(best.model as BaselineModelJson, sample27)
     : predictRidge(best.model as RidgeModelJson, sample27);
@@ -108,8 +110,9 @@ async function main(): Promise<void> {
 
 async function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number, boardGeneratorVersion: BoardGroupVersion): Promise<{ gameNumber: number; predictedMs: number }[]> {
   const out: { gameNumber: number; predictedMs: number }[] = [];
+  const featureKeys = model.features;
   for (let gameNumber = startInclusive; gameNumber < endExclusive; gameNumber++) {
-    const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion));
+    const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion), featureKeys);
     if (!sample) continue;
     const yhat = model.modelType === 'baseline'
       ? predictBaseline(model as BaselineModelJson, sample)
