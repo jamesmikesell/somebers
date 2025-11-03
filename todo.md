@@ -1,6 +1,7 @@
 # TODO
 
-- recalculate all ML stats for each deduction iteration
+- Video tutorial
+- ability to configure the app for a tournament via a link - (specify enabled features, don't allow features to be changed, ability to specify individual game numbers and order)
 - text occasionally selected, esp when double clicking to reset scratch pad....
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
@@ -9,7 +10,7 @@
 - post to social media
 - track last X games against par time.
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
-- Positive feedback when breaking previous records 
+- Positive feedback when breaking previous records
 - multi-player: pvp
 - multi-player: co-op
 - leader board
@@ -22,6 +23,7 @@
 
 # Done
 
+- recalculate all ML stats for each deduction iteration
 - tournament mode: incorrect moves allowed, game doesn't warn on mistake. will likely need to always show headers, and cleared cells should likely continue to show their value (though possibly in a different text color?). will also need to be able to mark a cell as untouched. if we hide color groups after they're "complete" we'll need to make sure the hiding logic is based on no cells having a selection status!=none rather than checking for the correct cells being selected.
 - light mode auto complete animation not visible
 - check color optimizer, perhaps it should be arranging for the highest minimum contrast between touching blocks
@@ -40,7 +42,7 @@
 - record iOS 18 screen recordings, try to pick the correct version automatically.
 - fix doc on color groups
 - SW wait until refresh to use any new assets.
-- current sum for color group 
+- current sum for color group
 - current sum for color group setting toggle
 - current sum header setting toggle
 - cell animation service thing shouldn't be using the headers to determine if the goal has been met (don't use .currentSelectionSum)
@@ -103,8 +105,6 @@
 - buttons to change game number
 - current sum of selected col/rows
 - change the percent of numbers that are on the board (reduced to 40%)
-
-
 
 # Not Gonna Do
 
