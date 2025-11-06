@@ -167,7 +167,7 @@ async function evaluateFeatureSet(
   cache: Map<string, EvalResult>,
   opts: CliOptions,
 ): Promise<EvalResult> {
-  const key = features.join('|');
+  const key = [...features].sort().join('|');
   const cached = cache.get(key);
   if (cached) return cached;
   const trainOpts = opts.useKFold
