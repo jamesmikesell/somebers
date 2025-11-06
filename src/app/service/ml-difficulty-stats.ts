@@ -2,7 +2,7 @@ import { FeatureSpec } from '../model/ml-types';
 import { BoardStats } from './board-stat-analyzer';
 import { RawGenericFeatureSet, solveLinearSystem } from './ml-core';
 
-const SERIES_SUMMARY_SUFFIXES = ['First', 'Last', 'Delta', 'LinearCoef', 'QuadraticCoef', 'Average', 'StdDev'] as const;
+const SERIES_SUMMARY_SUFFIXES = ['First', 'Last', 'Delta', 'LinearCoef', 'QuadraticCoef', 'CubicCoef', 'Average', 'StdDev'] as const;
 
 interface MetricContext {
   boardSize: number;
@@ -126,49 +126,72 @@ function expandMetricKeys(prefix: string, metrics: readonly MetricConfig[]): str
 const FEATURE_KEYS: string[] = [
   "boardSize",
   "gameDateAsPercent",
+  "percentUnresolvedCellsCubicCoef",
   "percentUnresolvedCellsAverage",
   "falsePositiveMaxFirst",
+  "falsePositiveMaxLast",
   "falsePositiveMaxDelta",
+  "requiredCellsMeanFirst",
   "requiredCellsMeanQuadraticCoef",
+  "requiredCellsMeanCubicCoef",
+  "requiredCellsMaxQuadraticCoef",
+  "requiredCellsMaxCubicCoef",
+  "requiredCellsMaxAverage",
   "requiredCellsMaxStdDev",
+  "requiredCellsStdCubicCoef",
   "requiredCellsStdStdDev",
+  "unusableCellsMeanFirst",
   "unusableCellsMeanQuadraticCoef",
+  "unusableCellsMeanCubicCoef",
   "unusableCellsStdStdDev",
-  "requiredVsGoalMeanFirst",
-  "requiredVsGoalMeanQuadraticCoef",
   "requiredVsGoalMeanAverage",
-  "requiredVsGoalMeanStdDev",
-  "requiredVsGoalStdAverage",
+  "requiredVsGoalStdLinearCoef",
+  "requiredVsGoalStdQuadraticCoef",
   "requiredVsGoalStdStdDev",
-  "requiredVsGoalMaxFirst",
+  "requiredVsGoalMaxLinearCoef",
   "requiredVsGoalMaxQuadraticCoef",
+  "requiredVsGoalMaxCubicCoef",
   "requiredVsGoalMaxStdDev",
-  "unusableVsGoalStdFirst",
+  "unusableVsGoalMeanFirst",
+  "unusableVsGoalMeanCubicCoef",
+  "unusableVsGoalMeanAverage",
+  "unusableVsGoalStdCubicCoef",
+  "unusableVsGoalStdStdDev",
+  "actionableCellsMeanFirst",
   "actionableCellsMeanQuadraticCoef",
+  "actionableCellsMeanCubicCoef",
   "actionableCellsMaxStdDev",
-  "unactionableCellsMeanAverage",
+  "actionableCellsStdFirst",
+  "unactionableCellsMaxFirst",
   "unactionableCellsMaxLinearCoef",
-  "unactionableCellsMaxQuadraticCoef",
-  "unactionableCellsMaxAverage",
+  "unactionableCellsMaxStdDev",
+  "unactionableCellsStdLast",
   "unactionableCellsStdDelta",
   "unactionableCellsStdQuadraticCoef",
-  "cellsLargerThanTargetStdFirst",
+  "cellsLargerThanTargetStdQuadraticCoef",
+  "cellsLargerThanTargetStdAverage",
   "cellsLargerThanTargetStdStdDev",
-  "goalVsTotalMeanDelta",
+  "goalVsTotalMeanAverage",
   "goalVsTotalMaxQuadraticCoef",
+  "goalVsTotalMaxCubicCoef",
   "goalVsTotalStdQuadraticCoef",
-  "goalVsTotalAllStdLinearCoef",
-  "goalVsTotalAllStdAverage",
-  "falsePositiveStdFirst",
-  "falsePositiveMeanQuadraticCoef",
+  "goalVsTotalAllMaxLinearCoef",
   "goalVsTotalAllMaxQuadraticCoef",
-  "goalVsTotalMaxLinearCoef",
-  "unusableVsGoalMeanLinearCoef",
-  "unusableVsGoalMeanAverage",
-  "requiredCellsMaxLinearCoef",
+  "goalVsTotalAllMaxStdDev",
+  "goalVsTotalAllStdFirst",
+  "goalVsTotalAllStdCubicCoef",
+  "unactionableCellsStdCubicCoef",
+  "falsePositiveMeanAverage",
+  "falsePositiveStdCubicCoef",
+  "requiredVsGoalMeanStdDev",
   "unusableVsGoalMeanQuadraticCoef",
-  "unusableVsGoalStdQuadraticCoef",
-  "requiredVsGoalStdLinearCoef"
+  "deductionIterations",
+  "goalVsTotalAllMeanDelta",
+  "goalVsTotalStdStdDev",
+  "goalVsTotalMaxDelta",
+  "goalVsTotalAllStdQuadraticCoef",
+  "unactionableCellsMaxAverage",
+  "cellsLargerThanTargetMeanAverage"
 ];
 
 export const FEATURE_SPEC: FeatureSpec = {
@@ -381,6 +404,7 @@ function addSeriesSummaries(
       : values.map(() => 0);
   const linearCoef = computeLinearCoefficient(xs, values);
   const quadraticCoef = computeQuadraticCoefficient(xs, values);
+  const cubicCoef = computeCubicCoefficient(xs, values);
   const average = values.reduce((sum, value) => sum + value, 0) / count;
   const variance =
     values.reduce((sum, value) => sum + (value - average) * (value - average), 0) / count;
@@ -390,6 +414,7 @@ function addSeriesSummaries(
   features[`${prefix}Delta`] = delta;
   features[`${prefix}LinearCoef`] = linearCoef;
   features[`${prefix}QuadraticCoef`] = quadraticCoef;
+  features[`${prefix}CubicCoef`] = cubicCoef;
   features[`${prefix}Average`] = average;
   features[`${prefix}StdDev`] = stdDev;
 }
@@ -443,6 +468,50 @@ function computeQuadraticCoefficient(xs: number[], ys: number[]): number {
   const coefficients = solveLinearSystem(A, b);
   const quad = coefficients[2] ?? 0;
   return sanitizeNumber(Number.isFinite(quad) ? quad : 0);
+}
+
+function computeCubicCoefficient(xs: number[], ys: number[]): number {
+  const n = xs.length;
+  if (n < 4) return 0;
+  let sumX = 0;
+  let sumX2 = 0;
+  let sumX3 = 0;
+  let sumX4 = 0;
+  let sumX5 = 0;
+  let sumX6 = 0;
+  let sumY = 0;
+  let sumXY = 0;
+  let sumX2Y = 0;
+  let sumX3Y = 0;
+  for (let i = 0; i < n; i++) {
+    const x = xs[i];
+    const y = ys[i];
+    const x2 = x * x;
+    const x3 = x2 * x;
+    const x4 = x2 * x2;
+    const x5 = x3 * x2;
+    const x6 = x3 * x3;
+    sumX += x;
+    sumX2 += x2;
+    sumX3 += x3;
+    sumX4 += x4;
+    sumX5 += x5;
+    sumX6 += x6;
+    sumY += y;
+    sumXY += x * y;
+    sumX2Y += x2 * y;
+    sumX3Y += x3 * y;
+  }
+  const A = [
+    [n, sumX, sumX2, sumX3],
+    [sumX, sumX2, sumX3, sumX4],
+    [sumX2, sumX3, sumX4, sumX5],
+    [sumX3, sumX4, sumX5, sumX6],
+  ];
+  const b = [sumY, sumXY, sumX2Y, sumX3Y];
+  const coefficients = solveLinearSystem(A, b);
+  const cubic = coefficients[3] ?? 0;
+  return sanitizeNumber(Number.isFinite(cubic) ? cubic : 0);
 }
 
 function sanitizeNumber(value: number): number {
