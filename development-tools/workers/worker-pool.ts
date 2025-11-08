@@ -5,11 +5,11 @@ import { BoardGroupVersion } from '../../src/app/model/grouping';
 import { ModelJson } from '../../src/app/model/ml-types';
 import { MsgFromMain } from './predict-pull.worker';
 
-export type Prediction = { gameNumber: number; predictedMs: number };
+export type Prediction = { gameNumber: number; predictedMs: number; boardSize: number; };
 
 type WorkerMsg =
   | { t: 'ready' }
-  | { t: 'result'; gameNumber: number; predictedMs: number };
+  | { t: 'result'; gameNumber: number; predictedMs: number; boardSize: number; };
 
 export class WorkerPool {
   private readonly workerPathTs: string;
@@ -23,7 +23,7 @@ export class WorkerPool {
   private rejectFn?: (err: unknown) => void;
   private boardGeneratorVersion: BoardGroupVersion;
 
-  constructor(opts: { workerPath: string; threads: number; model: ModelJson; numbers: number[], boardGeneratorVersion: BoardGroupVersion}) {
+  constructor(opts: { workerPath: string; threads: number; model: ModelJson; numbers: number[], boardGeneratorVersion: BoardGroupVersion }) {
     this.boardGeneratorVersion = opts.boardGeneratorVersion;
     this.workerPathTs = path.resolve(opts.workerPath);
     const relFromRoot = path.relative(path.resolve('.'), this.workerPathTs).replace(/\\/g, '/');
@@ -74,7 +74,7 @@ export class WorkerPool {
 
       worker.postMessage(message);
     } else if (msg.t === 'result') {
-      this.results.push({ gameNumber: msg.gameNumber, predictedMs: msg.predictedMs });
+      this.results.push({ gameNumber: msg.gameNumber, predictedMs: msg.predictedMs, boardSize: msg.boardSize, });
     }
   }
 

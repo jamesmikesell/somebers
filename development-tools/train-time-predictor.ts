@@ -69,7 +69,7 @@ async function main(): Promise<void> {
   const threadCount = parseThreadCount();
   console.log(`Evaluating difficulty of ${boardsToEvaluate} boards using ${threadCount} thread(s)`);
 
-  const predictions: { gameNumber: number; predictedMs: number }[] = [];
+  const predictions: { gameNumber: number; predictedMs: number; boardSize: number; }[] = [];
   const genStart = Date.now();
 
   let boardGeneratorVersion: BoardGroupVersion = 1;
@@ -89,7 +89,11 @@ async function main(): Promise<void> {
   const genSeconds = (Date.now() - genStart) / 1000;
   console.log(`Generated predictions for ${predictions.length} boards in ${genSeconds.toFixed(2)}s`);
 
-  predictions.forEach(x => x.predictedMs = Math.round(x.predictedMs))
+  predictions.forEach(x => {
+    x.predictedMs = Math.round(x.predictedMs);
+    x.boardSize = Math.pow(5, 2) + (x.boardSize * (Math.pow(9, 2) - Math.pow(5, 2)));
+    x.boardSize = Math.sqrt(x.boardSize);
+  })
   // Keep deterministic order like the original loop
   predictions.sort((a, b) => a.gameNumber - b.gameNumber);
   let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => Math.round(x.predictedMs));
@@ -108,8 +112,8 @@ async function main(): Promise<void> {
   writeFileSync(predictedTimes, JSON.stringify(next1kTimes, null, 2), 'utf8');
 }
 
-async function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number, boardGeneratorVersion: BoardGroupVersion): Promise<{ gameNumber: number; predictedMs: number }[]> {
-  const out: { gameNumber: number; predictedMs: number }[] = [];
+async function predictSequential(model: ModelJson, startInclusive: number, endExclusive: number, boardGeneratorVersion: BoardGroupVersion): Promise<{ gameNumber: number; predictedMs: number; boardSize: number }[]> {
+  const out: { gameNumber: number; predictedMs: number; boardSize: number }[] = [];
   const featureKeys = model.features;
   for (let gameNumber = startInclusive; gameNumber < endExclusive; gameNumber++) {
     const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion), featureKeys);
@@ -117,7 +121,7 @@ async function predictSequential(model: ModelJson, startInclusive: number, endEx
     const yhat = model.modelType === 'baseline'
       ? predictBaseline(model as BaselineModelJson, sample)
       : predictRidge(model as RidgeModelJson, sample);
-    out.push({ gameNumber, predictedMs: yhat });
+    out.push({ gameNumber, predictedMs: yhat, boardSize: sample.boardSize });
   }
   return out;
 }

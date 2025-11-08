@@ -14,15 +14,15 @@ export type MsgFromMain =
 
 type MsgToMain =
   | { t: 'ready' }
-  | { t: 'result'; gameNumber: number; predictedMs: number };
+  | { t: 'result'; gameNumber: number; predictedMs: number; boardSize: number; };
 
-async function predictOne(model: ModelJson, gameNumber: number, boardGeneratorVersion: BoardGroupVersion): Promise<number | null> {
+async function predictOne(model: ModelJson, gameNumber: number, boardGeneratorVersion: BoardGroupVersion): Promise<{ predictedMs: number, boardSize: number } | null> {
   const sample = toSample(await buildRawGameStatForGameNumber(gameNumber, boardGeneratorVersion), model.features);
   if (!sample) return null;
   const yhat = model.modelType === 'baseline'
     ? predictBaseline(model as BaselineModelJson, sample)
     : predictRidge(model as RidgeModelJson, sample);
-  return yhat;
+  return { predictedMs: yhat, boardSize: sample.boardSize };
 }
 
 if (!isMainThread && parentPort) {
@@ -32,9 +32,9 @@ if (!isMainThread && parentPort) {
   const onMessage = (msg: MsgFromMain): void => {
     if (msg.t === 'task') {
       void (async () => {
-        const yhat = await predictOne(model, msg.gameNumber, msg.boardGeneratorVersion);
-        if (yhat != null) {
-          const out: MsgToMain = { t: 'result', gameNumber: msg.gameNumber, predictedMs: yhat };
+        const prediction = await predictOne(model, msg.gameNumber, msg.boardGeneratorVersion);
+        if (prediction != null) {
+          const out: MsgToMain = { t: 'result', gameNumber: msg.gameNumber, predictedMs: prediction.predictedMs, boardSize: prediction.boardSize, };
           parentPort!.postMessage(out);
         }
         // Ask for the next task regardless of sample success
