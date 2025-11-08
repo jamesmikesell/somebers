@@ -10,7 +10,18 @@ import { AppVersion } from '../app-version';
 export class VersionCheckService {
   public isUpdateAvailable = false;
 
-  constructor(private http: HttpClient, private swUpdate: SwUpdate) { }
+
+  constructor(
+    private http: HttpClient,
+    private swUpdate: SwUpdate,
+  ) {
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && this.isUpdateAvailable) {
+        this.refreshApp();
+      }
+    });
+  }
+
 
   startVersionCheck() {
     timer(1 * 1000, 10 * 60 * 1000).subscribe(() => {
