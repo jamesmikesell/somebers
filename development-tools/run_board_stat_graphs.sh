@@ -26,3 +26,6 @@ echo "Ensuring Python dependencies (matplotlib, numpy) are installed"
 
 echo "Running plot_prediction_vs_backup.py"
 "$PYTHON" "$SCRIPT_DIR/plot_prediction_vs_backup.py" "$@"
+
+echo "Running plot_prediction_solve_times.py"
+"$PYTHON" "$SCRIPT_DIR/plot_prediction_solve_times.py" "$@"
