@@ -7,7 +7,7 @@ import { difficultyReportToGameStat, GamePlayStats } from '../src/app/service/ml
 import { BoardGroupVersion } from '../src/app/model/grouping';
 
 
-export async function computeStatsFromBackupFile(backupPath = 'development-tools/backup.json'): Promise<RawGenericFeatureSet[]> {
+export async function computeStatsFromBackupFile(backupPath = 'development-tools/backup.0.json'): Promise<RawGenericFeatureSet[]> {
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 
