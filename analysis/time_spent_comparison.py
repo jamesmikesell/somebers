@@ -12,6 +12,7 @@ from typing import Callable, Dict, List, Sequence, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import FuncFormatter
 
 
 JsonType = Union[dict, list, int, float, str, None]
@@ -21,6 +22,14 @@ JsonType = Union[dict, list, int, float, str, None]
 class GameRecord:
   game_number: int
   time_spent: float
+
+
+def _milliseconds_to_mmss(value: float) -> str:
+  if not np.isfinite(value) or value <= 0:
+    return ''
+  total_seconds = int(round(value / 1000.0))
+  minutes, seconds = divmod(total_seconds, 60)
+  return f'{minutes:02d}:{seconds:02d}'
 
 
 def extract_time_spent(node: JsonType) -> List[GameRecord]:
@@ -180,6 +189,7 @@ def plot_data(
   y_line = trend_func(x_line)
 
   plt.figure(figsize=(10, 6))
+  axis_formatter = FuncFormatter(lambda val, _: _milliseconds_to_mmss(val))
   if outlier_mask is None:
     plt.scatter(x, y, label='timeSpent pairs', alpha=0.7, s=15)
   else:
@@ -203,8 +213,15 @@ def plot_data(
   plt.xlabel('timeSpent (backup.0)')
   plt.ylabel('timeSpent (backup.1)')
   plt.title('timeSpent comparison (log-log scale)')
-  plt.xscale('log')
-  plt.yscale('log')
+  ax = plt.gca()
+  ax.set_xscale('log')
+  ax.set_yscale('log')
+  x_ticks = np.geomspace(x.min(), x.max(), num=15)
+  y_ticks = np.geomspace(y.min(), y.max(), num=15)
+  ax.set_xticks(x_ticks)
+  ax.set_yticks(y_ticks)
+  ax.xaxis.set_major_formatter(axis_formatter)
+  ax.yaxis.set_major_formatter(axis_formatter)
   plt.grid(True, alpha=0.3)
   plt.legend()
   plt.figtext(0.5, -0.02, metadata, ha='center', fontsize=8)
