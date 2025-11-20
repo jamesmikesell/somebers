@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { SavedGameStateV3 } from '../src/app/model/saved-game-data/saved-game-data.v3';
 import { BoardStatAnalyzer } from '../src/app/service/board-stat-analyzer';
 import { generateGameBoard } from '../src/app/service/gameboard-generator';
@@ -7,7 +7,15 @@ import { difficultyReportToGameStat, GamePlayStats } from '../src/app/service/ml
 import { BoardGroupVersion } from '../src/app/model/grouping';
 
 
-export async function computeStatsFromBackupFile(backupPath = 'development-tools/backup.0.json'): Promise<RawGenericFeatureSet[]> {
+export async function computeStatsFromBackupFile(): Promise<RawGenericFeatureSet[]> {
+  let backupPath: string;
+  if (existsSync('development-tools/backup.combined.json')) {
+    console.log("Using combined training")
+    backupPath = 'development-tools/backup.combined.json'
+  } else {
+    console.log("\n!!! Combined training data missing !!!\n")
+    backupPath = 'development-tools/backup.0.json';
+  }
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 

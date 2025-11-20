@@ -1,0 +1,435 @@
+{
+  "options": {
+    "minDelta": 25,
+    "forced": [],
+    "start": [],
+    "startEmpty": false,
+    "excluded": [],
+    "seed": 1337,
+    "kFold": 5,
+    "useKFold": true,
+    "outputPath": "development-tools/feature-selection-results.json",
+    "initialFeatures": [
+      "gameDateAsPercent",
+      "percentUnresolvedCellsDelta",
+      "percentUnresolvedCellsAverage",
+      "falsePositiveMeanDelta",
+      "falsePositiveMaxLast",
+      "falsePositiveMaxQuadraticCoef",
+      "falsePositiveMaxStdDev",
+      "falsePositiveStdDelta",
+      "requiredCellsMeanFirst",
+      "requiredCellsMeanQuadraticCoef",
+      "requiredCellsMeanCubicCoef",
+      "requiredCellsMaxFirst",
+      "requiredCellsMaxCubicCoef",
+      "requiredCellsMaxStdDev",
+      "unusableCellsMeanFirst",
+      "unusableCellsMeanQuadraticCoef",
+      "unusableCellsMeanCubicCoef",
+      "unusableCellsStdFirst",
+      "unusableCellsStdQuadraticCoef",
+      "requiredVsGoalMeanFirst",
+      "requiredVsGoalMeanCubicCoef",
+      "requiredVsGoalMeanAverage",
+      "requiredVsGoalStdLinearCoef",
+      "requiredVsGoalStdCubicCoef",
+      "requiredVsGoalStdAverage",
+      "requiredVsGoalMaxFirst",
+      "requiredVsGoalMaxCubicCoef",
+      "unusableVsGoalMeanFirst",
+      "unusableVsGoalMeanQuadraticCoef",
+      "unusableVsGoalMeanAverage",
+      "unusableVsGoalStdFirst",
+      "unusableVsGoalStdCubicCoef",
+      "actionableCellsMeanFirst",
+      "actionableCellsMeanQuadraticCoef",
+      "actionableCellsMeanCubicCoef",
+      "actionableCellsMaxFirst",
+      "actionableCellsMaxQuadraticCoef",
+      "actionableCellsStdAverage",
+      "unactionableCellsMeanCubicCoef",
+      "unactionableCellsMaxQuadraticCoef",
+      "unactionableCellsMaxCubicCoef",
+      "unactionableCellsStdAverage",
+      "cellsLargerThanTargetMeanAverage",
+      "cellsLargerThanTargetStdFirst",
+      "goalVsTotalMeanQuadraticCoef",
+      "goalVsTotalMeanCubicCoef",
+      "goalVsTotalMeanAverage",
+      "goalVsTotalMaxQuadraticCoef",
+      "goalVsTotalStdDelta",
+      "goalVsTotalStdQuadraticCoef",
+      "goalVsTotalStdCubicCoef",
+      "goalVsTotalStdStdDev",
+      "goalVsTotalAllMeanFirst",
+      "goalVsTotalAllMeanCubicCoef",
+      "goalVsTotalAllMeanStdDev",
+      "goalVsTotalAllMaxLinearCoef",
+      "goalVsTotalAllMaxQuadraticCoef",
+      "goalVsTotalAllMaxStdDev",
+      "cellsLargerThanTargetStdStdDev",
+      "unusableCellsStdAverage",
+      "unactionableCellsMaxDelta"
+    ],
+    "maxFeatures": 245
+  },
+  "final": {
+    "features": [
+      "gameDateAsPercent",
+      "percentUnresolvedCellsDelta",
+      "percentUnresolvedCellsAverage",
+      "falsePositiveMeanDelta",
+      "falsePositiveMaxLast",
+      "falsePositiveMaxQuadraticCoef",
+      "falsePositiveMaxStdDev",
+      "requiredCellsMeanFirst",
+      "requiredCellsMeanQuadraticCoef",
+      "requiredCellsMeanCubicCoef",
+      "requiredCellsMaxFirst",
+      "requiredCellsMaxCubicCoef",
+      "requiredCellsMaxStdDev",
+      "unusableCellsMeanFirst",
+      "unusableCellsMeanQuadraticCoef",
+      "unusableCellsMeanCubicCoef",
+      "unusableCellsStdFirst",
+      "requiredVsGoalMaxCubicCoef",
+      "unusableVsGoalMeanFirst",
+      "unusableVsGoalMeanQuadraticCoef",
+      "unusableVsGoalMeanAverage",
+      "unusableVsGoalStdCubicCoef",
+      "actionableCellsMeanFirst",
+      "actionableCellsMeanQuadraticCoef",
+      "actionableCellsMeanCubicCoef",
+      "unactionableCellsMeanCubicCoef",
+      "unactionableCellsMaxQuadraticCoef",
+      "unactionableCellsMaxCubicCoef",
+      "unactionableCellsStdAverage",
+      "cellsLargerThanTargetStdFirst",
+      "goalVsTotalMeanQuadraticCoef",
+      "goalVsTotalMeanCubicCoef",
+      "goalVsTotalMeanAverage",
+      "goalVsTotalStdStdDev",
+      "goalVsTotalAllMeanFirst",
+      "goalVsTotalAllMeanCubicCoef",
+      "goalVsTotalAllMeanStdDev",
+      "goalVsTotalAllMaxQuadraticCoef",
+      "falsePositiveStdLast",
+      "requiredCellsStdCubicCoef",
+      "falsePositiveMaxLinearCoef",
+      "goalVsTotalMaxCubicCoef",
+      "unusableCellsStdCubicCoef",
+      "requiredVsGoalMaxAverage",
+      "requiredVsGoalStdStdDev",
+      "goalVsTotalAllStdLast",
+      "requiredCellsMeanAverage",
+      "requiredVsGoalStdLinearCoef",
+      "unactionableCellsStdQuadraticCoef",
+      "unusableCellsMaxAverage",
+      "requiredVsGoalStdQuadraticCoef",
+      "goalVsTotalMaxFirst",
+      "unactionableCellsMeanQuadraticCoef",
+      "actionableCellsMaxAverage",
+      "cellsLargerThanTargetMeanAverage",
+      "requiredCellsMaxAverage"
+    ],
+    "rmse": 219530.2154679402,
+    "baselineRmse": 311001.152227954,
+    "mae": 94072.19081348964,
+    "r2": 0.745011051961098
+  },
+  "history": [
+    {
+      "action": "init",
+      "rmse": 230428.53193329266,
+      "featureCount": 61
+    },
+    {
+      "action": "remove",
+      "feature": "goalVsTotalStdQuadraticCoef",
+      "rmse": 229872.94639867698,
+      "delta": 555.585534615675,
+      "featureCount": 60
+    },
+    {
+      "action": "remove",
+      "feature": "actionableCellsMaxFirst",
+      "rmse": 229340.9844121299,
+      "delta": 531.961986547074,
+      "featureCount": 59
+    },
+    {
+      "action": "remove",
+      "feature": "actionableCellsMaxQuadraticCoef",
+      "rmse": 228702.3619911766,
+      "delta": 638.6224209532957,
+      "featureCount": 58
+    },
+    {
+      "action": "remove",
+      "feature": "requiredVsGoalStdAverage",
+      "rmse": 228405.5694093047,
+      "delta": 296.7925818719086,
+      "featureCount": 57
+    },
+    {
+      "action": "remove",
+      "feature": "goalVsTotalStdDelta",
+      "rmse": 228201.48136555252,
+      "delta": 204.0880437521846,
+      "featureCount": 56
+    },
+    {
+      "action": "remove",
+      "feature": "falsePositiveStdDelta",
+      "rmse": 227858.2109754049,
+      "delta": 343.2703901476343,
+      "featureCount": 55
+    },
+    {
+      "action": "remove",
+      "feature": "requiredVsGoalMaxFirst",
+      "rmse": 227426.05473269755,
+      "delta": 432.1562427073368,
+      "featureCount": 54
+    },
+    {
+      "action": "remove",
+      "feature": "unactionableCellsMaxDelta",
+      "rmse": 227162.95698601674,
+      "delta": 263.0977466808108,
+      "featureCount": 53
+    },
+    {
+      "action": "remove",
+      "feature": "requiredVsGoalStdLinearCoef",
+      "rmse": 226974.6637094315,
+      "delta": 188.29327658523107,
+      "featureCount": 52
+    },
+    {
+      "action": "remove",
+      "feature": "unusableCellsStdAverage",
+      "rmse": 226803.19180428222,
+      "delta": 171.4719051492866,
+      "featureCount": 51
+    },
+    {
+      "action": "remove",
+      "feature": "unusableVsGoalStdFirst",
+      "rmse": 226687.23407346776,
+      "delta": 115.95773081446532,
+      "featureCount": 50
+    },
+    {
+      "action": "remove",
+      "feature": "requiredVsGoalMeanFirst",
+      "rmse": 226604.6221752754,
+      "delta": 82.61189819235005,
+      "featureCount": 49
+    },
+    {
+      "action": "add",
+      "feature": "falsePositiveStdLast",
+      "rmse": 226115.894486237,
+      "delta": 488.72768903840915,
+      "featureCount": 50
+    },
+    {
+      "action": "remove",
+      "feature": "unusableCellsStdQuadraticCoef",
+      "rmse": 225513.9219845042,
+      "delta": 601.9725017327874,
+      "featureCount": 49
+    },
+    {
+      "action": "remove",
+      "feature": "actionableCellsStdAverage",
+      "rmse": 225081.7801664878,
+      "delta": 432.14181801641826,
+      "featureCount": 48
+    },
+    {
+      "action": "add",
+      "feature": "requiredCellsStdCubicCoef",
+      "rmse": 224519.40364965863,
+      "delta": 562.3765168291575,
+      "featureCount": 49
+    },
+    {
+      "action": "add",
+      "feature": "falsePositiveMaxLinearCoef",
+      "rmse": 224023.94716292224,
+      "delta": 495.45648673639516,
+      "featureCount": 50
+    },
+    {
+      "action": "add",
+      "feature": "goalVsTotalMaxCubicCoef",
+      "rmse": 223534.96761650365,
+      "delta": 488.97954641858814,
+      "featureCount": 51
+    },
+    {
+      "action": "add",
+      "feature": "unusableCellsStdCubicCoef",
+      "rmse": 223216.76354413462,
+      "delta": 318.20407236902975,
+      "featureCount": 52
+    },
+    {
+      "action": "remove",
+      "feature": "goalVsTotalStdCubicCoef",
+      "rmse": 223187.18518532504,
+      "delta": 29.578358809580095,
+      "featureCount": 51
+    },
+    {
+      "action": "add",
+      "feature": "requiredVsGoalMaxAverage",
+      "rmse": 222961.98381941067,
+      "delta": 225.2013659143704,
+      "featureCount": 52
+    },
+    {
+      "action": "remove",
+      "feature": "cellsLargerThanTargetMeanAverage",
+      "rmse": 222829.06200716092,
+      "delta": 132.92181224975502,
+      "featureCount": 51
+    },
+    {
+      "action": "add",
+      "feature": "requiredVsGoalStdStdDev",
+      "rmse": 222496.4914316011,
+      "delta": 332.5705755598028,
+      "featureCount": 52
+    },
+    {
+      "action": "remove",
+      "feature": "cellsLargerThanTargetStdStdDev",
+      "rmse": 222431.25456761438,
+      "delta": 65.23686398673453,
+      "featureCount": 51
+    },
+    {
+      "action": "remove",
+      "feature": "requiredVsGoalMeanAverage",
+      "rmse": 222379.05694972095,
+      "delta": 52.19761789342738,
+      "featureCount": 50
+    },
+    {
+      "action": "add",
+      "feature": "goalVsTotalAllStdLast",
+      "rmse": 222100.0950929995,
+      "delta": 278.96185672146385,
+      "featureCount": 51
+    },
+    {
+      "action": "remove",
+      "feature": "requiredVsGoalMeanCubicCoef",
+      "rmse": 221973.5012477258,
+      "delta": 126.5938452736882,
+      "featureCount": 50
+    },
+    {
+      "action": "remove",
+      "feature": "requiredVsGoalStdCubicCoef",
+      "rmse": 221728.79684771076,
+      "delta": 244.70440001503448,
+      "featureCount": 49
+    },
+    {
+      "action": "add",
+      "feature": "requiredCellsMeanAverage",
+      "rmse": 221467.08912465587,
+      "delta": 261.70772305488936,
+      "featureCount": 50
+    },
+    {
+      "action": "add",
+      "feature": "requiredVsGoalStdLinearCoef",
+      "rmse": 221186.15291182994,
+      "delta": 280.9362128259381,
+      "featureCount": 51
+    },
+    {
+      "action": "add",
+      "feature": "unactionableCellsStdQuadraticCoef",
+      "rmse": 220865.20343180816,
+      "delta": 320.9494800217799,
+      "featureCount": 52
+    },
+    {
+      "action": "add",
+      "feature": "unusableCellsMaxAverage",
+      "rmse": 220635.47110638057,
+      "delta": 229.73232542758342,
+      "featureCount": 53
+    },
+    {
+      "action": "add",
+      "feature": "requiredVsGoalStdQuadraticCoef",
+      "rmse": 220494.00719219891,
+      "delta": 141.46391418165877,
+      "featureCount": 54
+    },
+    {
+      "action": "remove",
+      "feature": "goalVsTotalAllMaxStdDev",
+      "rmse": 220414.0000453614,
+      "delta": 80.00714683750994,
+      "featureCount": 53
+    },
+    {
+      "action": "remove",
+      "feature": "goalVsTotalAllMaxLinearCoef",
+      "rmse": 220313.11412208327,
+      "delta": 100.88592327813967,
+      "featureCount": 52
+    },
+    {
+      "action": "add",
+      "feature": "goalVsTotalMaxFirst",
+      "rmse": 220013.0481789819,
+      "delta": 300.0659431013628,
+      "featureCount": 53
+    },
+    {
+      "action": "remove",
+      "feature": "goalVsTotalMaxQuadraticCoef",
+      "rmse": 219847.06613787776,
+      "delta": 165.98204110414372,
+      "featureCount": 52
+    },
+    {
+      "action": "add",
+      "feature": "unactionableCellsMeanQuadraticCoef",
+      "rmse": 219715.68464585295,
+      "delta": 131.38149202481145,
+      "featureCount": 53
+    },
+    {
+      "action": "add",
+      "feature": "actionableCellsMaxAverage",
+      "rmse": 219609.21618873716,
+      "delta": 106.46845711578499,
+      "featureCount": 54
+    },
+    {
+      "action": "add",
+      "feature": "cellsLargerThanTargetMeanAverage",
+      "rmse": 219581.29002229686,
+      "delta": 27.92616644030204,
+      "featureCount": 55
+    },
+    {
+      "action": "add",
+      "feature": "requiredCellsMaxAverage",
+      "rmse": 219530.2154679402,
+      "delta": 51.074554356659064,
+      "featureCount": 56
+    }
+  ]
+}
