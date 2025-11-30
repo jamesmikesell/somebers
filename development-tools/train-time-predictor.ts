@@ -46,6 +46,7 @@ async function main(): Promise<void> {
     metrics: best.metrics,
     perSizeRmse: best.perSizeRmse,
     perSizeMae: best.perSizeMae,
+    perSizeSmape: best.perSizeSmape,
     baseline,
     ridgeCandidates: ridgeCandidates
       .map((e) => ({ model: { modelType: e.model.modelType, lambda: (e.model as RidgeModelJson).lambda, transform: (e.model as RidgeModelJson).transform }, metrics: e.metrics }))

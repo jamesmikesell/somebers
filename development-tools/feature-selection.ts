@@ -34,6 +34,8 @@ interface HistoryEntry {
   action: 'init' | 'add' | 'remove';
   feature?: string;
   rmse: number;
+  smape: number;
+  r2: number;
   delta?: number;
   featureCount: number;
 }
@@ -134,6 +136,10 @@ function parseArgs(): CliOptions {
 
 function fmt(value: number): string {
   return value.toFixed(2);
+}
+
+function fmtR2(value: number): string {
+  return value.toFixed(3);
 }
 
 function deriveCandidateFeatures(
@@ -246,11 +252,13 @@ async function attemptBackwardElimination(
       action: 'remove',
       feature: removedFeature,
       rmse: currentEval.best.metrics.rmse,
+      smape: currentEval.best.metrics.smape,
+      r2: currentEval.best.metrics.r2,
       delta: bestRemoval.delta,
       featureCount: selected.length,
     });
     console.log(
-      `[-] Removed ${removedFeature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} (Δ ${fmt(bestRemoval.delta)})`,
+      `[-] Removed ${removedFeature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ ${fmt(bestRemoval.delta)})`,
     );
   }
   return { selected, eval: currentEval };
@@ -324,10 +332,12 @@ async function main(): Promise<void> {
   history.push({
     action: 'init',
     rmse: currentEval.best.metrics.rmse,
+    smape: currentEval.best.metrics.smape,
+    r2: currentEval.best.metrics.r2,
     featureCount: selected.length,
   });
   console.log(
-    `[feature-selection] Starting with ${selected.length} feature(s); RMSE ${fmt(currentEval.best.metrics.rmse)} (baseline ${fmt(currentEval.baseline.metrics.rmse)})`,
+    `[feature-selection] Starting with ${selected.length} feature(s); RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (baseline RMSE ${fmt(currentEval.baseline.metrics.rmse)} SMAPE ${fmt(currentEval.baseline.metrics.smape)} R2 ${fmtR2(currentEval.baseline.metrics.r2)})`,
   );
 
   ({ selected, eval: currentEval } = await attemptBackwardElimination(
@@ -369,11 +379,13 @@ async function main(): Promise<void> {
       action: 'add',
       feature: bestAddition.feature,
       rmse: currentEval.best.metrics.rmse,
+      smape: currentEval.best.metrics.smape,
+      r2: currentEval.best.metrics.r2,
       delta: bestAddition.delta,
       featureCount: selected.length,
     });
     console.log(
-      `[+] Added ${bestAddition.feature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} (Δ ${fmt(bestAddition.delta)})`,
+      `[+] Added ${bestAddition.feature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ ${fmt(bestAddition.delta)})`,
     );
     ({ selected, eval: currentEval } = await attemptBackwardElimination(
       rawStats,
@@ -395,6 +407,12 @@ async function main(): Promise<void> {
   console.log(
     `Final RMSE: ${fmt(currentEval.best.metrics.rmse)} (baseline ${fmt(currentEval.baseline.metrics.rmse)})`,
   );
+  console.log(
+    `Final SMAPE: ${fmt(currentEval.best.metrics.smape)} (baseline ${fmt(currentEval.baseline.metrics.smape)})`,
+  );
+  console.log(
+    `Final R2: ${fmtR2(currentEval.best.metrics.r2)} (baseline ${fmtR2(currentEval.baseline.metrics.r2)})`,
+  );
   console.log(`Total improvement vs initial: ${fmt(improvement)}`);
   console.log('Features:');
   selected.forEach((f, idx) => console.log(`  ${idx + 1}. ${f}`));
@@ -412,7 +430,10 @@ async function main(): Promise<void> {
       rmse: currentEval.best.metrics.rmse,
       baselineRmse: currentEval.baseline.metrics.rmse,
       mae: currentEval.best.metrics.mae,
+      smape: currentEval.best.metrics.smape,
+      baselineSmape: currentEval.baseline.metrics.smape,
       r2: currentEval.best.metrics.r2,
+      baselineR2: currentEval.baseline.metrics.r2,
     },
     history,
   };

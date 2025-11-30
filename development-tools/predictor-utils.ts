@@ -7,19 +7,20 @@ export function modelStats(best: ModelEvaluationResult<ModelJson>, trainEval?: M
     best.model.modelType,
     best.model.modelType === 'ridge' ? (best.model as RidgeModelJson).lambda + '/' + (best.model as RidgeModelJson).transform : 'baseline'
   );
-  if (trainEval) console.log('Training RMSE:', trainEval.metrics.rmse.toFixed(2), 'MAE:', trainEval.metrics.mae.toFixed(2), 'R2:', trainEval.metrics.r2.toFixed(3));
-  console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'R2:', best.metrics.r2.toFixed(3));
-  const logPerSize = (label: string, rmseBySize: Record<string, number>, maeBySize: Record<string, number>) => {
+  if (trainEval) console.log('Training RMSE:', trainEval.metrics.rmse.toFixed(2), 'MAE:', trainEval.metrics.mae.toFixed(2), 'SMAPE:', trainEval.metrics.smape.toFixed(4), 'R2:', trainEval.metrics.r2.toFixed(3));
+  console.log('Validation RMSE:', best.metrics.rmse.toFixed(2), 'MAE:', best.metrics.mae.toFixed(2), 'SMAPE:', best.metrics.smape.toFixed(4), 'R2:', best.metrics.r2.toFixed(3));
+  const logPerSize = (label: string, rmseBySize: Record<string, number>, maeBySize: Record<string, number>, smapeBySize: Record<string, number>) => {
     if (!rmseBySize || !Object.keys(rmseBySize).length) return;
     console.log(`${label} metrics by board size:`);
     for (const size of Object.keys(rmseBySize).sort((a, b) => Number(a) - Number(b))) {
       const rmseVal = rmseBySize[size];
       const maeVal = maeBySize?.[size];
-      console.log(`  ${size}: RMSE=${rmseVal.toFixed(2)} MAE=${maeVal != null ? maeVal.toFixed(2) : 'n/a'}`);
+      const smapeVal = smapeBySize?.[size];
+      console.log(`  ${size}: RMSE=${rmseVal.toFixed(2)} MAE=${maeVal != null ? maeVal.toFixed(2) : 'n/a'} SMAPE=${smapeVal != null ? smapeVal.toFixed(4) : 'n/a'}`);
     }
   };
-  if (trainEval) logPerSize('Training', trainEval.perSizeRmse, trainEval.perSizeMae);
-  logPerSize('Validation', best.perSizeRmse, best.perSizeMae);
+  if (trainEval) logPerSize('Training', trainEval.perSizeRmse, trainEval.perSizeMae, trainEval.perSizeSmape);
+  logPerSize('Validation', best.perSizeRmse, best.perSizeMae, best.perSizeSmape);
 }
 
 export function logWeights(best: ModelEvaluationResult<ModelJson>): void {

@@ -78,6 +78,8 @@ describe('ml-core k-fold cross validation (optional)', () => {
     const { best, baseline } = trainBestModel(samples, 1337, { useKFold: true, k: 5 });
     expect(isFinite(best.metrics.rmse)).toBeTrue();
     expect(isFinite(baseline.metrics.rmse)).toBeTrue();
+    expect(isFinite(best.metrics.smape)).toBeTrue();
+    expect(isFinite(baseline.metrics.smape)).toBeTrue();
     // Expect ridge to do at least as well as baseline on this synthetic linear data
     // Allow equality due to potential tie-breakers.
     expect(best.metrics.rmse).toBeLessThanOrEqual(baseline.metrics.rmse + 1e-6);
@@ -107,6 +109,8 @@ describe('ml-core configurable feature keys', () => {
     expect(best.model.features).toEqual(featureKeys);
     expect(best.model.modelType).toBe('ridge');
     expect(best.metrics.rmse).toBeLessThan(baseline.metrics.rmse);
+    expect(isFinite(best.metrics.smape)).toBeTrue();
+    expect(isFinite(baseline.metrics.smape)).toBeTrue();
 
     const sample = toSample(rawSamples[0], featureKeys);
     expect(sample?.features).toEqual([
