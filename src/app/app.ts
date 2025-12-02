@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { NextGameFilterDialogLauncher } from './dialog/next-game-filter/next-game-filter-dialog';
 import { MATERIAL_IMPORTS } from './material-imports';
 import { BoardUiService } from './service/board-ui.service';
+import { NextGameFilterOptions, NextGameFilterService } from './service/next-game-filter.service';
 import { PwaInstallService } from './service/pwa-install.service';
 import { ColorModeSetting, SettingsService } from './service/settings.service';
 import { VersionCheckService } from './service/version-check.service';
@@ -25,6 +27,21 @@ export class App implements OnInit, OnDestroy {
   boardVisible = false;
   canUndo = false;
   showStartOver = false;
+  nextGameFilterEnabled = false;
+  nextGameFilterRangeLabel?: string;
+  nextGameFilterFpHidden = false;
+  get menuBadgeVisible(): boolean {
+    return this.versionCheckService.isUpdateAvailable || this.nextGameFilterEnabled;
+  }
+  get menuBadgeLabel(): string {
+    if (this.nextGameFilterEnabled && this.versionCheckService.isUpdateAvailable)
+      return 'Fltr +';
+    if (this.nextGameFilterEnabled)
+      return 'Fltr';
+    if (this.versionCheckService.isUpdateAvailable)
+      return '!';
+    return '';
+  }
 
   private destroy = new Subject<void>();
 
@@ -35,6 +52,8 @@ export class App implements OnInit, OnDestroy {
     // Force early construction so it can capture beforeinstallprompt events
     _pwaInstallService: PwaInstallService,
     private settingsService: SettingsService,
+    private nextGameFilterService: NextGameFilterService,
+    private nextGameFilterDialogLauncher: NextGameFilterDialogLauncher,
   ) {
     versionCheckService.startVersionCheck();
     const colorMode = this.settingsService.getColorMode();
@@ -58,6 +77,10 @@ export class App implements OnInit, OnDestroy {
     this.boardUiService.showStartOver$
       .pipe(takeUntil(this.destroy))
       .subscribe(show => setTimeout(() => this.showStartOver = show, 0))
+
+    this.nextGameFilterService.options$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(options => this.updateNextGameFilterLabel(options));
   }
 
 
@@ -84,6 +107,69 @@ export class App implements OnInit, OnDestroy {
   }
 
 
+  private updateNextGameFilterLabel(options: NextGameFilterOptions): void {
+    this.nextGameFilterEnabled = options?.enabled === true;
+    if (!this.nextGameFilterEnabled) {
+      this.nextGameFilterRangeLabel = undefined;
+      this.nextGameFilterFpHidden = false;
+      return;
+    }
+
+    this.nextGameFilterFpHidden = options.excludeFpPlus === true;
+    this.nextGameFilterRangeLabel = options.mode === 'difficulty'
+      ? this.formatDifficultyRange(options.minDifficulty, options.maxDifficulty)
+      : this.formatTimeRange(options.minTimeSeconds, options.maxTimeSeconds);
+  }
+
+
+  private formatDifficultyRange(min?: number, max?: number): string | undefined {
+    const minVal = this.toSingleDecimal(min);
+    const maxVal = this.toSingleDecimal(max);
+    if (minVal == null && maxVal == null)
+      return undefined;
+    if (minVal != null && maxVal != null)
+      return `${minVal} - ${maxVal}◇`;
+    if (minVal != null)
+      return `${minVal}◇+`;
+    if (maxVal == null)
+      return undefined;
+    return `<=${maxVal}◇`;
+  }
+
+
+  private formatTimeRange(minSeconds?: number, maxSeconds?: number): string | undefined {
+    const min = this.secondsToMinutes(minSeconds);
+    const max = this.secondsToMinutes(maxSeconds);
+    if (min == null && max == null)
+      return undefined;
+    if (min != null && max != null)
+      return `${min} - ${max}m`;
+    if (min != null)
+      return `${min}m+`;
+    if (max == null)
+      return undefined;
+    return `<=${max}m`;
+  }
+
+
+  private toSingleDecimal(value?: number): string | undefined {
+    if (!Number.isFinite(value))
+      return undefined;
+
+    const rounded = Math.round(value * 10) / 10;
+    return Number.isInteger(rounded) ? `${rounded}` : rounded.toFixed(1);
+  }
+
+
+  private secondsToMinutes(totalSeconds?: number): string | undefined {
+    if (!Number.isFinite(totalSeconds))
+      return undefined;
+
+    const minutes = Math.round((totalSeconds / 60) * 10) / 10;
+    return Number.isInteger(minutes) ? `${minutes}` : minutes.toFixed(1);
+  }
+
+
   private setColorMode(): void {
     document.body.style.colorScheme = this.currentColorMode.cssScheme;
 
@@ -97,6 +183,13 @@ export class App implements OnInit, OnDestroy {
 
   requestStartOver(): void {
     this.boardUiService.requestRestart();
+  }
+
+
+  async openNextGameFilter(): Promise<void> {
+    const result = await this.nextGameFilterDialogLauncher.open();
+    if (result)
+      this.nextGameFilterService.setOptions(result);
   }
 }
 

@@ -21,10 +21,10 @@
             <button
               matMiniFab
               class="game-button"
-              [disabled]="gameNumber <= 1"
-              (click)="changeGameNumberFromUi(gameNumber - 1)"
+              [disabled]="nextGameSearchInProgress || gameNumber <= 1"
+              (click)="goToNextGameFromToolbar('backward')"
             >
-              <mat-icon>do_not_disturb_on</mat-icon>
+              <mat-icon>{{ nextGameSearchInProgress ? "hourglass_top" : "do_not_disturb_on" }}</mat-icon>
             </button>
           </div>
 
@@ -45,9 +45,10 @@
             <button
               matMiniFab
               class="game-button"
-              (click)="changeGameNumberFromUi(gameNumber + 1)"
+              (click)="goToNextGameFromToolbar('forward')"
+              [disabled]="nextGameSearchInProgress"
             >
-              <mat-icon>add_circle</mat-icon>
+              <mat-icon>{{ nextGameSearchInProgress ? "hourglass_top" : "add_circle" }}</mat-icon>
             </button>
 
             @if (tournamentMode) {
@@ -95,9 +96,14 @@
           Play Game {{ gameNumber }} Again
         </button>
         &nbsp;&nbsp;
-        <button matFab extended (click)="platNextUnfinishedGame()">
-          <mat-icon>skip_next</mat-icon>
-          Next Game
+        <button
+          matFab
+          extended
+          (click)="platNextUnfinishedGame()"
+          [disabled]="nextGameSearchInProgress"
+        >
+          <mat-icon>{{ nextGameSearchInProgress ? "hourglass_top" : "skip_next" }}</mat-icon>
+          {{ nextGameSearchInProgress ? "Finding Next Game..." : "Next Game" }}
         </button>
       </div>
     </div>

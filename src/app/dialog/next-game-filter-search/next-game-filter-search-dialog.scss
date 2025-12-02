@@ -1,0 +1,28 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.text {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.current {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.current__number {
+  display: inline-flex;
+  min-width: 24px;
+  justify-content: center;
+}

@@ -10,11 +10,14 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { filter, first, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, filter, first, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { CelebrationLauncherService, CelebrationStats } from '../../dialog/celebration/celebration-launcher.service';
 import { ConfirmStartOverDialogLauncher } from '../../dialog/confirm-start-over/confirm-start-over-dialog';
+import { NextGameFilterNoMatchDialog } from '../../dialog/next-game-filter-no-match/next-game-filter-no-match-dialog';
+import { NextGameFilterSearchDialog } from '../../dialog/next-game-filter-search/next-game-filter-search-dialog';
 import { MATERIAL_IMPORTS } from '../../material-imports';
 import { DisplayCell, GameBoard, SelectionStatus } from '../../model/game-board';
 import { CellDtoV1 } from '../../model/saved-game-data/cell-dto-v1';
@@ -23,8 +26,10 @@ import { MoveHistoryDtoV1 } from '../../model/saved-game-data/move-history-dto.v
 import { LockService } from '../../service/app-lock.service';
 import { BoardUiService } from '../../service/board-ui.service';
 import { CachingBoardGeneratorService } from '../../service/caching-board-generator.service';
-import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
 import { ChangedDefaultService } from '../../service/changed-default.service';
+import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.service';
+import { NextGameFilterService } from '../../service/next-game-filter.service';
+import { NextGameSelectorService, SearchDirection } from '../../service/next-game-selector.service';
 import { SaveDataService } from '../../service/save-data.service';
 import { SettingsService } from '../../service/settings.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
@@ -68,6 +73,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   shapesMode: boolean = false;
   scratchPadVisible: boolean = true;
   nextGameButtonState: "hidden" | "show-animated" | "show-instant" = "hidden";
+  nextGameSearchInProgress = false;
   disableAnimations = false;
   stats: GameStats;
   rowColCurrentSumVisible: boolean = true;
@@ -132,6 +138,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private cachingBoardGenerator: CachingBoardGeneratorService,
     private changedDefaultService: ChangedDefaultService,
+    private nextGameFilterService: NextGameFilterService,
+    private nextGameSelectorService: NextGameSelectorService,
+    private dialog: MatDialog,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
@@ -468,7 +477,30 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
+  async goToNextGameFromToolbar(direction: SearchDirection): Promise<void> {
+    if (this.nextGameSearchInProgress)
+      return;
+
+    const options = this.nextGameFilterService.getOptions();
+    const skipCompleted = options.enabled && options.skipCompleted;
+    if (options.enabled) {
+      const filterOutcome = await this.tryFilteredNextGame(direction, skipCompleted);
+      if (filterOutcome !== 'unhandled')
+        return;
+    }
+
+this.changeGameNumberFromUi(this.gameNumber + (direction === 'forward' ? 1 : -1))
+  }
+
+
   async platNextUnfinishedGame(): Promise<void> {
+    if (this.nextGameSearchInProgress)
+      return;
+
+    const filterOutcome = await this.tryFilteredNextGame('forward', true);
+    if (filterOutcome !== 'unhandled')
+      return;
+
     const allGameNumbers = Array.from(this.previousGames.keys()).sort((a, b) => a - b);
     // Find the next game number after current
     for (let i = this.gameNumber + 1; i <= Math.max(...allGameNumbers) + 1; i++) {
@@ -638,6 +670,63 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
   private calculateStats(): void {
     this.stats = this.statCalculator.calculateStats(this.gameNumber);
+  }
+
+  private async tryFilteredNextGame(searchDirection: SearchDirection, skipCompletedOverride?: boolean): Promise<'handled' | 'unhandled' | 'cancelled'> {
+    const filterOptions = this.nextGameFilterService.getOptions();
+    if (!filterOptions.enabled)
+      return 'unhandled';
+
+    const abortController = new AbortController();
+    const progress$ = new BehaviorSubject<number | undefined>(undefined);
+    let dialogRef: MatDialogRef<NextGameFilterSearchDialog> | undefined;
+    let noMatchFound = false;
+    const dialogTimer = setTimeout(() => {
+      dialogRef = this.dialog.open(NextGameFilterSearchDialog, {
+        disableClose: true,
+        data: {
+          onCancel: () => {
+            abortController.abort();
+            dialogRef?.close();
+          },
+          progress$: progress$.asObservable(),
+        }
+      });
+    }, 500);
+
+    this.nextGameSearchInProgress = true;
+    try {
+      const result = await this.nextGameSelectorService.findNextGame(
+        this.gameNumber,
+        this.previousGames,
+        abortController.signal,
+        searchDirection,
+        gameNumber => progress$.next(gameNumber),
+        skipCompletedOverride,
+      );
+      if (result?.status === 'cancelled')
+        return 'cancelled';
+
+      if (result?.gameNumber != null) {
+        await this.changeGameNumberFromUi(result.gameNumber);
+        return 'handled';
+      }
+
+      if (result?.status === 'none') {
+        noMatchFound = true;
+        return 'handled';
+      }
+
+      return 'unhandled';
+    } finally {
+      this.nextGameSearchInProgress = false;
+      clearTimeout(dialogTimer);
+      dialogRef?.close();
+      progress$.complete();
+
+      if (noMatchFound)
+        this.dialog.open(NextGameFilterNoMatchDialog);
+    }
   }
 
 

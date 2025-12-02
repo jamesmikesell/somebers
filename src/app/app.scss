@@ -20,3 +20,14 @@
   text-align: center;
   align-content: center;
 }
+
+.filter-menu-label__summary {
+  margin-left: 6px;
+  font-size: 0.95em;
+  white-space: nowrap;
+}
+
+.filter-menu-label__fp-plus {
+  display: inline-flex;
+  align-items: center;
+}

@@ -23,6 +23,7 @@
 
 # Done
 
+- filter for next game
 - Auto refresh the app once the update has been downloaded, when the user changes the app from being visible to not visible
 - recalculate all ML stats for each deduction iteration
 - tournament mode: incorrect moves allowed, game doesn't warn on mistake. will likely need to always show headers, and cleared cells should likely continue to show their value (though possibly in a different text color?). will also need to be able to mark a cell as untouched. if we hide color groups after they're "complete" we'll need to make sure the hiding logic is based on no cells having a selection status!=none rather than checking for the correct cells being selected.
