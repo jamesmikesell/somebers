@@ -11,6 +11,10 @@ This repo hosts Somebers, an Angular SPA deployed as static pages. Follow these 
 - Tests: colocated `*.spec.ts` (e.g., `src/app/model/random.spec.ts`).
 - Builds: production output in `dist/numbers/browser/`; deploy copies to `docs/`.
 
+## Angular Material
+- UI is built with Angular Material 20; use the v20 APIs/selectors/config (no legacy syntax from earlier releases).
+- Prefer existing Angular Material components, themes, and styling primitives—do not create custom colors/themes/components when a Material option already covers the need.
+
 ## Build, Test, and Development Commands
 - `npm start`: Start dev server with HMR at `http://localhost:4200`.
 - `npm run startExternal`: Serve on `0.0.0.0` with local SSL certs.
