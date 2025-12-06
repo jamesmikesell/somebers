@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./component/backup/backup').then(m => m.BackupComponent),
   },
   {
+    path: 'sessions',
+    loadComponent: () => import('./component/sessions/sessions').then(m => m.SessionsComponent),
+  },
+  {
     path: 'resume',
     loadComponent: () => import('./component/resume/resume').then(m => m.ResumeComponent),
   },

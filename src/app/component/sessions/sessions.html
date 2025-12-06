@@ -1,0 +1,171 @@
+<app-title></app-title>
+
+<div class="overscroll session-shell">
+  <div class="session-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="startSession()"
+      [disabled]="state?.active"
+    >
+      Start Session
+    </button>
+
+    <button
+      mat-stroked-button
+      color="warn"
+      (click)="endSession()"
+      [disabled]="!state?.active"
+    >
+      End Session
+    </button>
+  </div>
+
+  <mat-card class="status-card">
+    <mat-card-header>
+      <mat-card-title>Session Status</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="status-row">
+        <span>Status</span>
+        <span>
+          @if (state?.startTime) {
+            @if (state?.active) { Active } @else { Ended }
+          } @else {
+            Not started
+          }
+        </span>
+      </div>
+      <div class="status-row">
+        <span>Session start</span>
+        <span>
+          @if (state?.startTime) {
+            {{ state.startTime | date:"EEE, MMM d, y 'at' h:mm a" }}
+          } @else {
+            –
+          }
+        </span>
+      </div>
+      <div class="status-row">
+        <span>Session end</span>
+        <span>
+          @if (state?.active) {
+            In progress
+          } @else {
+            @if (state?.endTime) {
+              {{ state.endTime | date:"EEE, MMM d, y 'at' h:mm a" }}
+            } @else {
+              –
+            }
+          }
+        </span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (loading) {
+    <div class="loading">Loading session stats…</div>
+  } @else if (stats?.startTime) {
+    <div class="stats-grid">
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Boards Completed</div>
+          <div class="stat-value">{{ stats?.boardCount || 0 }}</div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Max Mistakes</div>
+          <div class="stat-value">{{ stats?.maxMistakes ?? '–' }}</div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Cumulative Difficulty</div>
+          <div class="stat-value">
+            @if (stats?.cumulativeDifficulty != null) {
+              {{ stats.cumulativeDifficulty | number:'1.0-0' }}
+            } @else {
+              –
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Avg. Time vs Par</div>
+          <div class="stat-value">
+            @if (stats?.averageTimeAgainstParMs != null) {
+              {{ stats.averageTimeAgainstParMs < 0 ? '-' : '+' }}
+              {{
+                (stats.averageTimeAgainstParMs < 0
+                  ? -stats.averageTimeAgainstParMs
+                  : stats.averageTimeAgainstParMs) | duration
+              }}
+            } @else {
+              –
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Total Play Time</div>
+          <div class="stat-value">{{ stats?.totalPlayTimeMs | duration }}</div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Avg. Mstk. / Board</div>
+          <div class="stat-value">
+            @if (stats?.averageMistakes != null) {
+              {{ stats.averageMistakes | number:'1.0-2' }}
+            } @else {
+              –
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Accuracy</div>
+          <div class="stat-value">
+            @if (stats?.accuracyPercent != null) {
+              {{ stats.accuracyPercent | number:'1.0-1' }}%
+            } @else {
+              –
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Avg. Difficulty</div>
+          <div class="stat-value">
+            @if (stats?.averageDifficulty != null) {
+              {{ stats.averageDifficulty | number:'1.0-1' }}
+            } @else {
+              –
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
+          <div class="stat-label">Max Difficulty</div>
+          <div class="stat-value">
+            @if (stats?.maxDifficulty != null) {
+              {{ stats.maxDifficulty | number:'1.0-1' }}
+            } @else {
+              –
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <p>No session data yet. Start a session to track boards completed within that window.</p>
+    </div>
+  }
+</div>

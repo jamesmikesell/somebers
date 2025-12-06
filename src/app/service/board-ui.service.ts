@@ -8,7 +8,6 @@ export class BoardUiService {
 
   readonly boardVisible$ = new BehaviorSubject<boolean>(false);
   readonly canUndo$ = new BehaviorSubject<boolean>(false);
-  readonly showStartOver$ = new BehaviorSubject<boolean>(false);
 
   get undoRequested$(): Observable<void> {
     return this.undoRequestedSubject.asObservable();
@@ -34,8 +33,4 @@ export class BoardUiService {
     return this.restartRequestedSubject.asObservable();
   }
 
-
-  setShowStartOver(value: boolean): void {
-    this.showStartOver$.next(!!value);
-  }
 }

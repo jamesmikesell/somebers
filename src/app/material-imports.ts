@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatCardModule } from '@angular/material/card';
 
 export const MATERIAL_IMPORTS = [
   FormsModule,
@@ -16,4 +17,5 @@ export const MATERIAL_IMPORTS = [
   MatMenuModule,
   MatBadgeModule,
   MatDialogModule,
+  MatCardModule,
 ] as const;

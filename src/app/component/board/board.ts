@@ -31,6 +31,7 @@ import { ColorGridOptimizerService } from '../../service/color-grid-optimizer.se
 import { NextGameFilterService } from '../../service/next-game-filter.service';
 import { NextGameSelectorService, SearchDirection } from '../../service/next-game-selector.service';
 import { SaveDataService } from '../../service/save-data.service';
+import { SessionService } from '../../service/session.service';
 import { SettingsService } from '../../service/settings.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { TimeTracker } from '../../service/time-tracker';
@@ -94,6 +95,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   private sectionAnimator = new SectionCompletionAnimator();
   private lockLostNavigated = false;
   private celebratingGameNumber: number = undefined;
+  private sessionActive = false;
 
   @ViewChild('boardLayout')
   set boardLayout(ref: ElementRef<HTMLElement> | undefined) {
@@ -141,12 +143,14 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     private nextGameFilterService: NextGameFilterService,
     private nextGameSelectorService: NextGameSelectorService,
     private dialog: MatDialog,
+    private sessionService: SessionService,
   ) {
     this.devMode = AppVersion.VERSION as string === "000000-0000000000";
 
     this.configureTimeTracking();
     this.statCalculator = new StatCalculator(this.previousGames);
     this.configureUndo();
+    this.subscribeToSession();
 
     this.shapesMode = this.settingsService.getShapesModeEnabled();
     this.scratchPadVisible = this.settingsService.getScratchPadVisible();
@@ -190,6 +194,11 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.boardUiService.undoRequested$
       .pipe(takeUntil(this.destroy))
       .subscribe(() => {
+        if (this.sessionActive && !this.tournamentMode) {
+          alert('Undos are disabled during active sessions.');
+          return;
+        }
+
         this.undoManager.undoLast()
       });
     this.boardUiService.setCanUndo(this.undoManager.hasUndo());
@@ -320,6 +329,15 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       ).subscribe(() => {
         this.saveGameState()
       })
+  }
+
+
+  private subscribeToSession(): void {
+    this.sessionService.state$
+      .pipe(takeUntil(this.destroy))
+      .subscribe(state => {
+        this.sessionActive = state.active;
+      });
   }
 
 
@@ -455,6 +473,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy))
       .subscribe(async confirmed => {
         if (confirmed) {
+          this.sessionService.removeDifficultyEntry(this.gameNumber);
           this.previousGames.delete(this.gameNumber);
           await this.updateGameNumber(this.gameNumber);
           this.saveGameState()
@@ -486,7 +505,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
         return;
     }
 
-this.changeGameNumberFromUi(this.gameNumber + (direction === 'forward' ? 1 : -1))
+    this.changeGameNumberFromUi(this.gameNumber + (direction === 'forward' ? 1 : -1))
   }
 
 
@@ -740,6 +759,7 @@ this.changeGameNumberFromUi(this.gameNumber + (direction === 'forward' ? 1 : -1)
     if (this.gameBoard.isComplete() && this.celebratingGameNumber === undefined) {
       this.celebratingGameNumber = this.gameNumber;
       this.undoManager.clear();
+      await this.sessionService.recordCompletion(this.gameNumber, this.moveHistory);
 
       let stats: CelebrationStats = {
         mistakes: this.stats.mistakesCurrentBoard,

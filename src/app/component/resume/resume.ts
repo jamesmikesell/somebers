@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MATERIAL_IMPORTS } from '../../material-imports';
+import { SessionService } from '../../service/session.service';
 import { Title } from "../title/title";
 
 @Component({
@@ -12,11 +13,13 @@ import { Title } from "../title/title";
 export class ResumeComponent {
 
   constructor(
-    private router: Router
+    private router: Router,
+    private sessionService: SessionService,
   ) { }
 
 
   async resume(): Promise<void> {
+    this.sessionService.refreshFromStorage();
     await this.router.navigateByUrl('/');
   }
 }

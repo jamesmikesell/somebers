@@ -1,0 +1,58 @@
+.session-actions {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0 16px;
+  justify-content: center;
+}
+
+.session-shell {
+  max-width: 800px;
+  width: 93vw;
+  margin-top: 45px;
+}
+
+.status-card {
+  margin-bottom: 12px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 12px;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.loading {
+  padding: 12px;
+  font-style: italic;
+}
+
+.empty-state {
+  margin-top: 12px;
+  padding: 12px;
+}
