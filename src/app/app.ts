@@ -30,12 +30,12 @@ export class App implements OnInit, OnDestroy {
   nextGameFilterRangeLabel?: string;
   nextGameFilterFpHidden = false;
   get menuBadgeVisible(): boolean {
-    return this.versionCheckService.isUpdateAvailable || this.nextGameFilterEnabled;
+    return this.versionCheckService.isUpdateAvailable || (this.nextGameFilterEnabled && this.boardVisible);
   }
   get menuBadgeLabel(): string {
-    if (this.nextGameFilterEnabled && this.versionCheckService.isUpdateAvailable)
+    if (this.boardVisible && this.nextGameFilterEnabled && this.versionCheckService.isUpdateAvailable)
       return 'Fltr +';
-    if (this.nextGameFilterEnabled)
+    if (this.boardVisible && this.nextGameFilterEnabled)
       return 'Fltr';
     if (this.versionCheckService.isUpdateAvailable)
       return '!';
