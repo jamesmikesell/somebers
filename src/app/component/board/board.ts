@@ -388,6 +388,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
 
   async use(cell: DisplayCell): Promise<void> {
+    if (this.gameBoard.isComplete())
+      return;
+
     cell.processing = false;
 
     if (cell.status !== SelectionStatus.NONE) {
@@ -419,6 +422,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
 
   async clear(cell: DisplayCell): Promise<void> {
+    if (this.gameBoard.isComplete())
+      return;
+
     cell.processing = false;
 
     if (cell.status !== SelectionStatus.NONE) {
@@ -448,6 +454,9 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
 
   async onHeaderDoubleTap(rowIndex: number, colIndex: number): Promise<void> {
+    if (this.gameBoard.isComplete())
+      return;
+
     if (rowIndex > 0 && colIndex > 0)
       return;
 
