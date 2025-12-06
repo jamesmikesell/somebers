@@ -26,7 +26,6 @@ export class App implements OnInit, OnDestroy {
   get currentColorMode() { return this.colorModes[this.currentColorModeIndex] }
   boardVisible = false;
   canUndo = false;
-  showStartOver = false;
   nextGameFilterEnabled = false;
   nextGameFilterRangeLabel?: string;
   nextGameFilterFpHidden = false;
@@ -73,10 +72,6 @@ export class App implements OnInit, OnDestroy {
     this.boardUiService.canUndo$
       .pipe(takeUntil(this.destroy))
       .subscribe(canUndo => setTimeout(() => this.canUndo = canUndo, 0))
-
-    this.boardUiService.showStartOver$
-      .pipe(takeUntil(this.destroy))
-      .subscribe(show => setTimeout(() => this.showStartOver = show, 0))
 
     this.nextGameFilterService.options$
       .pipe(takeUntil(this.destroy))

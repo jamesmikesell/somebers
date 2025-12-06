@@ -22,41 +22,42 @@
       Undo
     </button>
 
-    @if (showStartOver) {
-      <button mat-menu-item (click)="requestStartOver()">
-        <mat-icon>restart_alt</mat-icon>
-        Start Board Over
-      </button>
-    }
-  }
+    <button mat-menu-item (click)="requestStartOver()">
+      <mat-icon>restart_alt</mat-icon>
+      Start Board Over
+    </button>
 
-  <button mat-menu-item (click)="openNextGameFilter()">
-    <mat-icon
-      [matBadgeHidden]="!nextGameFilterEnabled"
-      matBadge="on"
-      matBadgePosition="after"
-      aria-hidden="false"
-      >filter_alt</mat-icon
-    >
-    <span class="filter-menu-label">
-      Game Filter
-      @if (nextGameFilterEnabled && (nextGameFilterRangeLabel || nextGameFilterFpHidden)) {
-        <span class="filter-menu-label__summary">
-          (
-          @if (nextGameFilterFpHidden) {
-            <span class="filter-menu-label__fp-plus">🚫FP+</span>
-          }
-          @if (nextGameFilterFpHidden && nextGameFilterRangeLabel) {
-            &nbsp;
-          }
-          @if (nextGameFilterRangeLabel) {
-            {{ nextGameFilterRangeLabel }}
-          }
-          )
-        </span>
-      }
-    </span>
-  </button>
+    <button mat-menu-item (click)="openNextGameFilter()">
+      <mat-icon
+        [matBadgeHidden]="!nextGameFilterEnabled"
+        matBadge="on"
+        matBadgePosition="after"
+        aria-hidden="false"
+        >filter_alt</mat-icon
+      >
+      <span class="filter-menu-label">
+        Game Filter
+        @if (
+          nextGameFilterEnabled &&
+          (nextGameFilterRangeLabel || nextGameFilterFpHidden)
+        ) {
+          <span class="filter-menu-label__summary">
+            (
+            @if (nextGameFilterFpHidden) {
+              <span class="filter-menu-label__fp-plus">🚫FP+</span>
+            }
+            @if (nextGameFilterFpHidden && nextGameFilterRangeLabel) {
+              &nbsp;
+            }
+            @if (nextGameFilterRangeLabel) {
+              {{ nextGameFilterRangeLabel }}
+            }
+            )
+          </span>
+        }
+      </span>
+    </button>
+  }
 
   <button mat-menu-item routerLink="/documentation">
     <mat-icon>book</mat-icon>

@@ -198,7 +198,6 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       await this.updateGameNumber(this.gameNumber || 1);
 
     this.setupStartOverMenuHandling();
-    this.boardUiService.setShowStartOver(true);
   }
 
 
@@ -210,7 +209,6 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.destroy.next()
     this.boardUiService.boardVisible$.next(false);
-    this.boardUiService.setShowStartOver(false);
     this.timeTracker.destroy();
     this.saveGameState();
     this.layoutController.destroy();
@@ -265,7 +263,6 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     this.lockLostNavigated = true;
     this.ngZone.run(() => {
       this.boardUiService.boardVisible$.next(false);
-      this.boardUiService.setShowStartOver(false);
       this.router.navigateByUrl('/resume').catch(error => {
         console.error('Failed to navigate after losing app lock', error);
       });
