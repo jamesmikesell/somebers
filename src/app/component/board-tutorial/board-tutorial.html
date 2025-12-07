@@ -1,0 +1,31 @@
+<ng-template #tutorialInstructions>
+  <mat-card class="instructions">
+    <mat-card-content>
+      <div [innerHTML]="currentStepHtml"></div>
+
+      <div class="step-tracker">
+        Step {{ currentStepIndex + 1 }} of {{ steps.length || 1 }}
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      @if (currentStepIndex < steps.length - 1) {
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="nextDisabled"
+          (click)="nextStep()"
+        >
+          Next
+        </button>
+      } @else {
+        <a mat-button routerLink="/">Play For Real</a>
+      }
+    </mat-card-actions>
+  </mat-card>
+</ng-template>
+
+<app-board
+  [tutorialHeaderContents]="tutorialInstructions"
+  #boardComponent
+></app-board>

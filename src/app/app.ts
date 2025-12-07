@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NextGameFilterDialogLauncher } from './dialog/next-game-filter/next-game-filter-dialog';
 import { MATERIAL_IMPORTS } from './material-imports';
 import { BoardUiService } from './service/board-ui.service';
 import { NextGameFilterOptions, NextGameFilterService } from './service/next-game-filter.service';
 import { PwaInstallService } from './service/pwa-install.service';
+import { SaveDataService } from './service/save-data.service';
 import { ColorModeSetting, SettingsService } from './service/settings.service';
 import { VersionCheckService } from './service/version-check.service';
 
@@ -53,6 +54,8 @@ export class App implements OnInit, OnDestroy {
     private settingsService: SettingsService,
     private nextGameFilterService: NextGameFilterService,
     private nextGameFilterDialogLauncher: NextGameFilterDialogLauncher,
+    private saveDataService: SaveDataService,
+    private router: Router,
   ) {
     versionCheckService.startVersionCheck();
     const colorMode = this.settingsService.getColorMode();
@@ -65,6 +68,8 @@ export class App implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    void this.redirectFirstTimeVisitor();
+
     this.boardUiService.boardVisible$
       .pipe(takeUntil(this.destroy))
       .subscribe(visible => setTimeout(() => this.boardVisible = visible, 0))
@@ -88,6 +93,21 @@ export class App implements OnInit, OnDestroy {
     this.currentColorModeIndex = (this.currentColorModeIndex + 1) % this.colorModes.length;
     this.setColorMode();
     this.settingsService.setColorMode(this.currentColorMode.mode);
+  }
+
+  private async redirectFirstTimeVisitor(): Promise<void> {
+    try {
+      const savedData = await this.saveDataService.service.load();
+      const hasSeenGame = !!savedData && savedData.currentGameNumber != null;
+      if (!hasSeenGame && !this.router.url.startsWith('/tutorial')) {
+        await this.router.navigateByUrl('/tutorial');
+      }
+    } catch (error) {
+      console.warn('Unable to check save data for first-visit redirect', error);
+      if (!this.router.url.startsWith('/tutorial')) {
+        await this.router.navigateByUrl('/tutorial');
+      }
+    }
   }
 
 

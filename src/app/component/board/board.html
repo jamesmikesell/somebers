@@ -4,84 +4,94 @@
 
     <div class="centered">
       <div class="top-controls">
-        <div class="game-controls">
-          <div class="game-controls__side game-controls__side--left">
-            @if (devMode) {
-              <div class="dev-controls">
-                <button
-                  matMiniFab
-                  class="game-button"
-                  (click)="autoCompleteGame()"
-                >
-                  <mat-icon>auto_fix_high</mat-icon>
-                </button>
-              </div>
-            }
+        @if (tutorialHeaderContents) {
+          <ng-container *ngTemplateOutlet="tutorialHeaderContents"></ng-container>
+        } @else {
+          <div class="game-controls">
+            <div class="game-controls__side game-controls__side--left">
+              @if (devMode) {
+                <div class="dev-controls">
+                  <button
+                    matMiniFab
+                    class="game-button"
+                    (click)="autoCompleteGame()"
+                  >
+                    <mat-icon>auto_fix_high</mat-icon>
+                  </button>
+                </div>
+              }
 
-            <button
-              matMiniFab
-              class="game-button"
-              [disabled]="nextGameSearchInProgress || gameNumber <= 1"
-              (click)="goToNextGameFromToolbar('backward')"
-            >
-              <mat-icon>{{ nextGameSearchInProgress ? "hourglass_top" : "do_not_disturb_on" }}</mat-icon>
-            </button>
-          </div>
-
-          <div class="game-controls__center">
-            <mat-form-field class="game-number" subscriptSizing="dynamic">
-              <mat-label>Game #</mat-label>
-              <input
-                matInput
-                type="number"
-                [ngModel]="gameNumber"
-                (ngModelChange)="changeGameNumberFromUi($event)"
-                min="1"
-              />
-            </mat-form-field>
-          </div>
-
-          <div class="game-controls__side game-controls__side--right">
-            <button
-              matMiniFab
-              class="game-button"
-              (click)="goToNextGameFromToolbar('forward')"
-              [disabled]="nextGameSearchInProgress"
-            >
-              <mat-icon>{{ nextGameSearchInProgress ? "hourglass_top" : "add_circle" }}</mat-icon>
-            </button>
-
-            @if (tournamentMode) {
               <button
                 matMiniFab
                 class="game-button"
-                (click)="showCleared = !showCleared"
+                [disabled]="nextGameSearchInProgress || gameNumber <= 1"
+                (click)="goToNextGameFromToolbar('backward')"
               >
                 <mat-icon>{{
-                  showCleared ? "visibility" : "visibility_off"
+                  nextGameSearchInProgress
+                    ? "hourglass_top"
+                    : "do_not_disturb_on"
                 }}</mat-icon>
               </button>
-            }
+            </div>
+
+            <div class="game-controls__center">
+              <mat-form-field class="game-number" subscriptSizing="dynamic">
+                <mat-label>Game #</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [ngModel]="gameNumber"
+                  (ngModelChange)="changeGameNumberFromUi($event)"
+                  min="1"
+                />
+              </mat-form-field>
+            </div>
+
+            <div class="game-controls__side game-controls__side--right">
+              <button
+                matMiniFab
+                class="game-button"
+                (click)="goToNextGameFromToolbar('forward')"
+                [disabled]="nextGameSearchInProgress"
+              >
+                <mat-icon>{{
+                  nextGameSearchInProgress ? "hourglass_top" : "add_circle"
+                }}</mat-icon>
+              </button>
+
+              @if (tournamentMode) {
+                <button
+                  matMiniFab
+                  class="game-button"
+                  (click)="showCleared = !showCleared"
+                >
+                  <mat-icon>{{
+                    showCleared ? "visibility" : "visibility_off"
+                  }}</mat-icon>
+                </button>
+              }
+            </div>
           </div>
-        </div>
 
-        <div class="stats">
-          <app-stats [stats]="stats"></app-stats>
-        </div>
+          <div class="stats">
+            <app-stats [stats]="stats"></app-stats>
+          </div>
 
-        <div class="estimated">
-          <app-estimated-difficulty
-            [playArea]="
-              !gameBoard.isComplete() ? gameBoard.playArea : undefined
-            "
-            [gameNumber]="gameNumber"
-          ></app-estimated-difficulty>
-        </div>
+          <div class="estimated">
+            <app-estimated-difficulty
+              [playArea]="
+                !gameBoard.isComplete() ? gameBoard.playArea : undefined
+              "
+              [gameNumber]="gameNumber"
+            ></app-estimated-difficulty>
+          </div>
+        }
       </div>
     </div>
   </div>
 
-  @if (nextGameButtonState !== "hidden") {
+  @if (nextGameButtonState !== "hidden" && !tutorialHeaderContents) {
     <div
       class="next-game-container"
       [class.animate]="nextGameButtonState === 'show-animated'"
@@ -102,7 +112,9 @@
           (click)="platNextUnfinishedGame()"
           [disabled]="nextGameSearchInProgress"
         >
-          <mat-icon>{{ nextGameSearchInProgress ? "hourglass_top" : "skip_next" }}</mat-icon>
+          <mat-icon>{{
+            nextGameSearchInProgress ? "hourglass_top" : "skip_next"
+          }}</mat-icon>
           {{ nextGameSearchInProgress ? "Finding Next Game..." : "Next Game" }}
         </button>
       </div>
@@ -189,7 +201,7 @@
         </table>
       </div>
 
-      @if (scratchPadVisible) {
+      @if (scratchPadVisible && !tutorialHeaderContents) {
         <div
           class="scratch-container"
           #scratchContainer

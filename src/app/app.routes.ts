@@ -27,6 +27,10 @@ export const routes: Routes = [
     loadComponent: () => import('./component/resume/resume').then(m => m.ResumeComponent),
   },
   {
+    path: 'tutorial',
+    loadComponent: () => import('./component/board-tutorial/board-tutorial').then(m => m.BoardTutorialComponent),
+  },
+  {
     path: '**',
     loadComponent: () => import('./component/board/board').then(m => m.Board)
   },

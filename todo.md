@@ -1,28 +1,26 @@
 # TODO
 
-- Video tutorial
 - ability to configure the app for a tournament via a link - (specify enabled features, don't allow features to be changed, ability to specify individual game numbers and order)
 - text occasionally selected, esp when double clicking to reset scratch pad....
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
 - organize documentation, add links
-- tutorial mode
 - post to social media
-- track last X games against par time.
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
-- Positive feedback when breaking previous records
 - multi-player: pvp
 - multi-player: co-op
 - leader board
 - ability to play board again and compare against previous attempts
 - ability to play board again and not ruin streak history
 - sounds
-- temp cell selection: optionally do math for selected cells
-- stats of fail counts based on grid size, time spent per game, per size
 - ability to sync game state across devices
 
 # Done
 
+- Positive feedback when breaking previous records
+- track last X games against par time.
+- tutorial mode
+- Video tutorial
 - filter for next game
 - Auto refresh the app once the update has been downloaded, when the user changes the app from being visible to not visible
 - recalculate all ML stats for each deduction iteration
@@ -110,6 +108,8 @@
 
 # Not Gonna Do
 
+- temp cell selection: optionally do math for selected cells
+- stats of fail counts based on grid size, time spent per game, per size
 - ML: stats on first iteration actionable... if a cell is removed when scanning a column, we probably shouldn't "remove" it from the row / group scan until iteration 2.
 - show hints for when people get stuck (Participation Trophy Mode)... though with infinite mistakes, is this necessary?
 - Create a queue of pending moves and If one of the first moves fails, prevent failure of the others

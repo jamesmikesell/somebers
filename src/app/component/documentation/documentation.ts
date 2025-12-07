@@ -18,22 +18,22 @@ export class Documentation implements OnInit {
   readonly iosVideoOptions: readonly IosVideoOption[] = [
     {
       id: 'iphone-18',
-      buttonLabel: 'Watch iPhone demo (iOS 18 and earlier)',
+      buttonLabel: 'Watch iPhone tutorial (iOS 18 and earlier)',
       src: '/install-iphone-ios-18.mp4',
     },
     {
       id: 'iphone-26',
-      buttonLabel: 'Watch iPhone demo (iOS 26 and newer)',
+      buttonLabel: 'Watch iPhone tutorial (iOS 26 and newer)',
       src: '/install-iphone-ios-26.mp4',
     },
     {
       id: 'ipad-18',
-      buttonLabel: 'Watch iPad demo (iOS 18 and earlier)',
+      buttonLabel: 'Watch iPad tutorial (iOS 18 and earlier)',
       src: '/install-ipad-ios-18.mp4',
     },
     {
       id: 'ipad-26',
-      buttonLabel: 'Watch iPad demo (iOS 26 and newer)',
+      buttonLabel: 'Watch iPad tutorial (iOS 26 and newer)',
       src: '/install-ipad-ios-26.mp4',
     },
   ];

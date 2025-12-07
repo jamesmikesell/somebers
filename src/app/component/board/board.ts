@@ -5,9 +5,11 @@ import {
   ElementRef,
   HostBinding,
   HostListener,
+  Input,
   NgZone,
   OnDestroy,
   OnInit,
+  TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -67,6 +69,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     return this.gameBoard?.fullBoard.length;
   }
 
+  @Input() tutorialHeaderContents: TemplateRef<any>;;
   gameNumber: number = 1;
   SelectionStatus = SelectionStatus;
   gameBoard = new GameBoard();
@@ -85,7 +88,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
   layoutMode: LayoutMode = 'vertical';
   boardHorizontalOffset = 0;
-  private previousGames = new Map<number, GameInProgressDtoV3>();
+  previousGames = new Map<number, GameInProgressDtoV3>();
   private moveHistory: MoveHistoryDtoV1[] = [];
   private undoManager: UndoManager;
   private destroy = new Subject<void>();
