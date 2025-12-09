@@ -16,21 +16,50 @@
     <s>some</s> sum up and belong in the final answer. Your job?
     <strong>Sniff out the keepers, whack the impostors</strong>.
   </p>
-  <div class="callout">
-    <strong>One truth, one solution.</strong> Each puzzle has exactly
-    <em>one</em> valid solution. Find it by pure deduction—no guessing needed.
-  </div>
 
   <br />
   <h2>📺 Tutorial</h2>
-  If this is your first time here, your quickest learning path is to
+  If this is your first time here, your quickest learning path is:
   <br />
   <br />
   <button mat-stroked-button color="primary" routerLink="/tutorial">
     <mat-icon>play_circle</mat-icon>
     Play the Interactive Tutorial
   </button>
-  <br /><br />
+
+  <br />
+  <br />
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <br />
+  <a id="guessing"></a>
+  <h2>🎲 Guessing</h2>
+  <p>Guessing is almost never required.</p>
+  <p>
+    Any board <em>not</em> labeled with an
+    <span>
+      <code
+        ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP+</code
+      >
+    </span>
+    warning (<a routerLink="/documentation" fragment="fp-warning">FP+ meaning</a
+    >) is <strong>guaranteed</strong> to be solvable without a single guess. In
+    fact, game #422 is the first game to require a guess, and even that isn't
+    until only the last 6 unselected cells remain.
+  </p>
+  <p>
+    In the case of #422, when only the last 6 cells remain, by enabling
+    <code>tournament mode</code> in the <a routerLink="/settings">Settings</a>,
+    one of the two equally correct solutions can be chosen without fear of
+    ruining a winning streak.
+  </p>
+  <p>
+    That said, given how boards are randomly generated, there is a possibility a
+    completely unsolvable board does exist.
+  </p>
 
   <!--  -->
   <!--  -->
@@ -51,10 +80,6 @@
     <li>
       Each <strong>color group</strong> must add up to the tiny number in that
       group's <strong>top-left cell</strong>.
-    </li>
-    <li>
-      <strong>No mistakes!</strong> Every game can be solved with 0 mistakes, no
-      guessing required.
     </li>
   </ul>
   <p class="note">

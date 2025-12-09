@@ -235,7 +235,8 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
         stepAction: async () => { },
       },
       {
-        body: `That said... keep an eye on your mistakes and your “time spent.” Anything greater than zero, or less than perfection, is a failure in my mind.`,
+        body: `That said... keep an eye on your mistakes and your “time spent.” Anything greater than zero, or less than perfection, is a failure in my mind.
+                <br>And remember, guessing is <strong>NEVER</strong> required... <a href="/#/documentation#guessing"><em>usually</em><sup>†</sup></a>.`,
         stepAction: async () => { },
       },
     ];
