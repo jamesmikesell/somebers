@@ -80,7 +80,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
         },
       },
       {
-        body: `Unfortunately the essential numbers have camouflaged themselves within a dense forest of similar numbers.`,
+        body: `Unfortunately, the essential numbers have camouflaged themselves within a dense forest of similar numbers.`,
         stepAction: async () => {
           this.iterateCells((r, ri, c, ci) => {
             c.status = SelectionStatus.NONE;
@@ -177,7 +177,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
         stepAction: async () => { },
       },
       {
-        body: `Now, to select any cells that <strong>must</strong> be essential (i.e., only the <code>2</code>), simply tap it.
+        body: `Now, to select any cells that <strong>must</strong> be essential (i.e., only the <code>2</code>), simply tap them.
                 <br><em>You must select at least one cell to continue.</em>`,
         stepAction: async () => {
           this.nextDisabled = true;
@@ -209,7 +209,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
         stepAction: async () => { },
       },
       {
-        body: `Notice on the highlighted <code>5</code> header below, there is a tiny <code><sup>𝛴</sup>2</code> in the upper-right corner.`,
+        body: `Notice on the highlighted <code>5</code> header below; there is a tiny <code><sup>𝛴</sup>2</code> in the upper-right corner.`,
         stepAction: async () => {
           this.iterateCells((r, ri, c, ci) => {
             if (ri === 0 && ci === 3)
@@ -223,7 +223,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       },
       {
         body: `You now know the fundamentals of how to play. Finish the game below by eliminating any non-essential cells and selecting <strong>all</strong> essential ones.
-                <br>You'll know you've finished when confetti showers the screen accompanied by a deprecating insult.`,
+                <br>You'll know you've finished when confetti showers the screen accompanied by a mocking insult.`,
         stepAction: async () => {
           this.iterateCells((r, ri, c, ci) => {
             c.highlighted = false;
