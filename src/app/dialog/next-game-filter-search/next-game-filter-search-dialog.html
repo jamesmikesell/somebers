@@ -2,9 +2,13 @@
 
 <div mat-dialog-content class="content">
   <div class="row">
-    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
-    <div class="text">
-      Looking for a board that matches your filter. If nothing turns up, you can cancel or disable the Game Filter from the menu.
+    <mat-progress-spinner
+      mode="indeterminate"
+      diameter="32"
+    ></mat-progress-spinner>
+    <div class="app-font">
+      Looking for a board that matches your filter. If nothing turns up, you can
+      cancel or disable the Game Filter from the menu.
       <div class="current">
         Checking game #
         <span class="current__number">{{ currentGameNumber ?? "..." }}</span>

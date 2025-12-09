@@ -1,141 +1,143 @@
 <h2 mat-dialog-title>Next Game Filter</h2>
 
-<div mat-dialog-content class="dialog-content">
-  <mat-card>
-    <mat-card-content>
-      When enabled, boards not matching the filters below will be skipped. If no
-      boards matching the filters are found, the next incomplete board will be
-      selected.
-    </mat-card-content>
-  </mat-card>
+<div mat-dialog-content>
+  <div class="dialog-content app-font">
+    <mat-card>
+      <mat-card-content>
+        When enabled, boards not matching the filters below will be skipped. If
+        no boards matching the filters are found, the next incomplete board will
+        be selected.
+      </mat-card-content>
+    </mat-card>
 
-  <mat-slide-toggle [(ngModel)]="filterEnabled">
-    Enable filter
-  </mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="filterEnabled">
+      Enable filter
+    </mat-slide-toggle>
 
-  <mat-slide-toggle [(ngModel)]="excludeFpPlus" [disabled]="!filterEnabled">
-    Exclude FP+ boards
-  </mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="excludeFpPlus" [disabled]="!filterEnabled">
+      Exclude FP+ boards
+    </mat-slide-toggle>
 
-  <mat-slide-toggle [(ngModel)]="skipCompleted" [disabled]="!filterEnabled">
-    Game change buttons
-    <mat-icon class="text-icon">do_not_disturb_on</mat-icon>
-    <mat-icon class="text-icon">add_circle</mat-icon> always skip completed
-    boards
-  </mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="skipCompleted" [disabled]="!filterEnabled">
+      Game change buttons
+      <mat-icon class="text-icon">do_not_disturb_on</mat-icon>
+      <mat-icon class="text-icon">add_circle</mat-icon> always skip completed
+      boards
+    </mat-slide-toggle>
 
-  <div class="field-row">
-    <mat-form-field appearance="outline">
-      <mat-label>Filter by</mat-label>
-      <mat-select [(ngModel)]="mode" [disabled]="!filterEnabled">
-        <mat-option value="difficulty">Difficulty</mat-option>
-        <mat-option value="time">Par Solve Time</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="field-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Filter by</mat-label>
+        <mat-select [(ngModel)]="mode" [disabled]="!filterEnabled">
+          <mat-option value="difficulty">Difficulty</mat-option>
+          <mat-option value="time">Par Solve Time</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (mode === "difficulty") {
+      <div class="range-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Min difficulty</mat-label>
+          <input
+            matInput
+            type="number"
+            min="0"
+            max="100"
+            step="0.1"
+            [disabled]="!filterEnabled"
+            [ngModel]="minDifficulty"
+            (focus)="selectAllText($event)"
+            (ngModelChange)="onDifficultyChange($event, 'min')"
+          />
+          <button
+            *ngIf="minDifficulty != null"
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Clear minimum difficulty"
+            (click)="onDifficultyChange(undefined, 'min')"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Max difficulty</mat-label>
+          <input
+            matInput
+            type="number"
+            min="0"
+            max="100"
+            step="0.1"
+            [disabled]="!filterEnabled"
+            [ngModel]="maxDifficulty"
+            (focus)="selectAllText($event)"
+            (ngModelChange)="onDifficultyChange($event, 'max')"
+          />
+          <button
+            *ngIf="maxDifficulty != null"
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Clear maximum difficulty"
+            (click)="onDifficultyChange(undefined, 'max')"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    } @else {
+      <div class="range-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Min minutes</mat-label>
+          <input
+            matInput
+            type="number"
+            min="0"
+            step="0.1"
+            [disabled]="!filterEnabled"
+            [ngModel]="minMinutes"
+            (focus)="selectAllText($event)"
+            (ngModelChange)="onMinutesChange($event, 'min')"
+          />
+          <button
+            *ngIf="minMinutes != null"
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Clear minimum minutes"
+            (click)="onMinutesChange(undefined, 'min')"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Max minutes</mat-label>
+          <input
+            matInput
+            type="number"
+            min="0"
+            max="400"
+            step="0.1"
+            [disabled]="!filterEnabled"
+            [ngModel]="maxMinutes"
+            (focus)="selectAllText($event)"
+            (ngModelChange)="onMinutesChange($event, 'max')"
+          />
+          <button
+            *ngIf="maxMinutes != null"
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Clear maximum minutes"
+            (click)="onMinutesChange(undefined, 'max')"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    }
   </div>
-
-  @if (mode === "difficulty") {
-    <div class="range-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Min difficulty</mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          max="100"
-          step="0.1"
-          [disabled]="!filterEnabled"
-          [ngModel]="minDifficulty"
-          (focus)="selectAllText($event)"
-          (ngModelChange)="onDifficultyChange($event, 'min')"
-        />
-        <button
-          *ngIf="minDifficulty != null"
-          mat-icon-button
-          matSuffix
-          type="button"
-          aria-label="Clear minimum difficulty"
-          (click)="onDifficultyChange(undefined, 'min')"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Max difficulty</mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          max="100"
-          step="0.1"
-          [disabled]="!filterEnabled"
-          [ngModel]="maxDifficulty"
-          (focus)="selectAllText($event)"
-          (ngModelChange)="onDifficultyChange($event, 'max')"
-        />
-        <button
-          *ngIf="maxDifficulty != null"
-          mat-icon-button
-          matSuffix
-          type="button"
-          aria-label="Clear maximum difficulty"
-          (click)="onDifficultyChange(undefined, 'max')"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-  } @else {
-    <div class="range-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Min minutes</mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          step="0.1"
-          [disabled]="!filterEnabled"
-          [ngModel]="minMinutes"
-          (focus)="selectAllText($event)"
-          (ngModelChange)="onMinutesChange($event, 'min')"
-        />
-        <button
-          *ngIf="minMinutes != null"
-          mat-icon-button
-          matSuffix
-          type="button"
-          aria-label="Clear minimum minutes"
-          (click)="onMinutesChange(undefined, 'min')"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Max minutes</mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          max="400"
-          step="0.1"
-          [disabled]="!filterEnabled"
-          [ngModel]="maxMinutes"
-          (focus)="selectAllText($event)"
-          (ngModelChange)="onMinutesChange($event, 'max')"
-        />
-        <button
-          *ngIf="maxMinutes != null"
-          mat-icon-button
-          matSuffix
-          type="button"
-          aria-label="Clear maximum minutes"
-          (click)="onMinutesChange(undefined, 'max')"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-  }
 </div>
 
 <div mat-dialog-actions align="end">
