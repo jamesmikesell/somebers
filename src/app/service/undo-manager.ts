@@ -58,7 +58,7 @@ export class UndoManager {
         last.actions.forEach(action => {
           const cell = gb.playArea[action.row]?.[action.col];
           if (cell) {
-            cell.status = SelectionStatus.NONE;
+            cell.status = action.previousStatus ?? SelectionStatus.NONE;
             cell.invalidMove = false;
           }
         });
@@ -90,6 +90,7 @@ export class UndoManager {
       kind: action.kind,
       row: coords.row,
       col: coords.col,
+      previousStatus: action.previousStatus ?? SelectionStatus.NONE,
     };
   }
 
@@ -127,12 +128,14 @@ interface UndoCellAction {
   kind: 'select' | 'clear';
   row: number;
   col: number;
+  previousStatus: SelectionStatus;
 }
 
 
 export interface UndoCellActionPayload {
   kind: 'select' | 'clear';
   cell: DisplayCell;
+  previousStatus: SelectionStatus;
 }
 
 

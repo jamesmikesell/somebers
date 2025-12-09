@@ -37,7 +37,7 @@ import { SessionService } from '../../service/session.service';
 import { SettingsService } from '../../service/settings.service';
 import { GameStats, StatCalculator } from '../../service/stat-calculator';
 import { TimeTracker } from '../../service/time-tracker';
-import { UndoManager } from '../../service/undo-manager';
+import { UndoCellActionPayload, UndoManager } from '../../service/undo-manager';
 import { WakeLock } from '../../service/wake-lock';
 import { CellComponent } from '../cell/cell.component';
 import { EstimatedDifficultyComponent } from '../estimated-difficulty/estimated-difficulty';
@@ -305,7 +305,11 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       return;
 
     this.undoManager.pushCells(
-      cells.map(cell => ({ kind: 'clear', cell, nextStatus: SelectionStatus.CLEARED })),
+      cells.map(cell => ({
+        kind: 'clear',
+        cell,
+        previousStatus: SelectionStatus.NONE,
+      }) ),
       { appendToPrevious: true },
     );
   }
@@ -398,18 +402,29 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
     if (cell.status !== SelectionStatus.NONE) {
       if (this.tournamentMode) {
+        const previousStatus = cell.status;
         cell.status = SelectionStatus.NONE;
+        this.updateMoveHistory(true);
+        this.undoManager.pushCells([
+          {
+            kind: previousStatus === SelectionStatus.SELECTED ? 'select' : 'clear',
+            cell,
+            previousStatus,
+          },
+        ]);
         this.gameBoard.recalculateSelectedHeaders();
+        this.saveGameState();
       }
 
       return;
     }
 
+    const previousStatus = cell.status;
     if (cell.required || this.tournamentMode) {
       cell.status = SelectionStatus.SELECTED;
       this.updateMoveHistory(true)
       this.undoManager.pushCells([
-        { kind: 'select', cell },
+        { kind: 'select', cell, previousStatus },
       ]);
       this.gameBoard.recalculateSelectedHeaders();
       this.sectionAnimator.handleCellUsed(this.gameBoard, cell);
@@ -432,18 +447,29 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
     if (cell.status !== SelectionStatus.NONE) {
       if (this.tournamentMode) {
+        const previousStatus = cell.status;
         cell.status = SelectionStatus.NONE;
+        this.updateMoveHistory(true);
+        this.undoManager.pushCells([
+          {
+            kind: previousStatus === SelectionStatus.SELECTED ? 'select' : 'clear',
+            cell,
+            previousStatus,
+          },
+        ]);
         this.gameBoard.recalculateSelectedHeaders();
+        this.saveGameState();
       }
 
       return;
     }
 
+    const previousStatus = cell.status;
     if (!cell.required || this.tournamentMode) {
       cell.status = SelectionStatus.CLEARED;
       this.updateMoveHistory(true)
       this.undoManager.pushCells([
-        { kind: 'clear', cell },
+        { kind: 'clear', cell, previousStatus },
       ]);
     } else {
       this.updateMoveHistory(false)
@@ -471,7 +497,11 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
 
     if (autoCleared.length)
       this.undoManager.pushCells(
-        autoCleared.map(cell => ({ kind: 'clear', cell, nextStatus: SelectionStatus.CLEARED })),
+        autoCleared.map(cell => ({
+          kind: 'clear',
+          cell,
+          previousStatus: SelectionStatus.NONE,
+        })),
       );
 
     this.saveGameState();
