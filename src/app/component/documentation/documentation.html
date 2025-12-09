@@ -27,13 +27,86 @@
     Play the Interactive Tutorial
   </button>
 
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <!--  -->
   <br />
   <br />
+  <br />
+  <h2>📋 Core Gameplay</h2>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Rules (click to expand) </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <h2>The Goal</h2>
+      <ul>
+        <li>
+          Each <strong>row</strong> must add up to the gray number at the
+          <strong>left</strong> of that row.
+        </li>
+        <li>
+          Each <strong>column</strong> must add up to the gray number at the
+          <strong>top</strong> of that column.
+        </li>
+        <li>
+          Each <strong>color group</strong> must add up to the tiny number in
+          that group's <strong>top-left cell</strong>.
+        </li>
+      </ul>
+      <p class="note">
+        The correct solution is the <strong>only</strong> way to satisfy
+        <em>all three</em> rules at once.
+      </p>
+
+      <div class="callout">
+        <strong>Beginner's hint</strong> • If a row must total <code>2</code>,
+        you can immediately hide any numbers larger than <code>2</code> in that
+        row. Use this logic to whittle away unusable numbers, thus slowly
+        revealing required numbers.
+      </div>
+
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <!--  -->
+      <br />
+      <h2>Gameplay</h2>
+      <ol>
+        <li>
+          <strong>Remove cells</strong> • <em>Swipe down</em> or
+          <em>double-tap</em> (or <em>right-click</em> on desktop) to
+          <strong>remove</strong> a number — “this number <em>cannot</em> be
+          part of the solution.”
+        </li>
+        <li>
+          <strong>Select required cells</strong> • <em>Tap</em> or
+          <em>swipe up</em> on a cell to <strong>select</strong> (circle) it —
+          “this number <em>must</em> be part of the solution.”
+        </li>
+        <li>
+          <strong>Mistake warning</strong> • If you try to select a number that
+          doesn't belong or remove a number that is required, the cell will
+          wiggle and <strong>Mistakes</strong> counter will increase. Unless in
+          <a routerLink="/documentation" fragment="tournament-mode"
+            ><code>tournament mode</code></a
+          >, the game will not let you make an incorrect move... It will simply
+          warn you that a move is incorrect.
+        </li>
+      </ol>
+    </mat-expansion-panel>
+  </mat-accordion>
+
   <!--  -->
   <!--  -->
   <!--  -->
   <!--  -->
   <!--  -->
+  <br />
   <br />
   <a id="guessing"></a>
   <h2>🎲 Guessing</h2>
@@ -52,7 +125,7 @@
   </p>
   <p>
     In the case of #422, when only the last 6 cells remain, by enabling
-    <code>tournament mode</code> in the <a routerLink="/settings">Settings</a>,
+    <code>tournament mode</code> in the <a routerLink="/settings">settings</a>,
     one of the two equally correct solutions can be chosen without fear of
     ruining a winning streak.
   </p>
@@ -67,163 +140,14 @@
   <!--  -->
   <!--  -->
   <br />
-  <h2>🎯 The Goal</h2>
+  <h2>✨ App Features</h2>
   <ul>
-    <li>
-      Each <strong>row</strong> must add up to the gray number at the
-      <strong>left</strong> of that row.
-    </li>
-    <li>
-      Each <strong>column</strong> must add up to the gray number at the
-      <strong>top</strong> of that column.
-    </li>
-    <li>
-      Each <strong>color group</strong> must add up to the tiny number in that
-      group's <strong>top-left cell</strong>.
-    </li>
-  </ul>
-  <p class="note">
-    The correct solution is the <strong>only</strong> way to satisfy
-    <em>all three</em> rules at once.
-  </p>
-
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <br />
-  <h2>✋ Core Gameplay</h2>
-  <ol>
-    <li>
-      <strong>Start state:</strong> The grid shows numbers in every cell, but
-      nothing is selected/circled yet.
-    </li>
-    <li>
-      <strong>Select required cells:</strong> <em>Tap</em> or
-      <em>swipe up</em> on a cell to <strong>select</strong> (circle) it — “this
-      number <em>must</em> be part of the solution.”
-    </li>
-    <li>
-      <strong>Hide unused cells:</strong> <em>Double-tap</em> or
-      <em>swipe down</em> (or <em>right-click</em> on desktop) to
-      <strong>remove</strong> a number — “this number <em>cannot</em> be part of
-      the solution.”
-    </li>
-    <li>
-      <strong>Built-in feedback:</strong> If you try to keep a number that
-      doesn't belong or remove a number that is required, the cell will shake,
-      as if squirming under the pressure of being found out. The
-      <strong>Mistakes</strong> counter will also increase with each mistake
-      made.
-    </li>
-  </ol>
-
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <br />
-  <h2>🖥️ / 👆 Controls</h2>
-  <ul>
-    <li>
-      <strong>Mobile / Tablet</strong>
-      <ul>
-        <li>Tap or Swipe up → <strong>Select (circle)</strong> a number.</li>
-        <li>Double-tap or Swipe down → <strong>Remove</strong> a number.</li>
-        <li>
-          Long-press → <strong>Magnify</strong> cell content
-          <span class="note"
-            >(useful for viewing small text on smaller screens).</span
-          >
-        </li>
-        <li>
-          Long-press, then slide left/right→
-          <strong>Temporary highlight</strong>
-          <span class="note">
-            (shows a red/white diamond as a visual marker).
-          </span>
-          Long-press a cell until the magnified view appears, then — without
-          lifting your finger — slide slightly left or right to toggle the
-          highlight on or off.
-        </li>
-      </ul>
-    </li>
-    <li>
-      <strong>Desktop</strong>
-      <ul>
-        <li>All of the controls listed above, plus...</li>
-        <li>Right-click → <strong>Remove</strong> number.</li>
-      </ul>
-    </li>
-  </ul>
-
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <!--  -->
-  <br />
-  <h2>🧠 Tips &amp; Tricks</h2>
-  <ul>
-    <li>
-      <strong>Easy eliminations:</strong> If a row must total <code>2</code>,
-      you can immediately hide any numbers larger than <code>2</code> in that
-      row.
-    </li>
-    <li>
-      <strong>No guessing:</strong> Only select or clear a number when you're
-      positive that's the only option for that number.
-    </li>
-    <li>
-      <strong>Cross-check both ways:</strong> A choice must fit the row
-      <em>and</em> the column. If it breaks either total, it's out.
-    </li>
-    <li>
-      <strong>Leverage color groups:</strong> Use the group's tiny top-left
-      total to lock in or eliminate cells inside that color.
-    </li>
-    <li>
-      <strong>Spot running totals:</strong> The upper-right corner of each
-      header cell can show the sum of the currently selected cells in that
-      section. You can disable this display from the
-      <a routerLink="/settings">Settings</a> menu if you like making things more
-      difficult than they need to be.
-    </li>
-    <li>
-      <strong>Auto-clear satisfied lines:</strong> Once you've selected every
-      required cell in a row or column, double-tap that header to
-      <strong>automatically hide</strong> any remaining cells in that line.
-    </li>
-    <li>
-      <strong>Use temporary highlights:</strong> (see
-      <code>Controls</code> section above) The red/white diamond is a quick,
-      toggleable marker to help you keep track of numbers you're actively
-      considering — especially useful during mental calculations.
-    </li>
-    <li>
-      <strong>Skip and return:</strong> Use the buttons beside the game number
-      to jump past a tricky board. Your progress is saved automatically, so you
-      can resume a partially completed puzzle any time.
-    </li>
     <li>
       <a id="scratch-pad"></a>
-      <strong>Take advantage of the scratch pad:</strong> It's just a handy spot
-      to park a single number, just like you would with pencil and paper. Nudge
-      it up or down with the buttons, and double-click the value to reset it
-      back to 10 when you want to start fresh.
-    </li>
-    <li>
-      <strong>Stat toggles:</strong> Some of the stats are surrounded by
-      <code>&lt;</code> <code>&gt;</code> indicating they can be clicked to
-      display different stats.
-    </li>
-    <li>
-      <code>Par Time</code> • This is the amount of time the game thinks it
-      would take for a seasoned veteran to solve the displayed board. Click
-      through the stats to see your time on each board, and how you speed
-      compares.
+      <strong>Scratch pad</strong> • It's just a handy spot to park a single
+      number, just like you would with pencil and paper. Nudge it up or down
+      with the buttons, and double-click the value to reset it back to 10 when
+      you want to start fresh.
     </li>
     <li>
       <a id="fp-warning"></a>
@@ -239,9 +163,42 @@
       column, or group). The <code>#-#</code> shown in the warning represents
       how many cells <code>[can't]-[can]</code> be determined with
       first-principles alone. Beyond that point, more advanced deduction methods
-      are required to solve the board.
+      are required to solve the board. Though
+      <a routerLink="/documentation" fragment="guessing"
+        >as mentioned, guessing</a
+      >
+      is almost <em>never</em> required.
     </li>
-
+    <li>
+      <strong>Temporary highlight</strong> • Long-press a cell until the
+      magnified view appears, then — without lifting your finger — slide
+      slightly left or right to toggle on or off the red/white diamond highlight
+      over a cell. Use these highlights as a marker to help you keep track of
+      numbers you're actively considering.
+    </li>
+    <li>
+      <strong>Magnify</strong> • Long-press and hold a cell to magnify the cell
+      content
+      <span class="note"
+        >(useful for viewing tiny text on smaller screens).</span
+      >
+    </li>
+    <li>
+      <strong>Par Time</strong> • This is the amount of time the game thinks it
+      would take for a seasoned veteran to solve the displayed board. Click
+      through the stats to see your time on each board, and how you speed
+      compares.
+    </li>
+    <li>
+      <strong>Stat toggles</strong> • Some of the stats are surrounded by
+      <code>&lt;</code> <code>&gt;</code> indicating they can be clicked to
+      display different stats.
+    </li>
+    <li>
+      <strong>Skip and return</strong> • Use the buttons beside the game number
+      to jump past a tricky board. Your progress is saved automatically, so you
+      can resume a partially completed puzzle any time.
+    </li>
     <li>
       <span>
         <code><mat-icon class="icon">undo</mat-icon>Undo</code> in the
@@ -263,7 +220,44 @@
       <em>tagliatelle al tartufo</em> from a gas station.
     </li>
     <li>
-      Check out the <a routerLink="/settings">Settings</a> for additional game
+      <strong>Sessions</strong> • Found on the on the
+      <a routerLink="/sessions">session page</a> and from the
+      <span>
+        <code><mat-icon class="icon">more_vert</mat-icon></code>
+      </span>
+      app menu. Allows for tracking stats only during a specified time period.
+    </li>
+    <li>
+      <strong>Start board over</strong> • Found in the
+      <span>
+        <code><mat-icon class="icon">more_vert</mat-icon></code>
+      </span>
+      app menu. Does what it says.
+    </li>
+    <li>
+      <a id="tournament-mode"></a>
+      <strong>Tournament Mode</strong> • App doesn't warn when mistakes are
+      made. Note, a board with uncorrected mistakes cannot be completed. See
+      more details in the <a routerLink="/settings">settings</a>.
+    </li>
+    <li>
+      <strong>Difficulty</strong> • Relative difficulty of a board on a 0-100
+      scale.
+    </li>
+    <li>
+      <strong>Shapes mode</strong> • Accessibility option for players with
+      colorblindness. See more details in the
+      <a routerLink="/settings">settings</a>.
+    </li>
+    <li>
+      <strong>Spot running totals</strong> • The upper-right corner of each
+      header cell can show the sum of the currently selected cells in that
+      section. You can disable this display from the
+      <a routerLink="/settings">settings</a> menu if you like making things more
+      difficult than they need to be.
+    </li>
+    <li>
+      Check out the <a routerLink="/settings">settings</a> for additional game
       options.
     </li>
     @if (timeSpentDays) {
@@ -362,7 +356,8 @@
   <h3>Android</h3>
   <ul>
     <li>
-      <strong>Chrome:</strong> Visit <code>somebers.com</code> → tap the
+      <strong>Chrome:</strong> Visit <code>somebers.com</code> → in the upper
+      <strong>RIGHT</strong> part of the screen tap Chrome's
       <strong>⋮</strong> menu → <strong>Install app</strong> (or
       <strong>Add to Home screen</strong>), then confirm.
     </li>

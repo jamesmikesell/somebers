@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { RouterLink } from '@angular/router';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
@@ -8,7 +9,7 @@ import { Title } from '../title/title';
 
 @Component({
   selector: 'app-documentation',
-  imports: [Title, InstallComponent, ...MATERIAL_IMPORTS, RouterLink],
+  imports: [Title, InstallComponent, ...MATERIAL_IMPORTS, RouterLink, MatExpansionModule],
   templateUrl: './documentation.html',
   styleUrl: './documentation.scss',
 })
