@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Undo Disabled</h2>
+
+<div mat-dialog-content>
+  <div class="app-font">
+    <p>
+      Undo is disabled while a session is active (unless also in
+      <a routerLink="/settings" (click)="close()" fragment="tournament-mode"
+        >tournament mode</a
+      >).
+    </p>
+    <p>
+      If this is an emergency, you can restart the board from the menu, though
+      be sure to read the associated warning dialog when restarting a board.
+    </p>
+    <p>
+      Visit the
+      <a routerLink="/sessions" (click)="close()" fragment="tournament-mode"
+        >Session</a
+      >
+      page to monitor your run — or end the session to re-enable undo for future
+      mistakes.
+    </p>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button matButton="outlined" (click)="goToSessions()">Sessions</button>
+  <button matButton="filled" color="primary" (click)="close()">Close</button>
+</div>

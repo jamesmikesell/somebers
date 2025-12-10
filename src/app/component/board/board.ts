@@ -18,6 +18,7 @@ import { BehaviorSubject, filter, first, Subject, takeUntil } from 'rxjs';
 import { AppVersion } from '../../app-version';
 import { CelebrationLauncherService, CelebrationStats } from '../../dialog/celebration/celebration-launcher.service';
 import { ConfirmStartOverDialogLauncher } from '../../dialog/confirm-start-over/confirm-start-over-dialog';
+import { ActiveSessionUndoWarningDialogLauncher } from '../../dialog/active-session-undo-warning/active-session-undo-warning-dialog';
 import { NextGameFilterNoMatchDialog } from '../../dialog/next-game-filter-no-match/next-game-filter-no-match-dialog';
 import { NextGameFilterSearchDialog } from '../../dialog/next-game-filter-search/next-game-filter-search-dialog';
 import { MATERIAL_IMPORTS } from '../../material-imports';
@@ -137,6 +138,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     private wakeLock: WakeLock,
     private colorOptimizer: ColorGridOptimizerService,
     private confirmStartOverLauncher: ConfirmStartOverDialogLauncher,
+    private activeSessionUndoWarningDialogLauncher: ActiveSessionUndoWarningDialogLauncher,
     private ngZone: NgZone,
     private settingsService: SettingsService,
     private lockService: LockService,
@@ -198,7 +200,13 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy))
       .subscribe(() => {
         if (this.sessionActive && !this.tournamentMode) {
-          alert('Undos are disabled during active sessions.');
+          this.activeSessionUndoWarningDialogLauncher
+            .open()
+            .pipe(first())
+            .subscribe(result => {
+              if (result === 'sessions')
+                this.router.navigateByUrl('/sessions');
+            });
           return;
         }
 
