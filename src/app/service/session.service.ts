@@ -198,10 +198,12 @@ export class SessionService implements OnDestroy {
       ? Math.max(...gamesWithDifficulty.map(({ difficulty }) => difficulty!.difficulty))
       : null;
 
+    const totalPlayTimeWithParMs = gamesWithDifficulty.reduce(
+      (sum, { game }) => sum + (game.timeSpent ?? 0),
+      0,
+    );
     const totalParMs = gamesWithDifficulty.reduce((sum, { difficulty }) => sum + (difficulty?.parTimeMs ?? 0), 0);
-    const averageTimeAgainstParMs = boardCount
-      ? (totalPlayTimeMs - totalParMs) / boardCount
-      : null;
+    const timeVariancePercent = this.computeSymmetricPercentDifference(totalPlayTimeWithParMs, totalParMs);
 
     const accuracyPercent = totalMoves
       ? Math.max(0, Math.min(100, ((totalMoves - totalMistakes) / totalMoves) * 100))
@@ -218,7 +220,7 @@ export class SessionService implements OnDestroy {
       cumulativeDifficulty,
       averageDifficulty,
       maxDifficulty,
-      averageTimeAgainstParMs,
+      timeVariancePercent,
       accuracyPercent,
     };
   }
@@ -315,6 +317,18 @@ export class SessionService implements OnDestroy {
   }
 
 
+  private computeSymmetricPercentDifference(value: number, baseline: number): number | null {
+    if (!Number.isFinite(value) || !Number.isFinite(baseline))
+      return null;
+
+    const denominator = (value + baseline) / 2;
+    if (!denominator)
+      return null;
+
+    return ((value - baseline) / denominator) * 100;
+  }
+
+
   private findBounds(moveHistory: MoveHistoryDtoV1[]): { earliest: number; latest: number } {
     let earliest = Number.POSITIVE_INFINITY;
     let latest = Number.NEGATIVE_INFINITY;
@@ -359,6 +373,6 @@ export interface SessionStats {
   cumulativeDifficulty: number | null;
   averageDifficulty: number | null;
   maxDifficulty: number | null;
-  averageTimeAgainstParMs: number | null;
+  timeVariancePercent: number | null;
   accuracyPercent: number | null;
 }

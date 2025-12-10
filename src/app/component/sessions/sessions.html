@@ -93,15 +93,11 @@
       </mat-card>
       <mat-card>
         <mat-card-content class="stat-content">
-          <div class="stat-label">Avg. Time vs Par</div>
+          <div class="stat-label">Time vs Par (%)</div>
           <div class="stat-value">
-            @if (stats?.averageTimeAgainstParMs != null) {
-              {{ stats.averageTimeAgainstParMs < 0 ? '-' : '+' }}
-              {{
-                (stats.averageTimeAgainstParMs < 0
-                  ? -stats.averageTimeAgainstParMs
-                  : stats.averageTimeAgainstParMs) | duration
-              }}
+            @if (stats?.timeVariancePercent != null) {
+              {{ stats.timeVariancePercent > 0 ? '+' : '' }}
+              {{ stats.timeVariancePercent | number:'1.0-1' }}%
             } @else {
               –
             }

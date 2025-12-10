@@ -80,7 +80,7 @@ describe('SessionService', () => {
     expect(stats.cumulativeDifficulty).toBe(50);
     expect(stats.averageDifficulty).toBe(50);
     expect(stats.maxDifficulty).toBe(50);
-    expect(stats.averageTimeAgainstParMs).toBeCloseTo(200, 5);
+    expect(stats.timeVariancePercent).toBeCloseTo(22.22222, 5);
     expect(stats.accuracyPercent).toBeCloseTo(50, 5);
     service.ngOnDestroy();
   });
