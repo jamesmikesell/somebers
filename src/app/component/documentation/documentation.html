@@ -94,7 +94,7 @@
           wiggle and the <strong>Mistakes</strong> counter will increase. Unless
           in
           <a routerLink="/documentation" fragment="tournament-mode"
-            ><code>tournament mode</code></a
+            >tournament mode</a
           >, the game will not let you make an incorrect move... It will simply
           warn you that a move is incorrect.
         </li>
@@ -228,7 +228,12 @@
         <code><mat-icon class="icon">more_vert</mat-icon></code>
       </span>
       app menu. Allows for tracking stats achieved during a specified time
-      period only.
+      period only. Note: the undo button is disabled when a session is active
+      unless
+      <a routerLink="/documentation" fragment="tournament-mode"
+        >tournament mode</a
+      >
+      is also enabled.
     </li>
     <li>
       <strong>Start board over</strong> • Found in the
