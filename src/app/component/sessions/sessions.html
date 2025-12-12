@@ -112,6 +112,12 @@
       </mat-card>
       <mat-card>
         <mat-card-content class="stat-content">
+          <div class="stat-label">Total Par Time</div>
+          <div class="stat-value">{{ stats?.totalParTimeMs | duration }}</div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content class="stat-content">
           <div class="stat-label">Avg. Mstk. / Board</div>
           <div class="stat-value">
             @if (stats?.averageMistakes != null) {

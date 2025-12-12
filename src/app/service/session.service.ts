@@ -202,8 +202,8 @@ export class SessionService implements OnDestroy {
       (sum, { game }) => sum + (game.timeSpent ?? 0),
       0,
     );
-    const totalParMs = gamesWithDifficulty.reduce((sum, { difficulty }) => sum + (difficulty?.parTimeMs ?? 0), 0);
-    const timeVariancePercent = this.computeSymmetricPercentDifference(totalPlayTimeWithParMs, totalParMs);
+    const totalParTimeMs = gamesWithDifficulty.reduce((sum, { difficulty }) => sum + (difficulty?.parTimeMs ?? 0), 0);
+    const timeVariancePercent = this.computeSymmetricPercentDifference(totalPlayTimeWithParMs, totalParTimeMs);
 
     const accuracyPercent = totalMoves
       ? Math.max(0, Math.min(100, ((totalMoves - totalMistakes) / totalMoves) * 100))
@@ -221,6 +221,7 @@ export class SessionService implements OnDestroy {
       averageDifficulty,
       maxDifficulty,
       timeVariancePercent,
+      totalParTimeMs,
       accuracyPercent,
     };
   }
@@ -374,5 +375,6 @@ export interface SessionStats {
   averageDifficulty: number | null;
   maxDifficulty: number | null;
   timeVariancePercent: number | null;
+  totalParTimeMs: number;
   accuracyPercent: number | null;
 }
