@@ -59,9 +59,7 @@ export class App implements OnInit, OnDestroy {
   ) {
     versionCheckService.startVersionCheck();
     const colorMode = this.settingsService.getColorMode();
-    const colorModeIndex = this.colorModes.findIndex(m => m.mode === colorMode);
-    if (colorModeIndex > -1)
-      this.currentColorModeIndex = colorModeIndex;
+    this.currentColorModeIndex = this.getColorModeIndex(colorMode);
 
     this.setColorMode();
   }
@@ -86,11 +84,14 @@ export class App implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy.next();
+    this.destroy.complete();
   }
 
 
-  toggleColorMode() {
-    this.currentColorModeIndex = (this.currentColorModeIndex + 1) % this.colorModes.length;
+  toggleColorMode(): void {
+    const nextMode = this.getNextColorMode(this.currentColorMode.mode, this.getDeviceColorScheme());
+    this.currentColorModeIndex = this.getColorModeIndex(nextMode);
+
     this.setColorMode();
     this.settingsService.setColorMode(this.currentColorMode.mode);
   }
@@ -189,10 +190,41 @@ export class App implements OnInit, OnDestroy {
     document.body.style.colorScheme = this.currentColorMode.cssScheme;
 
     const computedStyle = window.getComputedStyle(document.body);
-    computedStyle.backgroundColor;
 
     const themeColorMeta = this.getOrCreateThemeColorMeta();
     themeColorMeta.content = computedStyle.backgroundColor;
+  }
+
+  private getColorModeIndex(mode: ColorModeSetting): number {
+    const index = this.colorModes.findIndex(m => m.mode === mode);
+    return index > -1 ? index : 0;
+  }
+
+  private getDeviceColorScheme(): ColorModeSetting | undefined {
+    if (!window.matchMedia)
+      return undefined;
+
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    if (prefersDark.matches)
+      return 'dark';
+
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+    if (prefersLight.matches)
+      return 'light';
+
+    return undefined;
+  }
+
+  private getNextColorMode(currentMode: ColorModeSetting, devicePreference?: ColorModeSetting): ColorModeSetting {
+    if (currentMode === 'auto') {
+      if (devicePreference === 'dark')
+        return 'light';
+      if (devicePreference === 'light')
+        return 'dark';
+      return 'light';
+    }
+
+    return 'auto';
   }
 
 
