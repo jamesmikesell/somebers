@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { RouterLink } from '@angular/router';
 import { AppVersion } from '../../app-version';
 import { MATERIAL_IMPORTS } from '../../material-imports';
+import { DeviceInfo, DeviceInfoService } from '../../service/device-info.service';
 import { SaveDataService } from '../../service/save-data.service';
 import { InstallComponent } from '../install/install.component';
 import { Title } from '../title/title';
@@ -40,8 +41,13 @@ export class Documentation implements OnInit {
   ];
 
   selectedIosVideoId: string | null = null;
+  recommendedIosVideoId: string | null = null;
+  showAllIosOptions = false;
+  deviceInfo: DeviceInfo | null = null;
   timeSpentDays: string;
   timeSpentHours: string;
+  @ViewChild('iosVideoPlayer') iosVideoPlayer?: ElementRef<HTMLVideoElement>;
+  @ViewChild('iosVideoPlayerContainer') iosVideoPlayerContainer?: ElementRef<HTMLElement>;
 
   get selectedIosVideo(): IosVideoOption | null {
     if (!this.selectedIosVideoId) {
@@ -55,13 +61,40 @@ export class Documentation implements OnInit {
     );
   }
 
+  get iosRecommendedVideo(): IosVideoOption | null {
+    if (!this.recommendedIosVideoId) {
+      return null;
+    }
+
+    return (
+      this.iosVideoOptions.find(
+        (option) => option.id === this.recommendedIosVideoId,
+      ) ?? null
+    );
+  }
+
+  get iosDetectionSummary(): string {
+    if (!this.deviceInfo) {
+      return 'Device not detected';
+    }
+
+    const device = this.deviceInfo.deviceModelGuess;
+    const browser = this.deviceInfo.browserVersionGuess;
+    return `${device} • ${browser}`;
+  }
+
 
   constructor(
     private saveDataService: SaveDataService,
+    private deviceInfoService: DeviceInfoService,
   ) { }
 
 
   async ngOnInit(): Promise<void> {
+    this.deviceInfo = this.deviceInfoService.getDeviceInfo();
+    this.recommendedIosVideoId = this.chooseIosVideoId(this.deviceInfo);
+    this.selectedIosVideoId = this.recommendedIosVideoId;
+
     let savedData = await this.saveDataService.service.load();
     if (savedData) {
       let timeSpent = savedData.inProgressGames
@@ -85,13 +118,21 @@ export class Documentation implements OnInit {
   }
 
 
-  setIosVideo(option: IosVideoOption): void {
-    if (this.selectedIosVideoId === option.id) {
-      this.selectedIosVideoId = null;
-      return;
+  setIosVideo(
+    option: IosVideoOption,
+    opts: { revealOtherOptions?: boolean; autoplay?: boolean; scrollIntoView?: boolean } = {},
+  ): void {
+    this.selectedIosVideoId = option.id;
+    if (opts.revealOtherOptions) {
+      this.showAllIosOptions = true;
     }
 
-    this.selectedIosVideoId = option.id;
+    if (opts.autoplay || opts.scrollIntoView) {
+      setTimeout(() => {
+        if (opts.autoplay) this.tryPlaySelectedVideo();
+        if (opts.scrollIntoView) this.scrollToSelectedVideo();
+      }, 0);
+    }
   }
 
   onIosVideoLoaded(event: Event): void {
@@ -106,6 +147,72 @@ export class Documentation implements OnInit {
     } catch (error) {
       console.warn('Unable to set playback rate for iOS install video', error);
     }
+  }
+
+  toggleIosVideoOptions(): void {
+    this.showAllIosOptions = !this.showAllIosOptions;
+  }
+
+  private tryPlaySelectedVideo(): void {
+    const player = this.iosVideoPlayer?.nativeElement;
+    if (!player) return;
+    try {
+      void player.play();
+    } catch (error) {
+      console.warn('Unable to autoplay iOS install video', error);
+    }
+  }
+
+  private scrollToSelectedVideo(): void {
+    const target = this.iosVideoPlayerContainer?.nativeElement;
+    if (!target?.scrollIntoView) {
+      return;
+    }
+    try {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch {
+      try {
+        target.scrollIntoView();
+      } catch (error) {
+        console.warn('Unable to scroll to iOS install video', error);
+      }
+    }
+  }
+
+  private chooseIosVideoId(info: DeviceInfo | null): string | null {
+    if (!info || !info.isLikelyIOS) {
+      return null;
+    }
+
+    const isIpad = info.deviceModelGuess.toLowerCase().includes('ipad');
+    const isIphone = info.deviceModelGuess.toLowerCase().includes('iphone');
+    if (!isIpad && !isIphone) {
+      return null;
+    }
+
+    const safariMajor = info.browserVersionMajor ?? null;
+    const osTokenMajor = this.extractOsTokenMajor(info.iosOsToken);
+    const versionMajor = safariMajor ?? osTokenMajor;
+    const versionBucket = versionMajor !== null && versionMajor >= 26 ? '26' : '18';
+    const devicePrefix = isIpad ? 'ipad' : 'iphone';
+
+    const choiceId = `${devicePrefix}-${versionBucket}`;
+    const found = this.iosVideoOptions.find((option) => option.id === choiceId);
+    return found ? found.id : null;
+  }
+
+  private extractOsTokenMajor(osToken: string): number | null {
+    if (!osToken) {
+      return null;
+    }
+
+    const match = osToken.match(/(\d+)/);
+    if (!match?.[1]) {
+      return null;
+    }
+
+    const value = parseInt(match[1], 10);
+    return Number.isFinite(value) ? value : null;
   }
 }
 

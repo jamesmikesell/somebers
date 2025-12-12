@@ -87,6 +87,36 @@ ol {
   color: var(--mat-sys-primary);
 }
 
+.ios-install-video__recommended {
+  margin-bottom: 12px;
+}
+
+.ios-install-video__recommended-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ios-install-video__recommended-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-primary);
+  margin-bottom: 4px;
+}
+
+.ios-install-video__recommended-title {
+  font-weight: 600;
+}
+
+.ios-install-video__recommended-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .ios-install-video__player {
   inline-size: min(100%, 540px);
   border-radius: 12px;

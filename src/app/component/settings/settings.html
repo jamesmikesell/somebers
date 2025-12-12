@@ -189,7 +189,22 @@
   @if (devModeEnabled) {
     <section class="settings-section">
       <h2>Developer Settings</h2>
-      <div class="settings-option-group"></div>
+      <div class="settings-option-group">
+        <mat-card class="settings-option-card">
+          <mat-card-content>
+            <h3>Device Guess</h3>
+            <p>Likely model: {{ deviceInfo?.deviceModelGuess || 'Unknown' }}</p>
+            <p>Likely OS: {{ deviceInfo?.iosVersionGuess || 'Unknown' }}</p>
+            <p>Browser: {{ deviceInfo?.browserVersionGuess || 'Unknown' }}</p>
+            @if (deviceInfo?.iosVersionSource === 'os-token' && deviceInfo?.iosOsToken) {
+              <p class="settings-option-description">
+                UA OS token: {{ deviceInfo?.iosOsToken }}
+              </p>
+            }
+            <p class="settings-option-description">User agent: {{ deviceInfo?.userAgentSnapshot }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </section>
   }
 </div>
