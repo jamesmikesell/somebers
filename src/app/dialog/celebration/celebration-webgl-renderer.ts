@@ -112,11 +112,7 @@ export class CelebrationWebglRenderer {
     this.overlay = overlay;
     this.active = true;
 
-    const gl = canvas.getContext('webgl', {
-      alpha: true,
-      antialias: true,
-      premultipliedAlpha: false,
-    });
+    const gl = this.createGlContext(canvas);
 
     if (!gl) {
       this.active = false;
@@ -142,6 +138,31 @@ export class CelebrationWebglRenderer {
     this.animationFrameId = requestAnimationFrame(this.renderFrame);
 
     return true;
+  }
+
+  private createGlContext(canvas: HTMLCanvasElement): WebGLRenderingContext | null {
+    if (typeof WebGLRenderingContext === 'undefined') {
+      console.warn('WebGL not supported: missing WebGLRenderingContext.');
+      return null;
+    }
+
+    try {
+      return (
+        canvas.getContext('webgl', {
+          alpha: true,
+          antialias: true,
+          premultipliedAlpha: false,
+        }) ||
+        (canvas.getContext('experimental-webgl', {
+          alpha: true,
+          antialias: true,
+          premultipliedAlpha: false,
+        }) as WebGLRenderingContext | null)
+      );
+    } catch (error) {
+      console.error('Failed to acquire WebGL context:', error);
+      return null;
+    }
   }
 
   destroy(): void {

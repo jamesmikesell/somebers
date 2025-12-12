@@ -3,6 +3,7 @@
     class="celebration-overlay"
     (click)="close()"
     [class.active]="isActive"
+    [class.webgl-unsupported]="!webglSupported"
     #overlay
   >
     <canvas
