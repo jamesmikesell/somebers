@@ -9,6 +9,7 @@
   flex-direction: column;
   width: 100vw;
   height: 100vh;
+  overflow: clip;
 }
 
 .top-section {
@@ -20,6 +21,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  overflow: visible;
   min-height: 0;
   container-type: size;
   margin-top: 14px;
