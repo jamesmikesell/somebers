@@ -44,3 +44,16 @@ analysis/__pycache__
 .DS_Store
 Thumbs.db
 .venv*
+__pycache__/
+
+
+ml-tools/outputs/
+ml-tools/*.npz
+ml-tools/*.png
+ml-tools/.venv-ml/
+ml-tools/outputs/models/
+ml-tools/outputs/models-smoke/
+ml-tools/outputs/models-retrain-smoke/
+ml-tools/outputs/models-metrics-smoke/
+ml-tools/outputs/models-eval-smoke/
+ml-tools/outputs/models-header-smoke/
