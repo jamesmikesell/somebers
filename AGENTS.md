@@ -52,3 +52,5 @@ This repo hosts Somebers, an Angular SPA deployed as static pages. Follow these 
 - PWA/offline: service worker configured via `ngsw-config.json`; test offline after changes.
 - State migrations: when changing saved data, add/adjust versions under `model/saved-game-data/`.
 - Documentation: update `GEMINI.md` and `component/documentation/` when interactions or UI change.
+
+BEFORE ANYTHING ELSE: run 'bd onboard' and follow the instructions
