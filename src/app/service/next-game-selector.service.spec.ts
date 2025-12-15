@@ -16,6 +16,14 @@ describe('NextGameSelectorService', () => {
   let filterService: NextGameFilterService;
   let predictorStub: DifficultyPredictorStub;
   let selector: NextGameSelectorService;
+  const makeDetails = (overrides?: Partial<DifficultyDisplayDetails>): DifficultyDisplayDetails => ({
+    percentile: 0.5,
+    estimatedSolveTime: 60000,
+    firstPrincipalResolvableCellCount: 0,
+    firstPrincipalUnResoledCellCount: 0,
+    boardSize: 7,
+    ...overrides,
+  });
 
   const makeGame = (gameNumber: number): GameInProgressDtoV3 => ({
     gameNumber,
@@ -50,18 +58,8 @@ describe('NextGameSelectorService', () => {
       maxTimeSeconds: undefined,
     });
 
-    predictorStub.results.set(2, {
-      percentile: 0.3,
-      estimatedSolveTime: 60000,
-      firstPrincipalResolvableCellCount: 0,
-      firstPrincipalUnResoledCellCount: 0,
-    });
-    predictorStub.results.set(3, {
-      percentile: 0.5,
-      estimatedSolveTime: 60000,
-      firstPrincipalResolvableCellCount: 0,
-      firstPrincipalUnResoledCellCount: 0,
-    });
+    predictorStub.results.set(2, makeDetails({ percentile: 0.3 }));
+    predictorStub.results.set(3, makeDetails({ percentile: 0.5 }));
 
     const previous = new Map<number, GameInProgressDtoV3>([
       [1, makeGame(1)],
@@ -85,12 +83,7 @@ describe('NextGameSelectorService', () => {
       maxTimeSeconds: undefined,
     });
 
-    predictorStub.results.set(2, {
-      percentile: 0.1,
-      estimatedSolveTime: 60000,
-      firstPrincipalResolvableCellCount: 0,
-      firstPrincipalUnResoledCellCount: 0,
-    });
+    predictorStub.results.set(2, makeDetails({ percentile: 0.1 }));
 
     const previous = new Map<number, GameInProgressDtoV3>([
       [1, makeGame(1)],
@@ -112,12 +105,7 @@ describe('NextGameSelectorService', () => {
       maxTimeSeconds: undefined,
     });
 
-    predictorStub.results.set(2, {
-      percentile: 0.1,
-      estimatedSolveTime: 60000,
-      firstPrincipalResolvableCellCount: 0,
-      firstPrincipalUnResoledCellCount: 0,
-    });
+    predictorStub.results.set(2, makeDetails({ percentile: 0.1 }));
 
     const controller = new AbortController();
     const promise = selector.findNextGame(1, new Map(), controller.signal);
@@ -140,12 +128,7 @@ describe('NextGameSelectorService', () => {
       maxTimeSeconds: undefined,
     });
 
-    predictorStub.results.set(2, {
-      percentile: 0.5,
-      estimatedSolveTime: 60000,
-      firstPrincipalResolvableCellCount: 0,
-      firstPrincipalUnResoledCellCount: 0,
-    });
+    predictorStub.results.set(2, makeDetails({ percentile: 0.5 }));
 
     const previous = new Map<number, GameInProgressDtoV3>([
       [1, makeGame(1)],
@@ -169,12 +152,7 @@ describe('NextGameSelectorService', () => {
       maxTimeSeconds: undefined,
     });
 
-    predictorStub.results.set(2, {
-      percentile: 0.5,
-      estimatedSolveTime: 60000,
-      firstPrincipalResolvableCellCount: 0,
-      firstPrincipalUnResoledCellCount: 0,
-    });
+    predictorStub.results.set(2, makeDetails({ percentile: 0.5 }));
 
     const previous = new Map<number, GameInProgressDtoV3>([
       [1, makeGame(1)],

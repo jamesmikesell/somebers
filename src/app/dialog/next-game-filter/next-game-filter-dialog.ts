@@ -44,6 +44,9 @@ export class NextGameFilterDialog {
   maxDifficulty?: number;
   minMinutes?: number;
   maxMinutes?: number;
+  minBoardSize?: number;
+  maxBoardSize?: number;
+  readonly boardSizes = [5, 6, 7, 8, 9];
 
   constructor(
     private dialogRef: MatDialogRef<NextGameFilterDialog, NextGameFilterOptions | undefined>,
@@ -69,6 +72,14 @@ export class NextGameFilterDialog {
       this.maxMinutes = parsed;
   }
 
+  onBoardSizeChange(value: unknown, target: 'min' | 'max'): void {
+    const parsed = this.toBoardSize(value);
+    if (target === 'min')
+      this.minBoardSize = parsed;
+    else
+      this.maxBoardSize = parsed;
+  }
+
   selectAllText(event: FocusEvent): void {
     const input = event.target as HTMLInputElement | null;
     if (!input)
@@ -92,6 +103,8 @@ export class NextGameFilterDialog {
       maxDifficulty: this.maxDifficulty,
       minTimeSeconds: this.toSeconds(this.minMinutes),
       maxTimeSeconds: this.toSeconds(this.maxMinutes),
+      minBoardSize: this.minBoardSize,
+      maxBoardSize: this.maxBoardSize,
     };
 
     this.dialogRef.close(options);
@@ -107,6 +120,8 @@ export class NextGameFilterDialog {
     this.maxDifficulty = opt.maxDifficulty;
     this.minMinutes = this.toMinutes(opt.minTimeSeconds);
     this.maxMinutes = this.toMinutes(opt.maxTimeSeconds);
+    this.minBoardSize = opt.minBoardSize;
+    this.maxBoardSize = opt.maxBoardSize;
   }
 
   private toNumber(value: unknown): number | undefined {
@@ -133,6 +148,21 @@ export class NextGameFilterDialog {
       return undefined;
 
     return Math.round((totalSeconds / 60) * 10) / 10;
+  }
+
+  private toBoardSize(value: unknown): number | undefined {
+    if (value === '' || value == null)
+      return undefined;
+
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed))
+      return undefined;
+
+    const rounded = Math.round(parsed);
+    if (rounded < 5 || rounded > 9)
+      return undefined;
+
+    return rounded;
   }
 
 }

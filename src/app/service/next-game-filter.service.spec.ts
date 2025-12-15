@@ -10,6 +10,7 @@ describe('NextGameFilterService', () => {
     estimatedSolveTime: 120000,
     firstPrincipalResolvableCellCount: 0,
     firstPrincipalUnResoledCellCount: 0,
+    boardSize: 7,
     ...overrides,
   });
 
@@ -94,5 +95,19 @@ describe('NextGameFilterService', () => {
 
     expect(service.matchesFilter(sampleDetails({ firstPrincipalUnResoledCellCount: 1 }))).toBeFalse();
     expect(service.matchesFilter(sampleDetails({ firstPrincipalUnResoledCellCount: 0 }))).toBeTrue();
+  });
+
+  it('matches board size range when enabled', () => {
+    service.setOptions({
+      enabled: true,
+      excludeFpPlus: false,
+      skipCompleted: true,
+      mode: 'boardSize',
+      minBoardSize: 6,
+      maxBoardSize: 8,
+    });
+
+    expect(service.matchesFilter(sampleDetails({ boardSize: 7 }))).toBeTrue();
+    expect(service.matchesFilter(sampleDetails({ boardSize: 5 }))).toBeFalse();
   });
 });

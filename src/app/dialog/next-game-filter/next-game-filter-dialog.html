@@ -31,111 +31,145 @@
         <mat-select [(ngModel)]="mode" [disabled]="!filterEnabled">
           <mat-option value="difficulty">Difficulty</mat-option>
           <mat-option value="time">Par Solve Time</mat-option>
+          <mat-option value="boardSize">Board size</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
 
-    @if (mode === "difficulty") {
-      <div class="range-row">
-        <mat-form-field appearance="outline">
-          <mat-label>Min difficulty</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            max="100"
-            step="0.1"
-            [disabled]="!filterEnabled"
-            [ngModel]="minDifficulty"
-            (focus)="selectAllText($event)"
-            (ngModelChange)="onDifficultyChange($event, 'min')"
-          />
-          <button
-            *ngIf="minDifficulty != null"
-            mat-icon-button
-            matSuffix
-            type="button"
-            aria-label="Clear minimum difficulty"
-            (click)="onDifficultyChange(undefined, 'min')"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Max difficulty</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            max="100"
-            step="0.1"
-            [disabled]="!filterEnabled"
-            [ngModel]="maxDifficulty"
-            (focus)="selectAllText($event)"
-            (ngModelChange)="onDifficultyChange($event, 'max')"
-          />
-          <button
-            *ngIf="maxDifficulty != null"
-            mat-icon-button
-            matSuffix
-            type="button"
-            aria-label="Clear maximum difficulty"
-            (click)="onDifficultyChange(undefined, 'max')"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
-    } @else {
-      <div class="range-row">
-        <mat-form-field appearance="outline">
-          <mat-label>Min minutes</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            step="0.1"
-            [disabled]="!filterEnabled"
-            [ngModel]="minMinutes"
-            (focus)="selectAllText($event)"
-            (ngModelChange)="onMinutesChange($event, 'min')"
-          />
-          <button
-            *ngIf="minMinutes != null"
-            mat-icon-button
-            matSuffix
-            type="button"
-            aria-label="Clear minimum minutes"
-            (click)="onMinutesChange(undefined, 'min')"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Max minutes</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            max="400"
-            step="0.1"
-            [disabled]="!filterEnabled"
-            [ngModel]="maxMinutes"
-            (focus)="selectAllText($event)"
-            (ngModelChange)="onMinutesChange($event, 'max')"
-          />
-          <button
-            *ngIf="maxMinutes != null"
-            mat-icon-button
-            matSuffix
-            type="button"
-            aria-label="Clear maximum minutes"
-            (click)="onMinutesChange(undefined, 'max')"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
+    @switch (mode) {
+      @case ("difficulty") {
+        <div class="range-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Min difficulty</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              [disabled]="!filterEnabled"
+              [ngModel]="minDifficulty"
+              (focus)="selectAllText($event)"
+              (ngModelChange)="onDifficultyChange($event, 'min')"
+            />
+            <button
+              *ngIf="minDifficulty != null"
+              mat-icon-button
+              matSuffix
+              type="button"
+              aria-label="Clear minimum difficulty"
+              (click)="onDifficultyChange(undefined, 'min')"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Max difficulty</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              [disabled]="!filterEnabled"
+              [ngModel]="maxDifficulty"
+              (focus)="selectAllText($event)"
+              (ngModelChange)="onDifficultyChange($event, 'max')"
+            />
+            <button
+              *ngIf="maxDifficulty != null"
+              mat-icon-button
+              matSuffix
+              type="button"
+              aria-label="Clear maximum difficulty"
+              (click)="onDifficultyChange(undefined, 'max')"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      }
+      @case ("time") {
+        <div class="range-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Min minutes</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              step="0.1"
+              [disabled]="!filterEnabled"
+              [ngModel]="minMinutes"
+              (focus)="selectAllText($event)"
+              (ngModelChange)="onMinutesChange($event, 'min')"
+            />
+            <button
+              *ngIf="minMinutes != null"
+              mat-icon-button
+              matSuffix
+              type="button"
+              aria-label="Clear minimum minutes"
+              (click)="onMinutesChange(undefined, 'min')"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Max minutes</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="400"
+              step="0.1"
+              [disabled]="!filterEnabled"
+              [ngModel]="maxMinutes"
+              (focus)="selectAllText($event)"
+              (ngModelChange)="onMinutesChange($event, 'max')"
+            />
+            <button
+              *ngIf="maxMinutes != null"
+              mat-icon-button
+              matSuffix
+              type="button"
+              aria-label="Clear maximum minutes"
+              (click)="onMinutesChange(undefined, 'max')"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      }
+      @case ("boardSize") {
+        <div class="range-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Min board size</mat-label>
+            <mat-select
+              [disabled]="!filterEnabled"
+              [value]="minBoardSize"
+              (selectionChange)="onBoardSizeChange($event.value, 'min')"
+            >
+              <mat-option [value]="undefined">Any</mat-option>
+              @for (size of boardSizes; track size) {
+                <mat-option [value]="size">{{ size }} x {{ size }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Max board size</mat-label>
+            <mat-select
+              [disabled]="!filterEnabled"
+              [value]="maxBoardSize"
+              (selectionChange)="onBoardSizeChange($event.value, 'max')"
+            >
+              <mat-option [value]="undefined">Any</mat-option>
+              @for (size of boardSizes; track size) {
+                <mat-option [value]="size">{{ size }} x {{ size }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      }
     }
   </div>
 </div>

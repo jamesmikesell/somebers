@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { DifficultyDisplayDetails } from './difficulty-predictor.service';
 
-export type NextGameFilterMode = 'difficulty' | 'time';
+export type NextGameFilterMode = 'difficulty' | 'time' | 'boardSize';
 
 export interface NextGameFilterOptions {
   enabled: boolean;
@@ -13,6 +13,8 @@ export interface NextGameFilterOptions {
   maxDifficulty?: number;
   minTimeSeconds?: number;
   maxTimeSeconds?: number;
+  minBoardSize?: number;
+  maxBoardSize?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -71,12 +73,19 @@ export class NextGameFilterService {
         return false;
       if (normalized.maxDifficulty != null && difficultyPercent > normalized.maxDifficulty)
         return false;
-    } else {
+    } else if (normalized.mode === 'time') {
       if (!Number.isFinite(timeSeconds))
         return false;
       if (normalized.minTimeSeconds != null && timeSeconds < normalized.minTimeSeconds)
         return false;
       if (normalized.maxTimeSeconds != null && timeSeconds > normalized.maxTimeSeconds)
+        return false;
+    } else {
+      if (!Number.isFinite(details.boardSize))
+        return false;
+      if (normalized.minBoardSize != null && details.boardSize < normalized.minBoardSize)
+        return false;
+      if (normalized.maxBoardSize != null && details.boardSize > normalized.maxBoardSize)
         return false;
     }
 
@@ -84,17 +93,26 @@ export class NextGameFilterService {
   }
 
   private normalize(options: NextGameFilterOptions): NextGameFilterOptions {
-    const mode: NextGameFilterMode = options?.mode === 'time' ? 'time' : 'difficulty';
+    const mode: NextGameFilterMode = options?.mode === 'time'
+      ? 'time'
+      : options?.mode === 'boardSize'
+        ? 'boardSize'
+        : 'difficulty';
     let minDifficulty = this.toDecimalInRange(options?.minDifficulty, 0, 100);
     let maxDifficulty = this.toDecimalInRange(options?.maxDifficulty, 0, 100);
     let minTimeSeconds = this.toIntInRange(options?.minTimeSeconds, 0, undefined);
     let maxTimeSeconds = this.toIntInRange(options?.maxTimeSeconds, 0, undefined);
+    let minBoardSize = this.toIntInRange(options?.minBoardSize, 5, 9);
+    let maxBoardSize = this.toIntInRange(options?.maxBoardSize, 5, 9);
 
     if (minDifficulty != null && maxDifficulty != null && minDifficulty > maxDifficulty)
       [minDifficulty, maxDifficulty] = [maxDifficulty, minDifficulty];
 
     if (minTimeSeconds != null && maxTimeSeconds != null && minTimeSeconds > maxTimeSeconds)
       [minTimeSeconds, maxTimeSeconds] = [maxTimeSeconds, minTimeSeconds];
+
+    if (minBoardSize != null && maxBoardSize != null && minBoardSize > maxBoardSize)
+      [minBoardSize, maxBoardSize] = [maxBoardSize, minBoardSize];
 
     return {
       enabled: options?.enabled === true,
@@ -105,6 +123,8 @@ export class NextGameFilterService {
       maxDifficulty,
       minTimeSeconds,
       maxTimeSeconds,
+      minBoardSize,
+      maxBoardSize,
     };
   }
 
@@ -162,6 +182,8 @@ export class NextGameFilterService {
       maxDifficulty: undefined,
       minTimeSeconds: undefined,
       maxTimeSeconds: undefined,
+      minBoardSize: undefined,
+      maxBoardSize: undefined,
     };
   }
 }

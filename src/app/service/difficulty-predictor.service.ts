@@ -66,6 +66,7 @@ export class DifficultyPredictorService {
       percentile: percentile,
       firstPrincipalUnResoledCellCount: unresolvedCells,
       firstPrincipalResolvableCellCount: resolvableCells,
+      boardSize: difficultyAnalysis.totals.boardSize,
     };
   }
 
@@ -129,4 +130,5 @@ export interface DifficultyDisplayDetails {
   estimatedSolveTime: number;
   firstPrincipalUnResoledCellCount: number;
   firstPrincipalResolvableCellCount: number;
+  boardSize: number;
 }
