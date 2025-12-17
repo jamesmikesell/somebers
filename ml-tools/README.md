@@ -20,14 +20,17 @@ This repo already includes a Python environment with `numpy` + `matplotlib`:
 The `.npz` contains:
 
 - `X`: `float32` array shaped `(N, C, H, W)`
-  - channel `0`: per-cell `value`
+  - channel `0`: per-cell `value` (with the original header row/column removed)
   - channels `1..maxGroupNumber`: per-group channels; for group `g`, cells in that group contain that group’s `colorGroupGoal` (else `0`)
+  - 2 additional channels:
+    - column-header channel: value from original row `0` broadcast down each column
+    - row-header channel: value from original col `0` broadcast across each row
 - `y_time_spent`: `float32` shaped `(N,)` (training target)
 - `game_number`: `int32` shaped `(N,)` (ID only; do not train on it)
 - `game_date_as_percent`: `float32` shaped `(N,)` (global feature)
-- `height`, `width`: original board sizes per sample
-- `group_number_map`: `int16` shaped `(N, H, W)` (padded)
-- `group_goal`: `float32` shaped `(N, C)` mapping `groupNumber -> colorGroupGoal` (channel 0 is unused)
+- `height`, `width`: effective board sizes after removing the header row/column (so max is `9x9`)
+- `group_number_map`: `int16` shaped `(N, H, W)` for the reduced grid (padded)
+- `group_goal`: `float32` shaped `(N, 1+maxGroupNumber)` mapping `groupNumber -> colorGroupGoal` (index 0 unused)
 
 ## About `groupNumber`
 
@@ -60,3 +63,8 @@ This writes `*.png` files you can open to validate:
 - `sample_000_values.png` (channel 0)
 - `sample_000_groups.png` (group map + goals)
 - `sample_000_group_channels.png` (non-empty group channels)
+- `sample_000_column_headers.png`, `sample_000_row_headers.png` (per-column/per-row header channels, non-empty only)
+
+## Train models + export ONNX
+
+See `ml-tools/train/README.md`.
