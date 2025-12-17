@@ -1,11 +1,11 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
+import { DisplayCell, GameBoard } from '../src/app/model/game-board';
+import { BoardGroupVersion } from '../src/app/model/grouping';
 import { SavedGameStateV3 } from '../src/app/model/saved-game-data/saved-game-data.v3';
 import { BoardStatAnalyzer } from '../src/app/service/board-stat-analyzer';
 import { generateGameBoard } from '../src/app/service/gameboard-generator';
 import { RawGenericFeatureSet } from '../src/app/service/ml-core';
 import { difficultyReportToGameStat, GamePlayStats } from '../src/app/service/ml-difficulty-stats';
-import { BoardGroupVersion } from '../src/app/model/grouping';
-import { DisplayCell, GameBoard } from '../src/app/model/game-board';
 
 
 export interface BackupGameData {
@@ -15,7 +15,7 @@ export interface BackupGameData {
 }
 
 
-async function buildGameDataFromBackupFile(backupPath = 'development-tools/backup.json'): Promise<BackupGameData[]> {
+export async function buildGameDataFromBackupFile(backupPath = 'development-tools/backup.json'): Promise<BackupGameData[]> {
   const backupRaw = readFileSync(backupPath, 'utf8');
   const savedState = JSON.parse(backupRaw) as SavedGameStateV3;
 
@@ -67,39 +67,6 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
   return out;
 }
 
-
-function projectFullBoard(fullBoard: DisplayCell[][], includeFields?: (keyof DisplayCell)[]): (Partial<DisplayCell> | undefined)[][] {
-  const defaultFields: (keyof DisplayCell)[] = ['required', 'value', 'groupNumber'];
-
-  const pickFields = (cell: DisplayCell): Partial<DisplayCell> => {
-    const fields: ReadonlyArray<keyof DisplayCell> = includeFields?.length ? includeFields : defaultFields;
-
-    const result: Partial<Record<keyof DisplayCell, DisplayCell[keyof DisplayCell]>> = {};
-    fields.forEach(key => {
-      result[key] = cell[key];
-    });
-    return result as Partial<DisplayCell>;
-  };
-
-  return fullBoard.map(row => row.map(cell => cell ? pickFields(cell) : undefined));
-}
-
-
-export async function exportGameBoardsFromBackupFile(
-  backupPath = 'development-tools/backup.json',
-  outputPath = 'development-tools/game-board-export.json',
-  includeFullBoardFields?: (keyof DisplayCell)[],
-): Promise<Array<{ boardNumber: number; fullBoard: (Partial<DisplayCell> | undefined)[][]; gamePlayStats: GamePlayStats }>> {
-  const gameData = await buildGameDataFromBackupFile(backupPath);
-  const serializedGames = gameData.map(({ gameBoard, gamePlayStats, boardNumber }) => ({
-    boardNumber,
-    fullBoard: projectFullBoard(gameBoard.fullBoard, includeFullBoardFields),
-    gamePlayStats,
-  }));
-
-  writeFileSync(outputPath, JSON.stringify(serializedGames, null, 2));
-  return serializedGames;
-}
 
 
 export async function buildRawGameStatForGameNumber(gameNumber: number, version: BoardGroupVersion = 1): Promise<RawGenericFeatureSet> {
