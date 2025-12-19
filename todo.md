@@ -19,6 +19,7 @@
 
 # Done
 
+- filer: menu doesn't show correct filter being used if board size is being filtered
 - Positive feedback when breaking previous records
 - track last X games against par time.
 - tutorial mode
