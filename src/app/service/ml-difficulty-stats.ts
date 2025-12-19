@@ -4,27 +4,21 @@ import { RawGenericFeatureSet, solveLinearSystem } from './ml-core';
 
 const SERIES_SUMMARY_SUFFIXES = ['First', 'Last', 'Delta', 'LinearCoef', 'QuadraticCoef', 'CubicCoef', 'Average', 'StdDev'] as const;
 
-interface MetricContext {
-  boardSize: number;
-  boardSizePow2: number;
-  iteration: number;
-}
 
 interface MetricConfig {
   key: keyof BasicStats;
   name: string;
-  scale?: (value: number, context: MetricContext) => number;
+  scale?: (value: number, boardSize: number) => number;
 }
 
-const divideByBoardSize = (value: number, context: MetricContext): number =>
-  context.boardSize ? value / context.boardSize : 0;
+const divideByBoardSize = (value: number, boardSize: number): number => boardSize ? value / boardSize : 0;
 
 const FALSE_POSITIVE_METRICS: readonly MetricConfig[] = [
   { key: 'mean', name: 'Mean' },
   {
     key: 'max',
     name: 'Max',
-    scale: (value, context) => value / context.boardSizePow2,
+    scale: (value, _boardSize) => value,
   },
   { key: 'std', name: 'Std' },
 ];
@@ -438,13 +432,11 @@ function summarizeBasicStatsSeries(
   boardSize: number,
   features: Record<string, number>,
 ): void {
-  const contextBase = { boardSize, boardSizePow2: Math.pow(2, boardSize) };
   for (const metric of metrics) {
     const values = series.map((stats, iteration) => {
       const safe = nullSafeBasicStat(stats);
       const raw = safe[metric.key];
-      const context: MetricContext = { ...contextBase, iteration };
-      const scaled = metric.scale ? metric.scale(raw, context) : raw;
+      const scaled = metric.scale ? metric.scale(raw, boardSize) : raw;
       return sanitizeNumber(scaled);
     });
     addSeriesSummaries(`${prefix}${metric.name}`, values, features);

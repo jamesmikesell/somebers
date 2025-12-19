@@ -93,6 +93,7 @@ export class BoardStatAnalyzer {
     const currentGoal = stat.currentGoal();
     const unselectedCells = stat.cells.filter(x => x.status === SelectionStatus.NONE);
     const unselectedCellSum = unselectedCells.reduce((sum, x) => sum + x.value, 0);
+    const totalPossibleCombinations = Math.pow(2, unselectedCells.length);
 
     const actionableCellsCount = possibleCorrect.alwaysRequiredCount + possibleCorrect.neverUsedCount;
 
@@ -105,14 +106,14 @@ export class BoardStatAnalyzer {
       cellCountGreaterThanGoal: unselectedCells.filter(x => x.value > currentGoal).length,
       actionableCellsCount: actionableCellsCount,
       unactionableCellsCount: unselectedCells.length - actionableCellsCount,
-      falsePositiveSolutionCount: possibleCorrect.possiblyCorrectCombinations - 1,
+      falsePositiveSolutionCount: (possibleCorrect.possiblyCorrectCombinations - 1) / totalPossibleCombinations,
       guaranteedRequiredCellCount: possibleCorrect.alwaysRequiredCount,
       guaranteedUnusableCellCount: possibleCorrect.neverUsedCount,
       guaranteedRequiredCellCountVsGoal: currentGoal ? (possibleCorrect.alwaysRequiredCount / currentGoal) : 0,
       guaranteedUnusableCellCountVsGoal: currentGoal ? (possibleCorrect.neverUsedCount / currentGoal) : 0,
       goalVsUnselectedSum: unselectedCellSum ? (currentGoal / unselectedCellSum) : 0,
 
-      crossFalsePositiveSolutionCount: crossPossibleCorrect ? (crossPossibleCorrect.possiblyCorrectCombinations - 1) : 0,
+      crossFalsePositiveSolutionCount: crossPossibleCorrect ? (crossPossibleCorrect.possiblyCorrectCombinations - 1) / totalPossibleCombinations : 0,
       crossActionableCellsCount: crossActionableCellsCount,
       crossUnactionableCellsCount: crossPossibleCorrect ? (unselectedCells.length - crossActionableCellsCount) : 0,
       crossGuaranteedRequiredCellCount: crossPossibleCorrect?.alwaysRequiredCount ?? 0,
