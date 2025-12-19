@@ -120,9 +120,16 @@
       >
     </span>
     warning (<a routerLink="/documentation" fragment="fp-warning">FP+ meaning</a
-    >) is <strong>guaranteed</strong> to be solvable without a single guess. In
-    fact, game #422 is the first game to require a guess, and even that isn't
-    until only the last 6 unselected cells remain.
+    >) is <strong>guaranteed</strong> to be solvable without a single guess.
+    Furthermore, anything not labeled with a
+    <span>
+      <code
+        ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP+!</code
+      >
+    </span>
+    (note the <code>!</code> after the <code>+</code>) is also guaranteed to be
+    solvable without guessing. In fact, game #422 is the first game to require a
+    guess, and even that isn't until only the last 6 unselected cells remain.
   </p>
   <p>
     In the case of #422, when only the last 6 cells remain, by enabling
@@ -165,7 +172,19 @@
       column, or group). The <code>#-#</code> shown in the warning represents
       how many cells <code>[can't]-[can]</code> be determined with
       first-principles alone. Beyond that point, more advanced deduction methods
-      are required to solve the board. Though
+      are required to solve the board.
+      <p>
+        Some boards have an
+        <span>
+          <code
+            ><mat-icon class="icon warning-icon">report_problem</mat-icon
+            >FP+!</code
+          >
+        </span>
+        warning (note the <code>!</code> after the <code>+</code>). These boards
+        have been automatically determined to be even more difficult.
+      </p>
+      Though
       <a routerLink="/documentation" fragment="guessing"
         >as mentioned, guessing</a
       >
@@ -326,7 +345,9 @@
         <mat-card-content>
           <div class="ios-install-video__recommended-header">
             <div>
-              <div class="ios-install-video__recommended-label">Recommended</div>
+              <div class="ios-install-video__recommended-label">
+                Recommended
+              </div>
               <div class="ios-install-video__recommended-title">
                 {{ iosRecommendedVideo.buttonLabel }}
               </div>
@@ -337,14 +358,25 @@
                 mat-raised-button
                 color="primary"
                 type="button"
-                (click)="setIosVideo(iosRecommendedVideo, { autoplay: true, scrollIntoView: true })"
+                (click)="
+                  setIosVideo(iosRecommendedVideo, {
+                    autoplay: true,
+                    scrollIntoView: true,
+                  })
+                "
                 [class.active]="selectedIosVideo?.id === iosRecommendedVideo.id"
               >
                 <mat-icon>play_circle</mat-icon>
                 Play recommended
               </button>
-              <button mat-button type="button" (click)="toggleIosVideoOptions()">
-                {{ showAllIosOptions ? 'Hide other options' : 'See other options' }}
+              <button
+                mat-button
+                type="button"
+                (click)="toggleIosVideoOptions()"
+              >
+                {{
+                  showAllIosOptions ? "Hide other options" : "See other options"
+                }}
               </button>
             </div>
           </div>
