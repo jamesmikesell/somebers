@@ -248,6 +248,8 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
     percentUnresolvedCellsAfterDeduction:
       stats.totals.unresolvedCellCountAfterDeduction / cellCount,
+    firstPrincipalUnResoledCellCount:
+      stats.firstPrincipalsInitialSolve.unresolvedCellCountAfterBaseDeduction / cellCount,
   };
 
   summarizeNumericSeries(
@@ -606,4 +608,5 @@ export interface GameStatFeatures {
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;
   percentUnresolvedCellsAfterDeduction: number;
+  firstPrincipalUnResoledCellCount: number;
 }
