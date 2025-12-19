@@ -761,6 +761,8 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
     }, 500);
 
     this.nextGameSearchInProgress = true;
+    await new Promise(resolve => setTimeout(resolve, 0));
+
     try {
       const result = await this.nextGameSelectorService.findNextGame(
         this.gameNumber,

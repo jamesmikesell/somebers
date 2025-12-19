@@ -5,7 +5,9 @@
     <div class="centered">
       <div class="top-controls">
         @if (tutorialHeaderContents) {
-          <ng-container *ngTemplateOutlet="tutorialHeaderContents"></ng-container>
+          <ng-container
+            *ngTemplateOutlet="tutorialHeaderContents"
+          ></ng-container>
         } @else {
           <div class="game-controls">
             <div class="game-controls__side game-controls__side--left">
@@ -42,6 +44,7 @@
                   matInput
                   type="number"
                   [ngModel]="gameNumber"
+                  [disabled]="nextGameSearchInProgress"
                   (ngModelChange)="changeGameNumberFromUi($event)"
                   min="1"
                 />
@@ -115,7 +118,7 @@
           <mat-icon>{{
             nextGameSearchInProgress ? "hourglass_top" : "skip_next"
           }}</mat-icon>
-          {{ nextGameSearchInProgress ? "Finding Next Game..." : "Next Game" }}
+          Next Game
         </button>
       </div>
     </div>
