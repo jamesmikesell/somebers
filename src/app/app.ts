@@ -132,9 +132,13 @@ export class App implements OnInit, OnDestroy {
     }
 
     this.nextGameFilterFpHidden = options.excludeFpPlus === true;
-    this.nextGameFilterRangeLabel = options.mode === 'difficulty'
-      ? this.formatDifficultyRange(options.minDifficulty, options.maxDifficulty)
-      : this.formatTimeRange(options.minTimeSeconds, options.maxTimeSeconds);
+    if (options.mode === 'difficulty') {
+      this.nextGameFilterRangeLabel = this.formatDifficultyRange(options.minDifficulty, options.maxDifficulty);
+    } else if (options.mode === 'time') {
+      this.nextGameFilterRangeLabel = this.formatTimeRange(options.minTimeSeconds, options.maxTimeSeconds);
+    } else {
+      this.nextGameFilterRangeLabel = this.formatBoardSizeRange(options.minBoardSize, options.maxBoardSize);
+    }
   }
 
 
@@ -168,6 +172,21 @@ export class App implements OnInit, OnDestroy {
   }
 
 
+  private formatBoardSizeRange(min?: number, max?: number): string | undefined {
+    const minSize = this.toBoardSize(min);
+    const maxSize = this.toBoardSize(max);
+    if (minSize == null && maxSize == null)
+      return undefined;
+    if (minSize != null && maxSize != null)
+      return `${minSize}x${minSize} - ${maxSize}x${maxSize}`;
+    if (minSize != null)
+      return `${minSize}x${minSize}+`;
+    if (maxSize == null)
+      return undefined;
+    return `<=${maxSize}x${maxSize}`;
+  }
+
+
   private toSingleDecimal(value?: number): string | undefined {
     if (!Number.isFinite(value))
       return undefined;
@@ -183,6 +202,18 @@ export class App implements OnInit, OnDestroy {
 
     const minutes = Math.round((totalSeconds / 60) * 10) / 10;
     return Number.isInteger(minutes) ? `${minutes}` : minutes.toFixed(1);
+  }
+
+
+  private toBoardSize(value?: number): number | undefined {
+    if (!Number.isFinite(value))
+      return undefined;
+
+    const rounded = Math.round(value);
+    if (rounded < 5 || rounded > 9)
+      return undefined;
+
+    return rounded;
   }
 
 
