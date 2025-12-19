@@ -36,7 +36,7 @@ export class DifficultyPredictorService {
 
   async getDifficultyEstimates(gameNumberOrArea: DisplayCell[][] | number): Promise<DifficultyDisplayDetails> {
     let effectivePlayArea: DisplayCell[][];
-    if (typeof gameNumberOrArea === "number")
+    if (typeof gameNumberOrArea === 'number')
       effectivePlayArea = (await this.cachingBoardGenerator.generateOrGetGameBoard(gameNumberOrArea)).playArea;
     else
       effectivePlayArea = gameNumberOrArea;
@@ -46,8 +46,10 @@ export class DifficultyPredictorService {
 
     const difficultyAnalysis = BoardStatAnalyzer.evaluate(effectivePlayArea);
 
-    const unresolvedCells = difficultyAnalysis.totals.unresolvedCellCountAfterDeduction;
-    const resolvableCells = Math.pow(difficultyAnalysis.totals.boardSize, 2) - unresolvedCells;
+    const baseUnresolvedCells = difficultyAnalysis.firstPrincipalsInitialSolve.unresolvedCellCountAfterBaseDeduction;
+    const baseResolvableCells = Math.pow(difficultyAnalysis.firstPrincipalsInitialSolve.boardSize, 2) - baseUnresolvedCells;
+    const crossUnresolvedCells = difficultyAnalysis.firstPrincipalsInitialSolve.unresolvedCellCountAfterDeduction;
+    const crossResolvableCells = Math.pow(difficultyAnalysis.firstPrincipalsInitialSolve.boardSize, 2) - crossUnresolvedCells;
 
     const gamePlayStats: GamePlayStats = {
       timeSpent: 0,
@@ -64,8 +66,10 @@ export class DifficultyPredictorService {
     return {
       estimatedSolveTime: estimatedSolveTime,
       percentile: percentile,
-      firstPrincipalUnResoledCellCount: unresolvedCells,
-      firstPrincipalResolvableCellCount: resolvableCells,
+      firstPrincipalUnResoledCellCount: baseUnresolvedCells,
+      firstPrincipalResolvableCellCount: baseResolvableCells,
+      crossReferenceUnresolvedCellCount: crossUnresolvedCells,
+      crossReferenceResolvableCellCount: crossResolvableCells,
       boardSize: difficultyAnalysis.totals.boardSize,
     };
   }
@@ -130,5 +134,7 @@ export interface DifficultyDisplayDetails {
   estimatedSolveTime: number;
   firstPrincipalUnResoledCellCount: number;
   firstPrincipalResolvableCellCount: number;
+  crossReferenceUnresolvedCellCount?: number;
+  crossReferenceResolvableCellCount?: number;
   boardSize: number;
 }

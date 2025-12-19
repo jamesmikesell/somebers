@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from "@angular/material/icon";
+import { MatIconModule } from '@angular/material/icon';
 import { DisplayCell } from '../../model/game-board';
 import { DifficultyDisplayDetails, DifficultyPredictorService } from '../../service/difficulty-predictor.service';
 
@@ -18,7 +18,8 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
   percentileLabel = '–';
   estimatedTimeLabel = '–';
-  firstPrincipalViolationWarning = ""
+  firstPrincipalViolationWarning = '';
+  predictorResultId = 0;
 
 
   constructor(
@@ -33,9 +34,11 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
 
   private async updatePrediction(): Promise<void> {
-    this.firstPrincipalViolationWarning = "";
+    this.firstPrincipalViolationWarning = '';
     this.percentileLabel = '-';
     this.estimatedTimeLabel = '-';
+    this.predictorResultId++
+    const resultId = this.predictorResultId
 
     try {
       let difficultyDetails: DifficultyDisplayDetails;
@@ -44,11 +47,14 @@ export class EstimatedDifficultyComponent implements OnChanges {
       else if (this.gameNumber != null)
         difficultyDetails = await this.predictor.getDifficultyEstimates(this.gameNumber)
 
-      if (!difficultyDetails)
+      if (!difficultyDetails || resultId !== this.predictorResultId)
         return;
 
-      if (difficultyDetails.firstPrincipalUnResoledCellCount > 0)
-        this.firstPrincipalViolationWarning = `FP+ ${difficultyDetails.firstPrincipalUnResoledCellCount}-${difficultyDetails.firstPrincipalResolvableCellCount}`
+      if (difficultyDetails.firstPrincipalUnResoledCellCount > 0) {
+        const crossUnresolved = difficultyDetails.crossReferenceUnresolvedCellCount ?? 0;
+        const warningSuffix = crossUnresolved > 0 ? '!' : '';
+        this.firstPrincipalViolationWarning = `FP+${warningSuffix} ${difficultyDetails.firstPrincipalUnResoledCellCount}-${difficultyDetails.firstPrincipalResolvableCellCount}`;
+      }
 
       this.percentileLabel = `${(difficultyDetails.percentile * 100).toFixed(1)}`;
       this.estimatedTimeLabel = this.formatMs(difficultyDetails.estimatedSolveTime);
