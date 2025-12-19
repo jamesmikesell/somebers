@@ -19,13 +19,32 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
   const lastGameDate = Math.max(...completionTimes);
   const gameDatesDiff = lastGameDate - firstGameDate;
 
+  const filteredGames = savedState.inProgressGames.filter(game => {
+    if (!game?.completed
+      || (game.timeSpent ?? 0) <= 10000
+      || (game.moveHistory?.filter((correctMove) => !correctMove).length ?? 0) > 10
+    ) {
+      return false;
+    }
+
+    return true;
+  })
+
+  if (!filteredGames.some(game => game.gameNumber === 471)) {
+    const lastGame = filteredGames[filteredGames.length - 1];
+    const moveHistoryClone = lastGame?.moveHistory ? lastGame.moveHistory.map(move => ({ ...move })) : [];
+    filteredGames.push({
+      gameNumber: 471,
+      completed: true,
+      moveHistory: moveHistoryClone,
+      timeSpent: 4 * 60 * 60 * 1000,
+    });
+    console.warn('!!! WARNING !!! Injected fake game 471 into training set with a fake solve time of 4 hours.');
+  }
+
   console.log("Generating Stats...")
   const out: RawGenericFeatureSet[] = [];
-  for (const game of savedState.inProgressGames ?? []) {
-    if (!game?.completed) continue;
-    if ((game.timeSpent ?? 0) <= 15000) continue;
-    if ((game.moveHistory?.filter((correctMove) => !correctMove).length ?? 0) > 10) continue;
-
+  for (const game of filteredGames ?? []) {
     const gameBoard = await generateGameBoard(game.gameNumber);
     const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
     const completionTime = game.moveHistory[game.moveHistory.length - 1].timestamp;
