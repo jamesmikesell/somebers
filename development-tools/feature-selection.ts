@@ -40,7 +40,7 @@ interface HistoryEntry {
   featureCount: number;
 }
 
-const DEFAULT_MIN_DELTA = 25; // milliseconds
+const DEFAULT_MIN_DELTA = 0.00005; // absolute SMAPE improvement required (e.g., 0.005 = 0.5 pp)
 const DEFAULT_OUTPUT = 'development-tools/feature-selection-results.json';
 
 function parseList(value: string | undefined): string[] {
@@ -109,7 +109,7 @@ function parseArgs(): CliOptions {
         '  --max=N                 Maximum number of features to keep',
       );
       console.log(
-        '  --min-delta=ms          Minimum RMSE improvement (ms) required to add/remove a feature',
+        '  --min-delta=x           Minimum SMAPE improvement required to add/remove a feature (absolute, e.g., 0.005 = 0.5 pp)',
       );
       console.log(
         '  --no-kfold              Use a single stratified split instead of K-fold CV',
@@ -233,7 +233,7 @@ async function attemptBackwardElimination(
       const next = [...selected.slice(0, i), ...selected.slice(i + 1)];
       const evalResult = await evaluateFeatureSet(rawStats, next, cache, opts);
       const delta =
-        currentEval.best.metrics.rmse - evalResult.best.metrics.rmse;
+        currentEval.best.metrics.smape - evalResult.best.metrics.smape;
       if (
         delta > opts.minDelta &&
         (!bestRemoval || delta > bestRemoval.delta)
@@ -258,7 +258,7 @@ async function attemptBackwardElimination(
       featureCount: selected.length,
     });
     console.log(
-      `[-] Removed ${removedFeature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ ${fmt(bestRemoval.delta)})`,
+      `[-] Removed ${removedFeature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ SMAPE ${fmt(bestRemoval.delta)})`,
     );
   }
   return { selected, eval: currentEval };
@@ -364,7 +364,7 @@ async function main(): Promise<void> {
       if (next.length > maxFeatures) continue;
       const evalResult = await evaluateFeatureSet(rawStats, next, cache, opts);
       const delta =
-        currentEval.best.metrics.rmse - evalResult.best.metrics.rmse;
+        currentEval.best.metrics.smape - evalResult.best.metrics.smape;
       if (
         delta > opts.minDelta &&
         (!bestAddition || delta > bestAddition.delta)
@@ -385,7 +385,7 @@ async function main(): Promise<void> {
       featureCount: selected.length,
     });
     console.log(
-      `[+] Added ${bestAddition.feature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ ${fmt(bestAddition.delta)})`,
+      `[+] Added ${bestAddition.feature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ SMAPE ${fmt(bestAddition.delta)})`,
     );
     ({ selected, eval: currentEval } = await attemptBackwardElimination(
       rawStats,
@@ -399,7 +399,7 @@ async function main(): Promise<void> {
   }
 
   const improvement =
-    history.length > 0 ? history[0].rmse - currentEval.best.metrics.rmse : 0;
+    history.length > 0 ? history[0].smape - currentEval.best.metrics.smape : 0;
 
   console.log('');
   console.log('== Feature Selection Complete ==');
@@ -413,7 +413,7 @@ async function main(): Promise<void> {
   console.log(
     `Final R2: ${fmtR2(currentEval.best.metrics.r2)} (baseline ${fmtR2(currentEval.baseline.metrics.r2)})`,
   );
-  console.log(`Total improvement vs initial: ${fmt(improvement)}`);
+  console.log(`Total SMAPE improvement vs initial: ${fmt(improvement)}`);
   console.log('Features:');
   selected.forEach((f, idx) => console.log(`  ${idx + 1}. ${f}`));
 

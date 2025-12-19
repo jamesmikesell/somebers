@@ -494,7 +494,7 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
     }
   }
 
-  // Pick by lowest RMSE; tie-break on smaller weight L2 norm, then prefer log1p
+  // Pick by lowest SMAPE; tie-break on smaller weight L2 norm, then RMSE, then prefer log1p
   const baselineEval = useK
     ? (() => {
       const yTrueAll: number[] = [];
@@ -516,20 +516,24 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
   const weightL2 = (m: RidgeModelJson) => Math.sqrt(m.weights.reduce((s, w) => s + w * w, 0));
   const isBetter = (a: ModelEvaluationResult<ModelJson>, b: ModelEvaluationResult<ModelJson>): boolean => {
     const eps = 1e-9;
-    if (a.metrics.rmse + eps < b.metrics.rmse) return true;
-    if (Math.abs(a.metrics.rmse - b.metrics.rmse) <= eps) {
+    if (a.metrics.smape + eps < b.metrics.smape) return true;
+    if (Math.abs(a.metrics.smape - b.metrics.smape) <= eps) {
       if (a.model.modelType === 'ridge' && b.model.modelType === 'ridge') {
         const la = weightL2(a.model as RidgeModelJson);
         const lb = weightL2(b.model as RidgeModelJson);
         if (la + eps < lb) return true;
         if (Math.abs(la - lb) <= eps) {
-          // final tie-break: prefer log1p
-          const ta = (a.model as RidgeModelJson).transform;
-          const tb = (b.model as RidgeModelJson).transform;
-          if (ta === 'log1p' && tb !== 'log1p') return true;
+          if (a.metrics.rmse + eps < b.metrics.rmse) return true;
+          if (Math.abs(a.metrics.rmse - b.metrics.rmse) <= eps) {
+            // final tie-break: prefer log1p
+            const ta = (a.model as RidgeModelJson).transform;
+            const tb = (b.model as RidgeModelJson).transform;
+            if (ta === 'log1p' && tb !== 'log1p') return true;
+          }
         }
-      } else if (a.model.modelType === 'ridge' && b.model.modelType === 'baseline') {
-        return true; // prefer any proper model over baseline with same RMSE
+      } else {
+        if (a.metrics.rmse + eps < b.metrics.rmse) return true;
+        if (Math.abs(a.metrics.rmse - b.metrics.rmse) <= eps && a.model.modelType === 'ridge' && b.model.modelType === 'baseline') return true; // prefer any proper model over baseline with same SMAPE/RMSE
       }
     }
     return false;
