@@ -30,12 +30,24 @@ async function main(): Promise<void> {
     ? evaluate((s) => predictBaseline(best.model as BaselineModelJson, s), train, best.model as BaselineModelJson)
     : evaluate((s) => predictRidge(best.model as RidgeModelJson, s), train, best.model as RidgeModelJson)) as unknown as ModelEvaluationResult<ModelJson>;
 
-  // Predict for game #27
-  const sample27 = toSample(await buildRawGameStatForGameNumber(27), featureKeys)!;
-  let pred27 = best.model.modelType === 'baseline'
-    ? predictBaseline(best.model as BaselineModelJson, sample27)
-    : predictRidge(best.model as RidgeModelJson, sample27);
-  pred27 = pred27 / 1000 / 60;
+  // Predict for game #27 & 471
+  let pred27: number;
+  {
+    const sample27 = toSample(await buildRawGameStatForGameNumber(27), featureKeys)!;
+    pred27 = best.model.modelType === 'baseline'
+      ? predictBaseline(best.model as BaselineModelJson, sample27)
+      : predictRidge(best.model as RidgeModelJson, sample27);
+    pred27 = pred27 / 1000 / 60;
+  }
+
+  let pred471: number;
+  {
+    const sample471 = toSample(await buildRawGameStatForGameNumber(471), featureKeys)!;
+    pred471 = best.model.modelType === 'baseline'
+      ? predictBaseline(best.model as BaselineModelJson, sample471)
+      : predictRidge(best.model as RidgeModelJson, sample471);
+    pred471 = pred471 / 1000 / 60;
+  }
 
   // Persist artifacts
   const modelPath = 'public/difficulty-ml-model.json';
@@ -52,6 +64,7 @@ async function main(): Promise<void> {
       .map((e) => ({ model: { modelType: e.model.modelType, lambda: (e.model as RidgeModelJson).lambda, transform: (e.model as RidgeModelJson).transform }, metrics: e.metrics }))
       .sort((a, b) => a.metrics.rmse - b.metrics.rmse),
     predictionForGame27: pred27,
+    predictionForGame471: pred471,
   };
   writeFileSync('development-tools/ml-training-results.json', JSON.stringify(results, null, 2), 'utf8');
 
@@ -62,6 +75,7 @@ async function main(): Promise<void> {
   modelStats(best, trainEval);
   console.log('');
   console.log('Prediction for game #27 (minutes):', pred27.toFixed(1));
+  console.log('Prediction for game #471 (minutes):', pred471.toFixed(1));
   console.log('');
 
 
