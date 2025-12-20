@@ -24,7 +24,7 @@ export class BoardStatAnalyzer {
     if (this.LOG_ENABLED)
       console.log('Board stat analysis ', performance.now() - start)
 
-    return { totals, firstPrincipalsInitialSolve };
+    return { boardSize: cells.length, totals, firstPrincipalsInitialSolve };
   }
 
 
@@ -74,7 +74,6 @@ export class BoardStatAnalyzer {
     );
 
     return {
-      boardSize: grid.length,
       deductionIterations: deductionResults.iterations,
       baseDeductionIterations: deductionResults.baseDeductionIterations,
       unresolvedCellCountAfterBaseDeduction: deductionResults.unresolvedAfterBaseDeduction,
@@ -516,12 +515,12 @@ interface PossiblyCorrectSolutions {
 
 
 export interface BoardStats {
+  boardSize: number;
   totals: TotalsStats;
   firstPrincipalsInitialSolve: TotalsStats;
 }
 
 export interface TotalsStats {
-  boardSize: number;
   deductionIterations: number;
   baseDeductionIterations: number;
   unresolvedCellCountAfterBaseDeduction: number;

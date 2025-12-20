@@ -47,9 +47,9 @@ export class DifficultyPredictorService {
     const difficultyAnalysis = BoardStatAnalyzer.evaluate(effectivePlayArea);
 
     const baseUnresolvedCells = difficultyAnalysis.firstPrincipalsInitialSolve.unresolvedCellCountAfterBaseDeduction;
-    const baseResolvableCells = Math.pow(difficultyAnalysis.firstPrincipalsInitialSolve.boardSize, 2) - baseUnresolvedCells;
+    const baseResolvableCells = Math.pow(difficultyAnalysis.boardSize, 2) - baseUnresolvedCells;
     const crossUnresolvedCells = difficultyAnalysis.firstPrincipalsInitialSolve.unresolvedCellCountAfterDeduction;
-    const crossResolvableCells = Math.pow(difficultyAnalysis.firstPrincipalsInitialSolve.boardSize, 2) - crossUnresolvedCells;
+    const crossResolvableCells = Math.pow(difficultyAnalysis.boardSize, 2) - crossUnresolvedCells;
 
     const gamePlayStats: GamePlayStats = {
       timeSpent: 0,
@@ -70,7 +70,7 @@ export class DifficultyPredictorService {
       firstPrincipalResolvableCellCount: baseResolvableCells,
       crossReferenceUnresolvedCellCount: crossUnresolvedCells,
       crossReferenceResolvableCellCount: crossResolvableCells,
-      boardSize: difficultyAnalysis.totals.boardSize,
+      boardSize: difficultyAnalysis.boardSize,
     };
   }
 

@@ -203,7 +203,7 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     return { mean, min, max, std, sum };
   };
 
-  const boardSize = stats.totals.boardSize;
+  const boardSize = stats.boardSize;
   const rowColStats = (iteration: SectionStats[]): SectionStats[] => iteration.slice(0, boardSize * 2);
 
   const cellCountLargerThanTarget = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.cellCountGreaterThanGoal)));
