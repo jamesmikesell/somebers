@@ -45,6 +45,11 @@ interface HistoryEntry {
 const DEFAULT_MIN_DELTA = 0.00005; // absolute metric improvement required (e.g., 0.005 = 0.5 pp)
 const DEFAULT_OUTPUT = 'development-tools/feature-selection-results.json';
 
+interface ProgressReporter {
+  update(current: number, durationMs: number): void;
+  finish(): void;
+}
+
 function parseList(value: string | undefined): string[] {
   if (!value) return [];
   return value
@@ -155,6 +160,69 @@ function fmtR2(value: number): string {
   return value.toFixed(3);
 }
 
+function formatDuration(totalSeconds: number): string {
+  const seconds = Math.max(0, Math.round(totalSeconds));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs
+      .toString()
+      .padStart(2, '0')}`;
+  }
+  return `${minutes.toString().padStart(2, '0')}:${secs
+    .toString()
+    .padStart(2, '0')}`;
+}
+
+function createProgressReporter(label: string, total: number): ProgressReporter {
+  if (total <= 0) {
+    return {
+      update() {},
+      finish() {},
+    };
+  }
+
+  const barWidth = 24;
+  const isTty = Boolean(process.stdout.isTTY);
+  let avgMs = 0;
+  let seen = 0;
+  let lastPercent = -1;
+
+  const render = (current: number): void => {
+    const percent = Math.min(1, Math.max(0, current / total));
+    const etaMs = avgMs > 0 ? avgMs * (total - current) : 0;
+    const eta = formatDuration(etaMs / 1000);
+    const percentLabel = Math.round(percent * 100);
+    if (!isTty) {
+      if (percentLabel === lastPercent) return;
+      if (percentLabel % 10 !== 0 && current !== total) return;
+      lastPercent = percentLabel;
+      console.log(
+        `${label}: ${current}/${total} (${percentLabel}%) ETA ${eta}`,
+      );
+      return;
+    }
+    const filled = Math.round(barWidth * percent);
+    const bar =
+      '='.repeat(filled) + '-'.repeat(Math.max(0, barWidth - filled));
+    process.stdout.write(
+      `\r${label} [${bar}] ${current}/${total} ${percentLabel}% ETA ${eta}`,
+    );
+  };
+
+  return {
+    update(current: number, durationMs: number): void {
+      seen += 1;
+      avgMs = avgMs === 0 ? durationMs : avgMs + (durationMs - avgMs) / seen;
+      render(current);
+    },
+    finish(): void {
+      if (isTty) process.stdout.write('\n');
+    },
+  };
+}
+
 function deriveCandidateFeatures(
   samples: RawGenericFeatureSet[],
   allowed?: string[],
@@ -237,15 +305,27 @@ async function attemptBackwardElimination(
   history: HistoryEntry[],
 ): Promise<{ selected: string[]; eval: EvalResult }> {
   const metricLabel = opts.selectionMetric === 'rmse' ? 'RMSE' : 'SMAPE';
+  let pass = 0;
   while (true) {
+    pass += 1;
+    const eligible = selected.filter((feature) => !forced.has(feature));
+    const progress = createProgressReporter(
+      `[feature-selection] Backward elimination (pass ${pass})`,
+      eligible.length,
+    );
     let bestRemoval:
       | { idx: number; eval: EvalResult; delta: number }
       | undefined;
+    let evalIndex = 0;
     for (let i = 0; i < selected.length; i++) {
       const feature = selected[i];
       if (forced.has(feature)) continue;
       const next = [...selected.slice(0, i), ...selected.slice(i + 1)];
+      const start = Date.now();
       const evalResult = await evaluateFeatureSet(rawStats, next, cache, opts);
+      const durationMs = Date.now() - start;
+      evalIndex += 1;
+      progress.update(evalIndex, durationMs);
       const currentMetric = opts.selectionMetric === 'rmse'
         ? currentEval.best.metrics.rmse
         : currentEval.best.metrics.smape;
@@ -260,6 +340,7 @@ async function attemptBackwardElimination(
         bestRemoval = { idx: i, eval: evalResult, delta };
       }
     }
+    progress.finish();
     if (!bestRemoval) break;
     const removedFeature = selected[bestRemoval.idx];
     selected = [
@@ -373,16 +454,27 @@ async function main(): Promise<void> {
   const remainingCandidates = () =>
     candidatePool.filter((key) => !selected.includes(key));
 
+  let forwardPass = 0;
   while (selected.length < maxFeatures) {
+    forwardPass += 1;
     const candidates = remainingCandidates();
     if (!candidates.length) break;
+    const progress = createProgressReporter(
+      `[feature-selection] Forward selection (pass ${forwardPass})`,
+      candidates.length,
+    );
     let bestAddition:
       | { feature: string; eval: EvalResult; delta: number }
       | undefined;
+    let evalIndex = 0;
     for (const feature of candidates) {
       const next = [...selected, feature];
       if (next.length > maxFeatures) continue;
+      const start = Date.now();
       const evalResult = await evaluateFeatureSet(rawStats, next, cache, opts);
+      const durationMs = Date.now() - start;
+      evalIndex += 1;
+      progress.update(evalIndex, durationMs);
       const currentMetric = opts.selectionMetric === 'rmse'
         ? currentEval.best.metrics.rmse
         : currentEval.best.metrics.smape;
@@ -397,6 +489,7 @@ async function main(): Promise<void> {
         bestAddition = { feature, eval: evalResult, delta };
       }
     }
+    progress.finish();
     if (!bestAddition) break;
     selected = [...selected, bestAddition.feature];
     currentEval = bestAddition.eval;
