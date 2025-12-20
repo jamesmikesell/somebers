@@ -1,6 +1,7 @@
 import { writeFileSync } from 'fs';
 import { FEATURE_SPEC } from '../src/app/service/ml-difficulty-stats';
 import {
+  ModelSelectionMetric,
   RawGenericFeatureSet,
   trainBestModel,
 } from '../src/app/service/ml-core';
@@ -12,6 +13,7 @@ import {
 import { computeStatsFromBackupFile } from './training-data-loader';
 
 interface CliOptions {
+  selectionMetric?: ModelSelectionMetric;
   maxFeatures?: number;
   minDelta: number;
   forced: string[];
@@ -40,7 +42,7 @@ interface HistoryEntry {
   featureCount: number;
 }
 
-const DEFAULT_MIN_DELTA = 0.00005; // absolute SMAPE improvement required (e.g., 0.005 = 0.5 pp)
+const DEFAULT_MIN_DELTA = 0.00005; // absolute metric improvement required (e.g., 0.005 = 0.5 pp)
 const DEFAULT_OUTPUT = 'development-tools/feature-selection-results.json';
 
 function parseList(value: string | undefined): string[] {
@@ -85,11 +87,18 @@ function parseArgs(): CliOptions {
     else if (arg.startsWith('--k='))
       opts.kFold = Math.max(2, parseInt(arg.split('=')[1] ?? '', 10) || 5);
     else if (arg.startsWith('--out=')) opts.outputPath = arg.split('=')[1];
+    else if (arg.startsWith('--select-metric=')) {
+      const value = arg.split('=')[1]?.toLowerCase();
+      if (value === 'smape' || value === 'rmse') opts.selectionMetric = value;
+    }
     else if (arg === '--help' || arg === '-h') {
       console.log(
-        'Usage: npx ts-node -P tsconfig.node.json --compiler-options "{\"module\":\"CommonJS\"}" development-tools/feature-selection.ts [options]',
+        'Usage: npx ts-node -P tsconfig.node.json --compiler-options "{\"module\":\"CommonJS\"}" development-tools/feature-selection.ts --select-metric=smape|rmse [options]',
       );
       console.log('Options:');
+      console.log(
+        '  --select-metric=smape|rmse  Required. Metric used to pick the best model',
+      );
       console.log(
         '  --start-empty           Begin search with no features (default uses FEATURE_SPEC.keys)',
       );
@@ -109,7 +118,7 @@ function parseArgs(): CliOptions {
         '  --max=N                 Maximum number of features to keep',
       );
       console.log(
-        '  --min-delta=x           Minimum SMAPE improvement required to add/remove a feature (absolute, e.g., 0.005 = 0.5 pp)',
+        '  --min-delta=x           Minimum metric improvement required to add/remove a feature (absolute, e.g., 0.005 = 0.5 pp)',
       );
       console.log(
         '  --no-kfold              Use a single stratified split instead of K-fold CV',
@@ -131,6 +140,10 @@ function parseArgs(): CliOptions {
     opts.minDelta = DEFAULT_MIN_DELTA;
   if (opts.maxFeatures != null && opts.maxFeatures <= 0)
     opts.maxFeatures = undefined;
+  if (!opts.selectionMetric) {
+    console.error('[feature-selection] Missing required --select-metric=smape|rmse');
+    process.exit(1);
+  }
   return opts;
 }
 
@@ -177,8 +190,8 @@ async function evaluateFeatureSet(
   const cached = cache.get(key);
   if (cached) return cached;
   const trainOpts = opts.useKFold
-    ? { useKFold: true, k: opts.kFold, seed: opts.seed, featureKeys: features }
-    : { useKFold: false, seed: opts.seed, featureKeys: features };
+    ? { selectionMetric: opts.selectionMetric!, useKFold: true, k: opts.kFold, seed: opts.seed, featureKeys: features }
+    : { selectionMetric: opts.selectionMetric!, useKFold: false, seed: opts.seed, featureKeys: features };
   const { best, baseline } = trainBestModel(rawStats, opts.seed, trainOpts);
   const result: EvalResult = { best, baseline };
   cache.set(key, result);
@@ -223,6 +236,7 @@ async function attemptBackwardElimination(
   opts: CliOptions,
   history: HistoryEntry[],
 ): Promise<{ selected: string[]; eval: EvalResult }> {
+  const metricLabel = opts.selectionMetric === 'rmse' ? 'RMSE' : 'SMAPE';
   while (true) {
     let bestRemoval:
       | { idx: number; eval: EvalResult; delta: number }
@@ -232,8 +246,13 @@ async function attemptBackwardElimination(
       if (forced.has(feature)) continue;
       const next = [...selected.slice(0, i), ...selected.slice(i + 1)];
       const evalResult = await evaluateFeatureSet(rawStats, next, cache, opts);
-      const delta =
-        currentEval.best.metrics.smape - evalResult.best.metrics.smape;
+      const currentMetric = opts.selectionMetric === 'rmse'
+        ? currentEval.best.metrics.rmse
+        : currentEval.best.metrics.smape;
+      const nextMetric = opts.selectionMetric === 'rmse'
+        ? evalResult.best.metrics.rmse
+        : evalResult.best.metrics.smape;
+      const delta = currentMetric - nextMetric;
       if (
         delta > opts.minDelta &&
         (!bestRemoval || delta > bestRemoval.delta)
@@ -258,7 +277,7 @@ async function attemptBackwardElimination(
       featureCount: selected.length,
     });
     console.log(
-      `[-] Removed ${removedFeature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ SMAPE ${fmt(bestRemoval.delta)})`,
+      `[-] Removed ${removedFeature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ ${metricLabel} ${fmt(bestRemoval.delta)})`,
     );
   }
   return { selected, eval: currentEval };
@@ -326,6 +345,7 @@ async function main(): Promise<void> {
 
   const cache = new Map<string, EvalResult>();
   const history: HistoryEntry[] = [];
+  const metricLabel = opts.selectionMetric === 'rmse' ? 'RMSE' : 'SMAPE';
 
   let selected = [...preselected];
   let currentEval = await evaluateFeatureSet(rawStats, selected, cache, opts);
@@ -363,8 +383,13 @@ async function main(): Promise<void> {
       const next = [...selected, feature];
       if (next.length > maxFeatures) continue;
       const evalResult = await evaluateFeatureSet(rawStats, next, cache, opts);
-      const delta =
-        currentEval.best.metrics.smape - evalResult.best.metrics.smape;
+      const currentMetric = opts.selectionMetric === 'rmse'
+        ? currentEval.best.metrics.rmse
+        : currentEval.best.metrics.smape;
+      const nextMetric = opts.selectionMetric === 'rmse'
+        ? evalResult.best.metrics.rmse
+        : evalResult.best.metrics.smape;
+      const delta = currentMetric - nextMetric;
       if (
         delta > opts.minDelta &&
         (!bestAddition || delta > bestAddition.delta)
@@ -385,7 +410,7 @@ async function main(): Promise<void> {
       featureCount: selected.length,
     });
     console.log(
-      `[+] Added ${bestAddition.feature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ SMAPE ${fmt(bestAddition.delta)})`,
+      `[+] Added ${bestAddition.feature} -> RMSE ${fmt(currentEval.best.metrics.rmse)} SMAPE ${fmt(currentEval.best.metrics.smape)} R2 ${fmtR2(currentEval.best.metrics.r2)} (Δ ${metricLabel} ${fmt(bestAddition.delta)})`,
     );
     ({ selected, eval: currentEval } = await attemptBackwardElimination(
       rawStats,
@@ -399,7 +424,11 @@ async function main(): Promise<void> {
   }
 
   const improvement =
-    history.length > 0 ? history[0].smape - currentEval.best.metrics.smape : 0;
+    history.length > 0
+      ? (opts.selectionMetric === 'rmse'
+        ? history[0].rmse - currentEval.best.metrics.rmse
+        : history[0].smape - currentEval.best.metrics.smape)
+      : 0;
 
   console.log('');
   console.log('== Feature Selection Complete ==');
@@ -413,7 +442,7 @@ async function main(): Promise<void> {
   console.log(
     `Final R2: ${fmtR2(currentEval.best.metrics.r2)} (baseline ${fmtR2(currentEval.baseline.metrics.r2)})`,
   );
-  console.log(`Total SMAPE improvement vs initial: ${fmt(improvement)}`);
+  console.log(`Total ${metricLabel} improvement vs initial: ${fmt(improvement)}`);
   console.log('Features:');
   selected.forEach((f, idx) => console.log(`  ${idx + 1}. ${f}`));
 

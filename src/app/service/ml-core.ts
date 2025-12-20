@@ -368,25 +368,30 @@ function evaluateOnArrays<T extends ModelJson>(yTrue: number[], yPred: number[],
   return { model, metrics, perSizeRmse, perSizeMae, perSizeSmape };
 }
 
+export type ModelSelectionMetric = 'smape' | 'rmse';
+
 export interface TrainBestOptions {
+  selectionMetric: ModelSelectionMetric;
   useKFold?: boolean;
   k?: number;
   seed?: number;
   featureKeys?: readonly string[];
 }
 
-export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, options?: TrainBestOptions): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
+export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, options: TrainBestOptions): { best: ModelEvaluationResult<ModelJson>; baseline: ModelEvaluationResult<BaselineModelJson>; ridgeCandidates: ModelEvaluationResult<RidgeModelJson>[] } {
   // console.log(`Training Set Size: ${rawStats.length}`)
+  if (!options?.selectionMetric) throw new Error('trainBestModel: selectionMetric is required');
+  const selectionMetric = options.selectionMetric;
   const warn = (msg: string) => console.warn(`[ml-core] ${msg}`);
-  let featureKeys = options?.featureKeys ?? FEATURE_SPEC.keys;
+  let featureKeys = options.featureKeys ?? FEATURE_SPEC.keys;
   const mapped = rawStats.map((r) => ({ raw: r, sample: toSample(r, featureKeys) }));
   const dropped = mapped.filter((m) => !m.sample);
   if (dropped.length) warn(`toSample: skipped ${dropped.length} record(s) due to missing/invalid features; examples gameNumbers: ${dropped.slice(0, 5).map((m) => m.raw.gameNumber).join(', ')}`);
   let samples = mapped.map((m) => m.sample).filter((x): x is TrainingSample => !!x);
   if (!samples.length) throw new Error('No training samples available.');
-  const useK = !!options?.useKFold;
-  const k = options?.k && options.k >= 2 ? options.k : 5;
-  const seedToUse = options?.seed ?? seed;
+  const useK = !!options.useKFold;
+  const k = options.k && options.k >= 2 ? options.k : 5;
+  const seedToUse = options.seed ?? seed;
   let folds: { train: TrainingSample[]; valid: TrainingSample[] }[] = [];
   let train: TrainingSample[] = [];
   let valid: TrainingSample[] = [];
@@ -494,7 +499,10 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
     }
   }
 
-  // Pick by lowest SMAPE; tie-break on smaller weight L2 norm, then RMSE, then prefer log1p
+  const metricValue = (metric: ModelSelectionMetric, value: EvaluationMetrics): number =>
+    metric === 'smape' ? value.smape : value.rmse;
+  const secondaryMetric: ModelSelectionMetric = selectionMetric === 'smape' ? 'rmse' : 'smape';
+  // Pick by lowest selected metric; tie-break on smaller weight L2 norm, then secondary metric, then prefer log1p
   const baselineEval = useK
     ? (() => {
       const yTrueAll: number[] = [];
@@ -516,15 +524,19 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
   const weightL2 = (m: RidgeModelJson) => Math.sqrt(m.weights.reduce((s, w) => s + w * w, 0));
   const isBetter = (a: ModelEvaluationResult<ModelJson>, b: ModelEvaluationResult<ModelJson>): boolean => {
     const eps = 1e-9;
-    if (a.metrics.smape + eps < b.metrics.smape) return true;
-    if (Math.abs(a.metrics.smape - b.metrics.smape) <= eps) {
+    const aMetric = metricValue(selectionMetric, a.metrics);
+    const bMetric = metricValue(selectionMetric, b.metrics);
+    if (aMetric + eps < bMetric) return true;
+    if (Math.abs(aMetric - bMetric) <= eps) {
+      const aSecondary = metricValue(secondaryMetric, a.metrics);
+      const bSecondary = metricValue(secondaryMetric, b.metrics);
       if (a.model.modelType === 'ridge' && b.model.modelType === 'ridge') {
         const la = weightL2(a.model as RidgeModelJson);
         const lb = weightL2(b.model as RidgeModelJson);
         if (la + eps < lb) return true;
         if (Math.abs(la - lb) <= eps) {
-          if (a.metrics.rmse + eps < b.metrics.rmse) return true;
-          if (Math.abs(a.metrics.rmse - b.metrics.rmse) <= eps) {
+          if (aSecondary + eps < bSecondary) return true;
+          if (Math.abs(aSecondary - bSecondary) <= eps) {
             // final tie-break: prefer log1p
             const ta = (a.model as RidgeModelJson).transform;
             const tb = (b.model as RidgeModelJson).transform;
@@ -532,8 +544,8 @@ export function trainBestModel(rawStats: RawGenericFeatureSet[], seed = 1337, op
           }
         }
       } else {
-        if (a.metrics.rmse + eps < b.metrics.rmse) return true;
-        if (Math.abs(a.metrics.rmse - b.metrics.rmse) <= eps && a.model.modelType === 'ridge' && b.model.modelType === 'baseline') return true; // prefer any proper model over baseline with same SMAPE/RMSE
+        if (aSecondary + eps < bSecondary) return true;
+        if (Math.abs(aSecondary - bSecondary) <= eps && a.model.modelType === 'ridge' && b.model.modelType === 'baseline') return true; // prefer any proper model over baseline with same selected/secondary metric
       }
     }
     return false;

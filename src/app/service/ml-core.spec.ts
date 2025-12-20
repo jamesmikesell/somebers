@@ -75,7 +75,7 @@ describe('ml-core k-fold cross validation (optional)', () => {
       samples.push(makeRawFromFeatures(i + 1, boardSize, feats, timeSpent));
     }
 
-    const { best, baseline } = trainBestModel(samples, 1337, { useKFold: true, k: 5 });
+    const { best, baseline } = trainBestModel(samples, 1337, { selectionMetric: 'rmse', useKFold: true, k: 5 });
     expect(isFinite(best.metrics.rmse)).toBeTrue();
     expect(isFinite(baseline.metrics.rmse)).toBeTrue();
     expect(isFinite(best.metrics.smape)).toBeTrue();
@@ -105,7 +105,7 @@ describe('ml-core configurable feature keys', () => {
       });
     }
 
-    const { best, baseline } = trainBestModel(rawSamples, 2024, { useKFold: true, k: 4, featureKeys });
+    const { best, baseline } = trainBestModel(rawSamples, 2024, { selectionMetric: 'rmse', useKFold: true, k: 4, featureKeys });
     expect(best.model.features).toEqual(featureKeys);
     expect(best.model.modelType).toBe('ridge');
     expect(best.metrics.rmse).toBeLessThan(baseline.metrics.rmse);

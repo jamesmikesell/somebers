@@ -2,7 +2,7 @@ import { rmSync, writeFileSync } from 'fs';
 import * as path from 'path';
 import { BoardGroupVersion } from '../src/app/model/grouping';
 import { BaselineModelJson, ModelEvaluationResult, ModelJson, RidgeModelJson } from '../src/app/model/ml-types';
-import { evaluate, predictBaseline, predictRidge, stratifiedSplit, toSample, trainBestModel, TrainingSample } from '../src/app/service/ml-core';
+import { evaluate, ModelSelectionMetric, predictBaseline, predictRidge, stratifiedSplit, toSample, trainBestModel, TrainingSample } from '../src/app/service/ml-core';
 import { logWeights, modelStats, parseThreadCount } from './predictor-utils';
 import { buildRawGameStatForGameNumber, computeStatsFromBackupFile } from './training-data-loader';
 import { WorkerPool } from './workers/worker-pool';
@@ -11,14 +11,24 @@ import { WorkerPool } from './workers/worker-pool';
 
 /*
   Run with:
-    npx ts-node -P tsconfig.node.json --compiler-options '{"module":"CommonJS"}' development-tools/train-time-predictor.ts --threads=8
+    npx ts-node -P tsconfig.node.json --compiler-options '{"module":"CommonJS"}' development-tools/train-time-predictor.ts --threads=8 --select-metric=rmse
 */
+function parseSelectionMetric(): ModelSelectionMetric {
+  const arg = process.argv.find((value) => value.startsWith('--select-metric='));
+  const metric = arg?.split('=')[1]?.toLowerCase();
+  if (metric === 'smape' || metric === 'rmse') return metric;
+  console.error('Missing required --select-metric=smape|rmse');
+  process.exit(1);
+  return 'rmse';
+}
+
 async function main(): Promise<void> {
+  const selectionMetric = parseSelectionMetric();
   console.log('Loading and computing stats');
   const rawStats = await computeStatsFromBackupFile();
 
   console.log('Training start');
-  const { best, baseline, ridgeCandidates } = trainBestModel(rawStats, 1337, { useKFold: true, k: 5 });
+  const { best, baseline, ridgeCandidates } = trainBestModel(rawStats, 1337, { selectionMetric, useKFold: true, k: 5 });
   console.log('Training complete');
 
   const featureKeys = best.model.features;
