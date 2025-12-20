@@ -116,20 +116,24 @@
     Any board <em>not</em> labeled with an
     <span>
       <code
-        ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP+</code
-      >
-    </span>
-    warning (<a routerLink="/documentation" fragment="fp-warning">FP+ meaning</a
-    >) is <strong>guaranteed</strong> to be solvable without a single guess.
-    Furthermore, anything not labeled with a
-    <span>
-      <code
         ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP+!</code
       >
     </span>
-    (note the <code>!</code> after the <code>+</code>) is also guaranteed to be
-    solvable without guessing. In fact, game #422 is the first game to require a
-    guess, and even that isn't until only the last 6 unselected cells remain.
+    warning (note the <code>!</code> after the <code>+</code>, see
+    <a routerLink="/documentation" fragment="fp-warning">FP+ meaning</a>) is
+    <strong>guaranteed</strong> to be solvable without a single guess.
+  </p>
+  <p>
+    While any board labeled with an
+    <span>
+      <code
+        ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP+</code
+      >
+    </span>
+    (note the lack of a <code>!</code> after the <code>+</code>) is likely to be
+    very difficult, it is guaranteed to be solvable without guessing. In fact,
+    game #422 is the first game to require a guess, and even that isn't until
+    only the last 6 unselected cells remain.
   </p>
   <p>
     In the case of #422, when only the last 6 cells remain, by enabling
@@ -137,10 +141,6 @@
     <a routerLink="/settings" fragment="tournament-mode">settings</a>, one of
     the two equally correct solutions can be chosen without fear of ruining a
     winning streak.
-  </p>
-  <p>
-    That said, given how boards are randomly generated, there is a possibility
-    that a completely unsolvable board does exist.
   </p>
 
   <!--  -->
