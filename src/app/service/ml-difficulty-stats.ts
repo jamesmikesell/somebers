@@ -1,5 +1,5 @@
 import { FeatureSpec } from '../model/ml-types';
-import { BoardStats, SectionStats } from './board-stat-analyzer';
+import { BoardStats, SectionStats, TotalsStats } from './board-stat-analyzer';
 import { RawGenericFeatureSet, solveLinearSystem } from './ml-core';
 
 const SERIES_SUMMARY_SUFFIXES = ['First', 'Last', 'Delta', 'LinearCoef', 'QuadraticCoef', 'CubicCoef', 'Average', 'StdDev'] as const;
@@ -206,30 +206,38 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
   const boardSize = stats.boardSize;
   const rowColStats = (iteration: SectionStats[]): SectionStats[] => iteration.slice(0, boardSize * 2);
 
-  const cellCountLargerThanTarget = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.cellCountGreaterThanGoal)));
-  const falsePositiveSolutionCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.falsePositiveSolutionCount)));
-  const guaranteedRequiredCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedRequiredCellCount)));
-  const guaranteedUnusableCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedUnusableCellCount)));
-  const requiredCellCountVsGoal = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedRequiredCellCountVsGoal)));
-  const unusableCellCountVsGoal = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedUnusableCellCountVsGoal)));
-  const actionableCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.actionableCellsCount)));
-  const unactionableCellCount = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.unactionableCellsCount)));
+  const buildTotalsSeries = (totals: TotalsStats) => {
+    const iterationSectionStats = totals.iterationSectionStats;
+    return {
+      cellCountLargerThanTarget: iterationSectionStats.map(iter => agg(iter.map(s => s.cellCountGreaterThanGoal))),
+      falsePositiveSolutionCount: iterationSectionStats.map(iter => agg(iter.map(s => s.falsePositiveSolutionCount))),
+      guaranteedRequiredCellCount: iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedRequiredCellCount))),
+      guaranteedUnusableCellCount: iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedUnusableCellCount))),
+      requiredCellCountVsGoal: iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedRequiredCellCountVsGoal))),
+      unusableCellCountVsGoal: iterationSectionStats.map(iter => agg(iter.map(s => s.guaranteedUnusableCellCountVsGoal))),
+      actionableCellCount: iterationSectionStats.map(iter => agg(iter.map(s => s.actionableCellsCount))),
+      unactionableCellCount: iterationSectionStats.map(iter => agg(iter.map(s => s.unactionableCellsCount))),
+      crossFalsePositiveSolutionCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossFalsePositiveSolutionCount))),
+      crossGuaranteedRequiredCellCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedRequiredCellCount))),
+      crossGuaranteedUnusableCellCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedUnusableCellCount))),
+      crossRequiredCellCountVsGoal: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedRequiredCellCountVsGoal))),
+      crossUnusableCellCountVsGoal: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedUnusableCellCountVsGoal))),
+      crossActionableCellCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossActionableCellsCount))),
+      crossUnactionableCellCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossUnactionableCellsCount))),
+      crossAppliedSelectedCellCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossAppliedSelectedCellCount))),
+      crossAppliedClearedCellCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossAppliedClearedCellCount))),
+      crossAppliedActedUponCellCount: iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossAppliedActedUponCellCount))),
+      crossReferenceUnresolvedCells: totals.unresolvedCountsPerIteration.map(value => agg([value])),
+      crossReferenceResolvableCells: totals.unresolvedCountsPerIteration.map(
+        value => agg([Math.max(0, Math.pow(boardSize, 2) - value)]),
+      ),
+      goal: iterationSectionStats.map(iter => agg(iter.map(s => s.goalSum))),
+      goalVsUnselectedSum: iterationSectionStats.map(iter => agg(iter.map(s => s.goalVsUnselectedSum))),
+    };
+  };
 
-  const crossFalsePositiveSolutionCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossFalsePositiveSolutionCount)));
-  const crossGuaranteedRequiredCellCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedRequiredCellCount)));
-  const crossGuaranteedUnusableCellCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedUnusableCellCount)));
-  const crossRequiredCellCountVsGoal = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedRequiredCellCountVsGoal)));
-  const crossUnusableCellCountVsGoal = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossGuaranteedUnusableCellCountVsGoal)));
-  const crossActionableCellCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossActionableCellsCount)));
-  const crossUnactionableCellCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossUnactionableCellsCount)));
-  const crossAppliedSelectedCellCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossAppliedSelectedCellCount)));
-  const crossAppliedClearedCellCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossAppliedClearedCellCount)));
-  const crossAppliedActedUponCellCount = stats.totals.iterationSectionStats.map(iter => agg(rowColStats(iter).map(s => s.crossAppliedActedUponCellCount)));
-  const crossReferenceUnresolvedCells = stats.totals.unresolvedCountsPerIteration.map(value => agg([value]));
-  const crossReferenceResolvableCells = stats.totals.unresolvedCountsPerIteration.map(value => agg([Math.max(0, Math.pow(boardSize, 2) - value)]));
-
-  const goal = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.goalSum)));
-  const goalVsUnselectedSum = stats.totals.iterationSectionStats.map(iter => agg(iter.map(s => s.goalVsUnselectedSum)));
+  const totalsSeries = buildTotalsSeries(stats.totals);
+  const firstPrincipalSeries = buildTotalsSeries(stats.firstPrincipalsInitialSolve);
 
   const cellCount = Math.max(1, boardSize * boardSize);
   const boardSizeRatioDenominator = Math.pow(9, 2) - Math.pow(5, 2);
@@ -244,6 +252,11 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     unresolvedCellCountAfterDeduction: stats.totals.unresolvedCellCountAfterDeduction,
     percentUnresolvedCellsAfterDeduction:
       stats.totals.unresolvedCellCountAfterDeduction / cellCount,
+    firstPrincipalDeductionIterations: stats.firstPrincipalsInitialSolve.deductionIterations,
+    firstPrincipalUnresolvedCellCountAfterDeduction:
+      stats.firstPrincipalsInitialSolve.unresolvedCellCountAfterDeduction,
+    firstPrincipalPercentUnresolvedCellsAfterDeduction:
+      stats.firstPrincipalsInitialSolve.unresolvedCellCountAfterDeduction / cellCount,
     firstPrincipalUnResoledCellCount:
       stats.firstPrincipalsInitialSolve.unresolvedCellCountAfterBaseDeduction / cellCount,
   };
@@ -255,157 +268,318 @@ export function difficultyReportToGameStat(stats: BoardStats, gamePlayStats: Gam
     ),
     features,
   );
+  summarizeNumericSeries(
+    'firstPrincipalPercentUnresolvedCells',
+    stats.firstPrincipalsInitialSolve.unresolvedCountsPerIteration.map(
+      (value) => (value ?? 0) / cellCount,
+    ),
+    features,
+  );
 
   summarizeBasicStatsSeries(
-    falsePositiveSolutionCount,
+    totalsSeries.falsePositiveSolutionCount,
     'falsePositive',
     FALSE_POSITIVE_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    guaranteedRequiredCellCount,
+    totalsSeries.guaranteedRequiredCellCount,
     'requiredCells',
     REQUIRED_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    guaranteedUnusableCellCount,
+    totalsSeries.guaranteedUnusableCellCount,
     'unusableCells',
     UNUSABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    requiredCellCountVsGoal,
+    totalsSeries.requiredCellCountVsGoal,
     'requiredVsGoal',
     REQUIRED_VS_GOAL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    unusableCellCountVsGoal,
+    totalsSeries.unusableCellCountVsGoal,
     'unusableVsGoal',
     UNUSABLE_VS_GOAL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    actionableCellCount,
+    totalsSeries.actionableCellCount,
     'actionableCells',
     ACTIONABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    unactionableCellCount,
+    totalsSeries.unactionableCellCount,
     'unactionableCells',
     UNACTIONABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossFalsePositiveSolutionCount,
+    totalsSeries.crossFalsePositiveSolutionCount,
     'crossFalsePositive',
     FALSE_POSITIVE_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossGuaranteedRequiredCellCount,
+    totalsSeries.crossGuaranteedRequiredCellCount,
     'crossRequiredCells',
     REQUIRED_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossGuaranteedUnusableCellCount,
+    totalsSeries.crossGuaranteedUnusableCellCount,
     'crossUnusableCells',
     UNUSABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossRequiredCellCountVsGoal,
+    totalsSeries.crossRequiredCellCountVsGoal,
     'crossRequiredVsGoal',
     REQUIRED_VS_GOAL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossUnusableCellCountVsGoal,
+    totalsSeries.crossUnusableCellCountVsGoal,
     'crossUnusableVsGoal',
     UNUSABLE_VS_GOAL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossActionableCellCount,
+    totalsSeries.crossActionableCellCount,
     'crossActionableCells',
     ACTIONABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossUnactionableCellCount,
+    totalsSeries.crossUnactionableCellCount,
     'crossUnactionableCells',
     UNACTIONABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossAppliedActedUponCellCount,
+    totalsSeries.crossAppliedActedUponCellCount,
     'crossAppliedActedUponCells',
     ACTIONABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossAppliedSelectedCellCount,
+    totalsSeries.crossAppliedSelectedCellCount,
     'crossAppliedSelectedCells',
     REQUIRED_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossAppliedClearedCellCount,
+    totalsSeries.crossAppliedClearedCellCount,
     'crossAppliedClearedCells',
     UNUSABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossReferenceUnresolvedCells,
+    totalsSeries.crossReferenceUnresolvedCells,
     'crossReferenceUnresolvedCells',
     ACTIONABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    crossReferenceResolvableCells,
+    totalsSeries.crossReferenceResolvableCells,
     'crossReferenceResolvableCells',
     ACTIONABLE_CELL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    cellCountLargerThanTarget,
+    totalsSeries.cellCountLargerThanTarget,
     'cellsLargerThanTarget',
     CELL_COUNT_LARGER_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    goal,
+    totalsSeries.goal,
     'goalVsTotal',
     GOAL_VS_TOTAL_METRICS,
     boardSize,
     features,
   );
   summarizeBasicStatsSeries(
-    goalVsUnselectedSum,
+    totalsSeries.goalVsUnselectedSum,
     'goalVsTotalAll',
+    GOAL_VS_TOTAL_ALL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.falsePositiveSolutionCount,
+    'firstPrincipalFalsePositive',
+    FALSE_POSITIVE_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.guaranteedRequiredCellCount,
+    'firstPrincipalRequiredCells',
+    REQUIRED_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.guaranteedUnusableCellCount,
+    'firstPrincipalUnusableCells',
+    UNUSABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.requiredCellCountVsGoal,
+    'firstPrincipalRequiredVsGoal',
+    REQUIRED_VS_GOAL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.unusableCellCountVsGoal,
+    'firstPrincipalUnusableVsGoal',
+    UNUSABLE_VS_GOAL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.actionableCellCount,
+    'firstPrincipalActionableCells',
+    ACTIONABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.unactionableCellCount,
+    'firstPrincipalUnactionableCells',
+    UNACTIONABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossFalsePositiveSolutionCount,
+    'firstPrincipalCrossFalsePositive',
+    FALSE_POSITIVE_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossGuaranteedRequiredCellCount,
+    'firstPrincipalCrossRequiredCells',
+    REQUIRED_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossGuaranteedUnusableCellCount,
+    'firstPrincipalCrossUnusableCells',
+    UNUSABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossRequiredCellCountVsGoal,
+    'firstPrincipalCrossRequiredVsGoal',
+    REQUIRED_VS_GOAL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossUnusableCellCountVsGoal,
+    'firstPrincipalCrossUnusableVsGoal',
+    UNUSABLE_VS_GOAL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossActionableCellCount,
+    'firstPrincipalCrossActionableCells',
+    ACTIONABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossUnactionableCellCount,
+    'firstPrincipalCrossUnactionableCells',
+    UNACTIONABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossAppliedActedUponCellCount,
+    'firstPrincipalCrossAppliedActedUponCells',
+    ACTIONABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossAppliedSelectedCellCount,
+    'firstPrincipalCrossAppliedSelectedCells',
+    REQUIRED_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossAppliedClearedCellCount,
+    'firstPrincipalCrossAppliedClearedCells',
+    UNUSABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossReferenceUnresolvedCells,
+    'firstPrincipalCrossReferenceUnresolvedCells',
+    ACTIONABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.crossReferenceResolvableCells,
+    'firstPrincipalCrossReferenceResolvableCells',
+    ACTIONABLE_CELL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.cellCountLargerThanTarget,
+    'firstPrincipalCellsLargerThanTarget',
+    CELL_COUNT_LARGER_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.goal,
+    'firstPrincipalGoalVsTotal',
+    GOAL_VS_TOTAL_METRICS,
+    boardSize,
+    features,
+  );
+  summarizeBasicStatsSeries(
+    firstPrincipalSeries.goalVsUnselectedSum,
+    'firstPrincipalGoalVsTotalAll',
     GOAL_VS_TOTAL_ALL_METRICS,
     boardSize,
     features,
@@ -604,5 +778,8 @@ export interface GameStatFeatures {
   deductionIterations: number;
   unresolvedCellCountAfterDeduction: number;
   percentUnresolvedCellsAfterDeduction: number;
+  firstPrincipalDeductionIterations: number;
+  firstPrincipalUnresolvedCellCountAfterDeduction: number;
+  firstPrincipalPercentUnresolvedCellsAfterDeduction: number;
   firstPrincipalUnResoledCellCount: number;
 }
