@@ -40,7 +40,9 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
       moveHistory: moveHistoryClone,
       timeSpent: 4 * 60 * 60 * 1000,
     });
+    console.log('');
     console.warn('!!! WARNING !!! Injected fake game 471 into training set with a fake solve time of 4 hours.');
+    console.log('');
   }
 
   console.log("Generating Stats...")
@@ -69,7 +71,8 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
       out.push(s);
     }
   }
-  return out;
+
+  return JSON.parse(JSON.stringify(out)) as RawGenericFeatureSet[];
 }
 
 
