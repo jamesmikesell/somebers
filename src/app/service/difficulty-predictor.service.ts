@@ -55,7 +55,6 @@ export class DifficultyPredictorService {
       timeSpent: 0,
       gameNumber: 0,
       gameDateAsPercent: 1,
-      breaksMinutes: 0,
     }
 
     const rawStats = difficultyReportToGameStat(difficultyAnalysis, gamePlayStats);

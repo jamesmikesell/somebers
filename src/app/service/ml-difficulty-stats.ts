@@ -336,6 +336,52 @@ const FEATURE_KEYS: string[] = [
   'crossUnactionableCellsMaxAverage',
   'crossAppliedActedUponCellsMaxAverage',
   'requiredVsGoalMaxAverage',
+  'requiredCellsStdCubicCoef',
+  'requiredCellsMeanCubicCoef',
+  'crossUnactionableCellsMaxFirst',
+  'crossAppliedActedUponCellsMeanFirst',
+  'crossActionableCellsMeanQuadraticCoef',
+  'requiredVsGoalStdAverage',
+  'unactionableCellsMeanQuadraticCoef',
+  'crossUnactionableCellsMeanQuadraticCoef',
+  'unusableCellsStdQuadraticCoef',
+  'goalVsTotalAllStdQuadraticCoef',
+  'falsePositiveMaxStdDev',
+  'crossAppliedSelectedCellsMaxFirst',
+  'goalVsTotalAllMeanCubicCoef',
+  'crossUnactionableCellsStdQuadraticCoef',
+  'requiredVsGoalMeanAverage',
+  'falsePositiveStdFirst',
+  'actionableCellsStdCubicCoef',
+  'crossFalsePositiveStdDelta',
+  'goalVsTotalAllStdLast',
+  'crossUnactionableCellsMeanAverage',
+  'goalVsTotalStdFirst',
+  'requiredVsGoalStdFirst',
+  'crossUnusableCellsStdQuadraticCoef',
+  'requiredVsGoalMaxQuadraticCoef',
+  'crossActionableCellsMaxCubicCoef',
+  'crossRequiredVsGoalMaxCubicCoef',
+  'crossUnactionableCellsMaxQuadraticCoef',
+  'goalVsTotalStdCubicCoef',
+  'requiredCellsMeanFirst',
+  'crossAppliedSelectedCellsMaxAverage',
+  'crossActionableCellsMeanCubicCoef',
+  'crossActionableCellsStdStdDev',
+  'crossFalsePositiveMaxDelta',
+  'actionableCellsMaxFirst',
+  'crossFalsePositiveMaxLinearCoef',
+  'crossUnactionableCellsMaxStdDev',
+  'goalVsTotalAllMeanFirst',
+  'unactionableCellsMaxQuadraticCoef',
+  'unusableCellsStdAverage',
+  'crossActionableCellsMeanFirst',
+  'crossUnusableCellsMaxCubicCoef',
+  'unusableCellsMaxFirst',
+  'falsePositiveMaxFirst',
+  'unusableVsGoalMeanCubicCoef',
+  'requiredCellsStdQuadraticCoef',
+  'unusableCellsStdFirst',
 ];
 
 export const FEATURE_SPEC: FeatureSpec = {
@@ -347,7 +393,6 @@ export interface GamePlayStats {
   timeSpent: number;
   gameNumber: number;
   gameDateAsPercent: number;
-  breaksMinutes: number;
 }
 
 

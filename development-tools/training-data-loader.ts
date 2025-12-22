@@ -52,13 +52,11 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
     const completionTime = game.moveHistory[game.moveHistory.length - 1].timestamp;
     const gameDateAsPercent = (completionTime - firstGameDate) / gameDatesDiff;
     const moveTime = game.moveHistory[game.moveHistory.length - 1].timestamp - game.moveHistory[0].timestamp;
-    const breaksMinutes = (moveTime - game.timeSpent) / 1000 / 60;
     
     const gamePlayStats: GamePlayStats = {
       timeSpent: game.timeSpent,
       gameNumber: game.gameNumber,
       gameDateAsPercent: gameDateAsPercent,
-      breaksMinutes: breaksMinutes,
     }
     
     const baseLayout = toSimpleGrid(gameBoard.playArea);
@@ -90,7 +88,6 @@ export async function buildRawGameStatForGameNumber(gameNumber: number, version:
     timeSpent: 0,
     gameNumber: gameNumber,
     gameDateAsPercent: 1,
-    breaksMinutes: 0,
   }
 
   return difficultyReportToGameStat(stats, gamePlayStats);
