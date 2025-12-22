@@ -1,10 +1,11 @@
 import { readFileSync } from 'fs';
+import { SimpleCell } from '../src/app/model/game-board';
+import { BoardGroupVersion } from '../src/app/model/grouping';
 import { SavedGameStateV3 } from '../src/app/model/saved-game-data/saved-game-data.v3';
 import { BoardStatAnalyzer } from '../src/app/service/board-stat-analyzer';
 import { generateGameBoard } from '../src/app/service/gameboard-generator';
 import { RawGenericFeatureSet } from '../src/app/service/ml-core';
 import { difficultyReportToGameStat, GamePlayStats } from '../src/app/service/ml-difficulty-stats';
-import { BoardGroupVersion } from '../src/app/model/grouping';
 
 
 export async function computeStatsFromBackupFile(backupPath = 'development-tools/backup.json'): Promise<RawGenericFeatureSet[]> {
@@ -46,22 +47,27 @@ export async function computeStatsFromBackupFile(backupPath = 'development-tools
   const out: RawGenericFeatureSet[] = [];
   for (const game of filteredGames ?? []) {
     const gameBoard = await generateGameBoard(game.gameNumber);
-    const stats = BoardStatAnalyzer.evaluate(gameBoard.playArea);
     const completionTime = game.moveHistory[game.moveHistory.length - 1].timestamp;
     const gameDateAsPercent = (completionTime - firstGameDate) / gameDatesDiff;
     const moveTime = game.moveHistory[game.moveHistory.length - 1].timestamp - game.moveHistory[0].timestamp;
     const breaksMinutes = (moveTime - game.timeSpent) / 1000 / 60;
-
+    
     const gamePlayStats: GamePlayStats = {
       timeSpent: game.timeSpent,
       gameNumber: game.gameNumber,
       gameDateAsPercent: gameDateAsPercent,
       breaksMinutes: breaksMinutes,
     }
+    
+    const baseLayout = toSimpleGrid(gameBoard.playArea);
+    const augmentedLayouts = buildAugmentedLayouts(baseLayout);
+    // const augmentedLayouts = [baseLayout];
+    for (const layout of augmentedLayouts) {
+      const stats = BoardStatAnalyzer.evaluate(layout);
+      const s = difficultyReportToGameStat(stats, gamePlayStats)
 
-    const s = difficultyReportToGameStat(stats, gamePlayStats)
-
-    out.push(s);
+      out.push(s);
+    }
   }
   return out;
 }
@@ -85,4 +91,45 @@ export async function buildRawGameStatForGameNumber(gameNumber: number, version:
   }
 
   return difficultyReportToGameStat(stats, gamePlayStats);
+}
+
+function toSimpleGrid(grid: SimpleCell[][]): SimpleCell[][] {
+  return grid.map(row => row.map(cell => ({
+    required: cell.required,
+    value: cell.value,
+    groupNumber: cell.groupNumber,
+  })));
+}
+
+function buildAugmentedLayouts(baseLayout: SimpleCell[][]): SimpleCell[][][] {
+  const rotations = buildRotations(baseLayout);
+  const flipped = flipHorizontal(baseLayout);
+  const flippedRotations = buildRotations(flipped);
+
+  return [baseLayout, ...rotations, flipped, ...flippedRotations];
+}
+
+function buildRotations(layout: SimpleCell[][]): SimpleCell[][][] {
+  const rotated90 = rotate90(layout);
+  const rotated180 = rotate90(rotated90);
+  const rotated270 = rotate90(rotated180);
+  return [rotated90, rotated180, rotated270];
+}
+
+function rotate90(layout: SimpleCell[][]): SimpleCell[][] {
+  const rows = layout.length;
+  const cols = layout[0]?.length ?? 0;
+  const rotated: SimpleCell[][] = Array.from({ length: cols }, () => Array(rows));
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      rotated[c][rows - 1 - r] = layout[r][c];
+    }
+  }
+
+  return rotated;
+}
+
+function flipHorizontal(layout: SimpleCell[][]): SimpleCell[][] {
+  return layout.map(row => [...row].reverse());
 }
