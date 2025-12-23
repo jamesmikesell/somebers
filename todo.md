@@ -1,12 +1,9 @@
 # TODO
 
 - alt ml methods
-- filter on board size
 - ability to configure the app for a tournament via a link - (specify enabled features, don't allow features to be changed, ability to specify individual game numbers and order)
 - text occasionally selected, esp when double clicking to reset scratch pad....
 - consolidate animation hiding logic with existing clearing logic that hides cells / sections
-- add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
-- organize documentation, add links
 - post to social media
 - refactor board.ts to reduce complexity. esp to reduce complexity around when to save updated state / saved values.
 - multi-player: pvp
@@ -17,8 +14,12 @@
 - sounds
 - ability to sync game state across devices
 
+
 # Done
 
+- organize documentation, add links
+- add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
+- filter on board size
 - filer: menu doesn't show correct filter being used if board size is being filtered
 - Positive feedback when breaking previous records
 - track last X games against par time.
