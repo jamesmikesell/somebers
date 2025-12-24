@@ -73,6 +73,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       {
         body: 'Each game has its own unique set of <em>essential</em> numbers — shown below — that you’ll need to discover in order to solve the puzzle.',
         stepAction: async () => {
+          await new Promise(r => setTimeout(r, 600));
           this.iterateCells((r, ri, c, ci) => {
             c.status = c.required ? SelectionStatus.NONE : SelectionStatus.CLEARED;
             c.hideBackground = true
@@ -82,6 +83,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       {
         body: `Unfortunately, the essential numbers have camouflaged themselves within a dense forest of similar numbers.`,
         stepAction: async () => {
+          await new Promise(r => setTimeout(r, 600));
           this.iterateCells((r, ri, c, ci) => {
             c.status = SelectionStatus.NONE;
             c.hideBackground = true
@@ -91,6 +93,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       {
         body: `To give clues about where the essential numbers are hidden, the header beside each row shows the sum of all essential cells in that row.`,
         stepAction: async () => {
+          await new Promise(r => setTimeout(r, 600));
           this.iterateCells((r, ri, c, ci) => {
             if (!c.required)
               c.status = SelectionStatus.CLEARED;
@@ -105,6 +108,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       {
         body: `Likewise, the header above each column shows the sum of all essential cells in that column.`,
         stepAction: async () => {
+          await new Promise(r => setTimeout(r, 600));
           this.iterateCells((r, ri, c, ci) => {
             if (!c.required)
               c.status = SelectionStatus.CLEARED;
@@ -119,6 +123,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       {
         body: `Lastly, numbers are grouped by color. The sum of essential numbers in each color group is shown in that group's upper-left corner as an additional clue.`,
         stepAction: async () => {
+          await new Promise(r => setTimeout(r, 600));
           this.iterateCells((r, ri, c, ci) => {
             if (!c.required)
               c.status = SelectionStatus.CLEARED;
@@ -133,6 +138,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       {
         body: `With those clues in mind, let's focus on this highlighted row that must sum to <code>2</code>.`,
         stepAction: async () => {
+          await new Promise(r => setTimeout(r, 600));
           this.iterateCells((r, ri, c, ci) => {
             c.status = SelectionStatus.NONE;
             c.hideBackground = false;
@@ -159,8 +165,8 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       },
       {
         body: `To eliminate a cell, <strong>quickly</strong> swipe down on it (or right-click on a computer), and the cell will disappear.
-                <br>Now eliminate everything beside the selected row header showing <code>2</code> that is greater than <code>2</code>. 
-                <br><em>You must eliminate at least one cell to continue.</em>`,
+               &nbsp;Eliminate everything beside the selected row header showing <code>2</code> that is greater than <code>2</code>. 
+                &nbsp;<em>You must eliminate at least one cell to continue.</em>`,
         stepAction: async () => {
           this.nextDisabled = true;
 
@@ -211,10 +217,18 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
       {
         body: `Notice on the highlighted <code>5</code> header below; there is a tiny <code><sup>𝛴</sup>2</code> in the upper-right corner.`,
         stepAction: async () => {
+          let headerCell: DisplayCell;
           this.iterateCells((r, ri, c, ci) => {
             if (ri === 0 && ci === 3)
-              c.highlighted = true;
+              headerCell = c;
           })
+
+          await new Promise(r => setTimeout(r, 600));
+          headerCell.highlighted = true;
+          await new Promise(r => setTimeout(r, 1000));
+          headerCell.highlighted = false;
+          await new Promise(r => setTimeout(r, 1000));
+          headerCell.highlighted = true;
         },
       },
       {
@@ -225,6 +239,7 @@ export class BoardTutorialComponent implements OnInit, AfterViewInit {
         body: `You now know the fundamentals of how to play. Finish the game below by eliminating any non-essential cells and selecting <strong>all</strong> essential ones.
                 <br>You'll know you've finished when confetti showers the screen accompanied by a mocking insult.`,
         stepAction: async () => {
+          await new Promise(r => setTimeout(r, 600));
           this.iterateCells((r, ri, c, ci) => {
             c.highlighted = false;
           })

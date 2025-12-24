@@ -2,13 +2,13 @@
   <mat-card class="instructions app-font">
     <mat-card-content>
       <div [innerHTML]="currentStepHtml"></div>
+    </mat-card-content>
 
+    <mat-card-actions class="step-buttons">
       <div class="step-tracker">
         Step {{ currentStepIndex + 1 }} of {{ steps.length || 1 }}
       </div>
-    </mat-card-content>
 
-    <mat-card-actions>
       @if (currentStepIndex < steps.length - 1) {
         <button
           mat-raised-button
@@ -19,7 +19,7 @@
           Next
         </button>
       } @else {
-        <a mat-button routerLink="/">Play For Real</a>
+        <a mat-raised-button color="primary" routerLink="/">Play For Real</a>
       }
     </mat-card-actions>
   </mat-card>
