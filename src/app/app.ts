@@ -4,7 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { NextGameFilterDialogLauncher } from './dialog/next-game-filter/next-game-filter-dialog';
 import { MATERIAL_IMPORTS } from './material-imports';
 import { BoardUiService } from './service/board-ui.service';
-import { NextGameFilterOptions, NextGameFilterService } from './service/next-game-filter.service';
+import { FpFilterState, NextGameFilterOptions, NextGameFilterService } from './service/next-game-filter.service';
 import { PwaInstallService } from './service/pwa-install.service';
 import { SaveDataService } from './service/save-data.service';
 import { ColorModeSetting, SettingsService } from './service/settings.service';
@@ -29,7 +29,7 @@ export class App implements OnInit, OnDestroy {
   canUndo = false;
   nextGameFilterEnabled = false;
   nextGameFilterRangeLabel?: string;
-  nextGameFilterFpHidden = false;
+  nextGameFilterFpLabel?: string;
   get menuBadgeVisible(): boolean {
     return this.versionCheckService.isUpdateAvailable || (this.nextGameFilterEnabled && this.boardVisible);
   }
@@ -127,11 +127,11 @@ export class App implements OnInit, OnDestroy {
     this.nextGameFilterEnabled = options?.enabled === true;
     if (!this.nextGameFilterEnabled) {
       this.nextGameFilterRangeLabel = undefined;
-      this.nextGameFilterFpHidden = false;
+      this.nextGameFilterFpLabel = undefined;
       return;
     }
 
-    this.nextGameFilterFpHidden = options.excludeFpPlus === true;
+    this.nextGameFilterFpLabel = this.getFpFilterLabel(options.fpFilter);
     if (options.mode === 'difficulty') {
       this.nextGameFilterRangeLabel = this.formatDifficultyRange(options.minDifficulty, options.maxDifficulty);
     } else if (options.mode === 'time') {
@@ -139,6 +139,20 @@ export class App implements OnInit, OnDestroy {
     } else {
       this.nextGameFilterRangeLabel = this.formatBoardSizeRange(options.minBoardSize, options.maxBoardSize);
     }
+  }
+
+  private getFpFilterLabel(state: FpFilterState): string | undefined {
+    if (state === 'onlyFpPlusPlus')
+      return 'FP++ only';
+    if (state === 'onlyFpPlusOrPlusPlus')
+      return 'FP+ or FP++ only';
+    if (state === 'onlyFpPlus')
+      return 'FP+ only';
+    if (state === 'excludeFpPlusPlus')
+      return '🚫FP++';
+    if (state === 'excludeFpPlusPlusAndFpPlus')
+      return '🚫FP++/FP+';
+    return undefined;
   }
 
 

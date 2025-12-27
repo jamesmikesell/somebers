@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { firstValueFrom } from 'rxjs';
 import { MATERIAL_IMPORTS } from '../../material-imports';
-import { NextGameFilterMode, NextGameFilterOptions, NextGameFilterService } from '../../service/next-game-filter.service';
+import { FpFilterState, NextGameFilterMode, NextGameFilterOptions, NextGameFilterService } from '../../service/next-game-filter.service';
 
 export interface NextGameFilterDialogData {
   options: NextGameFilterOptions;
@@ -37,7 +37,7 @@ export interface NextGameFilterDialogData {
 })
 export class NextGameFilterDialog {
   filterEnabled = false;
-  excludeFpPlus = false;
+  fpFilter: FpFilterState = 'include';
   skipCompleted = true;
   mode: NextGameFilterMode = 'difficulty';
   minDifficulty?: number;
@@ -96,7 +96,7 @@ export class NextGameFilterDialog {
   save(): void {
     const options: NextGameFilterOptions = {
       enabled: this.filterEnabled,
-      excludeFpPlus: this.excludeFpPlus,
+      fpFilter: this.fpFilter,
       skipCompleted: this.skipCompleted,
       mode: this.mode,
       minDifficulty: this.minDifficulty,
@@ -113,7 +113,7 @@ export class NextGameFilterDialog {
   private applyOptions(options: NextGameFilterOptions): void {
     const opt = options ?? this.filterService.getOptions();
     this.filterEnabled = opt.enabled;
-    this.excludeFpPlus = opt.excludeFpPlus;
+    this.fpFilter = opt.fpFilter;
     this.skipCompleted = opt.skipCompleted;
     this.mode = opt.mode;
     this.minDifficulty = opt.minDifficulty;

@@ -14,16 +14,26 @@
       Enable filter
     </mat-slide-toggle>
 
-    <mat-slide-toggle [(ngModel)]="excludeFpPlus" [disabled]="!filterEnabled">
-      Exclude FP+ boards
-    </mat-slide-toggle>
-
     <mat-slide-toggle [(ngModel)]="skipCompleted" [disabled]="!filterEnabled">
       Game change buttons
       <mat-icon class="text-icon">do_not_disturb_on</mat-icon>
       <mat-icon class="text-icon">add_circle</mat-icon> always skip completed
       boards
     </mat-slide-toggle>
+
+    <div class="field-row">
+      <mat-form-field appearance="outline">
+        <mat-label>FP+ and FP++ Boards</mat-label>
+        <mat-select [(ngModel)]="fpFilter" [disabled]="!filterEnabled">
+          <mat-option value="include">Include All</mat-option>
+          <mat-option value="excludeFpPlusPlusAndFpPlus">Exclude FP++ and FP+ Boards</mat-option>
+          <mat-option value="excludeFpPlusPlus">Exclude FP++ Boards</mat-option>
+          <mat-option value="onlyFpPlus">Only Display FP+ Boards</mat-option>
+          <mat-option value="onlyFpPlusOrPlusPlus">Only Display FP+ or FP++ Boards</mat-option>
+          <mat-option value="onlyFpPlusPlus">Only Display FP++ Boards</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <div class="field-row">
       <mat-form-field appearance="outline">

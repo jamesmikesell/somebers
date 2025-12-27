@@ -12,7 +12,7 @@ class DifficultyPredictorStub {
 }
 
 describe('NextGameSelectorService', () => {
-  const storageKey = 'nextGameFilterOptions';
+  const storageKey = 'nextGameFilterOptionsV2';
   let filterService: NextGameFilterService;
   let predictorStub: DifficultyPredictorStub;
   let selector: NextGameSelectorService;
@@ -49,7 +49,7 @@ describe('NextGameSelectorService', () => {
   it('finds the first matching unplayed game', async () => {
     filterService.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'difficulty',
       minDifficulty: 40,
@@ -74,7 +74,7 @@ describe('NextGameSelectorService', () => {
   it('falls back to next unplayed when no match found', async () => {
     filterService.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'difficulty',
       minDifficulty: 80,
@@ -96,7 +96,7 @@ describe('NextGameSelectorService', () => {
   it('returns cancelled when abort signal is triggered', async () => {
     filterService.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'difficulty',
       minDifficulty: undefined,
@@ -119,7 +119,7 @@ describe('NextGameSelectorService', () => {
   it('can return an in-progress game that matches the filter', async () => {
     filterService.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'difficulty',
       minDifficulty: 40,
@@ -143,7 +143,7 @@ describe('NextGameSelectorService', () => {
   it('returns a completed game when skipCompleted is false', async () => {
     filterService.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: false,
       mode: 'difficulty',
       minDifficulty: 40,

@@ -39,14 +39,16 @@
         Game Filter
         @if (
           nextGameFilterEnabled &&
-          (nextGameFilterRangeLabel || nextGameFilterFpHidden)
+          (nextGameFilterRangeLabel || nextGameFilterFpLabel)
         ) {
           <span class="filter-menu-label__summary">
             (
-            @if (nextGameFilterFpHidden) {
-              <span class="filter-menu-label__fp-plus">🚫FP+</span>
+            @if (nextGameFilterFpLabel) {
+              <span class="filter-menu-label__fp">{{
+                nextGameFilterFpLabel
+              }}</span>
             }
-            @if (nextGameFilterFpHidden && nextGameFilterRangeLabel) {
+            @if (nextGameFilterFpLabel && nextGameFilterRangeLabel) {
               &nbsp;
             }
             @if (nextGameFilterRangeLabel) {

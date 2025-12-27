@@ -2,7 +2,7 @@ import { NextGameFilterOptions, NextGameFilterService } from './next-game-filter
 import { DifficultyDisplayDetails } from './difficulty-predictor.service';
 
 describe('NextGameFilterService', () => {
-  const storageKey = 'nextGameFilterOptions';
+  const storageKey = 'nextGameFilterOptionsV2';
   let service: NextGameFilterService;
 
   const sampleDetails = (overrides?: Partial<DifficultyDisplayDetails>): DifficultyDisplayDetails => ({
@@ -29,7 +29,7 @@ describe('NextGameFilterService', () => {
   it('persists options to storage', () => {
     const options: NextGameFilterOptions = {
       enabled: true,
-      excludeFpPlus: true,
+      fpFilter: 'excludeFpPlusPlus',
       skipCompleted: false,
       mode: 'time',
       minDifficulty: 10,
@@ -42,7 +42,7 @@ describe('NextGameFilterService', () => {
 
     const stored = JSON.parse(localStorage.getItem(storageKey) || '{}') as NextGameFilterOptions;
     expect(stored.enabled).toBeTrue();
-    expect(stored.excludeFpPlus).toBeTrue();
+    expect(stored.fpFilter).toBe('excludeFpPlusPlus');
     expect(stored.skipCompleted).toBeFalse();
     expect(stored.mode).toBe('time');
     expect(stored.minTimeSeconds).toBe(30);
@@ -52,7 +52,7 @@ describe('NextGameFilterService', () => {
   it('matches difficulty range when enabled', () => {
     service.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'difficulty',
       minDifficulty: 40,
@@ -68,7 +68,7 @@ describe('NextGameFilterService', () => {
   it('matches time range when enabled', () => {
     service.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'time',
       minTimeSeconds: 50,
@@ -84,7 +84,7 @@ describe('NextGameFilterService', () => {
   it('excludes FP+ boards when requested', () => {
     service.setOptions({
       enabled: true,
-      excludeFpPlus: true,
+      fpFilter: 'excludeFpPlusPlusAndFpPlus',
       skipCompleted: true,
       mode: 'difficulty',
       minDifficulty: undefined,
@@ -97,10 +97,76 @@ describe('NextGameFilterService', () => {
     expect(service.matchesFilter(sampleDetails({ firstPrincipalUnResoledCellCount: 0 }))).toBeTrue();
   });
 
+  it('filters FP++ boards when requested', () => {
+    service.setOptions({
+      enabled: true,
+      fpFilter: 'onlyFpPlusOrPlusPlus',
+      skipCompleted: true,
+      mode: 'difficulty',
+      minDifficulty: undefined,
+      maxDifficulty: undefined,
+      minTimeSeconds: undefined,
+      maxTimeSeconds: undefined,
+    });
+
+    expect(service.matchesFilter(sampleDetails({
+      firstPrincipalUnResoledCellCount: 2,
+      crossReferenceUnresolvedCellCount: 1,
+    }))).toBeTrue();
+    expect(service.matchesFilter(sampleDetails({
+      firstPrincipalUnResoledCellCount: 2,
+      crossReferenceUnresolvedCellCount: 0,
+    }))).toBeTrue();
+  });
+
+  it('shows only FP++ boards when requested', () => {
+    service.setOptions({
+      enabled: true,
+      fpFilter: 'onlyFpPlusPlus',
+      skipCompleted: true,
+      mode: 'difficulty',
+      minDifficulty: undefined,
+      maxDifficulty: undefined,
+      minTimeSeconds: undefined,
+      maxTimeSeconds: undefined,
+    });
+
+    expect(service.matchesFilter(sampleDetails({
+      firstPrincipalUnResoledCellCount: 2,
+      crossReferenceUnresolvedCellCount: 1,
+    }))).toBeTrue();
+    expect(service.matchesFilter(sampleDetails({
+      firstPrincipalUnResoledCellCount: 2,
+      crossReferenceUnresolvedCellCount: 0,
+    }))).toBeFalse();
+  });
+
+  it('shows only FP+ boards when requested', () => {
+    service.setOptions({
+      enabled: true,
+      fpFilter: 'onlyFpPlus',
+      skipCompleted: true,
+      mode: 'difficulty',
+      minDifficulty: undefined,
+      maxDifficulty: undefined,
+      minTimeSeconds: undefined,
+      maxTimeSeconds: undefined,
+    });
+
+    expect(service.matchesFilter(sampleDetails({
+      firstPrincipalUnResoledCellCount: 2,
+      crossReferenceUnresolvedCellCount: 1,
+    }))).toBeFalse();
+    expect(service.matchesFilter(sampleDetails({
+      firstPrincipalUnResoledCellCount: 2,
+      crossReferenceUnresolvedCellCount: 0,
+    }))).toBeTrue();
+  });
+
   it('matches board size range when enabled', () => {
     service.setOptions({
       enabled: true,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'boardSize',
       minBoardSize: 6,

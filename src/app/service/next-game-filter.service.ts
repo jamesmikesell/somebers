@@ -3,10 +3,11 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 import { DifficultyDisplayDetails } from './difficulty-predictor.service';
 
 export type NextGameFilterMode = 'difficulty' | 'time' | 'boardSize';
+export type FpFilterState = 'include' | 'onlyFpPlusPlus' | 'onlyFpPlusOrPlusPlus' | 'onlyFpPlus' | 'excludeFpPlusPlus' | 'excludeFpPlusPlusAndFpPlus';
 
 export interface NextGameFilterOptions {
   enabled: boolean;
-  excludeFpPlus: boolean;
+  fpFilter: FpFilterState;
   skipCompleted: boolean;
   mode: NextGameFilterMode;
   minDifficulty?: number;
@@ -19,7 +20,7 @@ export interface NextGameFilterOptions {
 
 @Injectable({ providedIn: 'root' })
 export class NextGameFilterService {
-  private readonly storageKey = 'nextGameFilterOptions';
+  private readonly storageKey = 'nextGameFilterOptionsV2';
   private readonly optionsSubject: BehaviorSubject<NextGameFilterOptions>;
 
   constructor() {
@@ -58,7 +59,9 @@ export class NextGameFilterService {
       return false;
 
     const isFpPlus = (details.firstPrincipalUnResoledCellCount ?? 0) > 0;
-    if (normalized.excludeFpPlus && isFpPlus)
+    const crossUnresolved = details.crossReferenceUnresolvedCellCount ?? 0;
+    const isFpPlusPlus = isFpPlus && crossUnresolved > 0;
+    if (!this.matchesFpFilter(normalized.fpFilter, isFpPlus, isFpPlusPlus))
       return false;
 
     const difficultyPercent = Number.isFinite(details.percentile) ? details.percentile * 100 : undefined;
@@ -116,7 +119,7 @@ export class NextGameFilterService {
 
     return {
       enabled: options?.enabled === true,
-      excludeFpPlus: options?.excludeFpPlus === true,
+      fpFilter: this.normalizeFpFilter(options?.fpFilter),
       skipCompleted: options?.skipCompleted !== false,
       mode,
       minDifficulty,
@@ -150,6 +153,32 @@ export class NextGameFilterService {
     return parsed;
   }
 
+  private normalizeFpFilter(value?: FpFilterState): FpFilterState {
+    if (
+      value === 'onlyFpPlusPlus'
+      || value === 'onlyFpPlusOrPlusPlus'
+      || value === 'onlyFpPlus'
+      || value === 'excludeFpPlusPlus'
+      || value === 'excludeFpPlusPlusAndFpPlus'
+    )
+      return value;
+    return 'include';
+  }
+
+  private matchesFpFilter(filter: FpFilterState, isFpPlus: boolean, isFpPlusPlus: boolean): boolean {
+    if (filter === 'onlyFpPlusPlus')
+      return isFpPlusPlus;
+    if (filter === 'onlyFpPlusOrPlusPlus')
+      return isFpPlus || isFpPlusPlus;
+    if (filter === 'onlyFpPlus')
+      return isFpPlus && !isFpPlusPlus;
+    if (filter === 'excludeFpPlusPlus')
+      return !isFpPlusPlus;
+    if (filter === 'excludeFpPlusPlusAndFpPlus')
+      return !isFpPlus && !isFpPlusPlus;
+    return true;
+  }
+
   private loadFromStorage(): NextGameFilterOptions {
     try {
       const raw = localStorage.getItem(this.storageKey);
@@ -175,7 +204,7 @@ export class NextGameFilterService {
   private defaultOptions(): NextGameFilterOptions {
     return {
       enabled: false,
-      excludeFpPlus: false,
+      fpFilter: 'include',
       skipCompleted: true,
       mode: 'difficulty',
       minDifficulty: undefined,
