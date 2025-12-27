@@ -120,27 +120,27 @@
   <h2>🎲 Guessing</h2>
   <p>Guessing is almost never required.</p>
   <p>
-    Any board <em>not</em> labeled with an
+    Only boards labeled with an
     <span>
       <code
-        ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP+!</code
+        ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP++</code
       >
     </span>
-    warning (note the <code>!</code> after the <code>+</code>, see
-    <a routerLink="/documentation" fragment="fp-warning">FP+ meaning</a>) is
-    <strong>guaranteed</strong> to be solvable without a single guess.
-  </p>
-  <p>
-    While any board labeled with an
+    warning <em>might</em> require guessing (note the <code>++</code> not just a
+    single <code>+</code>, see
+    <a routerLink="/documentation" fragment="fp-warning">FP+ meaning</a>).
+    Boards with only an
     <span>
       <code
         ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP+</code
       >
     </span>
-    (note the lack of a <code>!</code> after the <code>+</code>) is likely to be
-    very difficult, it is guaranteed to be solvable without guessing. In fact,
-    game #422 is the first game to require a guess, and even that isn't until
-    only the last 6 unselected cells remain.
+    warning, or boards with no warning at all, are guaranteed to be solvable
+    without a single guess.
+  </p>
+  <p>
+    In fact, game #422 is the first game to require a guess, and even that isn't
+    until only the last 6 unselected cells remain.
   </p>
   <p>
     In the case of #422, when only the last 6 cells remain, by enabling
@@ -173,30 +173,41 @@
           #-#</code
         >
       </span>
+      and
+      <span>
+        <code
+          ><mat-icon class="icon warning-icon">report_problem</mat-icon>FP++
+          #-#</code
+        >
+      </span>
       • This warning appears on only 3.4% of boards. It indicates that a board
       cannot be solved using only <em>first-principles</em> logic (identifying
-      required and unusable cells based solely on their presence in a row,
+      required and unusable cells based solely on their presence in each row,
       column, or group). The <code>#-#</code> shown in the warning represents
       how many cells <code>[can't]-[can]</code> be determined with
       first-principles alone. Beyond that point, more advanced deduction methods
       are required to solve the board.
-      <p>
-        Some boards have an
-        <span>
-          <code
-            ><mat-icon class="icon warning-icon">report_problem</mat-icon
-            >FP+!</code
-          >
-        </span>
-        warning (note the <code>!</code> after the <code>+</code>). These boards
-        have been automatically determined to be even more difficult. Some may
-        require guesses.
-      </p>
-      Though
-      <a routerLink="/documentation" fragment="guessing"
-        >as mentioned, guessing</a
-      >
-      is almost <em>never</em> required.
+
+      <br /><br />
+
+      Some boards have an
+      <span>
+        <code
+          ><mat-icon class="icon warning-icon">report_problem</mat-icon
+          >FP++</code
+        >
+      </span>
+      warning (note the <code>++</code> not just a single <code>+</code>). These
+      boards have been automatically determined to be even more difficult. While
+      some
+      <span>
+        <code
+          ><mat-icon class="icon warning-icon">report_problem</mat-icon
+          >FP++</code
+        > </span
+      >&nbsp; <em>may</em> require guesses, remember that all other boards
+      <em>never</em> &nbsp;
+      <a routerLink="/documentation" fragment="guessing">require guessing</a>.
     </li>
     <li>
       <strong>Temporary highlight</strong> • Long-press a cell until the

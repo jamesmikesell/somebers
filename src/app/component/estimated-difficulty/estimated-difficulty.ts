@@ -52,7 +52,7 @@ export class EstimatedDifficultyComponent implements OnChanges {
 
       if (difficultyDetails.firstPrincipalUnResoledCellCount > 0) {
         const crossUnresolved = difficultyDetails.crossReferenceUnresolvedCellCount ?? 0;
-        const warningSuffix = crossUnresolved > 0 ? '!' : '';
+        const warningSuffix = crossUnresolved > 0 ? '+' : '';
         this.firstPrincipalViolationWarning = `FP+${warningSuffix} ${difficultyDetails.firstPrincipalUnResoledCellCount}-${difficultyDetails.firstPrincipalResolvableCellCount}`;
       }
 
