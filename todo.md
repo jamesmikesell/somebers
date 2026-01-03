@@ -1,5 +1,6 @@
 # TODO
 
+- back buttons on tutorial
 - alt ml methods
 - ability to configure the app for a tournament via a link - (specify enabled features, don't allow features to be changed, ability to specify individual game numbers and order)
 - text occasionally selected, esp when double clicking to reset scratch pad....
