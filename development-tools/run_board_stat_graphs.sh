@@ -28,4 +28,23 @@ echo "Running plot_prediction_vs_backup.py"
 "$PYTHON" "$SCRIPT_DIR/plot_prediction_vs_backup.py" "$@"
 
 echo "Running plot_prediction_solve_times.py"
-"$PYTHON" "$SCRIPT_DIR/plot_prediction_solve_times.py" "$@"
+"$PYTHON" "$SCRIPT_DIR/plot_prediction_solve_times.py" \
+  --kde \
+  --kde-log \
+  --output "$SCRIPT_DIR/ml-prediction-solve-times-kde-logx.png" \
+  --combined-output "$SCRIPT_DIR/ml-prediction-solve-times-all-boards-kde-logx.png" \
+  "$@"
+
+"$PYTHON" "$SCRIPT_DIR/plot_prediction_solve_times.py" \
+  --kde \
+  --kde-log-density \
+  --output "$SCRIPT_DIR/ml-prediction-solve-times-kde-logdensity.png" \
+  --combined-output "$SCRIPT_DIR/ml-prediction-solve-times-all-boards-kde-logdensity.png" \
+  "$@"
+
+"$PYTHON" "$SCRIPT_DIR/plot_prediction_solve_times.py" \
+  --kde \
+  --x-scale linear \
+  --output "$SCRIPT_DIR/ml-prediction-solve-times-kde-linearx.png" \
+  --combined-output "$SCRIPT_DIR/ml-prediction-solve-times-all-boards-kde-linearx.png" \
+  "$@"
