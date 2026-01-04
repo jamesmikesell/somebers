@@ -18,6 +18,7 @@
   </p>
 
   <br />
+  <a id="tutorial"></a>
   <h2>📺 Tutorial</h2>
   If this is your first time here, your quickest learning path is:
   <br />
@@ -35,6 +36,7 @@
   <br />
   <br />
   <br />
+  <a id="core-gameplay"></a>
   <h2>📋 Core Gameplay</h2>
 
   <p>
@@ -49,17 +51,21 @@
         <mat-panel-title> Rules (click to expand) </mat-panel-title>
       </mat-expansion-panel-header>
 
+      <a id="goal"></a>
       <h2>The Goal</h2>
       <ul>
         <li>
+          <a id="goal-row-sum"></a>
           Each <strong>row</strong> must add up to the gray number at the
           <strong>left</strong> of that row.
         </li>
         <li>
+          <a id="goal-column-sum"></a>
           Each <strong>column</strong> must add up to the gray number at the
           <strong>top</strong> of that column.
         </li>
         <li>
+          <a id="goal-group-sum"></a>
           Each <strong>color group</strong> must add up to the tiny number in
           that group's <strong>top-left cell</strong>.
         </li>
@@ -82,20 +88,24 @@
       <!--  -->
       <!--  -->
       <br />
+      <a id="gameplay"></a>
       <h2>Gameplay</h2>
       <ol>
         <li>
+          <a id="gameplay-remove"></a>
           <strong>Remove cells</strong> • <em>Swipe down</em> or
           <em>double-tap</em> (or <em>right-click</em> on desktop) to
           <strong>remove</strong> a number — “this number <em>cannot</em> be
           part of the solution.”
         </li>
         <li>
+          <a id="gameplay-select"></a>
           <strong>Select required cells</strong> • <em>Tap</em> or
           <em>swipe up</em> on a cell to <strong>select</strong> (circle) it —
           “this number <em>must</em> be part of the solution.”
         </li>
         <li>
+          <a id="gameplay-mistake-warning"></a>
           <strong>Mistake warning</strong> • If you try to select a number that
           doesn't belong or remove a number that is required, the cell will
           wiggle and the <strong>Mistakes</strong> counter will increase. Unless
@@ -156,6 +166,7 @@
   <!--  -->
   <!--  -->
   <br />
+  <a id="app-features"></a>
   <h2>✨ App Features</h2>
   <ul>
     <li>
@@ -210,6 +221,7 @@
       <a routerLink="/documentation" fragment="guessing">require guessing</a>.
     </li>
     <li>
+      <a id="temporary-highlight"></a>
       <strong>Temporary highlight</strong> • Long-press a cell until the
       magnified view appears, then — without lifting your finger — slide
       slightly left or right to toggle on or off the red/white diamond highlight
@@ -217,6 +229,7 @@
       numbers you're actively considering.
     </li>
     <li>
+      <a id="magnify"></a>
       <strong>Magnify</strong> • Long-press and hold a cell to magnify the cell
       content
       <span class="note"
@@ -224,12 +237,14 @@
       >
     </li>
     <li>
+      <a id="par-time"></a>
       <strong>Par Time</strong> • This is the amount of time the game thinks it
       would take for a seasoned veteran to solve the displayed board. Click
       through the stats to see your time on each board, and how your speed
       compares.
     </li>
     <li>
+      <a id="game-filter"></a>
       <strong>Game Filter</strong> • Games can be filtered to display only
       boards of a certain difficulty, board size, or par time. The filter can be
       found in the
@@ -241,16 +256,19 @@
       >, however this menu item only appears when playing / viewing a game.
     </li>
     <li>
+      <a id="stat-toggles"></a>
       <strong>Stat toggles</strong> • Some of the stats are surrounded by
       <code>&lt;</code> <code>&gt;</code> indicating they can be clicked to
       display different stats.
     </li>
     <li>
+      <a id="skip-and-return"></a>
       <strong>Skip and return</strong> • Use the buttons beside the game number
       to jump past a tricky board. Your progress is saved automatically, so you
       can resume a partially completed puzzle any time.
     </li>
     <li>
+      <a id="undo-feature"></a>
       <span>
         <code><mat-icon class="icon">undo</mat-icon>Undo</code> in the
         <span>
@@ -271,6 +289,7 @@
       <em>tagliatelle al tartufo</em> from a gas station.
     </li>
     <li>
+      <a id="sessions"></a>
       <strong>Sessions</strong> • Found on the
       <a routerLink="/sessions">session page</a> and from the
       <span>
@@ -285,6 +304,7 @@
       is also enabled.
     </li>
     <li>
+      <a id="start-board-over"></a>
       <strong>Start board over</strong> • Found in the
       <span>
         <code><mat-icon class="icon">more_vert</mat-icon></code>
@@ -299,15 +319,18 @@
       <a routerLink="/settings" fragment="tournament-mode">settings</a>.
     </li>
     <li>
+      <a id="difficulty"></a>
       <strong>Difficulty</strong> • Relative difficulty of a board on a 0-100
       scale.
     </li>
     <li>
+      <a id="shapes-mode"></a>
       <strong>Shapes mode</strong> • Accessibility option for players with
       colorblindness. See more details in the
       <a routerLink="/settings">settings</a>.
     </li>
     <li>
+      <a id="spot-running-totals"></a>
       <strong>Spot running totals</strong> • The upper-right corner of each
       header cell can show the sum of the currently selected cells in that
       section. You can disable this display from the
@@ -315,11 +338,13 @@
       difficult than they need to be.
     </li>
     <li>
+      <a id="settings-more-options"></a>
       Check out the <a routerLink="/settings">settings</a> for additional game
       options.
     </li>
     @if (timeSpentDays) {
       <li>
+        <a id="time-spent-fun-fact"></a>
         Lastly, and in case you're curious, you've been improving your math and
         deduction skills for a combined total of
         <code>{{ timeSpentHours }} hours</code> straight! In case all that time
@@ -353,9 +378,18 @@
     installed PWAs:
   </p>
   <ul>
-    <li>Launch faster from your home screen, Dock, or Start menu.</li>
-    <li>Run in a standalone window without the browser address bar.</li>
-    <li>Work in airplane mode and in internet dead zones.</li>
+    <li>
+      <a id="install-benefit-launch"></a>
+      Launch faster from your home screen, Dock, or Start menu.
+    </li>
+    <li>
+      <a id="install-benefit-standalone"></a>
+      Run in a standalone window without the browser address bar.
+    </li>
+    <li>
+      <a id="install-benefit-offline"></a>
+      Work in airplane mode and in internet dead zones.
+    </li>
   </ul>
   <app-install></app-install>
 
@@ -364,6 +398,7 @@
     the instructions for your setup below.
   </div>
 
+  <a id="ios-install"></a>
   <h3>iOS (iPhone / iPad)</h3>
   <div class="ios-install-video">
     <p class="note">
@@ -447,21 +482,34 @@
   <p class="note">For best results on iOS, use Safari.</p>
   <ol>
     <li>
+      <a id="ios-step-open"></a>
       Open <strong>Safari</strong> and navigate to
       <code>https://somebers.com</code>.
     </li>
     <li>
+      <a id="ios-step-share"></a>
       Tap the <strong>Share</strong> button (you may need to tap the
       <code>...</code> menu button to find the share option)
     </li>
-    <li>Tap the <code>... more</code> button</li>
-    <li>Tap <code>Add to Home Screen</code></li>
-    <li>Tap the <code>Add</code> button</li>
+    <li>
+      <a id="ios-step-more"></a>
+      Tap the <code>... more</code> button
+    </li>
+    <li>
+      <a id="ios-step-add-home"></a>
+      Tap <code>Add to Home Screen</code>
+    </li>
+    <li>
+      <a id="ios-step-add"></a>
+      Tap the <code>Add</code> button
+    </li>
   </ol>
 
+  <a id="android-install"></a>
   <h3>Android</h3>
   <ul>
     <li>
+      <a id="android-chrome-install"></a>
       <strong>Chrome:</strong> Visit <code>somebers.com</code> → in the
       upper-<strong>RIGHT</strong> part of the screen tap Chrome's
       <strong>⋮</strong> menu → <strong>Install app</strong> (or
@@ -476,15 +524,18 @@
     You may also see an automatic “Install” prompt banner in supported browsers.
   </p>
 
+  <a id="macos-install"></a>
   <h3>macOS</h3>
   <ul>
     <li>
+      <a id="macos-safari-add"></a>
       <strong>Safari:</strong> Open <code>somebers.com</code> → from the
       <strong>File</strong> menu select <strong>Add to Dock</strong> (or use the
       <strong>Share</strong> button → <strong>Add to Dock</strong>), then choose
       to open in a separate window.
     </li>
     <li>
+      <a id="macos-chrome-install"></a>
       <strong>Chrome:</strong> Open <code>somebers.com</code> → click the
       <strong>Install</strong> icon in the address bar (or
       <strong>⋮</strong> menu → <strong>Save and share</strong> →
@@ -492,14 +543,17 @@
     </li>
   </ul>
 
+  <a id="windows-install"></a>
   <h3>Windows</h3>
   <ul>
     <li>
+      <a id="windows-chrome-install"></a>
       <strong>Chrome:</strong> Open <code>somebers.com</code> → click the
       <strong>Install</strong> icon in the address bar (or
       <strong>⋮</strong> menu → <strong>Install</strong>), then confirm.
     </li>
     <li>
+      <a id="windows-edge-install"></a>
       <strong>Edge:</strong> Open <code>somebers.com</code> →
       <strong>⋮</strong> menu → <strong>Apps</strong> →
       <strong>Install this site as an app</strong>.
