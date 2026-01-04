@@ -127,7 +127,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         '--predictions',
         type=Path,
-        default=Path('development-tools/ml-predictions-2k-games.json'),
+        default=Path('development-tools/ml-predictions-10k-games.json'),
         help='Path to ml predictions JSON.',
     )
     parser.add_argument(

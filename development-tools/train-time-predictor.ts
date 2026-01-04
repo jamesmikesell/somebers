@@ -90,7 +90,7 @@ async function main(): Promise<void> {
 
 
   let startBoardNumber = 1;
-  let boardsToEvaluate = 2000;
+  let boardsToEvaluate = 10000;
   const threadCount = parseThreadCount();
   console.log(`Evaluating difficulty of ${boardsToEvaluate} boards using ${threadCount} thread(s)`);
 
@@ -123,7 +123,7 @@ async function main(): Promise<void> {
   predictions.sort((a, b) => a.gameNumber - b.gameNumber);
   let next1kTimes = predictions.sort((a, b) => a.predictedMs - b.predictedMs).map(x => Math.round(x.predictedMs));
 
-  const predictedGameTimes = 'development-tools/ml-predictions-2k-games.json';
+  const predictedGameTimes = 'development-tools/ml-predictions-10k-games.json';
   const predictedTimes = 'public/difficulty-ml-predicted-times.json';
   rmSync(predictedGameTimes, { force: true })
   rmSync(predictedTimes, { force: true })

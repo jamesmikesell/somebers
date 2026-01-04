@@ -26,13 +26,13 @@ def parse_args() -> argparse.Namespace:
   parser = argparse.ArgumentParser(
       description=(
           'Generate a percent-per-bin solve time plot per board size using '
-          'development-tools/ml-predictions-2k-games.json data.'
+          'development-tools/ml-predictions-10k-games.json data.'
       )
   )
   parser.add_argument(
       'json_path',
       nargs='?',
-      default='development-tools/ml-predictions-2k-games.json',
+      default='development-tools/ml-predictions-10k-games.json',
       help='Path to the ML prediction JSON data.',
   )
   parser.add_argument(
