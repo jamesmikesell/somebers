@@ -1,7 +1,6 @@
 # TODO
 
 - back buttons on tutorial
-- note in documentation about filter
 - link to all app features
 - link to app feature itself
 - alt ml methods
@@ -21,6 +20,7 @@
 
 # Done
 
+- note in documentation about filter
 - organize documentation, add links
 - add ios version detection after Oct (ios version can't be detected until apple patches it in oct)
 - filter on board size
