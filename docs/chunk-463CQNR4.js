@@ -1,0 +1,1 @@
+import{Ka as a}from"./chunk-UH53RH2C.js";var c=class r{transform(t){let o=typeof t=="number"&&isFinite(t)&&t>0?Math.floor(t):0,e=Math.floor(o/1e3),m=e%60,s=Math.floor(e/60),f=s%60,p=Math.floor(s/60),i=n=>n<10?"0"+n:""+n;return`${p}:${i(f)}:${i(m)}`}static \u0275fac=function(o){return new(o||r)};static \u0275pipe=a({name:"duration",type:r,pure:!0})};export{c as a};
