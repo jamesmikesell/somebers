@@ -38,7 +38,10 @@
             </div>
 
             <div class="game-controls__center">
-              <mat-form-field class="game-number" subscriptSizing="dynamic">
+              <mat-form-field
+                subscriptSizing="dynamic"
+                [style.width.px]="gameNumberFieldWidth"
+              >
                 <mat-label>Game #</mat-label>
                 <input
                   matInput

@@ -248,6 +248,17 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
+  get gameNumberFieldWidth(): number {
+    const minWidth = 91;
+    const maxWidth = 156;
+    const widthPerChar = 9.4;
+    const widthBase = 48;
+    const length = Math.max(1, `${this.gameNumber ?? ''}`.length);
+    const width = widthPerChar * length + widthBase;
+    return Math.min(maxWidth, Math.max(minWidth, width));
+  }
+
+
   private monitorLock(): void {
     this.lockService.lockLost$
       .pipe(takeUntil(this.destroy))
@@ -317,7 +328,7 @@ export class Board implements OnInit, OnDestroy, AfterViewInit {
         kind: 'clear',
         cell,
         previousStatus: SelectionStatus.NONE,
-      }) ),
+      })),
       { appendToPrevious: true },
     );
   }
